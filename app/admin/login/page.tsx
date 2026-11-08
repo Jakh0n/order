@@ -5,7 +5,7 @@ import { Suspense } from "react";
 
 import { LoginForm } from "@/components/admin/login-form";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { getCurrentOwner } from "@/lib/auth/owner";
+import { getCurrentUser, homePathFor } from "@/lib/auth/owner";
 
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -35,6 +35,7 @@ async function Header() {
 }
 
 async function RedirectIfLoggedIn() {
-  if (await getCurrentOwner()) redirect("/admin/orders");
+  const current = await getCurrentUser();
+  if (current) redirect(homePathFor(current.user.role, !!current.store));
   return null;
 }

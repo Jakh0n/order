@@ -8,6 +8,7 @@ import { CartSync } from "@/components/storefront/cart-sync";
 import { CategoryNav } from "@/components/storefront/category-nav";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { ProductCard } from "@/components/storefront/product-card";
+import { StoreBlocked } from "@/components/storefront/store-blocked";
 import { StoreHeader } from "@/components/storefront/store-header";
 import { getStorefront } from "@/lib/storefront";
 
@@ -33,6 +34,7 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
   const { store: slug } = await params;
   const data = await getStorefront(slug);
   if (!data) notFound();
+  if (data.store.isBlocked) return <StoreBlocked name={data.store.name} />;
 
   const { store, categories } = data;
   const t = await getTranslations("menu");

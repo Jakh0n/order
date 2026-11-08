@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { homePathFor } from "@/lib/auth/owner";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { createSession, deleteSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
@@ -25,7 +26,7 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
 
   const user = await prisma.user.findUnique({
     where: { email: parsed.data.email },
-    select: { id: true, passwordHash: true },
+    select: { id: true, passwordHash: true, role: true, _count: { select: { stores: true } } },
   });
 
   dummyHash ??= hashPassword("dummy-password-for-timing");
@@ -33,7 +34,7 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
   if (!user?.passwordHash || !ok) return { error: "invalid", email };
 
   await createSession(user.id);
-  redirect("/admin/orders");
+  redirect(homePathFor(user.role, user._count.stores > 0));
 }
 
 export async function logout() {

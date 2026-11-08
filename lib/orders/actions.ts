@@ -9,6 +9,7 @@ export type CreateOrderError =
   | "invalid"
   | "storeNotFound"
   | "closed"
+  | "blocked"
   | "typeUnavailable"
   | "paymentUnavailable"
   | "zoneInvalid"
@@ -37,6 +38,7 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
   try {
     const store = await prisma.store.findUnique({ where: { slug: data.storeSlug } });
     if (!store) return { ok: false, error: "storeNotFound" };
+    if (store.isBlocked) return { ok: false, error: "blocked" };
     if (!isStoreOpenNow(store)) return { ok: false, error: "closed" };
 
     if (data.type === "PICKUP" && !store.pickupEnabled) {

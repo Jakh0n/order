@@ -81,6 +81,8 @@ model Store {
   transferDetails      String?
   plan                 Plan           @default(FREE)
   paidUntil            DateTime?
+  /// Superadmin bloklagan: mijoz menyusi yopiq, buyurtma qabul qilinmaydi
+  isBlocked            Boolean        @default(false)
   ownerId              String
   owner                User           @relation(fields: [ownerId], references: [id])
   categories           Category[]

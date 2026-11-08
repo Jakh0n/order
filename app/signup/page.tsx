@@ -5,7 +5,7 @@ import { Suspense } from "react";
 
 import { SignupForm } from "@/components/auth/signup-form";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { getCurrentOwner } from "@/lib/auth/owner";
+import { getCurrentUser, homePathFor } from "@/lib/auth/owner";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("signup");
@@ -41,6 +41,7 @@ async function Header() {
 }
 
 async function RedirectIfLoggedIn() {
-  if (await getCurrentOwner()) redirect("/admin/orders");
+  const current = await getCurrentUser();
+  if (current) redirect(homePathFor(current.user.role, !!current.store));
   return null;
 }

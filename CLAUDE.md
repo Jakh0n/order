@@ -48,7 +48,7 @@ app/
   signup/                     ro'yxatdan o'tish ustasi (hisob + do'kon)
   admin/login/                kirish (email + parol)
   admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], settings
-  superadmin/                 platforma egasi
+  superadmin/                 platforma egasi: statistika, do'konlar, tarif (+1 oy / bepul), bloklash
 components/ui/                shadcn komponentlari
 components/storefront/        mijoz menyusi, variant oynasi, savat
 components/checkout/          checkout formasi
@@ -57,6 +57,7 @@ components/admin/             admin: login formasi, buyurtma kartochkasi va amal
 components/admin/menu/        menyu: kategoriyalar, taom qatorlari, taom formasi (variantlar), rasm yuklash
 components/admin/settings/    sozlamalar formasi, do'kon havolasi + QR
 components/auth/              signup-form (2 qadamli usta)
+components/superadmin/        do'kon amallari (tarif, bloklash)
 i18n/                         next-intl sozlamasi (config, request, setLocale action)
 lib/
   db.ts                       Prisma client singleton
@@ -64,11 +65,13 @@ lib/
   order-message.ts            buildOrderMessage, telegramLink, whatsappLink
   validators.ts               zod sxemalar (checkoutFormSchema — klient, checkoutSchema — server)
   auth/session.ts             imzolangan cookie sessiya (AUTH_SECRET)
-  auth/owner.ts               getCurrentOwner / requireOwner — joriy ega va uning do'koni
+  auth/owner.ts               getCurrentUser, getCurrentOwner / requireOwner, requireSuperadmin, homePathFor
   auth/password.ts            scrypt xesh
   auth/actions.ts             login / logout
   auth/signup-actions.ts      signup (user + store bitta tranzaksiyada), checkSlug
   slug.ts                     slugify (kirill → lotin), RESERVED_SLUGS, slugError
+  superadmin/data.ts          getPlatformStats, listStores
+  superadmin/actions.ts       setStoreBlocked, extendPaidPlan, setFreePlan (requireSuperadmin)
   orders/actions.ts           createOrder — mijoz checkout'i
   orders/insert.ts            insertOrder — narx hisoblash + raqam berish + saqlash (umumiy)
   orders/admin-actions.ts     updateOrderStatus, setOrderPaid, createManualOrder
@@ -100,6 +103,7 @@ npm run db:migrate   # prisma migrate dev (-- --name <nom>)
 npm run db:seed      # namunaviy ma'lumot (qayta ishga tushirsa bo'ladi)
 npm run db:studio    # Prisma Studio
 npm run user:password -- owner@order.uz   # foydalanuvchi parolini o'rnatish
+npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 ```
 
 ## QOIDALAR
@@ -110,6 +114,8 @@ npm run user:password -- owner@order.uz   # foydalanuvchi parolini o'rnatish
 - Admin'dagi har bir Server Action foydalanuvchi shu do'kon egasi ekanini tekshiradi:
   `const { store } = await requireOwner()` va har bir so'rovda `where: { ..., storeId: store.id }`.
   Layout'dagi tekshiruv yetarli emas — har bir sahifa va action o'zi chaqiradi.
+- Bloklangan do'kon (`Store.isBlocked`): mijoz menyusi va checkout yopiq, createOrder rad etadi,
+  admin panelda ogohlantirish. Superadmin action'lari `requireSuperadmin()` bilan.
 - Narxlar Int, so'mda. Ko'rsatish faqat `formatUZS` orqali.
 - Buyurtma summasi SERVERDA bazadagi narxlardan qayta hisoblanadi, klient narxiga ishonilmaydi.
 - `minOrder`, tuman narxi, `isAvailable`, do'kon ochiqligi serverda tekshiriladi.

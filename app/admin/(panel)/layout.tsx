@@ -66,6 +66,14 @@ async function Panel({ children }: { children: React.ReactNode }) {
         </form>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
+        {store.isBlocked && (
+          <div
+            role="alert"
+            className="border-destructive/30 bg-destructive/10 text-destructive border-b px-4 py-3 text-sm"
+          >
+            {t("blockedBanner")}
+          </div>
+        )}
         {children}
         <form action={logout} className="border-t px-4 py-3 md:hidden">
           <Button type="submit" variant="ghost" size="sm">

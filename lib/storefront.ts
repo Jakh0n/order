@@ -32,6 +32,7 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
       closeTime: true,
       isOpen: true,
       minOrder: true,
+      isBlocked: true,
     },
   });
   if (!store) return null;

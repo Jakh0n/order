@@ -39,6 +39,8 @@ export interface StorefrontStore {
   openTime: string | null;
   closeTime: string | null;
   isOpen: boolean;
+  /** Superadmin bloklagan — menyu va buyurtma yopiq */
+  isBlocked: boolean;
   minOrder: number;
 }
 

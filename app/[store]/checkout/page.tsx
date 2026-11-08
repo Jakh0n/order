@@ -8,6 +8,7 @@ import { Suspense } from "react";
 import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { CartSync } from "@/components/storefront/cart-sync";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
+import { StoreBlocked } from "@/components/storefront/store-blocked";
 import { getCheckoutSettings, getStorefront } from "@/lib/storefront";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -27,6 +28,7 @@ async function Checkout({ params }: { params: PageProps<"/[store]/checkout">["pa
   const { store: slug } = await params;
   const [data, settings] = await Promise.all([getStorefront(slug), getCheckoutSettings(slug)]);
   if (!data || !settings) notFound();
+  if (data.store.isBlocked) return <StoreBlocked name={data.store.name} />;
 
   const t = await getTranslations("checkout");
 

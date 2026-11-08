@@ -1,16 +1,13 @@
 import "server-only";
 
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
 
 import { readSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 
-/**
- * Joriy do'kon egasi va uning do'koni (hozircha bitta do'kon — ko'p filial keyin).
- * Bir so'rov ichida bir marta o'qiladi.
- */
-export const getCurrentOwner = cache(async () => {
+/** Joriy foydalanuvchi va (bo'lsa) birinchi do'koni. Bir so'rov ichida bir marta o'qiladi. */
+export const getCurrentUser = cache(async () => {
   const userId = await readSession();
   if (!userId) return null;
 
@@ -21,17 +18,25 @@ export const getCurrentOwner = cache(async () => {
       email: true,
       name: true,
       role: true,
+      // Hozircha bitta do'kon — ko'p filial keyin
       stores: {
         orderBy: { createdAt: "asc" },
         take: 1,
-        select: { id: true, slug: true, name: true },
+        select: { id: true, slug: true, name: true, isBlocked: true },
       },
     },
   });
-  const store = user?.stores[0];
-  if (!user || !store) return null;
+  if (!user) return null;
 
-  return { user: { id: user.id, email: user.email, name: user.name, role: user.role }, store };
+  const { stores, ...rest } = user;
+  return { user: rest, store: stores[0] ?? null };
+});
+
+/** Joriy do'kon egasi va uning do'koni (do'koni yo'q foydalanuvchi uchun null) */
+export const getCurrentOwner = cache(async () => {
+  const current = await getCurrentUser();
+  if (!current?.store) return null;
+  return { user: current.user, store: current.store };
 });
 
 export type CurrentOwner = NonNullable<Awaited<ReturnType<typeof getCurrentOwner>>>;
@@ -39,6 +44,26 @@ export type CurrentOwner = NonNullable<Awaited<ReturnType<typeof getCurrentOwner
 /** Admin sahifalari va Server Action'lar uchun: kirmagan bo'lsa /admin/login ga. */
 export async function requireOwner(): Promise<CurrentOwner> {
   const owner = await getCurrentOwner();
-  if (!owner) redirect("/admin/login");
+  if (!owner) {
+    // Do'konsiz superadmin admin paneliga emas, o'z paneliga
+    const current = await getCurrentUser();
+    redirect(current?.user.role === "SUPERADMIN" ? "/superadmin" : "/admin/login");
+  }
   return owner;
+}
+
+/** Superadmin sahifalari va action'lari uchun. Boshqa rollar uchun 404 (panel borligini oshkor qilmaymiz). */
+export async function requireSuperadmin() {
+  const current = await getCurrentUser();
+  if (!current) redirect("/admin/login");
+  if (current.user.role !== "SUPERADMIN") {
+    notFound();
+  }
+  return current.user;
+}
+
+/** Kirgandan keyingi bosh sahifa */
+export function homePathFor(role: string, hasStore: boolean) {
+  if (role === "SUPERADMIN" && !hasStore) return "/superadmin";
+  return "/admin/orders";
 }

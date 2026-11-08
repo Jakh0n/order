@@ -86,7 +86,8 @@
       "unavailable": "Savatdagi ba'zi taomlar hozir mavjud emas. Savatni tekshiring.",
       "invalidOptions": "Taom variantlari o'zgargan. Savatni tekshiring.",
       "minOrder": "Minimal buyurtma: {amount}",
-      "server": "Xatolik yuz berdi. Qaytadan urinib ko'ring."
+      "server": "Xatolik yuz berdi. Qaytadan urinib ko'ring.",
+      "blocked": "Do'kon vaqtincha ishlamayapti"
     }
   },
   "payment": {
@@ -127,10 +128,44 @@
     "menu": "Menyu",
     "settings": "Sozlamalar",
     "logout": "Chiqish",
-    "viewStore": "Do'konni ko'rish"
+    "viewStore": "Do'konni ko'rish",
+    "blockedBanner": "Do'koningiz platforma tomonidan vaqtincha bloklangan: mijozlar menyuni ko'ra olmaydi va buyurtma bera olmaydi. Batafsil ma'lumot uchun biz bilan bog'laning."
   },
   "superadmin": {
-    "title": "Platforma boshqaruvi"
+    "title": "Platforma boshqaruvi",
+    "stores": "Do'konlar",
+    "blocked": "Bloklangan",
+    "paid": "Pullik (faol)",
+    "orders30": "Buyurtmalar (30 kun)",
+    "revenue30": "Aylanma (30 kun)",
+    "search": "Nom, havola yoki email bo'yicha qidirish",
+    "searchButton": "Qidirish",
+    "empty": "Do'kon topilmadi",
+    "owner": "Ega",
+    "created": "Yaratilgan",
+    "products": "{count} ta taom",
+    "ordersCount": "{total} ta buyurtma, 30 kunda {recent}",
+    "planFree": "Bepul",
+    "planPaid": "Pullik",
+    "paidUntil": "{date} gacha",
+    "expired": "Muddati o'tgan: {date}",
+    "unlimited": "Muddatsiz",
+    "extend": "+1 oy",
+    "makeFree": "Bepulga o'tkazish",
+    "block": "Bloklash",
+    "unblock": "Blokdan chiqarish",
+    "blockedBadge": "Bloklangan",
+    "blockTitle": "\"{name}\" bloklansinmi?",
+    "blockHint": "Mijozlar menyuni ko'ra olmaydi va buyurtma bera olmaydi. Ega admin panelga kira oladi va ogohlantirishni ko'radi.",
+    "cancel": "Bekor qilish",
+    "saved": "Saqlandi",
+    "openStore": "Do'konni ochish",
+    "adminPanel": "Do'kon paneli",
+    "logout": "Chiqish",
+    "errors": {
+      "invalid": "Ma'lumot noto'g'ri",
+      "notFound": "Do'kon topilmadi"
+    }
   },
   "orderMessage": {
     "header": "🛒 Yangi buyurtma #{number}",
@@ -156,7 +191,8 @@
     "notFound": "Do'kon topilmadi",
     "notFoundHint": "Havola noto'g'ri yoki do'kon o'chirilgan.",
     "open": "Ochiq",
-    "closed": "Yopiq"
+    "closed": "Yopiq",
+    "blocked": "Do'kon vaqtincha ishlamayapti."
   },
   "product": {
     "required": "Majburiy",
