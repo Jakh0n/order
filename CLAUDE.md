@@ -49,13 +49,19 @@ app/
   superadmin/                 platforma egasi
 components/ui/                shadcn komponentlari
 components/storefront/        mijoz menyusi, variant oynasi, savat
+components/checkout/          checkout formasi
+components/order/             buyurtma holati (bosqichlar, avto-yangilanish)
 i18n/                         next-intl sozlamasi (config, request, setLocale action)
 lib/
   db.ts                       Prisma client singleton
   money.ts                    formatUZS
   order-message.ts            buildOrderMessage, telegramLink, whatsappLink
-  validators.ts               zod sxemalar (checkout)
-  storefront.ts               getStorefront(slug) — "use cache" + cacheTag(storeCacheTag(slug))
+  validators.ts               zod sxemalar (checkoutFormSchema — klient, checkoutSchema — server)
+  orders/actions.ts           createOrder Server Action (narx serverda, raqam $transaction'da)
+  orders/pricing.ts           priceItems — bazadagi narx + variant tekshiruvi (sof funksiya)
+  orders/get-order.ts         getOrderForCustomer
+  orders/send-link.ts         orderSendLink — do'kon kanaliga qarab t.me / wa.me havola
+  storefront.ts               getStorefront(slug), getCheckoutSettings(slug) — "use cache" + cacheTag(storeCacheTag(slug))
   menu-types.ts               server → klient menyu tiplari
   store-hours.ts              isStoreOpenNow (Asia/Tashkent)
   cart-store.ts               zustand savat (slug bo'yicha, localStorage)

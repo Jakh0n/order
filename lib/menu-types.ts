@@ -46,3 +46,19 @@ export interface StorefrontData {
   store: StorefrontStore;
   categories: MenuCategory[];
 }
+
+export interface DeliveryZoneOption {
+  id: string;
+  name: string;
+  fee: number;
+}
+
+export type PaymentMethodValue = "CASH" | "CARD_ON_DELIVERY" | "TRANSFER";
+
+export interface CheckoutSettings {
+  pickupEnabled: boolean;
+  deliveryEnabled: boolean;
+  paymentMethods: PaymentMethodValue[];
+  transferDetails: string | null;
+  zones: DeliveryZoneOption[];
+}

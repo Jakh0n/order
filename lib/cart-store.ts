@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -151,4 +152,13 @@ const EMPTY: CartLine[] = [];
 /** Bitta do'kon savati (barqaror reference — keraksiz re-render yo'q) */
 export function useCartLines(slug: string) {
   return useCart((s) => s.carts[slug] ?? EMPTY);
+}
+
+/** localStorage'dan savat o'qildimi (undan oldin savat bo'sh ko'rinadi — "bo'sh" deb xulosa qilmang) */
+export function useCartHydrated() {
+  return useSyncExternalStore(
+    (onChange) => useCart.persist.onFinishHydration(onChange),
+    () => useCart.persist.hasHydrated(),
+    () => false,
+  );
 }

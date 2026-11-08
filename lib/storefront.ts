@@ -3,7 +3,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 
 import { prisma } from "@/lib/db";
-import type { StorefrontData } from "@/lib/menu-types";
+import type { CheckoutSettings, PaymentMethodValue, StorefrontData } from "@/lib/menu-types";
 
 /** Admin menyu/do'konni o'zgartirganda: revalidateTag(storeCacheTag(slug)) */
 export function storeCacheTag(slug: string) {
@@ -87,5 +87,43 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
           })),
       }))
       .filter((c) => c.products.length > 0),
+  };
+}
+
+/** Checkout uchun: qabul qilish usullari, to'lov usullari, tumanlar. */
+export async function getCheckoutSettings(slug: string): Promise<CheckoutSettings | null> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(storeCacheTag(slug));
+
+  const store = await prisma.store.findUnique({
+    where: { slug },
+    select: {
+      pickupEnabled: true,
+      deliveryEnabled: true,
+      acceptCash: true,
+      acceptCardOnDelivery: true,
+      acceptTransfer: true,
+      transferDetails: true,
+      zones: {
+        orderBy: [{ sort: "asc" }, { name: "asc" }],
+        select: { id: true, name: true, fee: true },
+      },
+    },
+  });
+  if (!store) return null;
+
+  const paymentMethods: PaymentMethodValue[] = [];
+  if (store.acceptCash) paymentMethods.push("CASH");
+  if (store.acceptCardOnDelivery) paymentMethods.push("CARD_ON_DELIVERY");
+  if (store.acceptTransfer) paymentMethods.push("TRANSFER");
+
+  return {
+    pickupEnabled: store.pickupEnabled,
+    // Tuman bo'lmasa yetkazib berishni tanlab bo'lmaydi
+    deliveryEnabled: store.deliveryEnabled && store.zones.length > 0,
+    paymentMethods,
+    transferDetails: store.transferDetails,
+    zones: store.zones,
   };
 }
