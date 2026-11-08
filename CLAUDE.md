@@ -54,6 +54,7 @@ components/checkout/          checkout formasi
 components/order/             buyurtma holati (bosqichlar, avto-yangilanish)
 components/admin/             admin: login formasi, buyurtma kartochkasi va amallari, confirm-dialog
 components/admin/menu/        menyu: kategoriyalar, taom qatorlari, taom formasi (variantlar), rasm yuklash
+components/admin/settings/    sozlamalar formasi, do'kon havolasi + QR
 i18n/                         next-intl sozlamasi (config, request, setLocale action)
 lib/
   db.ts                       Prisma client singleton
@@ -79,6 +80,8 @@ lib/
   cart-store.ts               zustand savat (cartKey bo'yicha, localStorage)
   cart-keys.ts                adminCartKey — admin savati alohida
   supabase/server.ts          service role client (server-only)
+  settings/data.ts            getStoreSettings
+  settings/actions.ts         saveStoreSettings (do'kon, ish vaqti, tumanlar, to'lov, kanal)
   storage.ts                  uploadMenuImage, deleteMenuImage, menuImagePrefix
 messages/uz.json, ru.json     tarjimalar
 prisma/schema.prisma, seed.ts
@@ -109,6 +112,8 @@ npm run user:password -- owner@order.uz   # foydalanuvchi parolini o'rnatish
 - `OrderItem`'da nom va narx snapshot qilib saqlanadi.
 - Har bir yangi matn `uz.json` VA `ru.json` ga qo'shiladi.
 - Avval mobil (375px), keyin desktop.
+- Shartli forma maydonlarini (react-hook-form) unmount qilmang — `hidden` bilan yashiring,
+  aks holda qayta ko'rsatilganda kiritilgan qiymat bo'sh ko'rinadi.
 - Supabase faqat Storage uchun; ma'lumotlar faqat Prisma orqali.
 - `SUPABASE_SERVICE_ROLE_KEY` hech qachon klient kodiga tushmaydi.
 - Har o'zgarishdan keyin: `npm run check`.

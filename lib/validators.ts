@@ -169,3 +169,113 @@ export const productSchema = z
 
 export type ProductFormInput = z.input<typeof productSchema>;
 export type ProductFormData = z.output<typeof productSchema>;
+
+// ---------- Admin: do'kon sozlamalari ----------
+// Xato xabarlari — "adminSettings.errors.*" kalitlari.
+
+const optionalTrimmed = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max, "tooLong")
+    .nullish()
+    .transform((v) => v || null);
+
+const timeOrEmpty = z
+  .string()
+  .trim()
+  .nullish()
+  .transform((v) => v || null)
+  .pipe(
+    z
+      .string()
+      .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "timeInvalid")
+      .nullable(),
+  );
+
+/** "@my_cafe", "t.me/my_cafe", "https://t.me/my_cafe" -> "my_cafe" */
+export function normalizeTelegramUsername(value: string): string {
+  return value
+    .trim()
+    .replace(/^https?:\/\//, "")
+    .replace(/^(t\.me|telegram\.me)\//, "")
+    .replace(/^@/, "")
+    .replace(/\/.*$/, "");
+}
+
+export const zoneSchema = z.object({
+  dbId: z.string().max(50).optional(),
+  name: z.string().trim().min(1, "nameRequired").max(60, "tooLong"),
+  fee: z
+    .number({ error: "feeInvalid" })
+    .int("feeInvalid")
+    .min(0, "feeInvalid")
+    .max(10_000_000, "feeInvalid"),
+});
+
+export const storeSettingsSchema = z
+  .object({
+    name: z.string().trim().min(2, "nameRequired").max(80, "tooLong"),
+    logoUrl: z.string().url().max(500).nullable(),
+    phone: optionalTrimmed(30),
+    address: optionalTrimmed(200),
+    landmark: optionalTrimmed(200),
+
+    isOpen: z.boolean(),
+    openTime: timeOrEmpty,
+    closeTime: timeOrEmpty,
+
+    pickupEnabled: z.boolean(),
+    deliveryEnabled: z.boolean(),
+    minOrder: z
+      .number({ error: "amountInvalid" })
+      .int("amountInvalid")
+      .min(0, "amountInvalid")
+      .max(100_000_000, "amountInvalid"),
+    zones: z.array(zoneSchema).max(50),
+
+    acceptCash: z.boolean(),
+    acceptCardOnDelivery: z.boolean(),
+    acceptTransfer: z.boolean(),
+    transferDetails: optionalTrimmed(500),
+
+    channel: z.enum(["TELEGRAM", "WHATSAPP"]),
+    telegramUsername: z
+      .string()
+      .nullish()
+      .transform((v) => (v ? normalizeTelegramUsername(v) : null)),
+    whatsappNumber: z
+      .string()
+      .nullish()
+      .transform((v) => {
+        const digits = (v ?? "").replace(/\D/g, "");
+        return digits ? `+${digits}` : null;
+      }),
+  })
+  .superRefine((s, ctx) => {
+    const issue = (path: string, message: string) =>
+      ctx.addIssue({ code: "custom", path: [path], message });
+
+    if (!!s.openTime !== !!s.closeTime) issue(s.openTime ? "closeTime" : "openTime", "bothTimes");
+    if (!s.pickupEnabled && !s.deliveryEnabled) issue("deliveryEnabled", "noOrderType");
+    if (s.deliveryEnabled && s.zones.length === 0) issue("zones", "zonesRequired");
+    if (!s.acceptCash && !s.acceptCardOnDelivery && !s.acceptTransfer) {
+      issue("acceptTransfer", "noPayment");
+    }
+    if (s.acceptTransfer && !s.transferDetails) issue("transferDetails", "transferDetailsRequired");
+
+    if (s.channel === "TELEGRAM") {
+      if (!s.telegramUsername) issue("telegramUsername", "telegramRequired");
+      else if (!/^[A-Za-z][A-Za-z0-9_]{3,31}$/.test(s.telegramUsername)) {
+        issue("telegramUsername", "telegramInvalid");
+      }
+    }
+    if (s.whatsappNumber && !/^\+\d{9,15}$/.test(s.whatsappNumber)) {
+      issue("whatsappNumber", "whatsappInvalid");
+    } else if (s.channel === "WHATSAPP" && !s.whatsappNumber) {
+      issue("whatsappNumber", "whatsappRequired");
+    }
+  });
+
+export type StoreSettingsInput = z.input<typeof storeSettingsSchema>;
+export type StoreSettingsData = z.output<typeof storeSettingsSchema>;

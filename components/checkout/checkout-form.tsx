@@ -272,7 +272,8 @@ export function CheckoutForm({
       )}
 
       {/* Manzil */}
-      {type === "DELIVERY" && (
+      {/* Yashiriladi, unmount qilinmaydi — aks holda qaytganda kiritilgan manzil bo'sh ko'rinadi */}
+      <div className={cn(type !== "DELIVERY" && "hidden")}>
         <Section title={t("deliveryDetails")}>
           <Field label={t("zone")} error={errorText(errors.zoneId?.message)}>
             <Controller
@@ -307,7 +308,7 @@ export function CheckoutForm({
             <Input id="landmark" placeholder={t("landmarkPlaceholder")} {...register("landmark")} />
           </Field>
         </Section>
-      )}
+      </div>
 
       {/* Vaqt va izoh */}
       <Section>
