@@ -7,7 +7,12 @@
   },
   "home": {
     "title": "order",
-    "subtitle": "Kafe va oshxonalar uchun onlayn buyurtma"
+    "subtitle": "Kafe va oshxonalar uchun onlayn menyu va buyurtma. Mijozlar menyuni ochadi, tanlaydi — buyurtma Telegram yoki WhatsApp'ingizga keladi.",
+    "signup": "Do'kon ochish — bepul",
+    "login": "Kirish",
+    "feature1": "Bir necha daqiqada menyu",
+    "feature2": "Buyurtmalar Telegram/WhatsApp'ga",
+    "feature3": "Naqd, karta yoki o'tkazma"
   },
   "menu": {
     "title": "Menyu",
@@ -170,7 +175,9 @@
     "email": "Email",
     "password": "Parol",
     "submit": "Kirish",
-    "invalid": "Email yoki parol noto'g'ri"
+    "invalid": "Email yoki parol noto'g'ri",
+    "noAccount": "Hisobingiz yo'qmi?",
+    "signupLink": "Ro'yxatdan o'ting"
   },
   "adminOrders": {
     "tabs": {
@@ -349,6 +356,49 @@
       "whatsappRequired": "WhatsApp raqamini kiriting",
       "whatsappInvalid": "Raqam noto'g'ri (masalan: +998901234567)",
       "imageInvalid": "Rasm noto'g'ri"
+    }
+  },
+  "signup": {
+    "title": "Do'kon ochish",
+    "step": "{current}-qadam / {total}",
+    "accountTitle": "Hisob",
+    "storeTitle": "Do'kon",
+    "email": "Email",
+    "password": "Parol",
+    "passwordHint": "Kamida 8 belgi",
+    "next": "Davom etish",
+    "back": "Orqaga",
+    "submit": "Do'konni yaratish",
+    "creating": "Yaratilmoqda...",
+    "storeName": "Do'kon nomi",
+    "storeNamePlaceholder": "Masalan: Bahor kafe",
+    "slug": "Do'kon havolasi",
+    "slugHint": "Faqat kichik lotin harflari, raqam va chiziqcha",
+    "slugChecking": "Tekshirilmoqda...",
+    "slugAvailable": "Bo'sh",
+    "channel": "Buyurtmalar qayerga kelsin",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp",
+    "telegramUsername": "Telegram username",
+    "telegramPlaceholder": "@bahor_kafe",
+    "whatsappNumber": "WhatsApp raqami",
+    "whatsappPlaceholder": "+998 90 123 45 67",
+    "haveAccount": "Hisobingiz bormi?",
+    "loginLink": "Kirish",
+    "terms": "Keyin menyu, ish vaqti, tumanlar va to'lov usullarini sozlamalarda qo'shasiz.",
+    "errors": {
+      "invalid": "Ma'lumotlarni tekshiring",
+      "server": "Xatolik yuz berdi. Qaytadan urinib ko'ring.",
+      "emailInvalid": "Email noto'g'ri",
+      "emailTaken": "Bu email bilan hisob allaqachon bor",
+      "passwordShort": "Parol kamida 8 belgi bo'lsin",
+      "tooLong": "Juda uzun",
+      "storeNameRequired": "Do'kon nomini kiriting",
+      "slugInvalid": "3–40 belgi: kichik lotin harflari, raqam, chiziqcha",
+      "slugReserved": "Bu havola band (tizim uchun)",
+      "slugTaken": "Bu havola band — boshqasini tanlang",
+      "telegramInvalid": "Username noto'g'ri (5–32 belgi: harf, raqam, _)",
+      "whatsappInvalid": "Raqam noto'g'ri (masalan: +998901234567)"
     }
   }
 }

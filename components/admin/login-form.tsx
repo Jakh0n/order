@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
@@ -46,6 +47,12 @@ export function LoginForm() {
         {pending && <Loader2 className="animate-spin" />}
         {t("submit")}
       </Button>
+      <p className="text-muted-foreground text-center text-sm">
+        {t("noAccount")}{" "}
+        <Link href="/signup" className="text-primary font-medium">
+          {t("signupLink")}
+        </Link>
+      </p>
     </form>
   );
 }

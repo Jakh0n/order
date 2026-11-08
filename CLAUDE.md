@@ -45,6 +45,7 @@ app/
   [store]/page.tsx            mijoz: menyu
   [store]/checkout/page.tsx   checkout
   o/[orderId]/page.tsx        buyurtma holati
+  signup/                     ro'yxatdan o'tish ustasi (hisob + do'kon)
   admin/login/                kirish (email + parol)
   admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], settings
   superadmin/                 platforma egasi
@@ -55,6 +56,7 @@ components/order/             buyurtma holati (bosqichlar, avto-yangilanish)
 components/admin/             admin: login formasi, buyurtma kartochkasi va amallari, confirm-dialog
 components/admin/menu/        menyu: kategoriyalar, taom qatorlari, taom formasi (variantlar), rasm yuklash
 components/admin/settings/    sozlamalar formasi, do'kon havolasi + QR
+components/auth/              signup-form (2 qadamli usta)
 i18n/                         next-intl sozlamasi (config, request, setLocale action)
 lib/
   db.ts                       Prisma client singleton
@@ -65,6 +67,8 @@ lib/
   auth/owner.ts               getCurrentOwner / requireOwner — joriy ega va uning do'koni
   auth/password.ts            scrypt xesh
   auth/actions.ts             login / logout
+  auth/signup-actions.ts      signup (user + store bitta tranzaksiyada), checkSlug
+  slug.ts                     slugify (kirill → lotin), RESERVED_SLUGS, slugError
   orders/actions.ts           createOrder — mijoz checkout'i
   orders/insert.ts            insertOrder — narx hisoblash + raqam berish + saqlash (umumiy)
   orders/admin-actions.ts     updateOrderStatus, setOrderPaid, createManualOrder
@@ -101,6 +105,7 @@ npm run user:password -- owner@order.uz   # foydalanuvchi parolini o'rnatish
 ## QOIDALAR
 
 - Multi-tenant: har bir do'konga tegishli ma'lumot `storeId` bilan.
+  Yangi top-level yo'l (app/<nom>) qo'shsangiz, `<nom>` ni `lib/slug.ts` dagi RESERVED_SLUGS ga qo'shing.
   Do'kon nomi, menyu, narx KODDA YOZILMAYDI — faqat bazada.
 - Admin'dagi har bir Server Action foydalanuvchi shu do'kon egasi ekanini tekshiradi:
   `const { store } = await requireOwner()` va har bir so'rovda `where: { ..., storeId: store.id }`.

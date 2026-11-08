@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { slugError } from "@/lib/slug";
+
 // Xato xabarlari — "checkout.errors.*" i18n kalitlari.
 
 /** "+998 90 123-45-67" -> "+998901234567" */
@@ -279,3 +281,54 @@ export const storeSettingsSchema = z
 
 export type StoreSettingsInput = z.input<typeof storeSettingsSchema>;
 export type StoreSettingsData = z.output<typeof storeSettingsSchema>;
+
+// ---------- Ro'yxatdan o'tish ----------
+// Xato xabarlari — "signup.errors.*" kalitlari.
+
+export const signupAccountSchema = z.object({
+  email: z.string().trim().toLowerCase().email("emailInvalid").max(200, "tooLong"),
+  password: z.string().min(8, "passwordShort").max(200, "tooLong"),
+});
+
+export const signupStoreSchema = z
+  .object({
+    storeName: z.string().trim().min(2, "storeNameRequired").max(80, "tooLong"),
+    slug: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .superRefine((v, ctx) => {
+        const error = slugError(v);
+        if (error) ctx.addIssue({ code: "custom", message: error });
+      }),
+    channel: z.enum(["TELEGRAM", "WHATSAPP"]),
+    telegramUsername: z
+      .string()
+      .nullish()
+      .transform((v) => (v ? normalizeTelegramUsername(v) : null)),
+    whatsappNumber: z
+      .string()
+      .nullish()
+      .transform((v) => {
+        const digits = (v ?? "").replace(/\D/g, "");
+        return digits ? `+${digits}` : null;
+      }),
+  })
+  .superRefine((s, ctx) => {
+    if (
+      s.channel === "TELEGRAM" &&
+      !/^[A-Za-z][A-Za-z0-9_]{3,31}$/.test(s.telegramUsername ?? "")
+    ) {
+      ctx.addIssue({ code: "custom", path: ["telegramUsername"], message: "telegramInvalid" });
+    }
+    if (s.channel === "WHATSAPP" && !/^\+\d{9,15}$/.test(s.whatsappNumber ?? "")) {
+      ctx.addIssue({ code: "custom", path: ["whatsappNumber"], message: "whatsappInvalid" });
+    }
+  });
+
+export const signupSchema = z.object({
+  ...signupAccountSchema.shape,
+  store: signupStoreSchema,
+});
+
+export type SignupInput = z.input<typeof signupSchema>;

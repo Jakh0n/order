@@ -7,7 +7,12 @@
   },
   "home": {
     "title": "order",
-    "subtitle": "Онлайн-заказы для кафе и столовых"
+    "subtitle": "Онлайн-меню и заказы для кафе и столовых. Клиент открывает меню, выбирает — заказ приходит вам в Telegram или WhatsApp.",
+    "signup": "Открыть заведение — бесплатно",
+    "login": "Войти",
+    "feature1": "Меню за несколько минут",
+    "feature2": "Заказы в Telegram/WhatsApp",
+    "feature3": "Наличные, карта или перевод"
   },
   "menu": {
     "title": "Меню",
@@ -170,7 +175,9 @@
     "email": "Email",
     "password": "Пароль",
     "submit": "Войти",
-    "invalid": "Неверный email или пароль"
+    "invalid": "Неверный email или пароль",
+    "noAccount": "Нет аккаунта?",
+    "signupLink": "Зарегистрируйтесь"
   },
   "adminOrders": {
     "tabs": {
@@ -349,6 +356,49 @@
       "whatsappRequired": "Введите номер WhatsApp",
       "whatsappInvalid": "Неверный номер (например: +998901234567)",
       "imageInvalid": "Неверное изображение"
+    }
+  },
+  "signup": {
+    "title": "Открыть заведение",
+    "step": "Шаг {current} из {total}",
+    "accountTitle": "Аккаунт",
+    "storeTitle": "Заведение",
+    "email": "Email",
+    "password": "Пароль",
+    "passwordHint": "Минимум 8 символов",
+    "next": "Далее",
+    "back": "Назад",
+    "submit": "Создать заведение",
+    "creating": "Создаём...",
+    "storeName": "Название заведения",
+    "storeNamePlaceholder": "Например: Кафе Бахор",
+    "slug": "Ссылка на заведение",
+    "slugHint": "Только строчные латинские буквы, цифры и дефис",
+    "slugChecking": "Проверяем...",
+    "slugAvailable": "Свободно",
+    "channel": "Куда присылать заказы",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp",
+    "telegramUsername": "Telegram username",
+    "telegramPlaceholder": "@bahor_kafe",
+    "whatsappNumber": "Номер WhatsApp",
+    "whatsappPlaceholder": "+998 90 123 45 67",
+    "haveAccount": "Уже есть аккаунт?",
+    "loginLink": "Войти",
+    "terms": "Меню, время работы, районы и способы оплаты добавите потом в настройках.",
+    "errors": {
+      "invalid": "Проверьте данные",
+      "server": "Произошла ошибка. Попробуйте ещё раз.",
+      "emailInvalid": "Неверный email",
+      "emailTaken": "Аккаунт с этим email уже существует",
+      "passwordShort": "Пароль должен быть не короче 8 символов",
+      "tooLong": "Слишком длинно",
+      "storeNameRequired": "Введите название заведения",
+      "slugInvalid": "3–40 символов: строчные латинские буквы, цифры, дефис",
+      "slugReserved": "Эта ссылка зарезервирована",
+      "slugTaken": "Эта ссылка занята — выберите другую",
+      "telegramInvalid": "Неверный username (5–32 символа: буквы, цифры, _)",
+      "whatsappInvalid": "Неверный номер (например: +998901234567)"
     }
   }
 }
