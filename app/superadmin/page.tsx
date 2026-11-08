@@ -5,6 +5,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { SentryTest } from "@/components/superadmin/sentry-test";
 import { StoreActions } from "@/components/superadmin/store-actions";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -75,6 +76,8 @@ async function Superadmin({
           className="col-span-2 md:col-span-1"
         />
       </div>
+
+      <SentryTest />
 
       <form className="flex gap-2" role="search">
         <Input

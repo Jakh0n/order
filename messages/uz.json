@@ -166,7 +166,10 @@
     "errors": {
       "invalid": "Ma'lumot noto'g'ri",
       "notFound": "Do'kon topilmadi"
-    }
+    },
+    "sentryTest": "Sentry'ni tekshirish",
+    "sentryTestHint": "Test xatosi yuboradi — Sentry'da paydo bo'lishi kerak.",
+    "sentrySent": "Test xatosi yuborildi"
   },
   "orderMessage": {
     "header": "🛒 Yangi buyurtma #{number}",
@@ -440,5 +443,10 @@
       "whatsappInvalid": "Raqam noto'g'ri (masalan: +998901234567)",
       "tooMany": "Juda ko'p urinish. Birozdan keyin qayta urinib ko'ring."
     }
+  },
+  "errorPage": {
+    "title": "Kutilmagan xatolik",
+    "description": "Xatolik haqida xabar oldik va tez orada tuzatamiz. Qaytadan urinib ko'ring.",
+    "retry": "Qayta urinish"
   }
 }

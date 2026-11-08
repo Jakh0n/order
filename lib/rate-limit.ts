@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { headers } from "next/headers";
 
 import { prisma } from "@/lib/db";
+import { reportError } from "@/lib/report-error";
 
 // Bazadagi qat'iy oyna (fixed window) hisoblagichi. Vercel'da instansiyalar xotira ulashmaydi,
 // shuning uchun hisob Postgres'da — bitta atomik so'rov.
@@ -64,7 +65,7 @@ export async function rateLimit(rule: RateLimitRule, id: string | null): Promise
     }
     return (rows[0]?.count ?? 0) <= rule.limit;
   } catch (e) {
-    console.error("rateLimit failed", e);
+    reportError(e, "rateLimit", { rule: rule.name });
     return true;
   }
 }

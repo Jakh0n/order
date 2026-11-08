@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getSupabaseAdmin } from "@/lib/supabase/server";
+import { reportError } from "@/lib/report-error";
 
 const BUCKET = "menu-images";
 const MAX_SIZE = 2_000_000; // 2 MB — Supabase bucket cheklovi bilan bir xil (fileSizeLimit "2MB")
@@ -37,7 +38,7 @@ export async function uploadMenuImage(storeId: string, file: File): Promise<stri
     upsert: false,
   });
   if (error) {
-    console.error("uploadMenuImage failed", error.message);
+    reportError(error, "uploadMenuImage");
     throw new MenuImageError("upload");
   }
 
@@ -51,5 +52,5 @@ export async function deleteMenuImage(storeId: string, url: string | null | unde
 
   const path = `stores/${storeId}/${url.slice(prefix.length)}`;
   const { error } = await getSupabaseAdmin().storage.from(BUCKET).remove([path]);
-  if (error) console.error("deleteMenuImage failed", error.message);
+  if (error) reportError(error, "deleteMenuImage");
 }

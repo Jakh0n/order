@@ -9,6 +9,7 @@ import { prisma } from "@/lib/db";
 import { clientIp, rateLimit, RULES } from "@/lib/rate-limit";
 import { slugError } from "@/lib/slug";
 import { type SignupInput, signupSchema } from "@/lib/validators";
+import { reportError } from "@/lib/report-error";
 
 export type SlugCheck = {
   available: boolean;
@@ -97,7 +98,7 @@ export async function signup(input: SignupInput): Promise<SignupResult> {
         ? { ok: false, error: "emailTaken", fieldErrors: { email: "emailTaken" } }
         : { ok: false, error: "slugTaken", fieldErrors: { "store.slug": "slugTaken" } };
     }
-    console.error("signup failed", e);
+    reportError(e, "signup");
     return { ok: false, error: "server" };
   }
 

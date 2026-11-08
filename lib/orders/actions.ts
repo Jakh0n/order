@@ -5,6 +5,7 @@ import { insertOrder } from "@/lib/orders/insert";
 import { clientIp, rateLimitAll, RULES } from "@/lib/rate-limit";
 import { isStoreOpenNow } from "@/lib/store-hours";
 import { checkoutSchema, type CheckoutInput } from "@/lib/validators";
+import { reportError } from "@/lib/report-error";
 
 export type CreateOrderError =
   | "invalid"
@@ -68,7 +69,7 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
     if (!result.ok) return { ok: false, error: result.error, minOrder: store.minOrder };
     return { ok: true, orderId: result.orderId };
   } catch (e) {
-    console.error("createOrder failed", e);
+    reportError(e, "createOrder", { store: data.storeSlug });
     return { ok: false, error: "server" };
   }
 }

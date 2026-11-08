@@ -25,6 +25,7 @@ export const RESERVED_SLUGS = new Set([
   "checkout",
   "settings",
   "dashboard",
+  "monitoring", // Sentry tunnel (next.config.ts → tunnelRoute)
 ]);
 
 export const SLUG_MIN = 3;

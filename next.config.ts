@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
@@ -30,4 +31,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+export default withSentryConfig(withNextIntl(nextConfig), {
+  // Source map yuklash faqat SENTRY_AUTH_TOKEN bo'lsa (Vercel build'da). Lokal build'da o'tkazib yuboriladi.
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  // Reklama blokerlari sentry.io ga so'rovlarni to'smasligi uchun o'z domenimiz orqali.
+  // "monitoring" — lib/slug.ts da band qilingan.
+  tunnelRoute: "/monitoring",
+  telemetry: false,
+});

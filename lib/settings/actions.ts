@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { deleteMenuImage, menuImagePrefix } from "@/lib/storage";
 import { storeCacheTag } from "@/lib/storefront";
 import { type StoreSettingsInput, storeSettingsSchema } from "@/lib/validators";
+import { reportError } from "@/lib/report-error";
 
 export type SettingsResult =
   { ok: true } | { ok: false; error: "invalid" | "server"; fieldErrors?: Record<string, string> };
@@ -65,7 +66,7 @@ export async function saveStoreSettings(input: StoreSettingsInput): Promise<Sett
       { timeout: 30_000, maxWait: 10_000 },
     );
   } catch (e) {
-    console.error("saveStoreSettings failed", e);
+    reportError(e, "saveStoreSettings");
     return { ok: false, error: "server" };
   }
 

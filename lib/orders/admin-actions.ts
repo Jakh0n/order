@@ -8,6 +8,7 @@ import { prisma } from "@/lib/db";
 import { insertOrder } from "@/lib/orders/insert";
 import { canTransition } from "@/lib/orders/status";
 import { type ManualOrderInput, manualOrderSchema } from "@/lib/validators";
+import { reportError } from "@/lib/report-error";
 
 // Har bir action: requireOwner() + har bir so'rovda storeId — boshqa do'kon buyurtmasiga tegib bo'lmaydi.
 
@@ -95,7 +96,7 @@ export async function createManualOrder(input: ManualOrderInput): Promise<Manual
     }
     return { ok: true, orderId: result.orderId, number: result.number };
   } catch (e) {
-    console.error("createManualOrder failed", e);
+    reportError(e, "createManualOrder");
     return { ok: false, error: "server" };
   }
 }

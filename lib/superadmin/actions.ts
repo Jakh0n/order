@@ -67,3 +67,9 @@ export async function setFreePlan(storeId: string): Promise<SuperadminResult> {
   refresh();
   return { ok: true };
 }
+
+/** Sentry ulanganini tekshirish: server tomonda test xatosi (onRequestError orqali Sentry'ga tushadi) */
+export async function triggerSentryTest(): Promise<never> {
+  await requireSuperadmin();
+  throw new Error(`Sentry test error (superadmin) ${new Date().toISOString()}`);
+}

@@ -69,6 +69,9 @@ lib/
   auth/password.ts            scrypt xesh
   auth/actions.ts             login / logout
   auth/signup-actions.ts      signup (user + store bitta tranzaksiyada), checkSlug
+  report-error.ts             reportError — try/catch'da yutilgan xatolarni Sentry'ga yuborish
+  sentry-options.ts           Sentry sozlamalari (dataCollection: shaxsiy ma'lumot o'chiq)
+  sentry-scrub.ts             telefon/email ni xabarlardan yashirish
   rate-limit.ts               rateLimit / rateLimitAll (Postgres, qat'iy oyna), RULES, clientIp
   slug.ts                     slugify (kirill → lotin), RESERVED_SLUGS, slugError
   superadmin/data.ts          getPlatformStats, listStores
@@ -117,6 +120,8 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
   Layout'dagi tekshiruv yetarli emas — har bir sahifa va action o'zi chaqiradi.
 - Bloklangan do'kon (`Store.isBlocked`): mijoz menyusi va checkout yopiq, createOrder rad etadi,
   admin panelda ogohlantirish. Superadmin action'lari `requireSuperadmin()` bilan.
+- Xatolar: `catch` da foydalanuvchiga do'stona xato qaytarsangiz, `reportError(e, "joy")` ni chaqiring
+  (`console.error` emas) — aks holda Sentry'ga tushmaydi. Session Replay yoqilmaydi (checkout formasi).
 - Ommaviy (kirishsiz) yoki qimmat Server Action'lar `rateLimit` bilan cheklanadi (`lib/rate-limit.ts` dagi RULES):
   login, signup, checkSlug, createOrder, rasm yuklash. Yangi shunday action qo'shsangiz — qoida qo'shing.
 - Narxlar Int, so'mda. Ko'rsatish faqat `formatUZS` orqali.

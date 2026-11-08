@@ -9,6 +9,7 @@ import { rateLimit, RULES } from "@/lib/rate-limit";
 import { deleteMenuImage, MenuImageError, menuImagePrefix, uploadMenuImage } from "@/lib/storage";
 import { storeCacheTag } from "@/lib/storefront";
 import { categorySchema, type ProductFormInput, productSchema } from "@/lib/validators";
+import { reportError } from "@/lib/report-error";
 
 // Har bir action: requireOwner() → har bir so'rovda storeId → mijoz menyusi keshini yangilash.
 
@@ -187,7 +188,7 @@ export async function uploadProductImage(
     return { ok: true, url: await uploadMenuImage(store.id, file) };
   } catch (e) {
     if (e instanceof MenuImageError) return { ok: false, error: e.code };
-    console.error("uploadProductImage failed", e);
+    reportError(e, "uploadProductImage");
     return { ok: false, error: "server" };
   }
 }
@@ -330,7 +331,7 @@ export async function saveProduct(
     updateTag(storeCacheTag(store.slug));
     return { ok: true, productId: savedId };
   } catch (e) {
-    console.error("saveProduct failed", e);
+    reportError(e, "saveProduct");
     return { ok: false, error: "server" };
   }
 }
