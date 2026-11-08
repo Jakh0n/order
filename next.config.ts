@@ -6,6 +6,10 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    // Taom rasmlari (brauzerda kichraytiriladi, lekin zaxira uchun; uploadMenuImage 2 MB dan kattasini rad etadi)
+    serverActions: { bodySizeLimit: "3mb" },
+  },
   images: {
     remotePatterns: [
       {

@@ -46,13 +46,14 @@ app/
   [store]/checkout/page.tsx   checkout
   o/[orderId]/page.tsx        buyurtma holati
   admin/login/                kirish (email + parol)
-  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, settings
+  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], settings
   superadmin/                 platforma egasi
 components/ui/                shadcn komponentlari
 components/storefront/        mijoz menyusi, variant oynasi, savat
 components/checkout/          checkout formasi
 components/order/             buyurtma holati (bosqichlar, avto-yangilanish)
-components/admin/             admin: login formasi, buyurtma kartochkasi va amallari
+components/admin/             admin: login formasi, buyurtma kartochkasi va amallari, confirm-dialog
+components/admin/menu/        menyu: kategoriyalar, taom qatorlari, taom formasi (variantlar), rasm yuklash
 i18n/                         next-intl sozlamasi (config, request, setLocale action)
 lib/
   db.ts                       Prisma client singleton
@@ -67,6 +68,8 @@ lib/
   orders/insert.ts            insertOrder — narx hisoblash + raqam berish + saqlash (umumiy)
   orders/admin-actions.ts     updateOrderStatus, setOrderPaid, createManualOrder
   orders/status.ts            holat o'tishlari (nextStatus, canTransition)
+  menu/admin-data.ts          getAdminMenu, getAdminProduct (keshsiz, nofaollar ham)
+  menu/admin-actions.ts       kategoriya/taom CRUD, tartiblash, "bugun yo'q", saveProduct (variantlar id bo'yicha moslanadi), rasm
   orders/pricing.ts           priceItems — bazadagi narx + variant tekshiruvi (sof funksiya)
   orders/get-order.ts         getOrderForCustomer
   orders/send-link.ts         orderSendLink — do'kon kanaliga qarab t.me / wa.me havola
@@ -76,7 +79,7 @@ lib/
   cart-store.ts               zustand savat (cartKey bo'yicha, localStorage)
   cart-keys.ts                adminCartKey — admin savati alohida
   supabase/server.ts          service role client (server-only)
-  storage.ts                  uploadMenuImage
+  storage.ts                  uploadMenuImage, deleteMenuImage, menuImagePrefix
 messages/uz.json, ru.json     tarjimalar
 prisma/schema.prisma, seed.ts
 ```

@@ -99,3 +99,73 @@ export const manualOrderSchema = z
   .superRefine(refineDelivery);
 
 export type ManualOrderInput = z.input<typeof manualOrderSchema>;
+
+// ---------- Admin: menyu ----------
+// Xato xabarlari — "adminMenu.errors.*" kalitlari.
+
+export const categorySchema = z.object({
+  name: z.string().trim().min(1, "nameRequired").max(60, "tooLong"),
+});
+
+const moneySchema = z
+  .number({ error: "priceInvalid" })
+  .int("priceInvalid")
+  .min(0, "priceInvalid")
+  .max(100_000_000, "priceInvalid");
+
+export const optionSchema = z.object({
+  /** Bazadagi id (yangi variantda yo'q). "id" emas — useFieldArray o'z "id" sini ishlatadi. */
+  dbId: z.string().max(50).optional(),
+  name: z.string().trim().min(1, "nameRequired").max(60, "tooLong"),
+  /** Asosiy narxga qo'shiladi; manfiy bo'lishi mumkin (masalan, yarim porsiya) */
+  price: z
+    .number({ error: "priceInvalid" })
+    .int("priceInvalid")
+    .min(-100_000_000, "priceInvalid")
+    .max(100_000_000, "priceInvalid"),
+});
+
+export const optionGroupSchema = z
+  .object({
+    dbId: z.string().max(50).optional(),
+    name: z.string().trim().min(1, "nameRequired").max(60, "tooLong"),
+    required: z.boolean(),
+    maxSelect: z.number({ error: "maxSelectInvalid" }).int().min(1, "maxSelectInvalid").max(20),
+    options: z.array(optionSchema).min(1, "optionsRequired").max(30),
+  })
+  .refine((g) => g.maxSelect <= g.options.length, {
+    path: ["maxSelect"],
+    message: "maxSelectInvalid",
+  });
+
+export const productSchema = z
+  .object({
+    name: z.string().trim().min(1, "nameRequired").max(100, "tooLong"),
+    description: z
+      .string()
+      .trim()
+      .max(500, "tooLong")
+      .nullish()
+      .transform((v) => v || null),
+    price: moneySchema,
+    categoryId: z.string().min(1, "categoryRequired").max(50),
+    isAvailable: z.boolean(),
+    imageUrl: z.string().url().max(500).nullable(),
+    optionGroups: z.array(optionGroupSchema).max(10),
+  })
+  .superRefine((p, ctx) => {
+    // Eng arzon tanlovda ham narx manfiy bo'lmasin: har guruhdan eng manfiy maxSelect ta variant
+    const minExtra = p.optionGroups.reduce((sum, g) => {
+      const sorted = g.options.map((o) => o.price).sort((a, b) => a - b);
+      const negatives = sorted.filter((x) => x < 0).slice(0, g.maxSelect);
+      const worst = negatives.reduce((s, x) => s + x, 0);
+      // Majburiy guruhda manfiy variant bo'lmasa ham, eng arzoni baribir tanlanadi
+      return sum + (negatives.length === 0 && g.required ? (sorted[0] ?? 0) : worst);
+    }, 0);
+    if (p.price + minExtra < 0) {
+      ctx.addIssue({ code: "custom", path: ["price"], message: "negativeTotal" });
+    }
+  });
+
+export type ProductFormInput = z.input<typeof productSchema>;
+export type ProductFormData = z.output<typeof productSchema>;
