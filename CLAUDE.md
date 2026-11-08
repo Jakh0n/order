@@ -48,12 +48,17 @@ app/
   admin/                      do'kon egasi paneli (orders, menu, settings)
   superadmin/                 platforma egasi
 components/ui/                shadcn komponentlari
+components/storefront/        mijoz menyusi, variant oynasi, savat
 i18n/                         next-intl sozlamasi (config, request, setLocale action)
 lib/
   db.ts                       Prisma client singleton
   money.ts                    formatUZS
   order-message.ts            buildOrderMessage, telegramLink, whatsappLink
   validators.ts               zod sxemalar (checkout)
+  storefront.ts               getStorefront(slug) — "use cache" + cacheTag(storeCacheTag(slug))
+  menu-types.ts               server → klient menyu tiplari
+  store-hours.ts              isStoreOpenNow (Asia/Tashkent)
+  cart-store.ts               zustand savat (slug bo'yicha, localStorage)
   supabase/server.ts          service role client (server-only)
   storage.ts                  uploadMenuImage
 messages/uz.json, ru.json     tarjimalar

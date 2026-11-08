@@ -2,7 +2,8 @@
   "common": {
     "comingSoon": "Tez orada",
     "language": "Til",
-    "currency": "so'm"
+    "currency": "so'm",
+    "home": "Bosh sahifa"
   },
   "home": {
     "title": "order",
@@ -13,14 +14,25 @@
     "unavailable": "Bugun yo'q",
     "add": "Qo'shish",
     "closed": "Hozir yopiq",
-    "workingHours": "Ish vaqti: {open} – {close}"
+    "workingHours": "Ish vaqti: {open} – {close}",
+    "empty": "Menyu hozircha bo'sh",
+    "closedBanner": "Hozir buyurtma qabul qilinmaydi. Menyuni ko'rishingiz mumkin.",
+    "categories": "Kategoriyalar"
   },
   "cart": {
     "title": "Savat",
     "empty": "Savat bo'sh",
     "total": "Jami",
     "checkout": "Rasmiylashtirish",
-    "minOrder": "Minimal buyurtma: {amount}"
+    "minOrder": "Minimal buyurtma: {amount}",
+    "subtotal": "Taomlar",
+    "items": "{count} ta taom",
+    "addMore": "Minimal buyurtmagacha yana {amount}",
+    "clear": "Tozalash",
+    "remove": "O'chirish",
+    "closed": "Do'kon hozir yopiq",
+    "deliveryNote": "Yetkazish narxi keyingi qadamda qo'shiladi",
+    "open": "Savatni ochish"
   },
   "checkout": {
     "title": "Buyurtmani rasmiylashtirish",
@@ -87,5 +99,23 @@
     "total": "Jami",
     "payment": "To'lov",
     "link": "Buyurtma"
+  },
+  "store": {
+    "notFound": "Do'kon topilmadi",
+    "notFoundHint": "Havola noto'g'ri yoki do'kon o'chirilgan.",
+    "open": "Ochiq",
+    "closed": "Yopiq"
+  },
+  "product": {
+    "required": "Majburiy",
+    "optional": "Ixtiyoriy",
+    "chooseOne": "Bittasini tanlang",
+    "chooseUpTo": "{count} tagacha tanlang",
+    "quantity": "Soni",
+    "addToCart": "Savatga qo'shish · {price}",
+    "added": "Savatga qo'shildi",
+    "increase": "Ko'paytirish",
+    "decrease": "Kamaytirish",
+    "inCart": "Savatda: {count}"
   }
 }

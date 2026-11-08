@@ -2,7 +2,8 @@
   "common": {
     "comingSoon": "Скоро",
     "language": "Язык",
-    "currency": "сум"
+    "currency": "сум",
+    "home": "Главная"
   },
   "home": {
     "title": "order",
@@ -13,14 +14,25 @@
     "unavailable": "Сегодня нет",
     "add": "Добавить",
     "closed": "Сейчас закрыто",
-    "workingHours": "Время работы: {open} – {close}"
+    "workingHours": "Время работы: {open} – {close}",
+    "empty": "Меню пока пусто",
+    "closedBanner": "Сейчас заказы не принимаются. Вы можете посмотреть меню.",
+    "categories": "Категории"
   },
   "cart": {
     "title": "Корзина",
     "empty": "Корзина пуста",
     "total": "Итого",
     "checkout": "Оформить",
-    "minOrder": "Минимальный заказ: {amount}"
+    "minOrder": "Минимальный заказ: {amount}",
+    "subtotal": "Блюда",
+    "items": "{count, plural, one {# блюдо} few {# блюда} many {# блюд} other {# блюда}}",
+    "addMore": "До минимального заказа ещё {amount}",
+    "clear": "Очистить",
+    "remove": "Удалить",
+    "closed": "Заведение сейчас закрыто",
+    "deliveryNote": "Стоимость доставки добавится на следующем шаге",
+    "open": "Открыть корзину"
   },
   "checkout": {
     "title": "Оформление заказа",
@@ -87,5 +99,23 @@
     "total": "Итого",
     "payment": "Оплата",
     "link": "Заказ"
+  },
+  "store": {
+    "notFound": "Заведение не найдено",
+    "notFoundHint": "Ссылка неверна или заведение удалено.",
+    "open": "Открыто",
+    "closed": "Закрыто"
+  },
+  "product": {
+    "required": "Обязательно",
+    "optional": "Необязательно",
+    "chooseOne": "Выберите один вариант",
+    "chooseUpTo": "Выберите до {count}",
+    "quantity": "Количество",
+    "addToCart": "В корзину · {price}",
+    "added": "Добавлено в корзину",
+    "increase": "Увеличить",
+    "decrease": "Уменьшить",
+    "inCart": "В корзине: {count}"
   }
 }
