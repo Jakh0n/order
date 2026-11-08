@@ -16,10 +16,13 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { adminCartKey } from "@/lib/cart-keys";
 import { cartSubtotal, unitPrice, useCart, useCartHydrated, useCartLines } from "@/lib/cart-store";
 import type { CheckoutSettings, StorefrontStore } from "@/lib/menu-types";
 import { formatUZS } from "@/lib/money";
 import { createOrder } from "@/lib/orders/actions";
+import { createManualOrder } from "@/lib/orders/admin-actions";
 import { cn } from "@/lib/utils";
 import {
   type CheckoutFormData,
@@ -50,13 +53,23 @@ const FIELD_MAP: Record<string, keyof CheckoutFormInput> = {
   customerPhone: "phoneDigits",
 };
 
+/**
+ * mode="customer" — mijoz checkout'i (/[store]/checkout).
+ * mode="admin" — egasi telefon orqali kelgan buyurtmani kiritadi: alohida savat,
+ * ish vaqti va minOrder tekshirilmaydi, "hozir to'landi" belgisi bor.
+ */
 export function CheckoutForm({
   store,
   settings,
+  mode = "customer",
 }: {
   store: StorefrontStore;
   settings: CheckoutSettings;
+  mode?: "customer" | "admin";
 }) {
+  const isAdmin = mode === "admin";
+  const cartKey = isAdmin ? adminCartKey(store.slug) : store.slug;
+  const tAdmin = useTranslations("adminOrders");
   const t = useTranslations("checkout");
   const tCart = useTranslations("cart");
   const tPay = useTranslations("payment");
@@ -64,10 +77,11 @@ export function CheckoutForm({
   const router = useRouter();
 
   const hydrated = useCartHydrated();
-  const lines = useCartLines(store.slug);
+  const lines = useCartLines(cartKey);
   const clearCart = useCart((s) => s.clear);
   const isOpenNow = useStoreOpen(store) ?? store.isOpen;
   const [submitted, setSubmitted] = useState(false);
+  const [markPaid, setMarkPaid] = useState(false);
 
   const {
     control,
@@ -94,6 +108,7 @@ export function CheckoutForm({
 
   // Oldingi buyurtmadagi ism va telefon (faqat shu brauzerda)
   useEffect(() => {
+    if (isAdmin) return;
     const saved = loadCustomer();
     if (saved.name || saved.phone) {
       reset({
@@ -102,7 +117,7 @@ export function CheckoutForm({
         phoneDigits: saved.phone ?? "",
       });
     }
-  }, [reset, getValues]);
+  }, [reset, getValues, isAdmin]);
 
   const [type, zoneId, paymentMethod] = useWatch({
     control,
@@ -114,18 +129,18 @@ export function CheckoutForm({
   const deliveryFee = type === "DELIVERY" ? (zone?.fee ?? 0) : 0;
   const total = subtotal + deliveryFee;
   const missing = Math.max(0, store.minOrder - subtotal);
-  const canOrder =
-    isOpenNow &&
-    missing === 0 &&
-    settings.paymentMethods.length > 0 &&
-    (settings.pickupEnabled || settings.deliveryEnabled);
+  const canOrder = isAdmin
+    ? lines.length > 0
+    : isOpenNow &&
+      missing === 0 &&
+      settings.paymentMethods.length > 0 &&
+      (settings.pickupEnabled || settings.deliveryEnabled);
 
   const errorText = (key?: string) => (key ? t(`errors.${key}`) : null);
 
   async function onSubmit(values: CheckoutFormData) {
-    const result = await createOrder({
-      storeSlug: store.slug,
-      lang: locale === "ru" ? "ru" : "uz",
+    const order = {
+      lang: locale === "ru" ? ("ru" as const) : ("uz" as const),
       customerName: values.customerName,
       customerPhone: `+998${values.phoneDigits}`,
       type: values.type,
@@ -140,23 +155,32 @@ export function CheckoutForm({
         quantity: l.quantity,
         optionIds: l.options.map((o) => o.id),
       })),
-    });
+    };
+
+    const result = isAdmin
+      ? await createManualOrder({ ...order, markPaid })
+      : await createOrder({ ...order, storeSlug: store.slug });
 
     if (!result.ok) {
       for (const [field, message] of Object.entries(result.fieldErrors ?? {})) {
         const name = FIELD_MAP[field] ?? field;
         if (name in values) setError(name as keyof CheckoutFormInput, { message });
       }
-      toast.error(
-        t(`errors.${result.error}`, { amount: formatUZS(result.minOrder ?? store.minOrder) }),
-      );
+      const minOrder = "minOrder" in result ? result.minOrder : undefined;
+      toast.error(t(`errors.${result.error}`, { amount: formatUZS(minOrder ?? store.minOrder) }));
       return;
     }
 
-    saveCustomer(values.customerName, values.phoneDigits);
     setSubmitted(true);
-    clearCart(store.slug);
-    router.replace(`/o/${result.orderId}`);
+    clearCart(cartKey);
+    if (isAdmin) {
+      const number = "number" in result ? Number(result.number) : 0;
+      toast.success(tAdmin("created", { number }));
+      router.push("/admin/orders");
+    } else {
+      saveCustomer(values.customerName, values.phoneDigits);
+      router.replace(`/o/${result.orderId}`);
+    }
   }
 
   if (!hydrated || submitted) {
@@ -167,6 +191,10 @@ export function CheckoutForm({
         <Skeleton className="h-24 w-full" />
       </div>
     );
+  }
+
+  if (lines.length === 0 && isAdmin) {
+    return <p className="text-muted-foreground px-4 py-10 text-center">{tAdmin("addItems")}</p>;
   }
 
   if (lines.length === 0) {
@@ -181,7 +209,7 @@ export function CheckoutForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col pb-32">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col">
       {/* Aloqa */}
       <Section title={t("contact")}>
         <Field
@@ -327,6 +355,13 @@ export function CheckoutForm({
         )}
       </Section>
 
+      {isAdmin && (
+        <label className="flex min-h-11 cursor-pointer items-center gap-3 border-b px-4 py-3">
+          <Checkbox checked={markPaid} onCheckedChange={setMarkPaid} />
+          <span className="font-medium">{tAdmin("markPaidNow")}</span>
+        </label>
+      )}
+
       {/* Buyurtma tarkibi */}
       <Section title={t("summary")}>
         <ul className="flex flex-col gap-2 text-sm">
@@ -354,10 +389,12 @@ export function CheckoutForm({
       </Section>
 
       {/* Yuborish */}
-      <div className="bg-background/95 fixed inset-x-0 bottom-0 z-40 border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
+      <div className="bg-background/95 sticky bottom-0 z-40 border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-2">
-          {!isOpenNow && <p className="text-destructive text-center text-sm">{tCart("closed")}</p>}
-          {isOpenNow && missing > 0 && (
+          {!isAdmin && !isOpenNow && (
+            <p className="text-destructive text-center text-sm">{tCart("closed")}</p>
+          )}
+          {!isAdmin && isOpenNow && missing > 0 && (
             <p className="text-center text-sm text-amber-600 dark:text-amber-500">
               {tCart("addMore", { amount: formatUZS(missing) })}
             </p>

@@ -13,10 +13,10 @@ import { ProductDialog } from "./product-dialog";
 import { ProductImage } from "./product-image";
 import { QuantityStepper } from "./quantity-stepper";
 
-export function ProductCard({ slug, product }: { slug: string; product: MenuProduct }) {
+export function ProductCard({ cartKey, product }: { cartKey: string; product: MenuProduct }) {
   const t = useTranslations();
   const [open, setOpen] = useState(false);
-  const lines = useCartLines(slug);
+  const lines = useCartLines(cartKey);
   const add = useCart((s) => s.add);
   const setQuantity = useCart((s) => s.setQuantity);
 
@@ -31,7 +31,7 @@ export function ProductCard({ slug, product }: { slug: string; product: MenuProd
       setOpen(true);
       return;
     }
-    add(slug, {
+    add(cartKey, {
       productId: product.id,
       name: product.name,
       imageUrl: product.imageUrl,
@@ -71,7 +71,7 @@ export function ProductCard({ slug, product }: { slug: string; product: MenuProd
           <QuantityStepper
             size="sm"
             value={inCart}
-            onChange={(q) => setQuantity(slug, simpleKey, q)}
+            onChange={(q) => setQuantity(cartKey, simpleKey, q)}
           />
         ) : (
           <Button size="sm" variant="secondary" className="w-full" onClick={quickAdd}>
@@ -81,7 +81,7 @@ export function ProductCard({ slug, product }: { slug: string; product: MenuProd
         )}
       </div>
 
-      <ProductDialog slug={slug} product={product} open={open} onOpenChange={setOpen} />
+      <ProductDialog cartKey={cartKey} product={product} open={open} onOpenChange={setOpen} />
     </article>
   );
 }

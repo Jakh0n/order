@@ -40,3 +40,15 @@ export function isStoreOpenNow(store: StoreHours, now: Date = new Date()): boole
   const current = tashkentMinutes(now);
   return open < close ? current >= open && current < close : current >= open || current < close; // masalan 18:00–02:00
 }
+
+/** Toshkentdagi bugungi kun boshi (UTC Date). Toshkentda yozgi vaqt yo'q: doim UTC+5. */
+export function tashkentDayStart(now: Date = new Date()): Date {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
+  return new Date(Date.UTC(get("year"), get("month") - 1, get("day")) - 5 * 60 * 60 * 1000);
+}

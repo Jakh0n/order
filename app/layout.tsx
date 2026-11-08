@@ -40,7 +40,13 @@ async function IntlProvider({ children }: { children: React.ReactNode }) {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="uz" className={`${fontSans.variable} ${fontMono.variable} h-full antialiased`}>
+    // suppressHydrationWarning: brauzer kengaytmalari (masalan, Scribe) <html> ga atribut qo'shadi.
+    // Faqat shu tegning atributlariga ta'sir qiladi — ichki komponentlar tekshirilaveradi.
+    <html
+      lang="uz"
+      className={`${fontSans.variable} ${fontMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body className="flex min-h-full flex-col">
         <Suspense>
           <IntlProvider>{children}</IntlProvider>

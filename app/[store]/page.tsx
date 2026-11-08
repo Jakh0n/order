@@ -52,14 +52,14 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
             <h2 className="text-lg font-semibold">{category.name}</h2>
             <div className="divide-y">
               {category.products.map((product) => (
-                <ProductCard key={product.id} slug={store.slug} product={product} />
+                <ProductCard key={product.id} cartKey={store.slug} product={product} />
               ))}
             </div>
           </section>
         ))}
       </main>
 
-      <CartSync slug={store.slug} products={products} />
+      <CartSync cartKey={store.slug} products={products} />
       <CartBar store={store} />
     </div>
   );

@@ -45,26 +45,36 @@ app/
   [store]/page.tsx            mijoz: menyu
   [store]/checkout/page.tsx   checkout
   o/[orderId]/page.tsx        buyurtma holati
-  admin/                      do'kon egasi paneli (orders, menu, settings)
+  admin/login/                kirish (email + parol)
+  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, settings
   superadmin/                 platforma egasi
 components/ui/                shadcn komponentlari
 components/storefront/        mijoz menyusi, variant oynasi, savat
 components/checkout/          checkout formasi
 components/order/             buyurtma holati (bosqichlar, avto-yangilanish)
+components/admin/             admin: login formasi, buyurtma kartochkasi va amallari
 i18n/                         next-intl sozlamasi (config, request, setLocale action)
 lib/
   db.ts                       Prisma client singleton
   money.ts                    formatUZS
   order-message.ts            buildOrderMessage, telegramLink, whatsappLink
   validators.ts               zod sxemalar (checkoutFormSchema — klient, checkoutSchema — server)
-  orders/actions.ts           createOrder Server Action (narx serverda, raqam $transaction'da)
+  auth/session.ts             imzolangan cookie sessiya (AUTH_SECRET)
+  auth/owner.ts               getCurrentOwner / requireOwner — joriy ega va uning do'koni
+  auth/password.ts            scrypt xesh
+  auth/actions.ts             login / logout
+  orders/actions.ts           createOrder — mijoz checkout'i
+  orders/insert.ts            insertOrder — narx hisoblash + raqam berish + saqlash (umumiy)
+  orders/admin-actions.ts     updateOrderStatus, setOrderPaid, createManualOrder
+  orders/status.ts            holat o'tishlari (nextStatus, canTransition)
   orders/pricing.ts           priceItems — bazadagi narx + variant tekshiruvi (sof funksiya)
   orders/get-order.ts         getOrderForCustomer
   orders/send-link.ts         orderSendLink — do'kon kanaliga qarab t.me / wa.me havola
   storefront.ts               getStorefront(slug), getCheckoutSettings(slug) — "use cache" + cacheTag(storeCacheTag(slug))
   menu-types.ts               server → klient menyu tiplari
   store-hours.ts              isStoreOpenNow (Asia/Tashkent)
-  cart-store.ts               zustand savat (slug bo'yicha, localStorage)
+  cart-store.ts               zustand savat (cartKey bo'yicha, localStorage)
+  cart-keys.ts                adminCartKey — admin savati alohida
   supabase/server.ts          service role client (server-only)
   storage.ts                  uploadMenuImage
 messages/uz.json, ru.json     tarjimalar
@@ -79,13 +89,16 @@ npm run check        # lint + typecheck
 npm run db:migrate   # prisma migrate dev (-- --name <nom>)
 npm run db:seed      # namunaviy ma'lumot (qayta ishga tushirsa bo'ladi)
 npm run db:studio    # Prisma Studio
+npm run user:password -- owner@order.uz   # foydalanuvchi parolini o'rnatish
 ```
 
 ## QOIDALAR
 
 - Multi-tenant: har bir do'konga tegishli ma'lumot `storeId` bilan.
   Do'kon nomi, menyu, narx KODDA YOZILMAYDI — faqat bazada.
-- Admin'dagi har bir Server Action foydalanuvchi shu do'kon egasi ekanini tekshiradi.
+- Admin'dagi har bir Server Action foydalanuvchi shu do'kon egasi ekanini tekshiradi:
+  `const { store } = await requireOwner()` va har bir so'rovda `where: { ..., storeId: store.id }`.
+  Layout'dagi tekshiruv yetarli emas — har bir sahifa va action o'zi chaqiradi.
 - Narxlar Int, so'mda. Ko'rsatish faqat `formatUZS` orqali.
 - Buyurtma summasi SERVERDA bazadagi narxlardan qayta hisoblanadi, klient narxiga ishonilmaydi.
 - `minOrder`, tuman narxi, `isAvailable`, do'kon ochiqligi serverda tekshiriladi.

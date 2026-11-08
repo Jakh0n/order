@@ -86,3 +86,16 @@ export const checkoutSchema = z
 
 export type CheckoutInput = z.input<typeof checkoutSchema>;
 export type CheckoutData = z.output<typeof checkoutSchema>;
+
+/** Admin "qo'lda buyurtma": do'kon sessiyadan olinadi; ish vaqti va minOrder tekshirilmaydi. */
+export const manualOrderSchema = z
+  .object({
+    ...orderFields,
+    customerPhone: phoneSchema,
+    lang: z.enum(["uz", "ru"]).default("uz"),
+    markPaid: z.boolean().default(false),
+    items: z.array(cartItemSchema).min(1).max(50),
+  })
+  .superRefine(refineDelivery);
+
+export type ManualOrderInput = z.input<typeof manualOrderSchema>;

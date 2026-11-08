@@ -23,12 +23,12 @@ import { ProductImage } from "./product-image";
 import { QuantityStepper } from "./quantity-stepper";
 
 export function ProductDialog({
-  slug,
+  cartKey,
   product,
   open,
   onOpenChange,
 }: {
-  slug: string;
+  cartKey: string;
   product: MenuProduct;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -37,7 +37,7 @@ export function ProductDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90dvh] gap-0 overflow-y-auto p-0 sm:max-w-md">
         {/* Har ochilishda tanlov qaytadan boshlanadi (Popup yopilganda unmount bo'ladi) */}
-        <ProductForm slug={slug} product={product} onDone={() => onOpenChange(false)} />
+        <ProductForm cartKey={cartKey} product={product} onDone={() => onOpenChange(false)} />
       </DialogContent>
     </Dialog>
   );
@@ -49,11 +49,11 @@ function optionPrice(price: number) {
 }
 
 function ProductForm({
-  slug,
+  cartKey,
   product,
   onDone,
 }: {
-  slug: string;
+  cartKey: string;
   product: MenuProduct;
   onDone: () => void;
 }) {
@@ -85,7 +85,7 @@ function ProductForm({
   function handleAdd() {
     if (!isValid) return;
     add(
-      slug,
+      cartKey,
       {
         productId: product.id,
         name: product.name,

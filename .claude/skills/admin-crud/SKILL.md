@@ -7,13 +7,14 @@ description: /admin ichida CRUD (kategoriya, taom, variant, tuman, sozlamalar, b
 
 1. **Zod sxema** `lib/validators.ts` da (yoki modul yonida). Pul — `z.number().int().min(0)`.
 2. **Server Action** (`"use server"`):
-   - Joriy foydalanuvchini oling (auth helper). Yo'q → xato.
+   - `const { store } = await requireOwner()` (`@/lib/auth/owner`) — kirmagan bo'lsa /admin/login ga yo'naltiradi.
    - Tahrirlanayotgan yozuvning `storeId` si shu foydalanuvchiga tegishli do'kon ekanini tekshiring
      (`store.ownerId === user.id`). Har bir `update`/`delete` da `where` ga `storeId` qo'shing — boshqa do'kon ma'lumotiga
      tegish imkoni bo'lmasin.
    - `safeParse` → xato bo'lsa `{ ok: false, errors }`.
-   - Prisma bilan yozing, keyin `revalidatePath("/admin/...")` va mijoz sahifasi uchun `revalidatePath(`/${slug}`)`
-     (yoki tegishli `revalidateTag`).
+   - Prisma bilan yozing (`updateMany`/`deleteMany` + `storeId` — boshqa do'kon yozuviga tegib bo'lmaydi).
+   - Admin sahifasini yangilash: `refresh()` (`next/cache`). Mijoz menyusi keshini yangilash:
+     `revalidateTag(storeCacheTag(store.slug), "max")` — Next 16 da ikkinchi argument majburiy.
    - `{ ok: true }` qaytaring.
 3. **Forma** (client component): `react-hook-form` + `zodResolver`, shadcn `Input`/`Label`/`Select`/`Checkbox`/`Button`.
    Yuborilganda `sonner` → `toast.success(t("..."))` / `toast.error(...)`.

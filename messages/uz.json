@@ -120,7 +120,9 @@
     "title": "Boshqaruv",
     "orders": "Buyurtmalar",
     "menu": "Menyu",
-    "settings": "Sozlamalar"
+    "settings": "Sozlamalar",
+    "logout": "Chiqish",
+    "viewStore": "Do'konni ko'rish"
   },
   "superadmin": {
     "title": "Platforma boshqaruvi"
@@ -162,5 +164,51 @@
     "increase": "Ko'paytirish",
     "decrease": "Kamaytirish",
     "inCart": "Savatda: {count}"
+  },
+  "adminLogin": {
+    "title": "Boshqaruv paneliga kirish",
+    "email": "Email",
+    "password": "Parol",
+    "submit": "Kirish",
+    "invalid": "Email yoki parol noto'g'ri"
+  },
+  "adminOrders": {
+    "tabs": {
+      "active": "Faol",
+      "completed": "Yakunlangan",
+      "cancelled": "Bekor qilingan",
+      "all": "Hammasi"
+    },
+    "todayRevenue": "Bugungi tushum",
+    "todayOrders": "Bugungi buyurtmalar",
+    "todayPaid": "Bugun to'langan",
+    "empty": "Buyurtmalar yo'q",
+    "newOrder": "Qo'lda buyurtma",
+    "newTitle": "Yangi buyurtma (qo'lda)",
+    "accept": "Qabul qilish",
+    "ready": "Tayyor",
+    "onTheWay": "Yo'lga chiqdi",
+    "complete": "Yakunlash",
+    "cancel": "Bekor qilish",
+    "cancelTitle": "Buyurtma #{number} bekor qilinsinmi?",
+    "cancelHint": "Bu amalni qaytarib bo'lmaydi. Mijozga o'zingiz xabar bering.",
+    "keep": "Yo'q, qolsin",
+    "markPaid": "To'landi",
+    "markUnpaid": "To'lanmagan",
+    "saved": "Saqlandi",
+    "markPaidNow": "Hozir to'landi",
+    "created": "Buyurtma #{number} yaratildi",
+    "addItems": "Menyudan taom qo'shing",
+    "autoRefresh": "Ro'yxat avtomatik yangilanadi",
+    "showing": "Oxirgi {count} ta",
+    "errors": {
+      "notFound": "Buyurtma topilmadi",
+      "invalidTransition": "Holat allaqachon o'zgargan. Sahifani yangilang.",
+      "invalid": "Ma'lumot noto'g'ri",
+      "server": "Xatolik yuz berdi",
+      "zoneInvalid": "Tuman topilmadi",
+      "unavailable": "Ba'zi taomlar mavjud emas",
+      "invalidOptions": "Taom variantlari noto'g'ri"
+    }
   }
 }

@@ -46,7 +46,7 @@ async function Checkout({ params }: { params: PageProps<"/[store]/checkout">["pa
         </div>
       </header>
 
-      <CartSync slug={slug} products={data.categories.flatMap((c) => c.products)} />
+      <CartSync cartKey={slug} products={data.categories.flatMap((c) => c.products)} />
       <CheckoutForm store={data.store} settings={settings} />
     </div>
   );

@@ -120,7 +120,9 @@
     "title": "Управление",
     "orders": "Заказы",
     "menu": "Меню",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "logout": "Выйти",
+    "viewStore": "Открыть витрину"
   },
   "superadmin": {
     "title": "Управление платформой"
@@ -162,5 +164,51 @@
     "increase": "Увеличить",
     "decrease": "Уменьшить",
     "inCart": "В корзине: {count}"
+  },
+  "adminLogin": {
+    "title": "Вход в панель управления",
+    "email": "Email",
+    "password": "Пароль",
+    "submit": "Войти",
+    "invalid": "Неверный email или пароль"
+  },
+  "adminOrders": {
+    "tabs": {
+      "active": "Активные",
+      "completed": "Завершённые",
+      "cancelled": "Отменённые",
+      "all": "Все"
+    },
+    "todayRevenue": "Выручка за сегодня",
+    "todayOrders": "Заказов сегодня",
+    "todayPaid": "Оплачено сегодня",
+    "empty": "Заказов нет",
+    "newOrder": "Заказ вручную",
+    "newTitle": "Новый заказ (вручную)",
+    "accept": "Принять",
+    "ready": "Готов",
+    "onTheWay": "В пути",
+    "complete": "Завершить",
+    "cancel": "Отменить",
+    "cancelTitle": "Отменить заказ #{number}?",
+    "cancelHint": "Это действие нельзя отменить. Сообщите клиенту сами.",
+    "keep": "Нет, оставить",
+    "markPaid": "Оплачен",
+    "markUnpaid": "Не оплачен",
+    "saved": "Сохранено",
+    "markPaidNow": "Оплачен сразу",
+    "created": "Заказ #{number} создан",
+    "addItems": "Добавьте блюда из меню",
+    "autoRefresh": "Список обновляется автоматически",
+    "showing": "Последние {count}",
+    "errors": {
+      "notFound": "Заказ не найден",
+      "invalidTransition": "Статус уже изменён. Обновите страницу.",
+      "invalid": "Неверные данные",
+      "server": "Произошла ошибка",
+      "zoneInvalid": "Район не найден",
+      "unavailable": "Некоторые блюда недоступны",
+      "invalidOptions": "Неверные варианты блюд"
+    }
   }
 }

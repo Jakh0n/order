@@ -31,7 +31,7 @@ export interface CartLine {
 export type NewCartLine = Omit<CartLine, "key" | "quantity">;
 
 interface CartState {
-  /** slug → qatorlar (har bir do'konning savati alohida) */
+  /** cartKey (do'kon slug'i yoki adminCartKey) → qatorlar */
   carts: Record<string, CartLine[]>;
   add: (slug: string, line: NewCartLine, quantity?: number) => void;
   setQuantity: (slug: string, key: string, quantity: number) => void;
