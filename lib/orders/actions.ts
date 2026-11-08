@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/db";
 import { insertOrder } from "@/lib/orders/insert";
+import { clientIp, rateLimitAll, RULES } from "@/lib/rate-limit";
 import { isStoreOpenNow } from "@/lib/store-hours";
 import { checkoutSchema, type CheckoutInput } from "@/lib/validators";
 
@@ -16,6 +17,7 @@ export type CreateOrderError =
   | "unavailable"
   | "invalidOptions"
   | "minOrder"
+  | "tooMany"
   | "server";
 
 export type CreateOrderResult =
@@ -34,6 +36,13 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
   if (!parsed.success)
     return { ok: false, error: "invalid", fieldErrors: fieldErrors(parsed.error) };
   const data = parsed.data;
+
+  // Soxta buyurtmalar oqimidan himoya: IP va (do'kon + telefon) bo'yicha
+  const allowed = await rateLimitAll([
+    [RULES.orderIp, await clientIp()],
+    [RULES.orderPhone, `${data.storeSlug}:${data.customerPhone}`],
+  ]);
+  if (!allowed) return { ok: false, error: "tooMany" };
 
   try {
     const store = await prisma.store.findUnique({ where: { slug: data.storeSlug } });

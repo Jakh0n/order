@@ -203,3 +203,12 @@ model OrderItem {
 
   @@index([orderId])
 }
+
+/// So'rovlar cheklovi (login, signup, buyurtma...). key: "login:ip:1.2.3.4"
+model RateLimit {
+  key     String   @id
+  count   Int
+  resetAt DateTime
+
+  @@index([resetAt])
+}

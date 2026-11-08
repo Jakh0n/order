@@ -6,12 +6,13 @@ import { redirect } from "next/navigation";
 import { hashPassword } from "@/lib/auth/password";
 import { createSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
+import { clientIp, rateLimit, RULES } from "@/lib/rate-limit";
 import { slugError } from "@/lib/slug";
 import { type SignupInput, signupSchema } from "@/lib/validators";
 
 export type SlugCheck = {
   available: boolean;
-  error?: "slugInvalid" | "slugReserved" | "slugTaken";
+  error?: "slugInvalid" | "slugReserved" | "slugTaken" | "tooMany";
 };
 
 /** Ustada yozish paytida tekshirish (yakuniy tekshiruv baribir signup ichida) */
@@ -21,6 +22,9 @@ export async function checkSlug(slug: string): Promise<SlugCheck> {
     .toLowerCase();
   const error = slugError(value);
   if (error) return { available: false, error };
+  if (!(await rateLimit(RULES.slugCheckIp, await clientIp()))) {
+    return { available: false, error: "tooMany" };
+  }
 
   const taken = await prisma.store.findUnique({ where: { slug: value }, select: { id: true } });
   return taken ? { available: false, error: "slugTaken" } : { available: true };
@@ -28,7 +32,7 @@ export async function checkSlug(slug: string): Promise<SlugCheck> {
 
 export type SignupResult = {
   ok: false;
-  error: "invalid" | "emailTaken" | "slugTaken" | "server";
+  error: "invalid" | "emailTaken" | "slugTaken" | "tooMany" | "server";
   fieldErrors?: Record<string, string>;
 };
 
@@ -43,6 +47,9 @@ export async function signup(input: SignupInput): Promise<SignupResult> {
     return { ok: false, error: "invalid", fieldErrors };
   }
   const { email, password, store } = parsed.data;
+
+  // Soxta do'konlar oqimidan himoya
+  if (!(await rateLimit(RULES.signupIp, await clientIp()))) return { ok: false, error: "tooMany" };
 
   const [emailTaken, slugTaken] = await Promise.all([
     prisma.user.findUnique({ where: { email }, select: { id: true } }),

@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { requireOwner } from "@/lib/auth/owner";
 import { prisma } from "@/lib/db";
+import { rateLimit, RULES } from "@/lib/rate-limit";
 import { deleteMenuImage, MenuImageError, menuImagePrefix, uploadMenuImage } from "@/lib/storage";
 import { storeCacheTag } from "@/lib/storefront";
 import { categorySchema, type ProductFormInput, productSchema } from "@/lib/validators";
@@ -12,7 +13,14 @@ import { categorySchema, type ProductFormInput, productSchema } from "@/lib/vali
 // Har bir action: requireOwner() → har bir so'rovda storeId → mijoz menyusi keshini yangilash.
 
 export type MenuActionError =
-  "invalid" | "notFound" | "categoryNotEmpty" | "imageType" | "imageSize" | "upload" | "server";
+  | "invalid"
+  | "notFound"
+  | "categoryNotEmpty"
+  | "imageType"
+  | "imageSize"
+  | "upload"
+  | "tooMany"
+  | "server";
 
 export type MenuActionResult<T = object> =
   ({ ok: true } & T) | { ok: false; error: MenuActionError; fieldErrors?: Record<string, string> };
@@ -170,7 +178,8 @@ export async function deleteProduct(productId: string): Promise<MenuActionResult
 export async function uploadProductImage(
   formData: FormData,
 ): Promise<MenuActionResult<{ url: string }>> {
-  const { store } = await requireOwner();
+  const { store, user } = await requireOwner();
+  if (!(await rateLimit(RULES.uploadUser, user.id))) return { ok: false, error: "tooMany" };
   const file = formData.get("file");
   if (!(file instanceof File)) return { ok: false, error: "invalid" };
 

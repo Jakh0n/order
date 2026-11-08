@@ -7,13 +7,14 @@ import { homePathFor } from "@/lib/auth/owner";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { createSession, deleteSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
+import { clientIp, rateLimitAll, RULES } from "@/lib/rate-limit";
 
 const loginSchema = z.object({
   email: z.string().trim().toLowerCase().email().max(200),
   password: z.string().min(1).max(200),
 });
 
-export type LoginState = { error?: "invalid"; email?: string } | undefined;
+export type LoginState = { error?: "invalid" | "tooMany"; email?: string } | undefined;
 
 // Foydalanuvchi yo'q bo'lsa ham vaqt bir xil bo'lishi uchun
 let dummyHash: Promise<string> | undefined;
@@ -23,6 +24,13 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
   const parsed = loginSchema.safeParse({ email, password: formData.get("password") });
   // React 19 xatodan keyin formani tozalaydi — email'ni qaytarib beramiz
   if (!parsed.success) return { error: "invalid", email };
+
+  // Parol tanlashdan himoya: IP va email bo'yicha
+  const allowed = await rateLimitAll([
+    [RULES.loginIp, await clientIp()],
+    [RULES.loginEmail, parsed.data.email],
+  ]);
+  if (!allowed) return { error: "tooMany", email };
 
   const user = await prisma.user.findUnique({
     where: { email: parsed.data.email },

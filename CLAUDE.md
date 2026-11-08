@@ -69,6 +69,7 @@ lib/
   auth/password.ts            scrypt xesh
   auth/actions.ts             login / logout
   auth/signup-actions.ts      signup (user + store bitta tranzaksiyada), checkSlug
+  rate-limit.ts               rateLimit / rateLimitAll (Postgres, qat'iy oyna), RULES, clientIp
   slug.ts                     slugify (kirill → lotin), RESERVED_SLUGS, slugError
   superadmin/data.ts          getPlatformStats, listStores
   superadmin/actions.ts       setStoreBlocked, extendPaidPlan, setFreePlan (requireSuperadmin)
@@ -116,6 +117,8 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
   Layout'dagi tekshiruv yetarli emas — har bir sahifa va action o'zi chaqiradi.
 - Bloklangan do'kon (`Store.isBlocked`): mijoz menyusi va checkout yopiq, createOrder rad etadi,
   admin panelda ogohlantirish. Superadmin action'lari `requireSuperadmin()` bilan.
+- Ommaviy (kirishsiz) yoki qimmat Server Action'lar `rateLimit` bilan cheklanadi (`lib/rate-limit.ts` dagi RULES):
+  login, signup, checkSlug, createOrder, rasm yuklash. Yangi shunday action qo'shsangiz — qoida qo'shing.
 - Narxlar Int, so'mda. Ko'rsatish faqat `formatUZS` orqali.
 - Buyurtma summasi SERVERDA bazadagi narxlardan qayta hisoblanadi, klient narxiga ishonilmaydi.
 - `minOrder`, tuman narxi, `isAvailable`, do'kon ochiqligi serverda tekshiriladi.

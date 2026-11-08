@@ -40,7 +40,7 @@ export function LoginForm() {
       </div>
       {state?.error && (
         <p className="text-destructive text-sm" role="alert">
-          {t("invalid")}
+          {state.error === "tooMany" ? t("tooMany") : t("invalid")}
         </p>
       )}
       <Button type="submit" size="lg" className="h-11" disabled={pending}>
