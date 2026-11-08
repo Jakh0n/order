@@ -1,0 +1,91 @@
+{
+  "common": {
+    "comingSoon": "Tez orada",
+    "language": "Til",
+    "currency": "so'm"
+  },
+  "home": {
+    "title": "order",
+    "subtitle": "Kafe va oshxonalar uchun onlayn buyurtma"
+  },
+  "menu": {
+    "title": "Menyu",
+    "unavailable": "Bugun yo'q",
+    "add": "Qo'shish",
+    "closed": "Hozir yopiq",
+    "workingHours": "Ish vaqti: {open} – {close}"
+  },
+  "cart": {
+    "title": "Savat",
+    "empty": "Savat bo'sh",
+    "total": "Jami",
+    "checkout": "Rasmiylashtirish",
+    "minOrder": "Minimal buyurtma: {amount}"
+  },
+  "checkout": {
+    "title": "Buyurtmani rasmiylashtirish",
+    "name": "Ismingiz",
+    "phone": "Telefon",
+    "type": "Qabul qilish usuli",
+    "pickup": "Olib ketish",
+    "delivery": "Yetkazib berish",
+    "zone": "Tuman",
+    "address": "Manzil",
+    "landmark": "Mo'ljal",
+    "time": "Vaqt",
+    "comment": "Izoh",
+    "payment": "To'lov usuli",
+    "subtotal": "Taomlar",
+    "deliveryFee": "Yetkazish",
+    "total": "Jami",
+    "submit": "Buyurtma berish"
+  },
+  "payment": {
+    "CASH": "Naqd",
+    "CARD_ON_DELIVERY": "Karta orqali (qabul qilganda)",
+    "TRANSFER": "Hisob raqamga o'tkazma",
+    "UNPAID": "To'lanmagan",
+    "PAID": "To'landi"
+  },
+  "status": {
+    "NEW": "Yangi",
+    "ACCEPTED": "Qabul qilindi",
+    "READY": "Tayyor",
+    "ON_THE_WAY": "Yo'lda",
+    "COMPLETED": "Yakunlandi",
+    "CANCELLED": "Bekor qilindi"
+  },
+  "order": {
+    "title": "Buyurtma #{number}",
+    "status": "Holati"
+  },
+  "admin": {
+    "title": "Boshqaruv",
+    "orders": "Buyurtmalar",
+    "menu": "Menyu",
+    "settings": "Sozlamalar"
+  },
+  "superadmin": {
+    "title": "Platforma boshqaruvi"
+  },
+  "orderMessage": {
+    "header": "🛒 Yangi buyurtma #{number}",
+    "store": "Do'kon",
+    "name": "Ism",
+    "phone": "Telefon",
+    "type": "Turi",
+    "PICKUP": "Olib ketish",
+    "DELIVERY": "Yetkazib berish",
+    "zone": "Tuman",
+    "address": "Manzil",
+    "landmark": "Mo'ljal",
+    "time": "Vaqt",
+    "comment": "Izoh",
+    "items": "Taomlar",
+    "subtotal": "Taomlar summasi",
+    "deliveryFee": "Yetkazish",
+    "total": "Jami",
+    "payment": "To'lov",
+    "link": "Buyurtma"
+  }
+}

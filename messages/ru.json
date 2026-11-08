@@ -1,0 +1,91 @@
+{
+  "common": {
+    "comingSoon": "Скоро",
+    "language": "Язык",
+    "currency": "сум"
+  },
+  "home": {
+    "title": "order",
+    "subtitle": "Онлайн-заказы для кафе и столовых"
+  },
+  "menu": {
+    "title": "Меню",
+    "unavailable": "Сегодня нет",
+    "add": "Добавить",
+    "closed": "Сейчас закрыто",
+    "workingHours": "Время работы: {open} – {close}"
+  },
+  "cart": {
+    "title": "Корзина",
+    "empty": "Корзина пуста",
+    "total": "Итого",
+    "checkout": "Оформить",
+    "minOrder": "Минимальный заказ: {amount}"
+  },
+  "checkout": {
+    "title": "Оформление заказа",
+    "name": "Ваше имя",
+    "phone": "Телефон",
+    "type": "Способ получения",
+    "pickup": "Самовывоз",
+    "delivery": "Доставка",
+    "zone": "Район",
+    "address": "Адрес",
+    "landmark": "Ориентир",
+    "time": "Время",
+    "comment": "Комментарий",
+    "payment": "Способ оплаты",
+    "subtotal": "Блюда",
+    "deliveryFee": "Доставка",
+    "total": "Итого",
+    "submit": "Оформить заказ"
+  },
+  "payment": {
+    "CASH": "Наличные",
+    "CARD_ON_DELIVERY": "Картой при получении",
+    "TRANSFER": "Перевод на расчётный счёт",
+    "UNPAID": "Не оплачен",
+    "PAID": "Оплачен"
+  },
+  "status": {
+    "NEW": "Новый",
+    "ACCEPTED": "Принят",
+    "READY": "Готов",
+    "ON_THE_WAY": "В пути",
+    "COMPLETED": "Завершён",
+    "CANCELLED": "Отменён"
+  },
+  "order": {
+    "title": "Заказ #{number}",
+    "status": "Статус"
+  },
+  "admin": {
+    "title": "Управление",
+    "orders": "Заказы",
+    "menu": "Меню",
+    "settings": "Настройки"
+  },
+  "superadmin": {
+    "title": "Управление платформой"
+  },
+  "orderMessage": {
+    "header": "🛒 Новый заказ #{number}",
+    "store": "Заведение",
+    "name": "Имя",
+    "phone": "Телефон",
+    "type": "Тип",
+    "PICKUP": "Самовывоз",
+    "DELIVERY": "Доставка",
+    "zone": "Район",
+    "address": "Адрес",
+    "landmark": "Ориентир",
+    "time": "Время",
+    "comment": "Комментарий",
+    "items": "Блюда",
+    "subtotal": "Сумма блюд",
+    "deliveryFee": "Доставка",
+    "total": "Итого",
+    "payment": "Оплата",
+    "link": "Заказ"
+  }
+}

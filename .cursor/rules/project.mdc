@@ -1,0 +1,23 @@
+---
+description: order loyihasi qoidalari
+alwaysApply: true
+---
+
+# order — qoidalar
+
+- Multi-tenant: har bir do'kon ma'lumoti `storeId` bilan. Do'kon nomi, menyu, narx kodda yozilmaydi — faqat bazada.
+- Admin Server Action'lari foydalanuvchi shu do'kon egasi ekanini tekshiradi.
+- Narxlar Int (so'm), ko'rsatish faqat `formatUZS` orqali.
+- Buyurtma summasi serverda bazadagi narxlardan qayta hisoblanadi; klient narxiga ishonilmaydi.
+- `minOrder`, tuman narxi, `isAvailable`, do'kon ochiqligi serverda tekshiriladi.
+- Buyurtma raqami `prisma.$transaction` ichida: `max(number) + 1`.
+- `OrderItem`'da nom va narx snapshot.
+- Har bir yangi matn `messages/uz.json` VA `messages/ru.json` ga.
+- Avval mobil (375px), keyin desktop.
+- Supabase faqat Storage uchun; ma'lumotlar faqat Prisma orqali.
+- `SUPABASE_SERVICE_ROLE_KEY` klient kodiga tushmaydi.
+- Next.js 16 + `cacheComponents`: runtime/DB o'qishlari `<Suspense>` ichida yoki `"use cache"`.
+- Har o'zgarishdan keyin: `npm run check`.
+- Hozir qilinmaydi: onlayn to'lov, Telegram bot, mobil ilova, ko'p filial.
+
+Batafsil: CLAUDE.md

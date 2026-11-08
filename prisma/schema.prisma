@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  OWNER
+  SUPERADMIN
+}
+
+enum Plan {
+  FREE
+  PAID
+}
+
+enum Channel {
+  TELEGRAM
+  WHATSAPP
+}
+
+enum OrderType {
+  PICKUP
+  DELIVERY
+}
+
+enum PaymentMethod {
+  CASH
+  CARD_ON_DELIVERY
+  TRANSFER
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+}
+
+enum OrderStatus {
+  NEW
+  ACCEPTED
+  READY
+  ON_THE_WAY
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String?
+  role         Role     @default(OWNER)
+  stores       Store[]
+  createdAt    DateTime @default(now())
+}
+
+model Store {
+  id                   String         @id @default(cuid())
+  slug                 String         @unique
+  name                 String
+  logoUrl              String?
+  phone                String?
+  address              String?
+  landmark             String?
+  openTime             String? // "09:00"
+  closeTime            String? // "22:00"
+  isOpen               Boolean        @default(true)
+  channel              Channel        @default(TELEGRAM)
+  telegramUsername     String?
+  whatsappNumber       String?
+  pickupEnabled        Boolean        @default(true)
+  deliveryEnabled      Boolean        @default(true)
+  minOrder             Int            @default(0)
+  acceptCash           Boolean        @default(true)
+  acceptCardOnDelivery Boolean        @default(true)
+  acceptTransfer       Boolean        @default(false)
+  transferDetails      String?
+  plan                 Plan           @default(FREE)
+  paidUntil            DateTime?
+  ownerId              String
+  owner                User           @relation(fields: [ownerId], references: [id])
+  categories           Category[]
+  products             Product[]
+  zones                DeliveryZone[]
+  orders               Order[]
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
+  @@index([ownerId])
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  storeId  String
+  store    Store     @relation(fields: [storeId], references: [id])
+  name     String
+  sort     Int       @default(0)
+  isActive Boolean   @default(true)
+  products Product[]
+
+  @@index([storeId])
+}
+
+model Product {
+  id           String        @id @default(cuid())
+  storeId      String
+  store        Store         @relation(fields: [storeId], references: [id])
+  categoryId   String
+  category     Category      @relation(fields: [categoryId], references: [id])
+  name         String
+  description  String?
+  price        Int
+  imageUrl     String?
+  isAvailable  Boolean       @default(true)
+  sort         Int           @default(0)
+  optionGroups OptionGroup[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([storeId])
+  @@index([categoryId])
+}
+
+model OptionGroup {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  required  Boolean  @default(false)
+  maxSelect Int      @default(1)
+  sort      Int      @default(0)
+  options   Option[]
+
+  @@index([productId])
+}
+
+model Option {
+  id      String      @id @default(cuid())
+  groupId String
+  group   OptionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  name    String
+  price   Int         @default(0)
+  sort    Int         @default(0)
+
+  @@index([groupId])
+}
+
+model DeliveryZone {
+  id      String @id @default(cuid())
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id])
+  name    String
+  fee     Int
+  sort    Int    @default(0)
+
+  @@index([storeId])
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  storeId       String
+  store         Store         @relation(fields: [storeId], references: [id])
+  number        Int
+  customerName  String
+  customerPhone String
+  type          OrderType
+  zoneName      String?
+  address       String?
+  landmark      String?
+  scheduledFor  String?
+  comment       String?
+  paymentMethod PaymentMethod
+  paymentStatus PaymentStatus @default(UNPAID)
+  status        OrderStatus   @default(NEW)
+  subtotal      Int
+  deliveryFee   Int           @default(0)
+  total         Int
+  lang          String        @default("uz")
+  items         OrderItem[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([storeId, number])
+  @@index([storeId, createdAt])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String?
+  name      String
+  unitPrice Int
+  quantity  Int
+  options   Json?
+  lineTotal Int
+
+  @@index([orderId])
+}
