@@ -9,7 +9,8 @@ Birinchi do'kon — egasining oshxonasi (slug: `oshxonam`). Keyin boshqa kafelar
 
 1. Mijoz do'kon sahifasini ochadi: `/{slug}`
 2. Taom tanlaydi (variantlar bilan), savatga qo'shadi
-3. Checkout: ism, telefon, olib ketish yoki yetkazish, tuman (narxi bilan), manzil,
+3. Checkout: ism, telefon, olib ketish yoki yetkazish (do'konning yagona yetkazish narxi), manzil +
+   "Use my current location" (koordinata + manzil OSM Nominatim orqali, `lib/geo`),
    mo'ljal, vaqt, izoh, to'lov usuli
 4. Buyurtma bazaga saqlanadi
 5. Mijozning Telegram'i (`https://t.me/USERNAME?text=...`) yoki WhatsApp'i
@@ -82,6 +83,7 @@ lib/
   orders/insert.ts            insertOrder — narx hisoblash + raqam berish + saqlash (umumiy)
   orders/admin-actions.ts     updateOrderStatus, setOrderPaid, createManualOrder
   orders/status.ts            holat o'tishlari (nextStatus, canTransition)
+  geo/                        lookupAddress (server action) → reverseGeocode (Nominatim; provayderni shu faylda almashtiring)
   menu/admin-data.ts          getAdminMenu, getAdminProduct (keshsiz, nofaollar ham)
   menu/admin-actions.ts       kategoriya/taom CRUD, tartiblash, "bugun yo'q", saveProduct (variantlar id bo'yicha moslanadi), rasm
   orders/pricing.ts           priceItems — bazadagi narx + variant tekshiruvi (sof funksiya)
@@ -189,3 +191,6 @@ keyin faqat eng tor joyni tuzatish. Mikroservislarga erta o'tilmaydi.
    Realtime; rate limit → Redis (Upstash); bildirishnomalar → navbat (queue); rasmlar → CDN / image transforms.
 3. **10 000+ / ko'p mamlakat**: read replica (menyu, hisobotlar), ko'p regionlik; alohida servislar faqat aniq
    sabab bilan (Telegram bot, real-time, analitika) — `lib/` dagi biznes logika `packages/core` ga ajratiladi.
+
+- Yetkazish: hududlar (DeliveryZone) endi ishlatilmaydi — `Store.deliveryFee` (yagona narx). Jadval ma'lumot yo'qolmasligi uchun qoldirilgan.
+- Buyurtmada `latitude/longitude` bo'lsa — xabarda, admin kartochkada va /o sahifada "Open in Maps" havolasi (`mapsLink`).

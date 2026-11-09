@@ -14,7 +14,6 @@ export type CreateOrderError =
   | "blocked"
   | "typeUnavailable"
   | "paymentUnavailable"
-  | "zoneInvalid"
   | "unavailable"
   | "invalidOptions"
   | "minOrder"
@@ -71,6 +70,7 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
       ...data,
       storeId: store.id,
       currency: store.currency,
+      deliveryFee: store.deliveryFee,
       minOrder: store.minOrder,
     });
     if (!result.ok) return { ok: false, error: result.error, minOrder: store.minOrder };

@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Bike, ChevronRight, Loader2, MapPin, Store } from "lucide-react";
+import { Bike, ChevronRight, LocateFixed, Loader2, MapPin, Store, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -22,6 +22,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { adminCartKey } from "@/lib/cart-keys";
 import { cartSubtotal, unitPrice, useCart, useCartHydrated, useCartLines } from "@/lib/cart-store";
 import type { CheckoutSettings, StorefrontStore } from "@/lib/menu-types";
+import { lookupAddress } from "@/lib/geo/actions";
+import { mapsLink } from "@/lib/order-message";
 import { createOrder } from "@/lib/orders/actions";
 import { createManualOrder } from "@/lib/orders/admin-actions";
 import { cn } from "@/lib/utils";
@@ -100,7 +102,8 @@ export function CheckoutForm({
       customerName: "",
       phone: "",
       type: settings.deliveryEnabled ? "DELIVERY" : "PICKUP",
-      zoneId: undefined,
+      latitude: undefined,
+      longitude: undefined,
       address: "",
       landmark: "",
       scheduledFor: "",
@@ -128,14 +131,62 @@ export function CheckoutForm({
     if (cartEmpty) router.replace(`/${store.slug}`);
   }, [cartEmpty, router, store.slug]);
 
-  const [type, zoneId, paymentMethod] = useWatch({
+  const [type, paymentMethod, latitude, longitude] = useWatch({
     control,
-    name: ["type", "zoneId", "paymentMethod"],
+    name: ["type", "paymentMethod", "latitude", "longitude"],
   });
 
   const subtotal = cartSubtotal(lines);
-  const zone = settings.zones.find((z) => z.id === zoneId);
-  const deliveryFee = type === "DELIVERY" ? (zone?.fee ?? 0) : 0;
+  const deliveryFee = type === "DELIVERY" ? settings.deliveryFee : 0;
+
+  // "Use my current location": browser geolocation → coordinates on the order + address text
+  const [locating, setLocating] = useState(false);
+  const [locationNote, setLocationNote] = useState<{ tone: "ok" | "error"; text: string } | null>(
+    null,
+  );
+  const hasLocation = latitude !== undefined && longitude !== undefined;
+
+  function locateMe() {
+    if (!("geolocation" in navigator)) {
+      setLocationNote({ tone: "error", text: t("errors.locationUnsupported") });
+      return;
+    }
+    setLocating(true);
+    setLocationNote(null);
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        const lat = Number(coords.latitude.toFixed(6));
+        const lng = Number(coords.longitude.toFixed(6));
+        setValue("latitude", lat);
+        setValue("longitude", lng);
+        const result = await lookupAddress(lat, lng);
+        if (result.ok) {
+          setValue("address", result.address, { shouldValidate: true, shouldDirty: true });
+          setLocationNote({ tone: "ok", text: t("locationFilled") });
+        } else {
+          setLocationNote({ tone: "error", text: t("errors.geocodeFailed") });
+        }
+        setLocating(false);
+      },
+      (error) => {
+        setLocating(false);
+        setLocationNote({
+          tone: "error",
+          text:
+            error.code === error.PERMISSION_DENIED
+              ? t("errors.locationDenied")
+              : t("errors.locationUnavailable"),
+        });
+      },
+      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 60_000 },
+    );
+  }
+
+  function removeLocation() {
+    setValue("latitude", undefined);
+    setValue("longitude", undefined);
+    setLocationNote(null);
+  }
   const total = subtotal + deliveryFee;
   const missing = Math.max(0, store.minOrder - subtotal);
   const canOrder = isAdmin
@@ -153,7 +204,8 @@ export function CheckoutForm({
       customerName: values.customerName,
       customerPhone: values.phone,
       type: values.type,
-      zoneId: values.type === "DELIVERY" ? values.zoneId : undefined,
+      latitude: values.type === "DELIVERY" ? values.latitude : undefined,
+      longitude: values.type === "DELIVERY" ? values.longitude : undefined,
       address: values.address,
       landmark: values.landmark,
       scheduledFor: values.scheduledFor,
@@ -302,27 +354,53 @@ export function CheckoutForm({
       {/* Yetkazish manzili. Yashiriladi, unmount qilinmaydi — aks holda qaytganda kiritilgan manzil bo'sh ko'rinadi */}
       <div className={cn(type !== "DELIVERY" && "hidden")}>
         <Card title={t("deliveryDetails")}>
-          <Field label={t("zone")} error={errorText(errors.zoneId?.message)}>
-            <Controller
-              control={control}
-              name="zoneId"
-              render={({ field }) => (
-                <RadioGroup
-                  value={field.value ?? null}
-                  onValueChange={(v) => field.onChange(String(v))}
-                  aria-invalid={!!errors.zoneId}
-                  className="gap-2"
-                >
-                  {settings.zones.map((z) => (
-                    <ChoiceCard key={z.id} value={z.id} checked={field.value === z.id}>
-                      <span className="flex-1">{z.name}</span>
-                      <span className="text-muted-foreground text-sm">{formatMoney(z.fee)}</span>
-                    </ChoiceCard>
-                  ))}
-                </RadioGroup>
+          {!isAdmin && (
+            <div className="flex flex-col gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 justify-start gap-2 rounded-xl"
+                disabled={locating}
+                onClick={locateMe}
+              >
+                {locating ? <Loader2 className="animate-spin" /> : <LocateFixed />}
+                {locating ? t("locating") : t("useLocation")}
+              </Button>
+              {hasLocation && (
+                <div className="bg-primary/5 flex items-center gap-2 rounded-xl px-3 py-2 text-sm">
+                  <MapPin className="text-primary size-4 shrink-0" />
+                  <span className="flex-1">{t("locationAttached")}</span>
+                  <a
+                    href={mapsLink(latitude, longitude) ?? "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary font-medium"
+                  >
+                    {t("viewOnMap")}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={removeLocation}
+                    aria-label={t("removeLocation")}
+                    className="text-muted-foreground hover:bg-background rounded-full p-1"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
               )}
-            />
-          </Field>
+              {locationNote && (
+                <p
+                  className={cn(
+                    "text-sm",
+                    locationNote.tone === "error" ? "text-destructive" : "text-muted-foreground",
+                  )}
+                  role={locationNote.tone === "error" ? "alert" : undefined}
+                >
+                  {locationNote.text}
+                </p>
+              )}
+            </div>
+          )}
           <Field label={t("address")} htmlFor="address" error={errorText(errors.address?.message)}>
             <Input
               id="address"
@@ -477,10 +555,7 @@ export function CheckoutForm({
           <dl className="flex flex-col gap-0.5 text-sm">
             <Row label={t("subtotal")} value={formatMoney(subtotal)} />
             {type === "DELIVERY" && (
-              <Row
-                label={t("deliveryFee")}
-                value={zone ? formatMoney(zone.fee) : t("chooseZone")}
-              />
+              <Row label={t("deliveryFee")} value={formatMoney(settings.deliveryFee)} />
             )}
           </dl>
           {!isAdmin && !isOpenNow && (

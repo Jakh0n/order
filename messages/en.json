@@ -76,13 +76,11 @@
     "transferDetails": "Bank transfer details",
     "transferNote": "The store will confirm your payment once it arrives.",
     "summary": "Your order",
-    "chooseZone": "Choose an area",
     "submitting": "Placing order...",
     "optional": "optional",
     "errors": {
       "nameRequired": "Please enter your name",
       "phoneInvalid": "Enter a valid phone number with country code, e.g. +1 555 123 4567",
-      "zoneRequired": "Choose a delivery area",
       "addressRequired": "Please enter your address",
       "timeInvalid": "Invalid time",
       "invalid": "Please check your details",
@@ -90,20 +88,29 @@
       "closed": "The store is closed right now — orders can't be placed",
       "typeUnavailable": "This option isn't available",
       "paymentUnavailable": "This payment method isn't available",
-      "zoneInvalid": "The selected area isn't available",
       "unavailable": "Some items in your cart are no longer available. Please check your cart.",
       "invalidOptions": "Item options have changed. Please check your cart.",
       "minOrder": "Minimum order: {amount}",
       "server": "Something went wrong. Please try again.",
       "blocked": "This store is temporarily unavailable",
-      "tooMany": "Too many orders. Please try again in 10 minutes."
+      "tooMany": "Too many orders. Please try again in 10 minutes.",
+      "locationDenied": "Location access is blocked. Allow it in your browser settings or type the address.",
+      "locationUnavailable": "Couldn't get your location. Please type the address.",
+      "locationUnsupported": "Your browser can't share location. Please type the address.",
+      "geocodeFailed": "Your location is attached, but we couldn't find the street name — please type the address."
     },
     "edit": "Edit",
     "timeAsap": "As soon as possible",
     "timeScheduled": "Schedule",
     "pickupAddress": "Pickup from",
     "itemsCount": "{count, plural, one {# item} other {# items}}",
-    "phoneHint": "The store may call you on this number"
+    "phoneHint": "The store may call you on this number",
+    "useLocation": "Use my current location",
+    "locating": "Finding your location…",
+    "locationAttached": "Your location is attached to the order",
+    "locationFilled": "We filled in your address — please check it and add the apartment number.",
+    "removeLocation": "Remove",
+    "viewOnMap": "View on map"
   },
   "payment": {
     "CASH": "Cash",
@@ -139,7 +146,9 @@
     "savedTitle": "Order #{number} saved",
     "savedHint": "Send the message so the store can accept your order.",
     "statusTitle": "Order #{number}",
-    "sendAgain": "Send the message again"
+    "sendAgain": "Send the message again",
+    "location": "Location",
+    "openMap": "Open in Maps"
   },
   "admin": {
     "title": "Dashboard",
@@ -190,24 +199,31 @@
     "sentrySent": "Test error sent"
   },
   "orderMessage": {
-    "header": "🛒 New order #{number}",
-    "store": "Store",
-    "name": "Name",
-    "phone": "Phone",
-    "type": "Type",
+    "header": "Order #{number}",
+    "customer": "Customer",
+    "service": "Service",
     "PICKUP": "Pickup",
     "DELIVERY": "Delivery",
     "zone": "Area",
-    "address": "Address",
-    "landmark": "Notes",
-    "time": "Time",
-    "comment": "Comment",
-    "items": "Items",
-    "subtotal": "Subtotal",
+    "itemTotal": "Item total",
+    "qty": "Qty",
     "deliveryFee": "Delivery",
     "total": "Total",
+    "time": "Time",
+    "asap": "As soon as possible",
+    "comment": "Note",
     "payment": "Payment",
-    "link": "Order"
+    "paymentMethods": {
+      "CASH": "Cash on Delivery",
+      "CARD_ON_DELIVERY": "Card on Delivery",
+      "TRANSFER": "Bank Transfer"
+    },
+    "paymentStatus": {
+      "UNPAID": "Unpaid",
+      "PAID": "Paid"
+    },
+    "seeOrder": "See order",
+    "sentFrom": "Sent from {store}"
   },
   "store": {
     "notFound": "Store not found",
@@ -274,7 +290,6 @@
       "invalidTransition": "The status has already changed. Please refresh the page.",
       "invalid": "Invalid data",
       "server": "Something went wrong",
-      "zoneInvalid": "Area not found",
       "unavailable": "Some items are unavailable",
       "invalidOptions": "Invalid item options"
     }
@@ -377,12 +392,6 @@
     "delivery": "Delivery",
     "minOrder": "Minimum order ({currency})",
     "minOrderHint": "0 — no minimum. Delivery fee is not counted.",
-    "zonesSection": "Delivery areas",
-    "zoneName": "Area",
-    "zonePlaceholder": "e.g. Downtown",
-    "zoneFee": "Fee ({currency})",
-    "addZone": "Add area",
-    "removeZone": "Remove area",
     "paymentSection": "Payment methods",
     "cash": "Cash",
     "card": "Card on delivery",
@@ -415,7 +424,6 @@
       "amountInvalid": "Invalid amount",
       "feeInvalid": "Invalid fee",
       "noOrderType": "Turn on at least one order type",
-      "zonesRequired": "Add at least one area for delivery",
       "noPayment": "Turn on at least one payment method",
       "transferDetailsRequired": "Enter your bank details",
       "telegramRequired": "Enter a Telegram username",
@@ -425,7 +433,9 @@
       "imageInvalid": "Invalid image",
       "currencyInvalid": "Invalid currency",
       "timeZoneInvalid": "Invalid time zone"
-    }
+    },
+    "deliveryFee": "Delivery fee ({currency})",
+    "deliveryFeeHint": "Added to every delivery order. 0 — free delivery."
   },
   "signup": {
     "title": "Open your store",

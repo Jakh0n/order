@@ -70,7 +70,7 @@ export async function signup(input: SignupInput): Promise<SignupResult> {
         select: { id: true },
       });
       // Boshlang'ich sozlamalar: kun bo'yi ochiq, olib ketish + naqd/karta.
-      // Yetkazish tumanlar qo'shilgach sozlamalarda yoqiladi.
+      // Delivery is switched on in Settings once the owner sets a delivery fee.
       await tx.store.create({
         data: {
           ownerId: created.id,

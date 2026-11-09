@@ -15,7 +15,10 @@ export interface InsertOrderInput {
   customerName: string;
   customerPhone: string;
   type: "PICKUP" | "DELIVERY";
-  zoneId?: string;
+  /** Store's flat delivery fee (minor units), applied to DELIVERY orders */
+  deliveryFee: number;
+  latitude?: number;
+  longitude?: number;
   address?: string;
   landmark?: string;
   scheduledFor?: string;
@@ -30,46 +33,40 @@ export interface InsertOrderInput {
 
 export type InsertOrderResult =
   | { ok: true; orderId: string; number: number }
-  | { ok: false; error: "zoneInvalid" | "unavailable" | "invalidOptions" | "minOrder" };
+  | { ok: false; error: "unavailable" | "invalidOptions" | "minOrder" };
 
 const MAX_NUMBER_RETRIES = 3;
 
 export async function insertOrder(input: InsertOrderInput): Promise<InsertOrderResult> {
-  // Tuman va bazadagi narxlar — parallel (bir-biriga bog'liq emas)
-  const [zone, products] = await Promise.all([
-    // Tuman narxi — faqat shu do'konning tumani
-    input.type === "DELIVERY"
-      ? prisma.deliveryZone.findFirst({ where: { id: input.zoneId, storeId: input.storeId } })
-      : null,
-    // Narxlar bazadan (klient narxiga ishonilmaydi)
-    prisma.product.findMany({
-      ...JOIN,
-      where: {
-        id: { in: [...new Set(input.items.map((i) => i.productId))] },
-        storeId: input.storeId,
-        isAvailable: true,
-        category: { isActive: true },
-      },
-      select: {
-        id: true,
-        name: true,
-        price: true,
-        optionGroups: {
-          select: {
-            id: true,
-            name: true,
-            required: true,
-            maxSelect: true,
-            options: { select: { id: true, name: true, price: true } },
-          },
+  // Prices from the database (client prices are never trusted)
+  const products = await prisma.product.findMany({
+    ...JOIN,
+    where: {
+      id: { in: [...new Set(input.items.map((i) => i.productId))] },
+      storeId: input.storeId,
+      isAvailable: true,
+      category: { isActive: true },
+    },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      optionGroups: {
+        select: {
+          id: true,
+          name: true,
+          required: true,
+          maxSelect: true,
+          options: { select: { id: true, name: true, price: true } },
         },
       },
-    }),
-  ]);
+    },
+  });
 
-  if (input.type === "DELIVERY" && !zone) return { ok: false, error: "zoneInvalid" };
-  const deliveryFee = zone?.fee ?? 0;
-  const zoneName = zone?.name ?? null;
+  const deliveryFee = input.type === "DELIVERY" ? input.deliveryFee : 0;
+  // Both coordinates or neither
+  const hasLocation =
+    input.type === "DELIVERY" && input.latitude !== undefined && input.longitude !== undefined;
 
   const priced = priceItems(products, input.items);
   if (!priced.ok) return { ok: false, error: priced.error };
@@ -95,7 +92,8 @@ export async function insertOrder(input: InsertOrderInput): Promise<InsertOrderR
             customerName: input.customerName,
             customerPhone: input.customerPhone,
             type: input.type,
-            zoneName,
+            latitude: hasLocation ? input.latitude : null,
+            longitude: hasLocation ? input.longitude : null,
             address: input.type === "DELIVERY" ? input.address : null,
             landmark: input.type === "DELIVERY" ? input.landmark : null,
             scheduledFor: input.scheduledFor ?? null,

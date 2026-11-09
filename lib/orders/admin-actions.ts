@@ -66,12 +66,16 @@ export type ManualOrderResult =
   | { ok: true; orderId: string; number: number }
   | {
       ok: false;
-      error: "invalid" | "zoneInvalid" | "unavailable" | "invalidOptions" | "server";
+      error: "invalid" | "unavailable" | "invalidOptions" | "server";
       fieldErrors?: Record<string, string>;
     };
 
 export async function createManualOrder(input: ManualOrderInput): Promise<ManualOrderResult> {
   const { store } = await requireOwner();
+  const settings = await prisma.store.findUniqueOrThrow({
+    where: { id: store.id },
+    select: { deliveryFee: true },
+  });
 
   const parsed = manualOrderSchema.safeParse(input);
   if (!parsed.success) {
@@ -88,6 +92,7 @@ export async function createManualOrder(input: ManualOrderInput): Promise<Manual
       ...data,
       storeId: store.id,
       currency: store.currency,
+      deliveryFee: settings.deliveryFee,
       paymentStatus: markPaid ? "PAID" : "UNPAID",
       minOrder: null,
     });

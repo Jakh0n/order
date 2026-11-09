@@ -1,8 +1,8 @@
-// Demo store "Flami Grill" (USD). Safe to re-run: the menu and zones are recreated,
+// Demo store "Flami Grill" (USD). Safe to re-run: the menu is recreated,
 // existing product photos are kept by item name, orders and the owner's password are untouched.
 import { PrismaClient } from "@prisma/client";
 
-import { FLAMI_MENU, FLAMI_ZONES } from "./flami-menu";
+import { FLAMI_DELIVERY_FEE, FLAMI_MENU } from "./flami-menu";
 
 const prisma = new PrismaClient();
 
@@ -26,6 +26,7 @@ async function main() {
     pickupEnabled: true,
     deliveryEnabled: true,
     minOrder: 1500,
+    deliveryFee: FLAMI_DELIVERY_FEE,
     acceptCash: true,
     acceptCardOnDelivery: true,
     acceptTransfer: true,
@@ -58,7 +59,6 @@ async function main() {
 
   await prisma.product.deleteMany({ where: { storeId: store.id } }); // option groups cascade
   await prisma.category.deleteMany({ where: { storeId: store.id } });
-  await prisma.deliveryZone.deleteMany({ where: { storeId: store.id } });
 
   for (const [cSort, cat] of FLAMI_MENU.entries()) {
     const category = await prisma.category.create({
@@ -89,10 +89,6 @@ async function main() {
       });
     }
   }
-
-  await prisma.deliveryZone.createMany({
-    data: FLAMI_ZONES.map(([name, fee], sort) => ({ storeId: store.id, name, fee, sort })),
-  });
 
   console.log(
     `Seed done: /${store.slug} — ${FLAMI_MENU.length} categories, ${photos.size} photos kept`,

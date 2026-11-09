@@ -1,4 +1,4 @@
-import type { OrderType, PaymentMethod } from "@prisma/client";
+import type { OrderType, PaymentMethod, PaymentStatus } from "@prisma/client";
 
 import { formatMoney } from "@/lib/money";
 import en from "@/messages/en.json";
@@ -23,11 +23,14 @@ export interface OrderMessageOrder {
   customerPhone: string;
   type: OrderType;
   zoneName?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   address?: string | null;
   landmark?: string | null;
   scheduledFor?: string | null;
   comment?: string | null;
   paymentMethod: PaymentMethod;
+  paymentStatus?: PaymentStatus;
   subtotal: number;
   deliveryFee: number;
   total: number;
@@ -38,6 +41,8 @@ export interface OrderMessageOrder {
 
 export interface OrderMessageStore {
   name: string;
+  /** For the store link in the footer */
+  slug?: string;
 }
 
 function optionNames(options: unknown): string[] {
@@ -48,49 +53,71 @@ function optionNames(options: unknown): string[] {
 }
 
 /** origin — saytning haqiqiy manzili (getRequestOrigin), xabar oxiridagi buyurtma havolasi uchun */
+/**
+ * Order message the customer sends to the store (Take App style).
+ * WhatsApp formats *bold* / _italic_; Telegram uses **bold** / __italic__ — so the markup depends on the channel.
+ */
 export function buildOrderMessage(
   order: OrderMessageOrder,
   store: OrderMessageStore,
   lang: Lang = "en",
   origin?: string,
+  channel: "TELEGRAM" | "WHATSAPP" = "WHATSAPP",
 ): string {
   const t = dictionaries[lang].orderMessage;
-  const pay = dictionaries[lang].payment;
-  const lines: string[] = [];
   const money = (minor: number) => formatMoney(minor, order.currency);
+  const bold = (text: string) => (channel === "TELEGRAM" ? `**${text}**` : `*${text}*`);
+  const italic = (text: string) => (channel === "TELEGRAM" ? `__${text}__` : `_${text}_`);
+  const base = origin?.replace(/\/$/, "");
+  const lines: string[] = [];
 
-  lines.push(t.header.replace("{number}", String(order.number)));
-  lines.push(`${t.store}: ${store.name}`);
+  lines.push(bold(t.header.replace("{number}", String(order.number))));
   lines.push("");
-  lines.push(`${t.name}: ${order.customerName}`);
-  lines.push(`${t.phone}: ${order.customerPhone}`);
-  lines.push(`${t.type}: ${t[order.type]}`);
-  if (order.type === "DELIVERY") {
-    if (order.zoneName) lines.push(`${t.zone}: ${order.zoneName}`);
-    if (order.address) lines.push(`${t.address}: ${order.address}`);
-    if (order.landmark) lines.push(`${t.landmark}: ${order.landmark}`);
-  }
-  if (order.scheduledFor) lines.push(`${t.time}: ${order.scheduledFor}`);
-  if (order.comment) lines.push(`${t.comment}: ${order.comment}`);
 
-  lines.push("");
-  lines.push(`${t.items}:`);
+  // *1x* Chicken Doner Wrap (Large, Cheese) $10.99
   for (const item of order.items) {
     const opts = optionNames(item.options);
     const suffix = opts.length ? ` (${opts.join(", ")})` : "";
-    lines.push(`• ${item.name}${suffix} × ${item.quantity} = ${money(item.lineTotal)}`);
+    lines.push(`${bold(`${item.quantity}x`)} ${item.name}${suffix} ${money(item.lineTotal)}`);
+  }
+  lines.push("");
+
+  const qty = order.items.reduce((sum, i) => sum + i.quantity, 0);
+  lines.push(`${t.itemTotal}: ${money(order.subtotal)} (${t.qty}: ${qty})`);
+  if (order.deliveryFee > 0) lines.push(`${t.deliveryFee}: ${money(order.deliveryFee)}`);
+  lines.push(bold(`${t.total}: ${money(order.total)}`));
+  lines.push("");
+
+  lines.push(`${t.customer}: ${bold(order.customerName)} ${order.customerPhone}`);
+  lines.push("");
+
+  if (order.type === "DELIVERY") {
+    const fee = order.deliveryFee > 0 ? ` ${money(order.deliveryFee)}` : "";
+    lines.push(`${t.service}: ${bold(`${t.DELIVERY}${fee}`)}`);
+    if (order.zoneName) lines.push(`└ ${t.zone}: ${order.zoneName}`);
+    if (order.address) lines.push(`└ ${order.address}`);
+    if (order.landmark) lines.push(`└ ${order.landmark}`);
+    const map = mapsLink(order.latitude, order.longitude);
+    if (map) lines.push(`└ 📍 ${map}`);
+  } else {
+    lines.push(`${t.service}: ${bold(t.PICKUP)}`);
+  }
+  lines.push(`${t.time}: ${order.scheduledFor ?? t.asap}`);
+  if (order.comment) lines.push(`${t.comment}: ${order.comment}`);
+  lines.push("");
+
+  lines.push(
+    `${t.payment}: ${bold(t.paymentMethods[order.paymentMethod])} (${t.paymentStatus[order.paymentStatus ?? "UNPAID"]})`,
+  );
+
+  if (base) {
+    lines.push("");
+    lines.push(`${t.seeOrder} ${base}/o/${order.id}`);
   }
 
   lines.push("");
-  lines.push(`${t.subtotal}: ${money(order.subtotal)}`);
-  if (order.deliveryFee > 0) lines.push(`${t.deliveryFee}: ${money(order.deliveryFee)}`);
-  lines.push(`${t.total}: ${money(order.total)}`);
-  lines.push(`${t.payment}: ${pay[order.paymentMethod]}`);
-
-  if (origin) {
-    lines.push("");
-    lines.push(`${t.link}: ${origin.replace(/\/$/, "")}/o/${order.id}`);
-  }
+  lines.push(italic(t.sentFrom.replace("{store}", store.name)));
+  if (base && store.slug) lines.push(`${base}/${store.slug}`);
 
   return lines.join("\n");
 }
@@ -106,4 +133,10 @@ export function telegramLink(username: string, text: string): string {
 export function whatsappLink(phone: string, text: string): string {
   const digits = phone.replace(/[^\d]/g, "");
   return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+}
+
+/** Google Maps link for a customer's location (opens the native maps app on phones) */
+export function mapsLink(latitude?: number | null, longitude?: number | null): string | null {
+  if (latitude == null || longitude == null) return null;
+  return `https://www.google.com/maps/search/?api=1&query=${latitude.toFixed(6)},${longitude.toFixed(6)}`;
 }

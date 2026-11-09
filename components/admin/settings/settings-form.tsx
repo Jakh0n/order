@@ -1,9 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ExternalLink, Loader2, Plus, X } from "lucide-react";
+import { ExternalLink, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Controller, type FieldPath, useFieldArray, useForm, useWatch } from "react-hook-form";
+import { Controller, type FieldPath, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { ImageUpload } from "@/components/admin/menu/image-upload";
@@ -38,7 +38,6 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsFo
     resolver: zodResolver(storeSettingsFormSchema),
     defaultValues,
   });
-  const zones = useFieldArray({ control, name: "zones" });
   const [deliveryEnabled, acceptTransfer, channel, telegramUsername, whatsappNumber, currency] =
     useWatch({
       control,
@@ -206,64 +205,27 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsFo
           />
         </Field>
         <p className="text-muted-foreground -mt-2 text-xs">{t("minOrderHint")}</p>
-      </Card>
-
-      <div className={cn(!deliveryEnabled && "hidden")}>
-        <Card title={t("zonesSection")}>
-          <ul className="flex flex-col gap-2">
-            {zones.fields.map((zone, i) => {
-              const zoneErrors = errors.zones?.[i];
-              return (
-                <li key={zone.id} className="flex items-start gap-2">
-                  <div className="flex-1">
-                    <Input
-                      placeholder={t("zonePlaceholder")}
-                      aria-label={t("zoneName")}
-                      maxLength={60}
-                      aria-invalid={!!zoneErrors?.name}
-                      {...register(`zones.${i}.name`)}
-                    />
-                    <ErrorLine text={errorText(zoneErrors?.name?.message)} />
-                  </div>
-                  <div className="w-32">
-                    <Input
-                      type="number"
-                      inputMode="numeric"
-                      min={0}
-                      step={priceStep(currency)}
-                      aria-label={t("zoneFee", { currency })}
-                      aria-invalid={!!zoneErrors?.fee}
-                      {...register(`zones.${i}.fee`, { valueAsNumber: true })}
-                    />
-                    <ErrorLine text={errorText(zoneErrors?.fee?.message)} />
-                  </div>
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    aria-label={t("removeZone")}
-                    onClick={() => zones.remove(i)}
-                  >
-                    <X />
-                  </Button>
-                </li>
-              );
-            })}
-          </ul>
-          <ErrorLine text={errorText(errors.zones?.message ?? errors.zones?.root?.message)} />
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="self-start"
-            disabled={zones.fields.length >= 50}
-            onClick={() => zones.append({ name: "", fee: Number.NaN })}
+        {/* Hidden, not unmounted — keeps the value while delivery is toggled */}
+        <div className={cn("flex flex-col gap-1.5", !deliveryEnabled && "hidden")}>
+          <Field
+            label={t("deliveryFee", { currency })}
+            htmlFor="deliveryFee"
+            error={errorText(errors.deliveryFee?.message)}
           >
-            <Plus />
-            {t("addZone")}
-          </Button>
-        </Card>
-      </div>
+            <Input
+              id="deliveryFee"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              step={priceStep(currency)}
+              className="w-40"
+              aria-invalid={!!errors.deliveryFee}
+              {...register("deliveryFee", { valueAsNumber: true })}
+            />
+          </Field>
+          <p className="text-muted-foreground text-xs">{t("deliveryFeeHint")}</p>
+        </div>
+      </Card>
 
       <Card title={t("paymentSection")}>
         <SwitchField control={control} name="acceptCash" label={t("cash")} />

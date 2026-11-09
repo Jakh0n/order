@@ -81,6 +81,8 @@ model Store {
   /// IANA vaqt zonasi (ish vaqti va "bugun" hisobi uchun), masalan "Europe/London"
   timeZone             String         @default("UTC")
   minOrder             Int            @default(0)
+  /// Flat delivery fee (minor units). Replaced per-area fees (DeliveryZone is no longer used).
+  deliveryFee          Int            @default(0)
   acceptCash           Boolean        @default(true)
   acceptCardOnDelivery Boolean        @default(true)
   acceptTransfer       Boolean        @default(false)
@@ -157,6 +159,7 @@ model Option {
   @@index([groupId])
 }
 
+/// Deprecated: per-area delivery fees, replaced by Store.deliveryFee. Kept to avoid data loss.
 model DeliveryZone {
   id      String @id @default(cuid())
   storeId String
@@ -179,6 +182,9 @@ model Order {
   zoneName      String?
   address       String?
   landmark      String?
+  /// Customer location from "Use my current location" (for a map link)
+  latitude      Float?
+  longitude     Float?
   scheduledFor  String?
   comment       String?
   paymentMethod PaymentMethod

@@ -1,9 +1,10 @@
 import type { Order, OrderItem } from "@prisma/client";
-import { Clock, MapPin, Phone } from "lucide-react";
+import { Clock, MapPin, Navigation, Phone } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/money";
+import { mapsLink } from "@/lib/order-message";
 import { cn } from "@/lib/utils";
 
 import { OrderActions } from "./order-actions";
@@ -74,6 +75,17 @@ export async function OrderCard({
               : t("checkout.pickup")}
           </span>
         </p>
+        {mapsLink(order.latitude, order.longitude) && (
+          <a
+            href={mapsLink(order.latitude, order.longitude)!}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary flex items-center gap-1.5 font-medium"
+          >
+            <Navigation className="size-3.5 shrink-0" />
+            {t("order.openMap")}
+          </a>
+        )}
         <p className="text-muted-foreground flex items-center gap-1.5">
           <Clock className="size-3.5 shrink-0" />
           {order.scheduledFor ?? t("checkout.asap")}

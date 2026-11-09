@@ -101,7 +101,6 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
   cacheTag(storeCacheTag(slug));
 
   const store = await prisma.store.findUnique({
-    ...JOIN,
     where: { slug },
     select: {
       pickupEnabled: true,
@@ -110,10 +109,7 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
       acceptCardOnDelivery: true,
       acceptTransfer: true,
       transferDetails: true,
-      zones: {
-        orderBy: [{ sort: "asc" }, { name: "asc" }],
-        select: { id: true, name: true, fee: true },
-      },
+      deliveryFee: true,
     },
   });
   if (!store) return null;
@@ -126,9 +122,9 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
   return {
     pickupEnabled: store.pickupEnabled,
     // Tuman bo'lmasa yetkazib berishni tanlab bo'lmaydi
-    deliveryEnabled: store.deliveryEnabled && store.zones.length > 0,
+    deliveryEnabled: store.deliveryEnabled,
     paymentMethods,
     transferDetails: store.transferDetails,
-    zones: store.zones,
+    deliveryFee: store.deliveryFee,
   };
 }

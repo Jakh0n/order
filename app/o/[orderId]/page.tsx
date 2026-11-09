@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { formatMoney } from "@/lib/money";
 import { type CustomerOrder, getOrderForCustomer } from "@/lib/orders/get-order";
+import { mapsLink } from "@/lib/order-message";
 import { orderSendLink } from "@/lib/orders/send-link";
 import { getRequestOrigin } from "@/lib/app-url";
 import { cn } from "@/lib/utils";
@@ -143,6 +144,21 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
             {order.zoneName && <Row label={t("checkout.zone")} value={order.zoneName} />}
             {order.address && <Row label={t("checkout.address")} value={order.address} />}
             {order.landmark && <Row label={t("checkout.landmark")} value={order.landmark} />}
+            {mapsLink(order.latitude, order.longitude) && (
+              <div className="flex justify-between gap-4">
+                <dt className="shrink-0 text-muted-foreground">{t("order.location")}</dt>
+                <dd>
+                  <a
+                    href={mapsLink(order.latitude, order.longitude)!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-primary"
+                  >
+                    {t("order.openMap")}
+                  </a>
+                </dd>
+              </div>
+            )}
             <Row label={t("checkout.time")} value={order.scheduledFor ?? t("checkout.asap")} />
             {order.comment && <Row label={t("checkout.comment")} value={order.comment} />}
             <Row label={t("checkout.name")} value={order.customerName} />

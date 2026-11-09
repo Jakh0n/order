@@ -227,10 +227,5 @@ export const FLAMI_MENU: { category: string; items: MenuItem[] }[] = [
   },
 ];
 
-export const FLAMI_ZONES: [name: string, feeCents: number][] = [
-  ["Downtown", 299],
-  ["Midtown", 349],
-  ["Uptown", 399],
-  ["Riverside", 449],
-  ["Airport", 699],
-];
+/** Flat delivery fee in cents */
+export const FLAMI_DELIVERY_FEE = 299;

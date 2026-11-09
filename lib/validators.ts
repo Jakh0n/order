@@ -41,22 +41,21 @@ const scheduledForSchema = z
 const orderFields = {
   customerName: z.string().trim().min(2, "nameRequired").max(80),
   type: z.enum(["PICKUP", "DELIVERY"]),
-  zoneId: optionalText(50),
   address: optionalText(300),
   landmark: optionalText(200),
+  /** From "Use my current location" — both or neither */
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
   scheduledFor: scheduledForSchema,
   comment: optionalText(500),
   paymentMethod: z.enum(["CASH", "CARD_ON_DELIVERY", "TRANSFER"]),
 };
 
 function refineDelivery(
-  data: { type: "PICKUP" | "DELIVERY"; zoneId?: string; address?: string },
+  data: { type: "PICKUP" | "DELIVERY"; address?: string },
   ctx: z.RefinementCtx,
 ) {
   if (data.type !== "DELIVERY") return;
-  if (!data.zoneId) {
-    ctx.addIssue({ code: "custom", path: ["zoneId"], message: "zoneRequired" });
-  }
   if (!data.address || data.address.length < 3) {
     ctx.addIssue({ code: "custom", path: ["address"], message: "addressRequired" });
   }
@@ -251,12 +250,6 @@ const currencySchema = z.string().trim().toUpperCase().refine(isValidCurrency, "
 const timeZoneSchema = z.string().trim().refine(isValidTimeZone, "timeZoneInvalid");
 
 function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
-  const zone = z.object({
-    dbId: z.string().max(50).optional(),
-    name: z.string().trim().min(1, "nameRequired").max(60, "tooLong"),
-    fee,
-  });
-
   return z
     .object({
       name: z.string().trim().min(2, "nameRequired").max(80, "tooLong"),
@@ -275,7 +268,8 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
       pickupEnabled: z.boolean(),
       deliveryEnabled: z.boolean(),
       minOrder,
-      zones: z.array(zone).max(50),
+      /** Flat delivery fee */
+      deliveryFee: fee,
 
       acceptCash: z.boolean(),
       acceptCardOnDelivery: z.boolean(),
@@ -300,7 +294,6 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
         issue(s2.openTime ? "closeTime" : "openTime", "bothTimes");
       }
       if (!s2.pickupEnabled && !s2.deliveryEnabled) issue("deliveryEnabled", "noOrderType");
-      if (s2.deliveryEnabled && s2.zones.length === 0) issue("zones", "zonesRequired");
       if (!s2.acceptCash && !s2.acceptCardOnDelivery && !s2.acceptTransfer) {
         issue("acceptTransfer", "noPayment");
       }
@@ -342,7 +335,7 @@ export function settingsFormToMinor(v: StoreSettingsFormData): StoreSettingsInpu
   return {
     ...v,
     minOrder: toMinor(v.minOrder, v.currency),
-    zones: v.zones.map((z2) => ({ ...z2, fee: toMinor(z2.fee, v.currency) })),
+    deliveryFee: toMinor(v.deliveryFee, v.currency),
   };
 }
 
@@ -351,7 +344,7 @@ export function settingsToForm(v: StoreSettingsInput): StoreSettingsFormInput {
   return {
     ...v,
     minOrder: toMajor(v.minOrder, v.currency),
-    zones: v.zones.map((z2) => ({ ...z2, fee: toMajor(z2.fee, v.currency) })),
+    deliveryFee: toMajor(v.deliveryFee, v.currency),
   };
 }
 

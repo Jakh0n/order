@@ -27,11 +27,7 @@ async function AdminSettings() {
     <div className="flex max-w-2xl flex-col gap-4 p-4 md:p-6">
       <h1 className="text-2xl font-bold">{t("settings")}</h1>
       <StoreLink slug={store.slug} origin={await getRequestOrigin()} />
-      <SettingsForm
-        // Saqlangandan keyin (refresh) yangi tuman id lari bilan formani qayta boshlash
-        key={settings.zones.map((z) => z.dbId).join()}
-        defaultValues={settingsToForm(settings)}
-      />
+      <SettingsForm defaultValues={settingsToForm(settings)} />
     </div>
   );
 }

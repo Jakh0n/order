@@ -36,7 +36,7 @@ async function NewOrder() {
   const adminSettings: CheckoutSettings = {
     ...settings,
     pickupEnabled: true,
-    deliveryEnabled: settings.zones.length > 0,
+    deliveryEnabled: true,
     paymentMethods: ["CASH", "CARD_ON_DELIVERY", "TRANSFER"],
   };
 
