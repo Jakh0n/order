@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import type { StorefrontStore } from "@/lib/menu-types";
 import { cn } from "@/lib/utils";
 
-import { useStoreOpen } from "./use-store-open";
+import { useStoreOpen, useTimeSlots } from "./use-store-open";
 
 /** Yopiq bo'lsa va sabab — ish vaqti, ochilish vaqti; qo'lda yopilgan bo'lsa null */
 function opensAtTime(store: StorefrontStore, open: boolean | null) {
@@ -51,11 +51,16 @@ export function OpenStatus({ store }: { store: StorefrontStore }) {
 export function ClosedBanner({ store }: { store: StorefrontStore }) {
   const t = useTranslations("menu");
   const open = useStoreOpen(store);
+  const canPreorder = useTimeSlots(store).length > 0;
   if (open !== false) return null;
   const opensAt = opensAtTime(store, open);
   return (
-    <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-sm text-amber-900">
-      {opensAt ? t("closedBannerHours", { time: opensAt }) : t("closedBanner")}
+    <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+      {canPreorder && opensAt
+        ? t("closedBannerPreorder", { time: opensAt })
+        : opensAt
+          ? t("closedBannerHours", { time: opensAt })
+          : t("closedBanner")}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,8 @@ export function QuantityStepper({
 }) {
   const t = useTranslations("product");
   const btn = size === "sm" ? "icon-sm" : "icon";
+  // At 1 with min 0 the next tap removes the line — say so with a trash icon
+  const removes = min === 0 && value === 1;
 
   return (
     <div className={cn("bg-background flex items-center gap-1 rounded-lg border", className)}>
@@ -29,11 +31,12 @@ export function QuantityStepper({
         type="button"
         variant="ghost"
         size={btn}
-        aria-label={t("decrease")}
+        aria-label={removes ? t("remove") : t("decrease")}
         disabled={value <= min}
         onClick={() => onChange(value - 1)}
+        className={cn(removes && "text-destructive hover:text-destructive")}
       >
-        <Minus />
+        {removes ? <Trash2 /> : <Minus />}
       </Button>
       <span
         className={cn("min-w-6 text-center font-medium tabular-nums", size === "sm" && "text-sm")}

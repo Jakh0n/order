@@ -10,7 +10,9 @@ const ALL_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satur
 
 /** Product names to mention in the meta description — the first few, in menu order. */
 export function topItemNames(data: StorefrontData, count = 4): string[] {
-  return data.categories.flatMap((c) => c.products.map((p) => p.name)).slice(0, count);
+  return data.categories
+    .flatMap((c) => c.products.filter((p) => p.isAvailable).map((p) => p.name))
+    .slice(0, count);
 }
 
 /** First menu photo — used when the store has no logo. */

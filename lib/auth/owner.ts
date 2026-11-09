@@ -30,6 +30,7 @@ export const getCurrentUser = cache(async () => {
           isBlocked: true,
           currency: true,
           timeZone: true,
+          channel: true,
         },
       },
     },

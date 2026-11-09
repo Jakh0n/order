@@ -37,6 +37,8 @@ interface CartState {
   setQuantity: (slug: string, key: string, quantity: number) => void;
   remove: (slug: string, key: string) => void;
   clear: (slug: string) => void;
+  /** Put lines back (undo "Clear cart") */
+  restore: (slug: string, lines: CartLine[]) => void;
   /** Menyuga moslash: yo'q bo'lgan taom/variantlarni olib tashlaydi, narx va nomlarni yangilaydi */
   sync: (slug: string, products: MenuProduct[]) => void;
 }
@@ -106,6 +108,8 @@ export const useCart = create<CartState>()(
           return { carts };
         }),
 
+      restore: (slug, lines) => set((state) => ({ carts: { ...state.carts, [slug]: lines } })),
+
       sync: (slug, products) =>
         set((state) => {
           const lines = state.carts[slug];
@@ -115,7 +119,7 @@ export const useCart = create<CartState>()(
           const next: CartLine[] = [];
           for (const line of lines) {
             const product = byId.get(line.productId);
-            if (!product) continue;
+            if (!product || !product.isAvailable) continue;
 
             const optionsById = new Map(
               product.optionGroups.flatMap((g) =>

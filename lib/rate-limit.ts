@@ -27,6 +27,7 @@ export const RULES = {
   receiptIp: { name: "receipt:ip", limit: 10, windowSeconds: 10 * 60 },
   receiptOrder: { name: "receipt:order", limit: 5, windowSeconds: 60 * 60 },
   geocodeIp: { name: "geocode:ip", limit: 10, windowSeconds: 60 },
+  reorderIp: { name: "reorder:ip", limit: 30, windowSeconds: 10 * 60 },
 } satisfies Record<string, RateLimitRule>;
 
 /**

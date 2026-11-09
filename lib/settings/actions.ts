@@ -25,15 +25,18 @@ export async function saveStoreSettings(input: StoreSettingsInput): Promise<Sett
   }
   const data = parsed.data;
 
-  // Logo faqat shu do'konning papkasidan
+  // Logo va muqova faqat shu do'konning papkasidan
   const prefix = menuImagePrefix(store.id);
-  if (data.logoUrl && (!prefix || !data.logoUrl.startsWith(prefix))) {
-    return { ok: false, error: "invalid", fieldErrors: { logoUrl: "imageInvalid" } };
+  for (const field of ["logoUrl", "coverUrl"] as const) {
+    const url = data[field];
+    if (url && (!prefix || !url.startsWith(prefix))) {
+      return { ok: false, error: "invalid", fieldErrors: { [field]: "imageInvalid" } };
+    }
   }
 
   const current = await prisma.store.findUnique({
     where: { id: store.id },
-    select: { logoUrl: true },
+    select: { logoUrl: true, coverUrl: true },
   });
   if (!current) return { ok: false, error: "server" };
 
@@ -46,6 +49,9 @@ export async function saveStoreSettings(input: StoreSettingsInput): Promise<Sett
 
   if (current.logoUrl && current.logoUrl !== data.logoUrl) {
     await deleteMenuImage(store.id, current.logoUrl);
+  }
+  if (current.coverUrl && current.coverUrl !== data.coverUrl) {
+    await deleteMenuImage(store.id, current.coverUrl);
   }
   updateTag(storeCacheTag(store.slug));
   refresh();

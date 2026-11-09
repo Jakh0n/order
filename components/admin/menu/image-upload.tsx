@@ -9,13 +9,17 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { uploadProductImage } from "@/lib/menu/admin-actions";
 import { shrinkImage } from "@/lib/shrink-image";
+import { cn } from "@/lib/utils";
 
 export function ImageUpload({
   value,
   onChange,
+  wide = false,
 }: {
   value: string | null;
   onChange: (url: string | null) => void;
+  /** Wide preview (store cover) instead of a square */
+  wide?: boolean;
 }) {
   const t = useTranslations("adminMenu");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,9 +39,14 @@ export function ImageUpload({
 
   return (
     <div className="flex items-center gap-3">
-      <div className="bg-muted relative size-24 shrink-0 overflow-hidden rounded-xl border">
+      <div
+        className={cn(
+          "bg-muted relative shrink-0 overflow-hidden rounded-xl border",
+          wide ? "aspect-[3/1] w-40 sm:w-56" : "size-24",
+        )}
+      >
         {value ? (
-          <Image src={value} alt="" fill sizes="96px" className="object-cover" />
+          <Image src={value} alt="" fill sizes={wide ? "224px" : "96px"} className="object-cover" />
         ) : (
           <ImagePlus className="text-muted-foreground/50 absolute inset-0 m-auto size-8" />
         )}

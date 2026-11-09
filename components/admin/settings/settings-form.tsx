@@ -89,6 +89,16 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsFo
             render={({ field }) => <ImageUpload value={field.value} onChange={field.onChange} />}
           />
         </Field>
+        <Field label={t("cover")}>
+          <Controller
+            control={control}
+            name="coverUrl"
+            render={({ field }) => (
+              <ImageUpload value={field.value} onChange={field.onChange} wide />
+            )}
+          />
+          <p className="text-muted-foreground text-xs">{t("coverHint")}</p>
+        </Field>
         <Field label={t("storeName")} htmlFor="name" error={errorText(errors.name?.message)}>
           <Input id="name" maxLength={80} aria-invalid={!!errors.name} {...register("name")} />
         </Field>

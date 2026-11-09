@@ -13,6 +13,7 @@ export async function getStoreSettings(storeId: string): Promise<StoreSettingsIn
   return {
     name: store.name,
     logoUrl: store.logoUrl,
+    coverUrl: store.coverUrl,
     phone: store.phone ?? "",
     address: store.address ?? "",
     landmark: store.landmark ?? "",

@@ -1,9 +1,10 @@
 "use client";
 
-import { ShoppingBag, Trash2 } from "lucide-react";
+import { Plus, ShoppingBag, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { useFormatMoney } from "@/components/currency-provider";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -16,15 +17,15 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { cartCount, cartSubtotal, unitPrice, useCart, useCartLines } from "@/lib/cart-store";
-import type { StorefrontStore } from "@/lib/menu-types";
+import type { MenuProduct, StorefrontStore } from "@/lib/menu-types";
 import { cn } from "@/lib/utils";
 
 import { ProductImage } from "./product-image";
 import { QuantityStepper } from "./quantity-stepper";
-import { useStoreOpen } from "./use-store-open";
+import { useStoreOpen, useTimeSlots } from "./use-store-open";
 
 /** Pastdagi suzuvchi "Savatni ko'rish" tugmasi + savat varag'i. Savat bo'sh bo'lsa ko'rinmaydi. */
-export function CartBar({ store }: { store: StorefrontStore }) {
+export function CartBar({ store, products }: { store: StorefrontStore; products: MenuProduct[] }) {
   const formatMoney = useFormatMoney();
   const t = useTranslations("cart");
   const [open, setOpen] = useState(false);
@@ -45,7 +46,11 @@ export function CartBar({ store }: { store: StorefrontStore }) {
           <span className="flex items-center gap-3">
             <span className="relative">
               <ShoppingBag className="size-5" />
-              <span className="bg-background text-primary absolute -top-2 -right-2.5 flex size-5 items-center justify-center rounded-full text-xs font-bold">
+              {/* key → remounts on every change, so the badge "bumps" when something is added */}
+              <span
+                key={count}
+                className="bg-background text-primary motion-safe:animate-in motion-safe:zoom-in-50 absolute -top-2 -right-2.5 flex size-5 items-center justify-center rounded-full text-xs font-bold motion-safe:duration-300"
+              >
                 {count}
               </span>
             </span>
@@ -54,17 +59,33 @@ export function CartBar({ store }: { store: StorefrontStore }) {
           <span className="font-semibold tabular-nums">{formatMoney(subtotal)}</span>
         </Button>
       </div>
-      <CartSheet store={store} open={open} onOpenChange={setOpen} />
+      <CartSheet store={store} products={products} open={open} onOpenChange={setOpen} />
     </>
   );
 }
 
+/** Cheap one-tap items that close the gap to the minimum order */
+function minOrderSuggestions(products: MenuProduct[], inCart: Set<string>, missing: number) {
+  return products
+    .filter((p) => p.isAvailable && p.optionGroups.length === 0 && !inCart.has(p.id))
+    .sort((a, b) => {
+      // First the cheapest item that covers the gap, then the closest ones below it
+      const aCovers = a.price >= missing;
+      const bCovers = b.price >= missing;
+      if (aCovers !== bCovers) return aCovers ? -1 : 1;
+      return aCovers ? a.price - b.price : b.price - a.price;
+    })
+    .slice(0, 3);
+}
+
 function CartSheet({
   store,
+  products,
   open,
   onOpenChange,
 }: {
   store: StorefrontStore;
+  products: MenuProduct[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
@@ -73,12 +94,30 @@ function CartSheet({
   const lines = useCartLines(store.slug);
   const setQuantity = useCart((s) => s.setQuantity);
   const clear = useCart((s) => s.clear);
+  const restore = useCart((s) => s.restore);
+  const add = useCart((s) => s.add);
   const isOpenNow = useStoreOpen(store) ?? store.isOpen;
+  // Closed now, but there are times to schedule for → pre-order
+  const canPreorder = useTimeSlots(store).length > 0;
 
   const subtotal = cartSubtotal(lines);
   const missing = Math.max(0, store.minOrder - subtotal);
   const progress = store.minOrder > 0 ? Math.min(100, (subtotal / store.minOrder) * 100) : 100;
-  const canCheckout = lines.length > 0 && isOpenNow && missing === 0;
+  const canCheckout = lines.length > 0 && (isOpenNow || canPreorder) && missing === 0;
+  const suggestions =
+    missing > 0
+      ? minOrderSuggestions(products, new Set(lines.map((l) => l.productId)), missing)
+      : [];
+
+  function clearWithUndo() {
+    const snapshot = lines;
+    clear(store.slug);
+    onOpenChange(false);
+    toast(t("cleared"), {
+      action: { label: t("undo"), onClick: () => restore(store.slug, snapshot) },
+      duration: 5000,
+    });
+  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -100,10 +139,7 @@ function CartSheet({
               variant="ghost"
               size="sm"
               className="text-muted-foreground"
-              onClick={() => {
-                clear(store.slug);
-                onOpenChange(false);
-              }}
+              onClick={clearWithUndo}
             >
               <Trash2 />
               {t("clear")}
@@ -158,14 +194,51 @@ function CartSheet({
               <p className="text-muted-foreground text-sm">
                 {t("addMore", { amount: formatMoney(missing) })}
               </p>
+              {suggestions.length > 0 && (
+                <div className="-mx-4 flex [scrollbar-width:none] gap-2 overflow-x-auto px-4 pt-1">
+                  {suggestions.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() =>
+                        add(store.slug, {
+                          productId: p.id,
+                          name: p.name,
+                          imageUrl: p.imageUrl,
+                          basePrice: p.price,
+                          options: [],
+                        })
+                      }
+                      className="hover:bg-muted flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3 text-sm whitespace-nowrap transition-colors"
+                    >
+                      <Plus className="text-primary size-4" aria-hidden />
+                      {p.name}
+                      <span className="text-muted-foreground tabular-nums">
+                        {formatMoney(p.price)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
-          {!isOpenNow && <p className="text-destructive text-sm">{t("closed")}</p>}
+          {!isOpenNow &&
+            (canPreorder ? (
+              <p className="text-sm text-amber-700 dark:text-amber-400">{t("preorder")}</p>
+            ) : (
+              <p className="text-destructive text-sm">{t("closed")}</p>
+            ))}
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">{t("subtotal")}</span>
             <span className="text-lg font-bold tabular-nums">{formatMoney(subtotal)}</span>
           </div>
-          <p className="text-muted-foreground -mt-2 text-xs">{t("deliveryNote")}</p>
+          {store.deliveryEnabled && (
+            <p className="text-muted-foreground -mt-2 text-xs">
+              {store.deliveryFee > 0
+                ? t("deliveryFee", { amount: formatMoney(store.deliveryFee) })
+                : t("freeDelivery")}
+            </p>
+          )}
           {canCheckout ? (
             <Link
               href={`/${store.slug}/checkout`}

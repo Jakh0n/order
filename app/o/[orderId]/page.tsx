@@ -1,14 +1,17 @@
-import { CheckCircle2, Phone, Send } from "lucide-react";
+import { CalendarClock, CheckCircle2, Phone, Send } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
+import { CopyButton } from "@/components/copy-button";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { AutoRefresh } from "@/components/order/auto-refresh";
 import { ReceiptUpload } from "@/components/order/receipt-upload";
+import { ReorderButton } from "@/components/order/reorder-button";
 import { SendMessage } from "@/components/order/send-message";
+import { StatusWatcher } from "@/components/order/status-watcher";
 import { StatusSteps } from "@/components/order/status-steps";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +21,7 @@ import { type CustomerOrder, getOrderForCustomer } from "@/lib/orders/get-order"
 import { mapsLink } from "@/lib/order-message";
 import { orderSendLink } from "@/lib/orders/send-link";
 import { getRequestOrigin } from "@/lib/app-url";
+import { isNextDaySlot } from "@/lib/store-hours";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { robots: { index: false } };
@@ -40,6 +44,18 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
   const send = orderSendLink(order, order.store, await getRequestOrigin());
   const money = (minor: number) => formatMoney(minor, order.currency);
   const isFinal = order.status === "COMPLETED" || order.status === "CANCELLED";
+  const scheduled = order.scheduledFor
+    ? isNextDaySlot(order.createdAt, order.scheduledFor, order.store.timeZone)
+      ? t("checkout.tomorrowAt", { time: order.scheduledFor })
+      : order.scheduledFor
+    : null;
+  // The most important line for a waiting customer: when
+  const scheduledBanner = scheduled && !isFinal && (
+    <p className="bg-primary/5 text-primary flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium">
+      <CalendarClock className="size-4 shrink-0" aria-hidden />
+      {t("order.scheduledFor", { time: scheduled })}
+    </p>
+  );
 
   return (
     <div className="bg-muted flex-1">
@@ -62,9 +78,8 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
             <span className="bg-primary/10 text-primary flex size-14 items-center justify-center rounded-full">
               <CheckCircle2 className="size-8" />
             </span>
-            <h1 className="text-xl font-bold">
-              {t("order.savedTitle", { number: order.number })}
-            </h1>
+            <h1 className="text-xl font-bold">{t("order.savedTitle", { number: order.number })}</h1>
+            {scheduledBanner}
             <SendMessage orderId={order.id} href={send.href} channel={send.channel} />
             <p className="text-muted-foreground text-xs">
               {format.dateTime(order.createdAt, {
@@ -86,13 +101,16 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
                 timeZone: order.store.timeZone,
               })}
             </p>
+            {scheduledBanner && <div className="mt-3">{scheduledBanner}</div>}
           </section>
         )}
 
-        <Card title={t("order.status")}>
-          <StatusSteps status={order.status} type={order.type} />
-          {!isFinal && <p className="text-muted-foreground text-xs">{t("order.autoRefresh")}</p>}
-        </Card>
+        <StatusWatcher orderId={order.id} number={order.number} status={order.status}>
+          <Card title={t("order.status")}>
+            <StatusSteps status={order.status} type={order.type} />
+            {!isFinal && <p className="text-muted-foreground text-xs">{t("order.autoRefresh")}</p>}
+          </Card>
+        </StatusWatcher>
 
         <Card title={t("order.items")}>
           <ul className="flex flex-col gap-2 text-sm">
@@ -131,20 +149,20 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
             {order.landmark && <Row label={t("checkout.landmark")} value={order.landmark} />}
             {mapsLink(order.latitude, order.longitude) && (
               <div className="flex justify-between gap-4">
-                <dt className="shrink-0 text-muted-foreground">{t("order.location")}</dt>
+                <dt className="text-muted-foreground shrink-0">{t("order.location")}</dt>
                 <dd>
                   <a
                     href={mapsLink(order.latitude, order.longitude)!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-primary"
+                    className="text-primary font-medium"
                   >
                     {t("order.openMap")}
                   </a>
                 </dd>
               </div>
             )}
-            <Row label={t("checkout.time")} value={order.scheduledFor ?? t("checkout.asap")} />
+            <Row label={t("checkout.time")} value={scheduled ?? t("checkout.asap")} />
             {order.comment && <Row label={t("checkout.comment")} value={order.comment} />}
             <Row label={t("checkout.name")} value={order.customerName} />
             <Row label={t("checkout.phone")} value={order.customerPhone} />
@@ -165,6 +183,8 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
         </Card>
 
         <div className="flex flex-col gap-2">
+          {/* Finished or cancelled → the natural next step is ordering again */}
+          {isFinal && <ReorderButton orderId={order.id} variant="default" />}
           {order.status !== "NEW" && send && !isFinal && (
             <a
               href={send.href}
@@ -210,8 +230,11 @@ function TransferDetails({ order, label }: { order: CustomerOrder; label: string
   if (!order.store.transferDetails) return null;
   return (
     <div className="bg-muted rounded-lg p-3 text-sm">
-      <p className="font-medium">{label}</p>
-      <p className="mt-1 whitespace-pre-line">{order.store.transferDetails}</p>
+      <div className="flex items-center justify-between gap-2">
+        <p className="font-medium">{label}</p>
+        <CopyButton text={order.store.transferDetails} />
+      </div>
+      <p className="mt-1 whitespace-pre-line select-all">{order.store.transferDetails}</p>
     </div>
   );
 }

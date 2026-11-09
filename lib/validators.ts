@@ -254,6 +254,7 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
     .object({
       name: z.string().trim().min(2, "nameRequired").max(80, "tooLong"),
       logoUrl: z.string().url().max(500).nullable(),
+      coverUrl: z.string().url().max(500).nullable(),
       phone: optionalTrimmed(30),
       address: optionalTrimmed(200),
       landmark: optionalTrimmed(200),

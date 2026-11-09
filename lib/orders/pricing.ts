@@ -21,6 +21,8 @@ export interface PricingItem {
 
 /** OrderItem.options snapshot (type — Prisma Json bilan mos bo'lishi uchun interface emas) */
 export type OrderOptionSnapshot = {
+  /** Option id (for "Order again"; missing on older orders — matched by group + name) */
+  id: string;
   group: string;
   name: string;
   price: number;
@@ -65,7 +67,9 @@ export function priceItems(products: PricingProduct[], items: PricingItem[]): Pr
         return { ok: false, error: "invalidOptions" };
       }
       matched += chosen.length;
-      snapshot.push(...chosen.map((o) => ({ group: group.name, name: o.name, price: o.price })));
+      snapshot.push(
+        ...chosen.map((o) => ({ id: o.id, group: group.name, name: o.name, price: o.price })),
+      );
     }
     // Boshqa taomning yoki o'chirilgan variant
     if (matched !== optionIds.size) return { ok: false, error: "invalidOptions" };

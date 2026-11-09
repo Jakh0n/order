@@ -160,7 +160,11 @@ export function MenuBrowser({
         )}
       </div>
 
-      <main className="flex flex-col gap-3 px-3 py-3 sm:px-4">
+      <main
+        id="menu"
+        tabIndex={-1}
+        className="flex scroll-mt-28 flex-col gap-3 px-3 py-3 outline-none sm:px-4"
+      >
         {categories.length === 0 && (
           <p className="text-muted-foreground py-16 text-center">{t("empty")}</p>
         )}

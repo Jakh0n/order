@@ -20,6 +20,8 @@ export interface MenuProduct {
   description: string | null;
   price: number;
   imageUrl: string | null;
+  /** false = "Sold out today": shown greyed out, can't be added */
+  isAvailable: boolean;
   optionGroups: MenuOptionGroup[];
 }
 
@@ -34,6 +36,8 @@ export interface StorefrontStore {
   slug: string;
   name: string;
   logoUrl: string | null;
+  /** Wide header photo (optional) */
+  coverUrl: string | null;
   phone: string | null;
   address: string | null;
   openTime: string | null;
@@ -46,6 +50,9 @@ export interface StorefrontStore {
   currency: string;
   /** IANA time zone for opening hours */
   timeZone: string;
+  deliveryEnabled: boolean;
+  /** Flat delivery fee (minor units) */
+  deliveryFee: number;
 }
 
 export interface StorefrontData {

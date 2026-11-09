@@ -83,6 +83,7 @@ lib/
   orders/insert.ts            insertOrder — narx hisoblash + raqam berish + saqlash (umumiy)
   orders/admin-actions.ts     updateOrderStatus, setOrderPaid, createManualOrder
   orders/status.ts            holat o'tishlari (nextStatus, canTransition)
+  orders/reorder-actions.ts   getReorderLines — "Order again" (/o sahifasi, kirishsiz, rate limit)
   orders/receipt-actions.ts   uploadOrderReceipt — mijoz TRANSFER chekini yuklaydi (kirishsiz, orderId bo'yicha)
   geo/                        lookupAddress (server action) → reverseGeocode (Nominatim; provayderni shu faylda almashtiring)
   menu/admin-data.ts          getAdminMenu, getAdminProduct (keshsiz, nofaollar ham)
@@ -93,7 +94,10 @@ lib/
   seo.ts                      storeJsonLd (schema.org FoodEstablishment + menyu), getSitemapStores, topItemNames
   storefront.ts               getStorefront(slug), getCheckoutSettings(slug) — "use cache" + cacheTag(storeCacheTag(slug))
   menu-types.ts               server → klient menyu tiplari
-  store-hours.ts              isStoreOpenNow / opensAt / startOfDayInZone (do'kon vaqt zonasi)
+  store-hours.ts              isStoreOpenNow / opensAt / startOfDayInZone; timeSlots / isValidSlot
+                              (vaqt tanlash va yopiq paytda oldindan buyurtma — klient va server bitta manba)
+  last-order.ts               mijozning oxirgi buyurtmasi (localStorage) — menyuda "Track" banner
+  phone-prefix.ts             dialPrefix — telefon maydoniga do'kon mamlakat kodi
   cart-store.ts               zustand savat (cartKey bo'yicha, localStorage)
   cart-keys.ts                adminCartKey — admin savati alohida
   supabase/server.ts          service role client (server-only)
@@ -132,7 +136,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Xatolar: `catch` da foydalanuvchiga do'stona xato qaytarsangiz, `reportError(e, "joy")` ni chaqiring
   (`console.error` emas) — aks holda Sentry'ga tushmaydi. Session Replay yoqilmaydi (checkout formasi).
 - Ommaviy (kirishsiz) yoki qimmat Server Action'lar `rateLimit` bilan cheklanadi (`lib/rate-limit.ts` dagi RULES):
-  login, signup, checkSlug, createOrder, rasm yuklash, chek yuklash. Yangi shunday action qo'shsangiz — qoida qo'shing.
+  login, signup, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder. Yangi shunday action qo'shsangiz — qoida qo'shing.
 - Tezlik: bog'langan ma'lumot (include / nested select) o'qilsa — `...JOIN` qo'shing; bir-biriga bog'liq
   bo'lmagan so'rovlarni `Promise.all` bilan parallel qiling. Har bir so'rov bazaga borish = vaqt.
 - Sayt manzilini `NEXT_PUBLIC_APP_URL` dan emas, `getRequestOrigin()` dan oling. U `APP_URL` (asosiy domen,

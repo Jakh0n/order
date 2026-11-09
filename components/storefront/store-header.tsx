@@ -4,13 +4,24 @@ import Image from "next/image";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import type { StorefrontStore } from "@/lib/menu-types";
 
+import { LastOrderBanner } from "./last-order-banner";
 import { ClosedBanner, OpenStatus } from "./open-badge";
 
 /** take.app uslubidagi sarlavha: rangli muqova, ustiga chiqib turgan logo, holat va manzil */
 export function StoreHeader({ store }: { store: StorefrontStore }) {
   return (
     <header className="bg-background">
-      <div className="from-primary/80 via-primary to-primary/70 relative h-28 bg-gradient-to-br sm:h-36">
+      <div className="from-primary/80 via-primary to-primary/70 relative h-28 overflow-hidden bg-gradient-to-br sm:h-44">
+        {store.coverUrl && (
+          <Image
+            src={store.coverUrl}
+            alt=""
+            fill
+            priority
+            sizes="(min-width: 672px) 672px, 100vw"
+            className="object-cover"
+          />
+        )}
         <div className="bg-background/90 absolute top-3 right-3 rounded-lg backdrop-blur">
           <LanguageSwitcher />
         </div>
@@ -59,6 +70,7 @@ export function StoreHeader({ store }: { store: StorefrontStore }) {
         </div>
 
         <ClosedBanner store={store} />
+        <LastOrderBanner slug={store.slug} />
       </div>
     </header>
   );

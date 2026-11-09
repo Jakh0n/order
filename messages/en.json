@@ -2,7 +2,9 @@
   "common": {
     "comingSoon": "Coming soon",
     "language": "Language",
-    "home": "Home"
+    "home": "Home",
+    "copy": "Copy",
+    "copied": "Copied"
   },
   "home": {
     "metaTitle": "Flami — your menu online, orders in WhatsApp and Telegram",
@@ -149,7 +151,11 @@
     "clearSearch": "Clear",
     "opensAt": "Opens at {time}",
     "closedNow": "Closed now",
-    "closedBannerHours": "Closed now — opens at {time}. Feel free to browse the menu."
+    "closedBannerHours": "Closed now — opens at {time}. Feel free to browse the menu.",
+    "closedBannerPreorder": "Closed now — opens at {time}. You can pre-order for later.",
+    "lastOrder": "Your order #{number}",
+    "trackOrder": "Track",
+    "skipToMenu": "Skip to menu"
   },
   "cart": {
     "title": "Your cart",
@@ -163,10 +169,14 @@
     "clear": "Clear",
     "remove": "Remove",
     "closed": "The store is closed right now",
-    "deliveryNote": "Delivery fee is added at checkout",
     "open": "Open cart",
     "view": "View cart",
-    "minProgress": "Minimum order: {amount}"
+    "minProgress": "Minimum order: {amount}",
+    "cleared": "Cart cleared",
+    "undo": "Undo",
+    "preorder": "Closed now — you can pre-order for a time after opening.",
+    "deliveryFee": "Delivery: {amount}",
+    "freeDelivery": "Free delivery"
   },
   "checkout": {
     "title": "Checkout",
@@ -216,23 +226,33 @@
       "server": "Something went wrong. Please try again.",
       "blocked": "This store is temporarily unavailable",
       "tooMany": "Too many orders. Please try again in 10 minutes.",
-      "locationDenied": "Location access is blocked. Allow it in your browser settings or type the address.",
+      "locationDenied": "Location access is blocked. To allow it, tap the lock icon next to the address bar → Location → Allow. Or just type the address.",
       "locationUnavailable": "Couldn't get your location. Please type the address.",
       "locationUnsupported": "Your browser can't share location. Please type the address.",
-      "geocodeFailed": "Your location is attached, but we couldn't find the street name — please type the address."
+      "geocodeFailed": "Your location is attached, but we couldn't find the street name — please type the address.",
+      "timeRequired": "Please choose a time",
+      "timeUnavailable": "This time isn't available anymore. Please choose another one."
     },
     "edit": "Edit",
     "timeAsap": "As soon as possible",
     "timeScheduled": "Schedule",
     "pickupAddress": "Pickup from",
     "itemsCount": "{count, plural, one {# item} other {# items}}",
-    "phoneHint": "The store may call you on this number",
+    "phoneHint": "Include your country code. The store may call you on this number.",
     "useLocation": "Use my current location",
     "locating": "Finding your location…",
     "locationAttached": "Your location is attached to the order",
     "locationFilled": "We filled in your address — please check it and add the apartment number.",
     "removeLocation": "Remove",
-    "viewOnMap": "View on map"
+    "viewOnMap": "View on map",
+    "placed": "Order placed!",
+    "uploadingReceipt": "Uploading your receipt…",
+    "openingOrder": "Opening your order…",
+    "preorderNote": "The store is closed right now. Choose a time after it opens — your order will be ready then.",
+    "chooseTime": "Choose a time",
+    "tomorrowAt": "Tomorrow {time}",
+    "editOrder": "Edit order",
+    "submitPreorder": "Place pre-order"
   },
   "payment": {
     "CASH": "Cash",
@@ -272,7 +292,17 @@
     "sentHint": "Message sent — the store will accept your order soon.",
     "notSent": "Didn't send it? Open the chat again",
     "location": "Location",
-    "openMap": "Open in Maps"
+    "openMap": "Open in Maps",
+    "scheduledFor": "Scheduled for {time}",
+    "statusChanged": "Order #{number}: {status}",
+    "reorder": "Order again",
+    "reorderNone": "None of these items are available right now.",
+    "reorderSkipped": "{count, plural, one {# item isn't} other {# items aren't}} available anymore and {count, plural, one {wasn't} other {weren't}} added.",
+    "reorderErrors": {
+      "notFound": "Order not found",
+      "tooMany": "Too many attempts. Please try again in a few minutes.",
+      "server": "Something went wrong. Please try again."
+    }
   },
   "admin": {
     "title": "Dashboard",
@@ -369,7 +399,8 @@
     "decrease": "Decrease",
     "inCart": "In cart: {count}",
     "close": "Close",
-    "addShort": "Add"
+    "addShort": "Add",
+    "remove": "Remove"
   },
   "adminLogin": {
     "title": "Log in to your dashboard",
@@ -417,7 +448,21 @@
       "server": "Something went wrong",
       "unavailable": "Some items are unavailable",
       "invalidOptions": "Invalid item options"
-    }
+    },
+    "statusChanged": "Order #{number} updated",
+    "undo": "Undo",
+    "messageCustomer": "Message",
+    "messageText": "Hi {name}! About your order #{number} at {store}:",
+    "staleHint": "Not accepted for 5+ minutes. The customer may not have sent the message — call or message them to confirm.",
+    "newOrderToast": "{count, plural, one {New order!} other {# new orders!}}",
+    "soundOn": "Sound on",
+    "soundOff": "Sound off",
+    "search": "Search orders",
+    "searchPlaceholder": "Order #, name or phone",
+    "date": "Date",
+    "searchButton": "Search",
+    "clearFilters": "Clear",
+    "noMatches": "No orders match your search"
   },
   "adminMenu": {
     "addCategory": "Add category",
@@ -560,7 +605,9 @@
       "timeZoneInvalid": "Invalid time zone"
     },
     "deliveryFee": "Delivery fee ({currency})",
-    "deliveryFeeHint": "Added to every delivery order. 0 — free delivery."
+    "deliveryFeeHint": "Added to every delivery order. 0 — free delivery.",
+    "cover": "Cover photo",
+    "coverHint": "Shown at the top of your store page. A wide photo works best (e.g. 1200×400)."
   },
   "signup": {
     "title": "Open your store",
@@ -645,5 +692,15 @@
       "upload": "Upload failed. Please try again.",
       "server": "Something went wrong. Please try again."
     }
+  },
+  "setup": {
+    "title": "Set up your store",
+    "progress": "{done} of {total}",
+    "done": "done",
+    "category": "Add a menu category",
+    "products": "Add at least 3 dishes",
+    "hours": "Set your opening hours",
+    "channel": "Connect Telegram or WhatsApp for orders",
+    "testOrder": "Open your store and place a test order"
   }
 }

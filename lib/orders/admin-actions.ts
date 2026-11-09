@@ -6,7 +6,7 @@ import { z } from "zod";
 import { requireOwner } from "@/lib/auth/owner";
 import { prisma } from "@/lib/db";
 import { insertOrder } from "@/lib/orders/insert";
-import { canTransition } from "@/lib/orders/status";
+import { canRevert, canTransition } from "@/lib/orders/status";
 import { type ManualOrderInput, manualOrderSchema } from "@/lib/validators";
 import { reportError } from "@/lib/report-error";
 
@@ -39,6 +39,37 @@ export async function updateOrderStatus(
   // Parallel o'zgarishdan himoya: holat o'qilgandan beri o'zgarmagan bo'lsa
   const { count } = await prisma.order.updateMany({
     where: { id: id.data, storeId: store.id, status: order.status },
+    data: { status: next.data },
+  });
+  if (count === 0) return { ok: false, error: "invalidTransition" };
+
+  refresh();
+  return { ok: true };
+}
+
+/** Undo a status change: only if the order is still in `from` and `to` is an earlier step */
+export async function revertOrderStatus(
+  orderId: string,
+  from: string,
+  to: string,
+): Promise<AdminActionResult> {
+  const { store } = await requireOwner();
+  const id = idSchema.safeParse(orderId);
+  const prev = statusSchema.safeParse(from);
+  const next = statusSchema.safeParse(to);
+  if (!id.success || !prev.success || !next.success) return { ok: false, error: "invalid" };
+
+  const order = await prisma.order.findFirst({
+    where: { id: id.data, storeId: store.id },
+    select: { status: true, type: true },
+  });
+  if (!order) return { ok: false, error: "notFound" };
+  if (order.status !== prev.data || !canRevert(prev.data, next.data, order.type)) {
+    return { ok: false, error: "invalidTransition" };
+  }
+
+  const { count } = await prisma.order.updateMany({
+    where: { id: id.data, storeId: store.id, status: prev.data },
     data: { status: next.data },
   });
   if (count === 0) return { ok: false, error: "invalidTransition" };

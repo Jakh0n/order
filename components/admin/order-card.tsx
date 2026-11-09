@@ -1,20 +1,31 @@
 import type { Order, OrderItem } from "@prisma/client";
-import { Clock, MapPin, Navigation, Phone, Receipt } from "lucide-react";
+import {
+  AlertTriangle,
+  Clock,
+  MapPin,
+  MessageCircle,
+  MessageSquare,
+  Navigation,
+  Phone,
+  Receipt,
+} from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/money";
 import { mapsLink } from "@/lib/order-message";
+import { isNextDaySlot } from "@/lib/store-hours";
 import { cn } from "@/lib/utils";
 
 import { OrderActions } from "./order-actions";
 
+// Text contrast ≥ 4.5:1 for every badge (white on amber/sky/emerald-600 is too light)
 const STATUS_STYLE: Record<Order["status"], string> = {
   NEW: "bg-blue-600 text-white",
-  ACCEPTED: "bg-amber-500 text-white",
+  ACCEPTED: "bg-amber-400 text-amber-950",
   READY: "bg-violet-600 text-white",
-  ON_THE_WAY: "bg-sky-600 text-white",
-  COMPLETED: "bg-emerald-600 text-white",
+  ON_THE_WAY: "bg-sky-700 text-white",
+  COMPLETED: "bg-emerald-700 text-white",
   CANCELLED: "bg-muted text-muted-foreground",
 };
 
@@ -26,20 +37,49 @@ function optionNames(options: unknown): string | null {
   return names.length ? names.join(", ") : null;
 }
 
+/** Write to the customer in the store's channel, with a greeting ready */
+function customerChatLink(channel: "TELEGRAM" | "WHATSAPP", phone: string, text: string) {
+  const digits = phone.replace(/\D/g, "");
+  return channel === "TELEGRAM"
+    ? `https://t.me/+${digits}`
+    : `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+}
+
 export async function OrderCard({
   order,
   timeZone,
+  storeName,
+  channel,
+  stale,
   receiptUrl,
 }: {
   order: Order & { items: OrderItem[] };
   /** Store time zone for the order time */
   timeZone: string;
+  storeName: string;
+  channel: "TELEGRAM" | "WHATSAPP";
+  /** Still NEW after 5+ minutes — the customer may not have sent the message */
+  stale: boolean;
   /** Signed link to the customer's bank transfer receipt */
   receiptUrl?: string;
 }) {
   const t = await getTranslations();
   const format = await getFormatter();
   const paid = order.paymentStatus === "PAID";
+  const chatHref = customerChatLink(
+    channel,
+    order.customerPhone,
+    t("adminOrders.messageText", {
+      name: order.customerName,
+      number: order.number,
+      store: storeName,
+    }),
+  );
+  const scheduled = order.scheduledFor
+    ? isNextDaySlot(order.createdAt, order.scheduledFor, timeZone)
+      ? t("checkout.tomorrowAt", { time: order.scheduledFor })
+      : order.scheduledFor
+    : null;
 
   return (
     <article
@@ -64,12 +104,30 @@ export async function OrderCard({
         </div>
       </header>
 
+      {stale && (
+        <p className="flex items-start gap-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+          <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
+          {t("adminOrders.staleHint")}
+        </p>
+      )}
+
       <div className="flex flex-col gap-1 text-sm">
         <p className="font-medium">{order.customerName}</p>
-        <a href={`tel:${order.customerPhone}`} className="text-primary flex items-center gap-1.5">
-          <Phone className="size-3.5" />
-          {order.customerPhone}
-        </a>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <a href={`tel:${order.customerPhone}`} className="text-primary flex items-center gap-1.5">
+            <Phone className="size-3.5" aria-hidden />
+            {order.customerPhone}
+          </a>
+          <a
+            href={chatHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary flex items-center gap-1.5 font-medium"
+          >
+            <MessageCircle className="size-3.5" aria-hidden />
+            {t("adminOrders.messageCustomer")}
+          </a>
+        </div>
         <p className="text-muted-foreground flex items-start gap-1.5">
           <MapPin className="mt-0.5 size-3.5 shrink-0" />
           <span>
@@ -91,10 +149,13 @@ export async function OrderCard({
         )}
         <p className="text-muted-foreground flex items-center gap-1.5">
           <Clock className="size-3.5 shrink-0" />
-          {order.scheduledFor ?? t("checkout.asap")}
+          {scheduled ?? t("checkout.asap")}
         </p>
         {order.comment && (
-          <p className="bg-muted rounded-md px-2 py-1 text-sm">💬 {order.comment}</p>
+          <p className="bg-muted flex items-start gap-1.5 rounded-md px-2 py-1 text-sm">
+            <MessageSquare className="text-muted-foreground mt-0.5 size-3.5 shrink-0" aria-hidden />
+            {order.comment}
+          </p>
         )}
       </div>
 

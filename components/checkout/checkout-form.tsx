@@ -1,7 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Bike, ChevronRight, LocateFixed, Loader2, MapPin, Store, X } from "lucide-react";
+import {
+  AlertCircle,
+  Bike,
+  CheckCircle2,
+  ChevronRight,
+  LocateFixed,
+  Loader2,
+  MapPin,
+  Store,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -9,9 +19,10 @@ import { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
+import { CopyButton } from "@/components/copy-button";
 import { useFormatMoney } from "@/components/currency-provider";
 import { ReceiptPicker, sendReceipt } from "@/components/order/receipt-upload";
-import { useStoreOpen } from "@/components/storefront/use-store-open";
+import { useStoreOpen, useTimeSlots } from "@/components/storefront/use-store-open";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +35,8 @@ import { adminCartKey } from "@/lib/cart-keys";
 import { cartSubtotal, unitPrice, useCart, useCartHydrated, useCartLines } from "@/lib/cart-store";
 import type { CheckoutSettings, StorefrontStore } from "@/lib/menu-types";
 import { lookupAddress } from "@/lib/geo/actions";
+import { saveLastOrder } from "@/lib/last-order";
+import { dialPrefix } from "@/lib/phone-prefix";
 import { mapsLink } from "@/lib/order-message";
 import { createOrder } from "@/lib/orders/actions";
 import { createManualOrder } from "@/lib/orders/admin-actions";
@@ -85,9 +98,15 @@ export function CheckoutForm({
   const lines = useCartLines(cartKey);
   const clearCart = useCart((s) => s.clear);
   const isOpenNow = useStoreOpen(store) ?? store.isOpen;
+  const slots = useTimeSlots(store);
+  // Closed now, but the customer can pick a time after opening
+  const preorder = !isAdmin && !isOpenNow && slots.length > 0;
   const [submitted, setSubmitted] = useState(false);
+  const [uploadingReceipt, setUploadingReceipt] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [markPaid, setMarkPaid] = useState(false);
-  const [timeMode, setTimeMode] = useState<"asap" | "scheduled">("asap");
+  const [chosenTimeMode, setTimeMode] = useState<"asap" | "scheduled">("asap");
+  const timeMode = preorder ? "scheduled" : chosenTimeMode;
   // Bank transfer receipt photo — uploaded right after the order is saved
   const [receipt, setReceipt] = useState<File | null>(null);
 
@@ -104,7 +123,8 @@ export function CheckoutForm({
     resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
       customerName: "",
-      phone: "",
+      // Pre-filled with the store's country code — the most common mistake is a local number
+      phone: dialPrefix(store.phone),
       type: settings.deliveryEnabled ? "DELIVERY" : "PICKUP",
       latitude: undefined,
       longitude: undefined,
@@ -124,7 +144,7 @@ export function CheckoutForm({
       reset({
         ...getValues(),
         customerName: saved.name ?? "",
-        phone: saved.phone ?? "",
+        phone: saved.phone || getValues("phone"),
       });
     }
   }, [reset, getValues, isAdmin]);
@@ -195,7 +215,7 @@ export function CheckoutForm({
   const missing = Math.max(0, store.minOrder - subtotal);
   const canOrder = isAdmin
     ? lines.length > 0
-    : isOpenNow &&
+    : (isOpenNow || preorder) &&
       missing === 0 &&
       settings.paymentMethods.length > 0 &&
       (settings.pickupEnabled || settings.deliveryEnabled);
@@ -203,6 +223,11 @@ export function CheckoutForm({
   const errorText = (key?: string) => (key ? t(`errors.${key}`) : null);
 
   async function onSubmit(values: CheckoutFormData) {
+    setServerError(null);
+    if (!isAdmin && timeMode === "scheduled" && !values.scheduledFor) {
+      setError("scheduledFor", { message: "timeRequired" }, { shouldFocus: true });
+      return;
+    }
     const order = {
       lang: "en" as const,
       customerName: values.customerName,
@@ -232,7 +257,10 @@ export function CheckoutForm({
         if (name in values) setError(name as keyof CheckoutFormInput, { message });
       }
       const minOrder = "minOrder" in result ? result.minOrder : undefined;
-      toast.error(t(`errors.${result.error}`, { amount: formatMoney(minOrder ?? store.minOrder) }));
+      // Inline, next to the button (a toast disappears before it can be acted on)
+      setServerError(
+        t(`errors.${result.error}`, { amount: formatMoney(minOrder ?? store.minOrder) }),
+      );
       return;
     }
 
@@ -244,7 +272,11 @@ export function CheckoutForm({
       router.push("/admin/orders");
     } else {
       saveCustomer(values.customerName, values.phone);
+      if ("number" in result) {
+        saveLastOrder(store.slug, { id: result.orderId, number: result.number });
+      }
       if (receipt && values.paymentMethod === "TRANSFER") {
+        setUploadingReceipt(true);
         const uploaded = await sendReceipt(result.orderId, receipt);
         // The order is already saved — the receipt can be attached again on the order page
         if (!uploaded.ok) toast.error(tReceipt("uploadFailed"));
@@ -253,7 +285,27 @@ export function CheckoutForm({
     }
   }
 
-  if (!hydrated || submitted) {
+  if (submitted) {
+    // Clear "it worked" state while we upload the receipt / open the order page
+    return (
+      <div
+        className="flex flex-col items-center gap-3 px-4 py-20 text-center"
+        role="status"
+        aria-live="polite"
+      >
+        <span className="bg-primary/10 text-primary flex size-14 items-center justify-center rounded-full">
+          <CheckCircle2 className="size-8" />
+        </span>
+        <p className="text-lg font-bold">{t("placed")}</p>
+        <p className="text-muted-foreground flex items-center gap-2 text-sm">
+          <Loader2 className="size-4 animate-spin" />
+          {uploadingReceipt ? t("uploadingReceipt") : t("openingOrder")}
+        </p>
+      </div>
+    );
+  }
+
+  if (!hydrated) {
     return (
       <div className="flex flex-col gap-3 px-4 py-6">
         <Skeleton className="h-10 w-full" />
@@ -319,6 +371,42 @@ export function CheckoutForm({
             </li>
           ))}
         </ul>
+      </Card>
+
+      {/* Aloqa */}
+      <Card title={t("contact")}>
+        <Field
+          label={t("name")}
+          htmlFor="customerName"
+          error={errorText(errors.customerName?.message)}
+        >
+          <Input
+            id="customerName"
+            autoComplete="name"
+            placeholder={t("namePlaceholder")}
+            aria-invalid={!!errors.customerName}
+            className="h-11"
+            {...register("customerName")}
+          />
+        </Field>
+        <Field
+          label={t("phone")}
+          htmlFor="phone"
+          hint={t("phoneHint")}
+          error={errorText(errors.phone?.message)}
+        >
+          <Input
+            id="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder={t("phonePlaceholder")}
+            maxLength={24}
+            aria-invalid={!!errors.phone}
+            className="h-11"
+            {...register("phone")}
+          />
+        </Field>
       </Card>
 
       {/* Qabul qilish usuli — segment tugmalar */}
@@ -441,56 +529,26 @@ export function CheckoutForm({
         </Card>
       )}
 
-      {/* Aloqa */}
-      <Card title={t("contact")}>
-        <Field
-          label={t("name")}
-          htmlFor="customerName"
-          error={errorText(errors.customerName?.message)}
-        >
-          <Input
-            id="customerName"
-            autoComplete="name"
-            placeholder={t("namePlaceholder")}
-            aria-invalid={!!errors.customerName}
-            className="h-11"
-            {...register("customerName")}
-          />
-        </Field>
-        <Field
-          label={t("phone")}
-          htmlFor="phone"
-          hint={isAdmin ? undefined : t("phoneHint")}
-          error={errorText(errors.phone?.message)}
-        >
-          <Input
-            id="phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            placeholder={t("phonePlaceholder")}
-            maxLength={24}
-            aria-invalid={!!errors.phone}
-            className="h-11"
-            {...register("phone")}
-          />
-        </Field>
-      </Card>
-
       {/* Vaqt va izoh */}
       <Card title={t("time")}>
+        {preorder && (
+          <p className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+            {t("preorderNote")}
+          </p>
+        )}
         <div className="grid grid-cols-2 gap-2">
           {(["asap", "scheduled"] as const).map((mode) => (
             <button
               key={mode}
               type="button"
               aria-pressed={timeMode === mode}
+              disabled={mode === "asap" && preorder}
               onClick={() => {
                 setTimeMode(mode);
                 if (mode === "asap") setValue("scheduledFor", "", { shouldValidate: true });
               }}
               className={cn(
-                "h-11 rounded-xl border text-sm font-medium transition-colors",
+                "h-11 rounded-xl border text-sm font-medium transition-colors disabled:opacity-40",
                 timeMode === mode ? "border-primary bg-primary/5 text-primary" : "hover:bg-muted",
               )}
             >
@@ -504,12 +562,29 @@ export function CheckoutForm({
             htmlFor="scheduledFor"
             error={errorText(errors.scheduledFor?.message)}
           >
-            <Input
-              id="scheduledFor"
-              type="time"
-              className="h-11 w-40"
-              {...register("scheduledFor")}
-            />
+            {isAdmin ? (
+              <Input
+                id="scheduledFor"
+                type="time"
+                className="h-11 w-40"
+                {...register("scheduledFor")}
+              />
+            ) : (
+              // Only real slots: inside opening hours, not in the past, with preparation time
+              <select
+                id="scheduledFor"
+                aria-invalid={!!errors.scheduledFor}
+                className="border-input bg-background focus-visible:ring-ring/50 h-11 w-full rounded-md border px-3 text-base outline-none focus-visible:ring-3 sm:w-56"
+                {...register("scheduledFor")}
+              >
+                <option value="">{t("chooseTime")}</option>
+                {slots.map((slot) => (
+                  <option key={`${slot.tomorrow}-${slot.value}`} value={slot.value}>
+                    {slot.tomorrow ? t("tomorrowAt", { time: slot.value }) : slot.value}
+                  </option>
+                ))}
+              </select>
+            )}
           </Field>
         </div>
         <Field label={t("comment")} htmlFor="comment" optional={t("optional")}>
@@ -544,8 +619,11 @@ export function CheckoutForm({
         />
         {paymentMethod === "TRANSFER" && settings.transferDetails && (
           <div className="bg-muted rounded-xl p-3 text-sm">
-            <p className="font-medium">{t("transferDetails")}</p>
-            <p className="mt-1 whitespace-pre-line">{settings.transferDetails}</p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-medium">{t("transferDetails")}</p>
+              <CopyButton text={settings.transferDetails} />
+            </div>
+            <p className="mt-1 whitespace-pre-line select-all">{settings.transferDetails}</p>
             <p className="text-muted-foreground mt-2 text-xs">{t("transferNote")}</p>
           </div>
         )}
@@ -578,8 +656,22 @@ export function CheckoutForm({
               <Row label={t("deliveryFee")} value={formatMoney(settings.deliveryFee)} />
             )}
           </dl>
-          {!isAdmin && !isOpenNow && (
+          {!isAdmin && !isOpenNow && !preorder && (
             <p className="text-destructive text-center text-sm">{tCart("closed")}</p>
+          )}
+          {serverError && (
+            <div
+              role="alert"
+              className="border-destructive/30 bg-destructive/5 text-destructive flex items-start gap-2 rounded-xl border px-3 py-2 text-sm"
+            >
+              <AlertCircle className="mt-0.5 size-4 shrink-0" />
+              <span className="flex-1">{serverError}</span>
+              {!isAdmin && (
+                <Link href={`/${store.slug}`} className="shrink-0 font-medium underline">
+                  {t("editOrder")}
+                </Link>
+              )}
+            </div>
           )}
           {!isAdmin && isOpenNow && missing > 0 && (
             <p className="text-center text-sm text-amber-600">
@@ -594,7 +686,7 @@ export function CheckoutForm({
           >
             <span className="flex items-center gap-2">
               {isSubmitting ? <Loader2 className="animate-spin" /> : null}
-              {isSubmitting ? t("submitting") : t("submit")}
+              {isSubmitting ? t("submitting") : preorder ? t("submitPreorder") : t("submit")}
             </span>
             <span className="flex items-center gap-1 font-bold tabular-nums">
               {formatMoney(total)}

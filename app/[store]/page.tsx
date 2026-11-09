@@ -61,8 +61,16 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
   const { store, categories } = data;
   const products = categories.flatMap((c) => c.products);
 
+  const t = await getTranslations("menu");
+
   return (
     <CurrencyProvider currency={store.currency}>
+      <a
+        href="#menu"
+        className="bg-background focus:ring-ring sr-only z-50 rounded-lg px-3 py-2 font-medium focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:ring-2"
+      >
+        {t("skipToMenu")}
+      </a>
       <JsonLd data={storeJsonLd(data, siteOrigin())} />
       {/* Gray background + white cards — sections stand apart clearly */}
       <div className="bg-muted flex-1">
@@ -71,7 +79,7 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
           <MenuBrowser cartKey={store.slug} categories={categories} />
         </div>
         <CartSync cartKey={store.slug} products={products} />
-        <CartBar store={store} />
+        <CartBar store={store} products={products} />
       </div>
     </CurrencyProvider>
   );

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   type AdminActionResult,
+  revertOrderStatus,
   setOrderPaid,
   updateOrderStatus,
 } from "@/lib/orders/admin-actions";
@@ -48,14 +49,21 @@ export function OrderActions({
 }) {
   const t = useTranslations("adminOrders");
   const [pending, startTransition] = useTransition();
+  // Which button is busy — the spinner shows on that one, all are disabled
+  const [busy, setBusy] = useState<"next" | "paid" | "cancel" | null>(null);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const next = nextStatus(status, type);
 
-  function run(action: () => Promise<AdminActionResult>, onDone?: () => void) {
+  function run(
+    which: "next" | "paid" | "cancel",
+    action: () => Promise<AdminActionResult>,
+    onDone?: () => void,
+  ) {
+    setBusy(which);
     startTransition(async () => {
       const result = await action();
+      setBusy(null);
       if (result.ok) {
-        toast.success(t("saved"));
         onDone?.();
       } else {
         toast.error(t(`errors.${result.error}`));
@@ -63,15 +71,30 @@ export function OrderActions({
     });
   }
 
+  function advance(to: OrderStatusValue) {
+    run(
+      "next",
+      () => updateOrderStatus(orderId, to),
+      () =>
+        // A mistaken tap is easy to make in a busy kitchen — offer a way back
+        toast.success(t("statusChanged", { number }), {
+          duration: 6000,
+          action: {
+            label: t("undo"),
+            onClick: async () => {
+              const result = await revertOrderStatus(orderId, to, status);
+              if (!result.ok) toast.error(t(`errors.${result.error}`));
+            },
+          },
+        }),
+    );
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       {next && (
-        <Button
-          size="sm"
-          disabled={pending}
-          onClick={() => run(() => updateOrderStatus(orderId, next))}
-        >
-          {pending && <Loader2 className="animate-spin" />}
+        <Button size="sm" disabled={pending} onClick={() => advance(next)}>
+          {busy === "next" && <Loader2 className="animate-spin" />}
           {t(NEXT_LABEL[next] ?? "complete")}
         </Button>
       )}
@@ -80,8 +103,15 @@ export function OrderActions({
         size="sm"
         variant={paid ? "secondary" : "outline"}
         disabled={pending}
-        onClick={() => run(() => setOrderPaid(orderId, !paid))}
+        onClick={() =>
+          run(
+            "paid",
+            () => setOrderPaid(orderId, !paid),
+            () => toast.success(t("saved")),
+          )
+        }
       >
+        {busy === "paid" && <Loader2 className="animate-spin" />}
         {paid ? t("markUnpaid") : t("markPaid")}
       </Button>
 
@@ -107,12 +137,16 @@ export function OrderActions({
                   disabled={pending}
                   onClick={() =>
                     run(
+                      "cancel",
                       () => updateOrderStatus(orderId, "CANCELLED"),
-                      () => setConfirmCancel(false),
+                      () => {
+                        setConfirmCancel(false);
+                        toast.success(t("saved"));
+                      },
                     )
                   }
                 >
-                  {pending && <Loader2 className="animate-spin" />}
+                  {busy === "cancel" && <Loader2 className="animate-spin" />}
                   {t("cancel")}
                 </Button>
               </DialogFooter>

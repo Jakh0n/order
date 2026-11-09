@@ -11,7 +11,7 @@ export function storeCacheTag(slug: string) {
 }
 
 /**
- * Mijoz sahifasi uchun do'kon va menyu. Faqat faol kategoriyalar va mavjud taomlar.
+ * Mijoz sahifasi uchun do'kon va menyu. Faqat faol kategoriyalar; tugagan taomlar isAvailable=false bilan.
  * Topilmasa null (notFound() ni chaqiruvchi qiladi).
  */
 export async function getStorefront(slug: string): Promise<StorefrontData | null> {
@@ -28,6 +28,7 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
         slug: true,
         name: true,
         logoUrl: true,
+        coverUrl: true,
         phone: true,
         address: true,
         openTime: true,
@@ -37,6 +38,8 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
         currency: true,
         timeZone: true,
         isBlocked: true,
+        deliveryEnabled: true,
+        deliveryFee: true,
       },
     }),
     prisma.category.findMany({
@@ -46,7 +49,8 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
     }),
     prisma.product.findMany({
       ...JOIN,
-      where: { store: { slug }, isAvailable: true, category: { isActive: true } },
+      // Sold-out items are shown greyed out ("Sold out today"), not hidden
+      where: { store: { slug }, category: { isActive: true } },
       orderBy: [{ sort: "asc" }, { name: "asc" }],
       select: {
         id: true,
@@ -55,6 +59,7 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
         description: true,
         price: true,
         imageUrl: true,
+        isAvailable: true,
         optionGroups: {
           orderBy: { sort: "asc" },
           select: {
@@ -80,12 +85,15 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
         ...c,
         products: products
           .filter((p) => p.categoryId === c.id)
+          // Sold out at the end of the category (stable sort keeps the menu order)
+          .sort((a, b) => Number(b.isAvailable) - Number(a.isAvailable))
           .map((p) => ({
             id: p.id,
             name: p.name,
             description: p.description,
             price: p.price,
             imageUrl: p.imageUrl,
+            isAvailable: p.isAvailable,
             // Variantsiz guruhlar mijozga ko'rsatilmaydi
             optionGroups: p.optionGroups.filter((g) => g.options.length > 0),
           })),

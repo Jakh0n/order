@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/db";
 import { insertOrder } from "@/lib/orders/insert";
 import { clientIp, rateLimitAll, RULES } from "@/lib/rate-limit";
-import { isStoreOpenNow } from "@/lib/store-hours";
+import { isStoreOpenNow, isValidSlot } from "@/lib/store-hours";
 import { checkoutSchema, type CheckoutInput } from "@/lib/validators";
 import { reportError } from "@/lib/report-error";
 
@@ -18,10 +18,11 @@ export type CreateOrderError =
   | "invalidOptions"
   | "minOrder"
   | "tooMany"
+  | "timeUnavailable"
   | "server";
 
 export type CreateOrderResult =
-  | { ok: true; orderId: string }
+  | { ok: true; orderId: string; number: number }
   | {
       ok: false;
       error: CreateOrderError;
@@ -50,7 +51,19 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
     if (!allowed) return { ok: false, error: "tooMany" };
     if (!store) return { ok: false, error: "storeNotFound" };
     if (store.isBlocked) return { ok: false, error: "blocked" };
-    if (!isStoreOpenNow(store)) return { ok: false, error: "closed" };
+    // Closed now → only a pre-order for a time inside the next opening session
+    const now = new Date();
+    if (!isStoreOpenNow(store, now)) {
+      if (!store.isOpen) return { ok: false, error: "closed" };
+      if (!data.scheduledFor) return { ok: false, error: "closed" };
+    }
+    if (data.scheduledFor && !isValidSlot(store, data.scheduledFor, now)) {
+      return {
+        ok: false,
+        error: "timeUnavailable",
+        fieldErrors: { scheduledFor: "timeUnavailable" },
+      };
+    }
 
     if (data.type === "PICKUP" && !store.pickupEnabled) {
       return { ok: false, error: "typeUnavailable" };
@@ -74,7 +87,7 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
       minOrder: store.minOrder,
     });
     if (!result.ok) return { ok: false, error: result.error, minOrder: store.minOrder };
-    return { ok: true, orderId: result.orderId };
+    return { ok: true, orderId: result.orderId, number: result.number };
   } catch (e) {
     reportError(e, "createOrder", { store: data.storeSlug });
     return { ok: false, error: "server" };

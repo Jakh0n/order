@@ -64,6 +64,7 @@ function ProductForm({
 }) {
   const formatMoney = useFormatMoney();
   const t = useTranslations("product");
+  const tMenu = useTranslations("menu");
   const add = useCart((s) => s.add);
   const [selected, setSelected] = useState<Record<string, string[]>>({});
   const [quantity, setQuantity] = useState(1);
@@ -97,10 +98,12 @@ function ProductForm({
   function handleAdd() {
     if (missingRequired.length > 0) {
       setAttempted(true);
-      // Birinchi tanlanmagan majburiy guruhga olib boramiz
-      document
-        .getElementById(`group-${missingRequired[0].id}`)
-        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      // Birinchi tanlanmagan majburiy guruhga olib boramiz va fokusni birinchi variantga qo'yamiz
+      const group = document.getElementById(`group-${missingRequired[0].id}`);
+      group?.scrollIntoView({ behavior: "smooth", block: "center" });
+      group
+        ?.querySelector<HTMLButtonElement>("button:not(:disabled)")
+        ?.focus({ preventScroll: true });
       return;
     }
     add(
@@ -238,17 +241,30 @@ function ProductForm({
       })}
 
       <div className="bg-popover sticky bottom-0 flex items-center gap-3 border-t p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-        <QuantityStepper value={quantity} onChange={setQuantity} min={1} className="rounded-full" />
-        <Button
-          className={cn(
-            "h-11 flex-1 justify-between rounded-full px-5 text-base",
-            missingRequired.length > 0 && "opacity-60",
-          )}
-          onClick={handleAdd}
-        >
-          <span>{t("addShort")}</span>
-          <span className="font-semibold tabular-nums">{formatMoney(unit * quantity)}</span>
-        </Button>
+        {!product.isAvailable ? (
+          <Button className="h-11 flex-1 rounded-full text-base" disabled>
+            {tMenu("unavailable")}
+          </Button>
+        ) : (
+          <>
+            <QuantityStepper
+              value={quantity}
+              onChange={setQuantity}
+              min={1}
+              className="rounded-full"
+            />
+            <Button
+              className={cn(
+                "h-11 flex-1 justify-between rounded-full px-5 text-base",
+                missingRequired.length > 0 && "opacity-60",
+              )}
+              onClick={handleAdd}
+            >
+              <span>{t("addShort")}</span>
+              <span className="font-semibold tabular-nums">{formatMoney(unit * quantity)}</span>
+            </Button>
+          </>
+        )}
       </div>
     </>
   );

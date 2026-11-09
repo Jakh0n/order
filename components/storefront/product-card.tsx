@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -26,6 +26,7 @@ export function ProductCard({ cartKey, product }: { cartKey: string; product: Me
     .reduce((sum, l) => sum + l.quantity, 0);
   const simpleKey = lineKey(product.id, []);
   const showStepper = !hasOptions && inCart > 0;
+  const soldOut = !product.isAvailable;
 
   function quickAdd() {
     if (hasOptions) {
@@ -48,15 +49,29 @@ export function ProductCard({ cartKey, product }: { cartKey: string; product: Me
         type="button"
         onClick={() => setOpen(true)}
         className="absolute inset-0 z-0 rounded-lg"
-        aria-label={product.name}
+        aria-label={soldOut ? `${product.name} — ${t("menu.unavailable")}` : product.name}
       />
 
-      <div className="pointer-events-none relative flex min-w-0 flex-1 flex-col gap-1">
+      <div
+        className={cn(
+          "pointer-events-none relative flex min-w-0 flex-1 flex-col gap-1",
+          soldOut && "opacity-60",
+        )}
+      >
         <h3 className="leading-snug font-semibold">{product.name}</h3>
         {product.description && (
           <p className="text-muted-foreground line-clamp-2 text-sm">{product.description}</p>
         )}
-        <p className="mt-auto pt-1 font-semibold">{formatMoney(product.price)}</p>
+        <p className="mt-auto flex flex-wrap items-center gap-x-2 pt-1 font-semibold">
+          <span className={cn(soldOut && "text-muted-foreground line-through")}>
+            {formatMoney(product.price)}
+          </span>
+          {soldOut && (
+            <span className="text-muted-foreground text-xs font-medium">
+              {t("menu.unavailable")}
+            </span>
+          )}
+        </p>
       </div>
 
       <div className="relative shrink-0">
@@ -64,7 +79,10 @@ export function ProductCard({ cartKey, product }: { cartKey: string; product: Me
           src={product.imageUrl}
           alt=""
           sizes="104px"
-          className="pointer-events-none size-26 rounded-xl"
+          className={cn(
+            "pointer-events-none size-26 rounded-xl",
+            soldOut && "opacity-50 grayscale",
+          )}
         />
 
         {hasOptions && inCart > 0 && (
@@ -76,15 +94,15 @@ export function ProductCard({ cartKey, product }: { cartKey: string; product: Me
           </span>
         )}
 
-        {/* Rasm ustidagi "+" yoki −/+ (take.app kabi) */}
-        <div className="absolute -right-1 -bottom-2 z-10">
+        {/* Rasm ustidagi "+" yoki −/+ (take.app kabi). Tugagan taomda tugma yo'q */}
+        <div className={cn("absolute -right-1 -bottom-2 z-10", soldOut && "hidden")}>
           {showStepper ? (
             <div className="bg-background ring-border flex items-center rounded-full shadow-md ring-1">
               <StepButton
-                label={t("product.decrease")}
+                label={inCart === 1 ? t("cart.remove") : t("product.decrease")}
                 onClick={() => setQuantity(cartKey, simpleKey, inCart - 1)}
               >
-                <Minus className="size-4" />
+                {inCart === 1 ? <Trash2 className="size-4" /> : <Minus className="size-4" />}
               </StepButton>
               <span className="min-w-5 text-center text-sm font-semibold tabular-nums">
                 {inCart}
