@@ -8,30 +8,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { uploadProductImage } from "@/lib/menu/admin-actions";
-
-const MAX_SIDE = 1200;
-const QUALITY = 0.82;
-
-/** Brauzerda kichraytirish (telefondagi 5-10 MB rasm → ~150-300 KB WebP). Bo'lmasa — asl fayl. */
-async function shrink(file: File): Promise<File> {
-  try {
-    const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.round(bitmap.width * scale);
-    canvas.height = Math.round(bitmap.height * scale);
-    canvas.getContext("2d")?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-    bitmap.close();
-
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, "image/webp", QUALITY),
-    );
-    if (!blob || blob.type !== "image/webp" || blob.size >= file.size) return file;
-    return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".webp", { type: "image/webp" });
-  } catch {
-    return file; // masalan, brauzer HEIC ni o'qiy olmasa
-  }
-}
+import { shrinkImage } from "@/lib/shrink-image";
 
 export function ImageUpload({
   value,
@@ -48,7 +25,7 @@ export function ImageUpload({
     if (!file) return;
     startTransition(async () => {
       const formData = new FormData();
-      formData.set("file", await shrink(file));
+      formData.set("file", await shrinkImage(file));
       const result = await uploadProductImage(formData);
       if (result.ok) onChange(result.url);
       else toast.error(t(`errors.${result.error}`));

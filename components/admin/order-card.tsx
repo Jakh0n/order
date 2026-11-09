@@ -1,5 +1,5 @@
 import type { Order, OrderItem } from "@prisma/client";
-import { Clock, MapPin, Navigation, Phone } from "lucide-react";
+import { Clock, MapPin, Navigation, Phone, Receipt } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { Badge } from "@/components/ui/badge";
@@ -29,10 +29,13 @@ function optionNames(options: unknown): string | null {
 export async function OrderCard({
   order,
   timeZone,
+  receiptUrl,
 }: {
   order: Order & { items: OrderItem[] };
   /** Store time zone for the order time */
   timeZone: string;
+  /** Signed link to the customer's bank transfer receipt */
+  receiptUrl?: string;
 }) {
   const t = await getTranslations();
   const format = await getFormatter();
@@ -120,6 +123,48 @@ export async function OrderCard({
           <span className="tabular-nums">{formatMoney(order.total, order.currency)}</span>
         </li>
       </ul>
+
+      {order.paymentMethod === "TRANSFER" && (receiptUrl || !paid) && (
+        <div
+          className={cn(
+            "flex items-center gap-3 rounded-lg border p-2 text-sm",
+            receiptUrl &&
+              !paid &&
+              "border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950",
+          )}
+        >
+          {receiptUrl ? (
+            <>
+              <a href={receiptUrl} target="_blank" rel="noopener noreferrer" className="shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element -- signed, short-lived URL */}
+                <img
+                  src={receiptUrl}
+                  alt={t("receipt.adminView")}
+                  className="size-14 rounded-md border object-cover"
+                />
+              </a>
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <a
+                  href={receiptUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary font-medium"
+                >
+                  {t("receipt.adminView")}
+                </a>
+                {!paid && (
+                  <p className="text-muted-foreground text-xs">{t("receipt.adminCheck")}</p>
+                )}
+              </div>
+            </>
+          ) : (
+            <p className="text-muted-foreground flex items-center gap-1.5">
+              <Receipt className="size-3.5 shrink-0" />
+              {t("receipt.adminNone")}
+            </p>
+          )}
+        </div>
+      )}
 
       <OrderActions
         orderId={order.id}

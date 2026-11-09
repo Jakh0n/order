@@ -54,3 +54,73 @@ export async function deleteMenuImage(storeId: string, url: string | null | unde
   const { error } = await getSupabaseAdmin().storage.from(BUCKET).remove([path]);
   if (error) reportError(error, "deleteMenuImage");
 }
+
+// --- Bank transfer receipts: private bucket, owners see them through short-lived signed URLs ---
+
+const RECEIPT_BUCKET = "payment-receipts";
+const RECEIPT_MAX_SIZE = 3_000_000; // 3 MB — serverActions.bodySizeLimit (the client shrinks photos first)
+const RECEIPT_URL_TTL = 60 * 60; // 1 hour
+
+/** Creates the private bucket on first use (no manual Supabase setup needed) */
+async function ensureReceiptBucket() {
+  const { error } = await getSupabaseAdmin().storage.createBucket(RECEIPT_BUCKET, {
+    public: false,
+    fileSizeLimit: RECEIPT_MAX_SIZE,
+    allowedMimeTypes: ["image/*"],
+  });
+  if (error && !/already exists/i.test(error.message)) throw error;
+}
+
+/** image/*, ≤ 3 MB. Path: stores/{storeId}/{orderId}/{random}.{ext}. Returns the storage path. */
+export async function uploadReceipt(storeId: string, orderId: string, file: File): Promise<string> {
+  if (!file.type.startsWith("image/")) throw new MenuImageError("imageType");
+  if (file.size > RECEIPT_MAX_SIZE) throw new MenuImageError("imageSize");
+
+  const ext = (file.name.split(".").pop() || file.type.split("/")[1] || "jpg")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "")
+    .slice(0, 5);
+  const path = `stores/${storeId}/${orderId}/${crypto.randomUUID()}.${ext || "jpg"}`;
+
+  const upload = () =>
+    getSupabaseAdmin()
+      .storage.from(RECEIPT_BUCKET)
+      .upload(path, file, { contentType: file.type, upsert: false });
+
+  let { error } = await upload();
+  if (error && /bucket not found/i.test(error.message)) {
+    try {
+      await ensureReceiptBucket();
+      ({ error } = await upload());
+    } catch (e) {
+      error = e as typeof error;
+    }
+  }
+  if (error) {
+    reportError(error, "uploadReceipt");
+    throw new MenuImageError("upload");
+  }
+  return path;
+}
+
+/** Old receipt removal (silent on error). Only inside this store's folder. */
+export async function deleteReceipt(storeId: string, path: string | null | undefined) {
+  if (!path || !path.startsWith(`stores/${storeId}/`)) return;
+  const { error } = await getSupabaseAdmin().storage.from(RECEIPT_BUCKET).remove([path]);
+  if (error) reportError(error, "deleteReceipt");
+}
+
+/** path -> signed URL (one request for the whole list). Missing ones are left out. */
+export async function receiptUrls(paths: string[]): Promise<Map<string, string>> {
+  const urls = new Map<string, string>();
+  if (paths.length === 0) return urls;
+  const { data, error } = await getSupabaseAdmin()
+    .storage.from(RECEIPT_BUCKET)
+    .createSignedUrls(paths, RECEIPT_URL_TTL);
+  if (error) {
+    reportError(error, "receiptUrls");
+    return urls;
+  }
+  for (const item of data) if (item.path && item.signedUrl) urls.set(item.path, item.signedUrl);
+  return urls;
+}

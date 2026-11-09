@@ -16,7 +16,10 @@ export default function LoginPage() {
         <RedirectIfLoggedIn />
       </Suspense>
       <Header />
-      <LoginForm />
+      {/* useSearchParams (?next=) — needs a Suspense boundary */}
+      <Suspense>
+        <LoginForm />
+      </Suspense>
     </main>
   );
 }

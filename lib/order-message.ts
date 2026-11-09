@@ -31,6 +31,8 @@ export interface OrderMessageOrder {
   comment?: string | null;
   paymentMethod: PaymentMethod;
   paymentStatus?: PaymentStatus;
+  /** Bank transfer receipt uploaded by the customer (adds a link for the store owner) */
+  receiptPath?: string | null;
   subtotal: number;
   deliveryFee: number;
   total: number;
@@ -109,6 +111,10 @@ export function buildOrderMessage(
   lines.push(
     `${t.payment}: ${bold(t.paymentMethods[order.paymentMethod])} (${t.paymentStatus[order.paymentStatus ?? "UNPAID"]})`,
   );
+
+  if (base && order.paymentMethod === "TRANSFER" && order.receiptPath) {
+    lines.push(`🧾 ${t.receipt}: ${base}/admin/receipt/${order.id}`);
+  }
 
   if (base) {
     lines.push("");

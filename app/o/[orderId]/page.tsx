@@ -7,6 +7,8 @@ import { Suspense } from "react";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { AutoRefresh } from "@/components/order/auto-refresh";
+import { ReceiptUpload } from "@/components/order/receipt-upload";
+import { SendMessage } from "@/components/order/send-message";
 import { StatusSteps } from "@/components/order/status-steps";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -60,27 +62,10 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
             <span className="bg-primary/10 text-primary flex size-14 items-center justify-center rounded-full">
               <CheckCircle2 className="size-8" />
             </span>
-            <div>
-              <h1 className="text-xl font-bold">
-                {t("order.savedTitle", { number: order.number })}
-              </h1>
-              <p className="text-muted-foreground mt-1 text-sm">{t("order.savedHint")}</p>
-            </div>
-            <a
-              href={send.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "h-13 w-full rounded-2xl text-base text-white",
-                send.channel === "TELEGRAM"
-                  ? "bg-[#229ED9] hover:bg-[#1d8cc2]"
-                  : "bg-[#25D366] hover:bg-[#1fb857]",
-              )}
-            >
-              <Send />
-              {send.channel === "TELEGRAM" ? t("order.sendTelegram") : t("order.sendWhatsapp")}
-            </a>
+            <h1 className="text-xl font-bold">
+              {t("order.savedTitle", { number: order.number })}
+            </h1>
+            <SendMessage orderId={order.id} href={send.href} channel={send.channel} />
             <p className="text-muted-foreground text-xs">
               {format.dateTime(order.createdAt, {
                 dateStyle: "medium",
@@ -174,6 +159,9 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
             </Badge>
           </div>
           <TransferDetails order={order} label={t("checkout.transferDetails")} />
+          {order.paymentMethod === "TRANSFER" && order.paymentStatus === "UNPAID" && !isFinal && (
+            <ReceiptUpload orderId={order.id} sent={!!order.receiptPath} />
+          )}
         </Card>
 
         <div className="flex flex-col gap-2">

@@ -10,6 +10,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { useFormatMoney } from "@/components/currency-provider";
+import { ReceiptPicker, sendReceipt } from "@/components/order/receipt-upload";
 import { useStoreOpen } from "@/components/storefront/use-store-open";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,6 +78,7 @@ export function CheckoutForm({
   const t = useTranslations("checkout");
   const tCart = useTranslations("cart");
   const tPay = useTranslations("payment");
+  const tReceipt = useTranslations("receipt");
   const router = useRouter();
 
   const hydrated = useCartHydrated();
@@ -86,6 +88,8 @@ export function CheckoutForm({
   const [submitted, setSubmitted] = useState(false);
   const [markPaid, setMarkPaid] = useState(false);
   const [timeMode, setTimeMode] = useState<"asap" | "scheduled">("asap");
+  // Bank transfer receipt photo — uploaded right after the order is saved
+  const [receipt, setReceipt] = useState<File | null>(null);
 
   const {
     control,
@@ -240,6 +244,11 @@ export function CheckoutForm({
       router.push("/admin/orders");
     } else {
       saveCustomer(values.customerName, values.phone);
+      if (receipt && values.paymentMethod === "TRANSFER") {
+        const uploaded = await sendReceipt(result.orderId, receipt);
+        // The order is already saved — the receipt can be attached again on the order page
+        if (!uploaded.ok) toast.error(tReceipt("uploadFailed"));
+      }
       router.replace(`/o/${result.orderId}`);
     }
   }
@@ -538,6 +547,17 @@ export function CheckoutForm({
             <p className="font-medium">{t("transferDetails")}</p>
             <p className="mt-1 whitespace-pre-line">{settings.transferDetails}</p>
             <p className="text-muted-foreground mt-2 text-xs">{t("transferNote")}</p>
+          </div>
+        )}
+        {/* Hidden, not unmounted — the picked receipt survives switching payment methods */}
+        {!isAdmin && (
+          <div className={cn("flex flex-col gap-2", paymentMethod !== "TRANSFER" && "hidden")}>
+            <Label>
+              {tReceipt("label")}
+              <span className="text-muted-foreground font-normal">({t("optional")})</span>
+            </Label>
+            <p className="text-muted-foreground text-xs">{tReceipt("hint")}</p>
+            <ReceiptPicker file={receipt} onChange={setReceipt} />
           </div>
         )}
       </Card>

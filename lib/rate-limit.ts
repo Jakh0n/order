@@ -24,6 +24,8 @@ export const RULES = {
   orderPhone: { name: "order:phone", limit: 5, windowSeconds: 10 * 60 },
   slugCheckIp: { name: "slug:ip", limit: 60, windowSeconds: 60 },
   uploadUser: { name: "upload:user", limit: 60, windowSeconds: 60 * 60 },
+  receiptIp: { name: "receipt:ip", limit: 10, windowSeconds: 10 * 60 },
+  receiptOrder: { name: "receipt:order", limit: 5, windowSeconds: 60 * 60 },
   geocodeIp: { name: "geocode:ip", limit: 10, windowSeconds: 60 },
 } satisfies Record<string, RateLimitRule>;
 

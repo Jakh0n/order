@@ -14,6 +14,12 @@ const loginSchema = z.object({
   password: z.string().min(1).max(200),
 });
 
+/** Only same-site admin paths (no open redirect via ?next=//evil.com) */
+function safeNext(value: FormDataEntryValue | null): string | null {
+  const next = typeof value === "string" ? value : "";
+  return /^\/admin\/[a-z0-9/_-]*$/i.test(next) && !next.includes("//") ? next : null;
+}
+
 export type LoginState = { error?: "invalid" | "tooMany"; email?: string } | undefined;
 
 // Foydalanuvchi yo'q bo'lsa ham vaqt bir xil bo'lishi uchun
@@ -42,7 +48,8 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
   if (!user?.passwordHash || !ok) return { error: "invalid", email };
 
   await createSession(user.id);
-  redirect(homePathFor(user.role, user._count.stores > 0));
+  const hasStore = user._count.stores > 0;
+  redirect((hasStore && safeNext(formData.get("next"))) || homePathFor(user.role, hasStore));
 }
 
 export async function logout() {

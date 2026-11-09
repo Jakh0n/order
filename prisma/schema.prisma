@@ -189,6 +189,9 @@ model Order {
   comment       String?
   paymentMethod PaymentMethod
   paymentStatus PaymentStatus @default(UNPAID)
+  /// Bank transfer receipt photo: path in the private "payment-receipts" bucket
+  receiptPath   String?
+  receiptAt     DateTime?
   status        OrderStatus   @default(NEW)
   subtotal      Int
   deliveryFee   Int           @default(0)

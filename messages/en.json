@@ -269,6 +269,8 @@
     "savedHint": "Send the message so the store can accept your order.",
     "statusTitle": "Order #{number}",
     "sendAgain": "Send the message again",
+    "sentHint": "Message sent — the store will accept your order soon.",
+    "notSent": "Didn't send it? Open the chat again",
     "location": "Location",
     "openMap": "Open in Maps"
   },
@@ -345,6 +347,7 @@
       "PAID": "Paid"
     },
     "seeOrder": "See order",
+    "receipt": "Payment receipt",
     "sentFrom": "Sent from {store}"
   },
   "store": {
@@ -618,5 +621,29 @@
     "ogStoreCta": "Order online",
     "ogHomeTitle": "Your menu on one link. Orders straight to your chat.",
     "ogHomeBody": "Online menu and ordering for small food businesses — orders arrive in WhatsApp or Telegram."
+  },
+  "receipt": {
+    "label": "Payment receipt",
+    "hint": "After you transfer the money, attach a screenshot or photo of the receipt — the store will check it and confirm your payment.",
+    "choose": "Attach receipt",
+    "change": "Change",
+    "remove": "Remove",
+    "uploading": "Uploading…",
+    "uploaded": "Receipt sent to the store",
+    "sent": "Receipt sent — the store will confirm your payment after checking it.",
+    "uploadFailed": "Your order is saved, but the receipt didn't upload. Please attach it again on the next page.",
+    "adminView": "View receipt",
+    "adminCheck": "Check the amount in your bank, then tap “Mark paid”.",
+    "adminNone": "No receipt yet",
+    "errors": {
+      "invalid": "Please choose an image",
+      "notFound": "Order not found",
+      "notAllowed": "A receipt can't be added to this order anymore",
+      "imageType": "Only images are allowed",
+      "imageSize": "The image is too large (max 3 MB)",
+      "tooMany": "Too many uploads. Please try again later.",
+      "upload": "Upload failed. Please try again.",
+      "server": "Something went wrong. Please try again."
+    }
   }
 }

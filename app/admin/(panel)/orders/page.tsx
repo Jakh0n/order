@@ -13,6 +13,7 @@ import { JOIN, prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { ACTIVE_STATUSES } from "@/lib/orders/status";
 import { startOfDayInZone } from "@/lib/store-hours";
+import { receiptUrls } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 
 const TABS = ["active", "completed", "cancelled", "all"] as const;
@@ -68,6 +69,8 @@ async function Orders({
       where: { storeId: store.id, status: { in: ACTIVE_STATUSES as OrderStatus[] } },
     }),
   ]);
+  // Private bucket: short-lived links, one request for the whole page
+  const receipts = await receiptUrls(orders.flatMap((o) => (o.receiptPath ? [o.receiptPath] : [])));
 
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
@@ -119,7 +122,12 @@ async function Orders({
       ) : (
         <div className="grid gap-3 lg:grid-cols-2">
           {orders.map((order) => (
-            <OrderCard key={order.id} order={order} timeZone={store.timeZone} />
+            <OrderCard
+              key={order.id}
+              order={order}
+              timeZone={store.timeZone}
+              receiptUrl={order.receiptPath ? receipts.get(order.receiptPath) : undefined}
+            />
           ))}
         </div>
       )}
