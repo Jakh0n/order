@@ -5,13 +5,135 @@
     "home": "Home"
   },
   "home": {
-    "title": "order",
-    "subtitle": "Online menu and ordering for cafés and restaurants. Customers open your menu, pick their food — and the order lands in your Telegram or WhatsApp.",
-    "signup": "Open your store — free",
+    "metaTitle": "Flami — your menu online, orders in WhatsApp and Telegram",
+    "metaDescription": "Put your menu online in minutes. Customers order from your link and the full order arrives in your WhatsApp or Telegram. Free, no commission.",
+    "brand": "Flami",
     "login": "Log in",
-    "feature1": "Your menu online in minutes",
-    "feature2": "Orders straight to Telegram / WhatsApp",
-    "feature3": "Cash, card or bank transfer"
+    "signup": "Create your store",
+    "nav": {
+      "how": "How it works",
+      "features": "Features",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "menu": "Menu",
+      "close": "Close menu"
+    },
+    "hero": {
+      "title": "Your menu on one link. Orders straight to your chat.",
+      "lead": "Customers open your menu, pick their food and check out. The full order lands in your WhatsApp or Telegram — items, total, address and all.",
+      "cta": "Create your store — free",
+      "demo": "See a live store",
+      "note": "No app for your customers. No commission on your sales."
+    },
+    "demo": {
+      "open": "Open now",
+      "eta": "Delivery 25–35 min",
+      "kebabs": "Kebabs",
+      "sides": "Sides",
+      "drinks": "Drinks",
+      "viewCart": "Send order",
+      "items": "{count, plural, one {# item} other {# items}}",
+      "chatStatus": "Business account",
+      "newOrder": "New order #{number}",
+      "newOrderBody": "{count, plural, one {# item} other {# items}} · {total}",
+      "label": "Animated demo: a customer adds a doner, fries and ayran, then sends the order to the shop on WhatsApp."
+    },
+    "steps": {
+      "title": "From menu to first order in three steps",
+      "s1": {
+        "title": "Add your menu",
+        "body": "Upload photos, set prices and add options like size or extra sauce. Change anything later in seconds."
+      },
+      "s2": {
+        "title": "Share your link",
+        "body": "Put flami.org/your-store in your Instagram bio, print the QR code for tables, or send it to regulars."
+      },
+      "s3": {
+        "title": "Get orders in chat",
+        "body": "Each order arrives in WhatsApp or Telegram, ready to cook — with a map pin for deliveries."
+      },
+      "v1Stock": "In stock",
+      "v2Copy": "Copy link"
+    },
+    "features": {
+      "title": "Built for the way you already sell",
+      "lead": "Your customers already message you to order. Flami turns that into a proper menu and a tidy order, without changing where you talk to them.",
+      "chatTitle": "Orders you can read at a glance",
+      "chatBody": "No more back-and-forth to work out what someone wants. Every order comes in the same clear format.",
+      "menu": {
+        "title": "A menu that sells",
+        "body": "Photos, categories, options and a sold-out switch. Search and quick add on any phone."
+      },
+      "track": {
+        "title": "Customers track their order",
+        "body": "Each order gets its own page that updates as you accept, cook and send it out."
+      },
+      "board": {
+        "title": "One board for every order",
+        "body": "Accept, mark ready, mark paid. See what is waiting and what is done."
+      },
+      "delivery": {
+        "title": "Delivery and pickup",
+        "body": "Flat delivery fee, minimum order, and the customer’s location on a map."
+      },
+      "payment": {
+        "title": "Get paid your way",
+        "body": "Cash, card on delivery or bank transfer. Customers pay you directly."
+      },
+      "hours": {
+        "title": "Opening hours that just work",
+        "body": "Set your hours and time zone. When you are closed, customers see when you open next."
+      },
+      "qr": {
+        "title": "A QR code for your tables",
+        "body": "Download it once and put it on tables, flyers and takeaway bags."
+      },
+      "currency": {
+        "title": "Any currency",
+        "body": "Dollars, euros, won, lira — pick yours when you create the store."
+      }
+    },
+    "audience": {
+      "text": "Made for kebab shops, bakeries, cafés, dessert shops, coffee carts, food trucks and home cooks who take orders by message."
+    },
+    "pricing": {
+      "title": "Free while we are in early access",
+      "lead": "Every feature, unlimited orders, no card needed. If a paid plan ever comes, you will hear about it well in advance.",
+      "price": "$0",
+      "per": "per month",
+      "includes": "Included",
+      "i1": "Unlimited products and orders",
+      "i2": "Orders to WhatsApp or Telegram",
+      "i3": "Order tracking page for customers",
+      "i4": "QR code for your store",
+      "i5": "Delivery and pickup",
+      "i6": "No commission on sales",
+      "cta": "Create your store"
+    },
+    "faq": {
+      "title": "Questions",
+      "q1": "Do my customers need to install an app?",
+      "a1": "No. Your store is a web page that opens in any phone browser. The order is sent through the WhatsApp or Telegram app they already have.",
+      "q2": "How do I receive orders?",
+      "a2": "When a customer checks out, the order is saved and opens as a ready-made message to your WhatsApp number or Telegram account. Every order also appears on your order board.",
+      "q3": "Do you take a cut of my sales?",
+      "a3": "No. Customers pay you directly — cash, card on delivery or bank transfer. Flami never handles the money.",
+      "q4": "Can I use my own currency and time zone?",
+      "a4": "Yes. Choose them when you create your store, and change them later in settings.",
+      "q5": "Can I change my menu later?",
+      "a5": "Anytime. Edits show on your store right away, including marking a dish as sold out for the day.",
+      "q6": "What happens when I am closed?",
+      "a6": "Customers can still browse your menu and see when you open next, but they cannot place an order."
+    },
+    "final": {
+      "title": "Your first online order could arrive tonight",
+      "body": "Setting up takes about five minutes.",
+      "cta": "Create your store — free"
+    },
+    "footer": {
+      "rights": "© Flami",
+      "made": "Made for small food businesses"
+    }
   },
   "menu": {
     "title": "Menu",

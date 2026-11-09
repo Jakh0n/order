@@ -21,8 +21,8 @@ const fontMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "order",
-    template: "%s · order",
+    default: "Flami",
+    template: "%s · Flami",
   },
   description: "Online menu and ordering for cafés and restaurants",
 };
