@@ -7,7 +7,7 @@ description: Prisma sxemasini o'zgartirish (model, maydon, enum, indeks qo'shish
 
 1. `prisma/schema.prisma` ni o'qing va o'zgarishni kiriting.
    - Har bir do'konga tegishli model `storeId` + `@@index([storeId])` ga ega bo'lsin.
-   - Pul maydonlari `Int` (so'm).
+   - Pul maydonlari `Int` — do'kon valyutasining eng kichik birligida (sent).
    - Yangi maydon majburiy bo'lsa, `@default(...)` bering yoki avval nullable qiling.
 2. **Ma'lumot yo'qotish xavfi bo'lsa TO'XTANG va foydalanuvchini ogohlantiring**:
    maydon/model o'chirish, nomini o'zgartirish (Prisma uni o'chirib-qayta yaratadi),

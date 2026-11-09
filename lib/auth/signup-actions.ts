@@ -76,6 +76,8 @@ export async function signup(input: SignupInput): Promise<SignupResult> {
           ownerId: created.id,
           slug: store.slug,
           name: store.storeName,
+          currency: store.currency,
+          timeZone: store.timeZone,
           channel: store.channel,
           telegramUsername: store.telegramUsername,
           whatsappNumber: store.whatsappNumber,

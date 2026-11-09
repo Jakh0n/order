@@ -5,11 +5,11 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { useFormatMoney } from "@/components/currency-provider";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { type CartOption, useCart } from "@/lib/cart-store";
 import type { MenuOptionGroup, MenuProduct } from "@/lib/menu-types";
-import { formatUZS } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
 import { ProductImage } from "./product-image";
@@ -17,6 +17,8 @@ import { QuantityStepper } from "./quantity-stepper";
 
 /** Telefonda pastdan chiqadigan varaq, katta ekranda markazdagi oyna (take.app kabi) */
 const SHEET_CLASS =
+  // flex (not grid): in a height-limited grid the photo row gets squeezed and the title slides under it
+  "flex flex-col [&>*]:shrink-0 " +
   "top-auto bottom-0 left-0 max-h-[92dvh] w-full max-w-none translate-x-0 translate-y-0 gap-0 overflow-y-auto rounded-b-none rounded-t-3xl p-0 " +
   "sm:top-1/2 sm:bottom-auto sm:left-1/2 sm:max-h-[88dvh] sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl";
 
@@ -46,9 +48,9 @@ export function ProductDialog({
   );
 }
 
-function optionPrice(price: number) {
+function optionPrice(price: number, format: (minor: number) => string) {
   if (price === 0) return null;
-  return price > 0 ? `+${formatUZS(price)}` : formatUZS(price);
+  return price > 0 ? `+${format(price)}` : format(price);
 }
 
 function ProductForm({
@@ -60,6 +62,7 @@ function ProductForm({
   product: MenuProduct;
   onDone: () => void;
 }) {
+  const formatMoney = useFormatMoney();
   const t = useTranslations("product");
   const add = useCart((s) => s.add);
   const [selected, setSelected] = useState<Record<string, string[]>>({});
@@ -139,7 +142,7 @@ function ProductForm({
             {product.description}
           </DialogDescription>
         )}
-        <p className="text-lg font-semibold">{formatUZS(product.price)}</p>
+        <p className="text-lg font-semibold">{formatMoney(product.price)}</p>
       </div>
 
       {product.optionGroups.map((group) => {
@@ -223,7 +226,9 @@ function ProductForm({
                         ))}
                     </span>
                     <span className="flex-1">{o.name}</span>
-                    <span className="text-muted-foreground text-sm">{optionPrice(o.price)}</span>
+                    <span className="text-muted-foreground text-sm">
+                      {optionPrice(o.price, formatMoney)}
+                    </span>
                   </button>
                 );
               })}
@@ -242,7 +247,7 @@ function ProductForm({
           onClick={handleAdd}
         >
           <span>{t("addShort")}</span>
-          <span className="font-semibold tabular-nums">{formatUZS(unit * quantity)}</span>
+          <span className="font-semibold tabular-nums">{formatMoney(unit * quantity)}</span>
         </Button>
       </div>
     </>

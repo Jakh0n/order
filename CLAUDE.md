@@ -13,14 +13,15 @@ Birinchi do'kon — egasining oshxonasi (slug: `oshxonam`). Keyin boshqa kafelar
    mo'ljal, vaqt, izoh, to'lov usuli
 4. Buyurtma bazaga saqlanadi
 5. Mijozning Telegram'i (`https://t.me/USERNAME?text=...`) yoki WhatsApp'i
-   (`https://wa.me/998XXXXXXXXX?text=...`) tayyor xabar bilan ochiladi va do'kon egasiga yuboradi
+   (`https://wa.me/<raqam>?text=...`) tayyor xabar bilan ochiladi va do'kon egasiga yuboradi
 6. Mijoz `/o/{orderId}` sahifasida buyurtma holatini ko'radi
 7. Do'kon egasi `/admin` da buyurtmalarni boshqaradi
 
 To'lov: onlayn to'lov YO'Q. Faqat `CASH`, `CARD_ON_DELIVERY`, `TRANSFER` (biznes hisob raqamiga).
 Egasi admin'da qo'lda "To'landi" qiladi.
-Tillar: o'zbek (asosiy, default) va rus.
-Valyuta: so'm, butun son (Int). Ko'rinishi: "45 000 so'm".
+Xalqaro platforma. Til: hozircha faqat ingliz (`messages/en.json`; yangi til = locale + messages fayli).
+Valyuta: har bir do'konda alohida (`Store.currency`, ISO 4217). Summalar Int — valyutaning eng kichik
+birligida (USD → sent). Vaqt zonasi: har bir do'konda alohida (`Store.timeZone`, IANA).
 
 ## Stack
 
@@ -62,7 +63,7 @@ i18n/                         next-intl sozlamasi (config, request, setLocale ac
 lib/
   db.ts                       Prisma client singleton, JOIN (relationLoadStrategy: "join")
   app-url.ts                  getRequestOrigin — sayt manzili so'rovdan (QR, xabardagi havola)
-  money.ts                    formatUZS
+  money.ts                    formatMoney(minor, currency), toMinor/toMajor, POPULAR_CURRENCIES
   order-message.ts            buildOrderMessage, telegramLink, whatsappLink
   validators.ts               zod sxemalar (checkoutFormSchema — klient, checkoutSchema — server)
   auth/session.ts             imzolangan cookie sessiya (AUTH_SECRET)
@@ -88,14 +89,15 @@ lib/
   orders/send-link.ts         orderSendLink — do'kon kanaliga qarab t.me / wa.me havola
   storefront.ts               getStorefront(slug), getCheckoutSettings(slug) — "use cache" + cacheTag(storeCacheTag(slug))
   menu-types.ts               server → klient menyu tiplari
-  store-hours.ts              isStoreOpenNow (Asia/Tashkent)
+  store-hours.ts              isStoreOpenNow / opensAt / startOfDayInZone (do'kon vaqt zonasi)
   cart-store.ts               zustand savat (cartKey bo'yicha, localStorage)
   cart-keys.ts                adminCartKey — admin savati alohida
   supabase/server.ts          service role client (server-only)
   settings/data.ts            getStoreSettings
   settings/actions.ts         saveStoreSettings (do'kon, ish vaqti, tumanlar, to'lov, kanal)
   storage.ts                  uploadMenuImage, deleteMenuImage, menuImagePrefix
-messages/uz.json, ru.json     tarjimalar
+messages/en.json              matnlar (hozircha faqat ingliz)
+components/currency-provider  CurrencyProvider + useFormatMoney (klient komponentlarda valyuta)
 prisma/schema.prisma, seed.ts
 ```
 
@@ -129,12 +131,17 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
   bo'lmagan so'rovlarni `Promise.all` bilan parallel qiling. Har bir so'rov bazaga borish = vaqt.
 - Sayt manzilini `NEXT_PUBLIC_APP_URL` dan emas, `getRequestOrigin()` dan oling. U `APP_URL` (asosiy domen,
   hozir https://flami.org) ni ishlatadi, bo'lmasa so'rovdagi manzilni — QR va xabardagi havola localhost bo'lib qolmaydi.
-- Narxlar Int, so'mda. Ko'rsatish faqat `formatUZS` orqali.
+- Pul: Int, do'kon valyutasining eng kichik birligida (sent). Ko'rsatish faqat `formatMoney(minor, currency)` /
+  `useFormatMoney()` orqali. Admin formalarida asosiy birlik (8.99) — saqlashda `toMinor`; formalar uchun
+  `productFormSchema` / `storeSettingsFormSchema`, server uchun `productSchema` / `storeSettingsSchema`.
+- Buyurtma o'z valyutasini saqlaydi (`Order.currency`) — summalar shu bilan ko'rsatiladi.
+- Vaqt: hech qachon qattiq vaqt zonasi yozilmaydi — `store.timeZone` (ish vaqti, "bugun", sanalar).
+- Telefon: xalqaro format (+mamlakat kodi), `phoneSchema` / `normalizePhone`.
 - Buyurtma summasi SERVERDA bazadagi narxlardan qayta hisoblanadi, klient narxiga ishonilmaydi.
 - `minOrder`, tuman narxi, `isAvailable`, do'kon ochiqligi serverda tekshiriladi.
 - Buyurtma raqami `prisma.$transaction` ichida: do'kondagi `max(number) + 1`.
 - `OrderItem`'da nom va narx snapshot qilib saqlanadi.
-- Har bir yangi matn `uz.json` VA `ru.json` ga qo'shiladi.
+- Har bir yangi matn `messages/en.json` ga qo'shiladi (kodda matn yozilmaydi).
 - Avval mobil (375px), keyin desktop.
 - Shartli forma maydonlarini (react-hook-form) unmount qilmang — `hidden` bilan yashiring,
   aks holda qayta ko'rsatilganda kiritilgan qiymat bo'sh ko'rinadi.

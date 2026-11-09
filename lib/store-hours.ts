@@ -1,11 +1,21 @@
-// Server va klientda bir xil ishlaydi. Vaqt — Toshkent (UTC+5).
-
-const TIME_ZONE = "Asia/Tashkent";
+// Works on both server and client. Every store has its own IANA time zone (Store.timeZone).
 
 interface StoreHours {
   isOpen: boolean;
   openTime: string | null;
   closeTime: string | null;
+  timeZone: string;
+}
+
+export const DEFAULT_TIME_ZONE = "UTC";
+
+export function isValidTimeZone(tz: string): boolean {
+  try {
+    new Intl.DateTimeFormat("en", { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function toMinutes(hhmm: string): number | null {
@@ -17,18 +27,31 @@ function toMinutes(hhmm: string): number | null {
   return h * 60 + min;
 }
 
-function tashkentMinutes(now: Date): number {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: TIME_ZONE,
+/** Wall-clock parts of `now` in the given time zone */
+function zonedParts(now: Date, timeZone: string) {
+  const tz = isValidTimeZone(timeZone) ? timeZone : DEFAULT_TIME_ZONE;
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
+    second: "2-digit",
     hourCycle: "h23",
   }).formatToParts(now);
   const get = (type: string) => Number(parts.find((p) => p.type === type)?.value ?? 0);
-  return get("hour") * 60 + get("minute");
+  return {
+    year: get("year"),
+    month: get("month"),
+    day: get("day"),
+    hour: get("hour"),
+    minute: get("minute"),
+    second: get("second"),
+  };
 }
 
-/** Do'kon hozir buyurtma qabul qiladimi: isOpen + ish vaqti (tunda yopiladigan holat ham). */
+/** Is the store taking orders now: isOpen + opening hours in its time zone (overnight hours supported). */
 export function isStoreOpenNow(store: StoreHours, now: Date = new Date()): boolean {
   if (!store.isOpen) return false;
   if (!store.openTime || !store.closeTime) return true;
@@ -37,27 +60,22 @@ export function isStoreOpenNow(store: StoreHours, now: Date = new Date()): boole
   const close = toMinutes(store.closeTime);
   if (open === null || close === null || open === close) return true;
 
-  const current = tashkentMinutes(now);
-  return open < close ? current >= open && current < close : current >= open || current < close; // masalan 18:00–02:00
+  const { hour, minute } = zonedParts(now, store.timeZone);
+  const current = hour * 60 + minute;
+  return open < close ? current >= open && current < close : current >= open || current < close; // e.g. 18:00–02:00
 }
 
-/** Toshkentdagi bugungi kun boshi (UTC Date). Toshkentda yozgi vaqt yo'q: doim UTC+5. */
-export function tashkentDayStart(now: Date = new Date()): Date {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(now);
-  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
-  return new Date(Date.UTC(get("year"), get("month") - 1, get("day")) - 5 * 60 * 60 * 1000);
-}
-
-/**
- * Ish vaqti tufayli yopiq bo'lsa — ochilish vaqti ("09:00"), aks holda null
- * (ochiq, qo'lda yopilgan yoki vaqt belgilanmagan).
- */
+/** Closed because of opening hours → opening time ("09:00"); otherwise null */
 export function opensAt(store: StoreHours, now: Date = new Date()): string | null {
   if (!store.isOpen || !store.openTime || !store.closeTime) return null;
   return isStoreOpenNow(store, now) ? null : store.openTime;
+}
+
+/** Start of "today" in the store's time zone, as a UTC Date (for "today's revenue"). */
+export function startOfDayInZone(timeZone: string, now: Date = new Date()): Date {
+  const p = zonedParts(now, timeZone);
+  // Offset of the zone at this moment = wall clock (as if UTC) − real UTC time
+  const wallAsUtc = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+  const offsetMs = wallAsUtc - Math.floor(now.getTime() / 1000) * 1000;
+  return new Date(Date.UTC(p.year, p.month - 1, p.day) - offsetMs);
 }

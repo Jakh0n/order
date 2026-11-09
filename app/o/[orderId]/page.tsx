@@ -11,7 +11,7 @@ import { StatusSteps } from "@/components/order/status-steps";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { formatUZS } from "@/lib/money";
+import { formatMoney } from "@/lib/money";
 import { type CustomerOrder, getOrderForCustomer } from "@/lib/orders/get-order";
 import { orderSendLink } from "@/lib/orders/send-link";
 import { getRequestOrigin } from "@/lib/app-url";
@@ -35,6 +35,7 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
   const t = await getTranslations();
   const format = await getFormatter();
   const send = orderSendLink(order, order.store, await getRequestOrigin());
+  const money = (minor: number) => formatMoney(minor, order.currency);
   const isFinal = order.status === "COMPLETED" || order.status === "CANCELLED";
 
   return (
@@ -80,7 +81,11 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
               {send.channel === "TELEGRAM" ? t("order.sendTelegram") : t("order.sendWhatsapp")}
             </a>
             <p className="text-muted-foreground text-xs">
-              {format.dateTime(order.createdAt, { dateStyle: "medium", timeStyle: "short" })}
+              {format.dateTime(order.createdAt, {
+                dateStyle: "medium",
+                timeStyle: "short",
+                timeZone: order.store.timeZone,
+              })}
             </p>
           </section>
         ) : (
@@ -89,7 +94,11 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
               {t("order.statusTitle", { number: order.number })}
             </h1>
             <p className="text-muted-foreground text-sm">
-              {format.dateTime(order.createdAt, { dateStyle: "medium", timeStyle: "short" })}
+              {format.dateTime(order.createdAt, {
+                dateStyle: "medium",
+                timeStyle: "short",
+                timeZone: order.store.timeZone,
+              })}
             </p>
           </section>
         )}
@@ -112,16 +121,16 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
                     </span>
                   )}
                 </span>
-                <span className="shrink-0 tabular-nums">{formatUZS(item.lineTotal)}</span>
+                <span className="shrink-0 tabular-nums">{money(item.lineTotal)}</span>
               </li>
             ))}
           </ul>
           <dl className="flex flex-col gap-1 border-t pt-3 text-sm">
-            <Row label={t("checkout.subtotal")} value={formatUZS(order.subtotal)} />
+            <Row label={t("checkout.subtotal")} value={money(order.subtotal)} />
             {order.type === "DELIVERY" && (
-              <Row label={t("checkout.deliveryFee")} value={formatUZS(order.deliveryFee)} />
+              <Row label={t("checkout.deliveryFee")} value={money(order.deliveryFee)} />
             )}
-            <Row label={t("checkout.total")} value={formatUZS(order.total)} strong />
+            <Row label={t("checkout.total")} value={money(order.total)} strong />
           </dl>
         </Card>
 

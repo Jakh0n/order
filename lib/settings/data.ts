@@ -18,6 +18,8 @@ export async function getStoreSettings(storeId: string): Promise<StoreSettingsIn
     phone: store.phone ?? "",
     address: store.address ?? "",
     landmark: store.landmark ?? "",
+    currency: store.currency,
+    timeZone: store.timeZone,
     isOpen: store.isOpen,
     openTime: store.openTime ?? "",
     closeTime: store.closeTime ?? "",

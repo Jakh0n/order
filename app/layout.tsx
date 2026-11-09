@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     default: "order",
     template: "%s · order",
   },
-  description: "Kafe va oshxonalar uchun onlayn buyurtma",
+  description: "Online menu and ordering for cafés and restaurants",
 };
 
 // Til cookie'dan o'qiladi (runtime API) — cacheComponents rejimida Suspense ichida bo'lishi shart.
@@ -43,7 +43,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     // suppressHydrationWarning: brauzer kengaytmalari (masalan, Scribe) <html> ga atribut qo'shadi.
     // Faqat shu tegning atributlariga ta'sir qiladi — ichki komponentlar tekshirilaveradi.
     <html
-      lang="uz"
+      lang="en"
       className={`${fontSans.variable} ${fontMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >

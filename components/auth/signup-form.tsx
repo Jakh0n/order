@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { checkSlug, signup, type SlugCheck } from "@/lib/auth/signup-actions";
+import { POPULAR_CURRENCIES } from "@/lib/money";
 import { slugify } from "@/lib/slug";
 import { cn } from "@/lib/utils";
 import { type SignupInput, signupSchema } from "@/lib/validators";
@@ -41,6 +42,9 @@ export function SignupForm({ host }: { host: string }) {
       store: {
         storeName: "",
         slug: "",
+        currency: "USD",
+        // The owner's current time zone; can be changed later in Settings
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         channel: "TELEGRAM",
         telegramUsername: "",
         whatsappNumber: "",
@@ -188,6 +192,24 @@ export function SignupForm({ host }: { host: string }) {
           {!slugError && slugStatus.state === "done" && slugStatus.error && (
             <p className="text-destructive text-sm">{errorText(slugStatus.error)}</p>
           )}
+        </Field>
+
+        <Field
+          label={t("currency")}
+          htmlFor="currency"
+          error={errorText(errors.store?.currency?.message)}
+        >
+          <select
+            id="currency"
+            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full rounded-lg border bg-transparent px-2.5 text-sm outline-none focus-visible:ring-3"
+            {...register("store.currency")}
+          >
+            {POPULAR_CURRENCIES.map((code) => (
+              <option key={code} value={code}>
+                {code}
+              </option>
+            ))}
+          </select>
         </Field>
 
         <Field label={t("channel")}>

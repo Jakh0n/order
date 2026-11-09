@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { CheckoutForm } from "@/components/checkout/checkout-form";
+import { CurrencyProvider } from "@/components/currency-provider";
 import { CartSync } from "@/components/storefront/cart-sync";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { StoreBlocked } from "@/components/storefront/store-blocked";
@@ -50,7 +51,9 @@ async function Checkout({ params }: { params: PageProps<"/[store]/checkout">["pa
         </header>
 
         <CartSync cartKey={slug} products={data.categories.flatMap((c) => c.products)} />
-        <CheckoutForm store={data.store} settings={settings} />
+        <CurrencyProvider currency={data.store.currency}>
+          <CheckoutForm store={data.store} settings={settings} />
+        </CurrencyProvider>
       </div>
     </div>
   );

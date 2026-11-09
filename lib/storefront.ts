@@ -34,6 +34,8 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
         closeTime: true,
         isOpen: true,
         minOrder: true,
+        currency: true,
+        timeZone: true,
         isBlocked: true,
       },
     }),

@@ -4,12 +4,12 @@ import { ArrowDown, ArrowUp, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
+import { useFormatMoney } from "@/components/currency-provider";
 import { ProductImage } from "@/components/storefront/product-image";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { setProductAvailable } from "@/lib/menu/admin-actions";
 import type { AdminMenuProduct } from "@/lib/menu/admin-data";
-import { formatUZS } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
 import { useMenuAction } from "./use-menu-action";
@@ -27,6 +27,7 @@ export function ProductRow({
   onMove: (dir: -1 | 1) => void;
   reordering: boolean;
 }) {
+  const formatMoney = useFormatMoney();
   const t = useTranslations("adminMenu");
   const { pending, run } = useMenuAction();
   const href = `/admin/menu/products/${product.id}`;
@@ -47,7 +48,7 @@ export function ProductRow({
             {product.name}
           </p>
           <p className="text-muted-foreground text-sm">
-            {formatUZS(product.price)}
+            {formatMoney(product.price)}
             {product.optionGroupCount > 0 &&
               ` · ${t("variants", { count: product.optionGroupCount })}`}
           </p>

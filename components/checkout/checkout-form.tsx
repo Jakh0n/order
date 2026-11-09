@@ -4,11 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Bike, ChevronRight, Loader2, MapPin, Store } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
+import { useFormatMoney } from "@/components/currency-provider";
 import { useStoreOpen } from "@/components/storefront/use-store-open";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +22,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { adminCartKey } from "@/lib/cart-keys";
 import { cartSubtotal, unitPrice, useCart, useCartHydrated, useCartLines } from "@/lib/cart-store";
 import type { CheckoutSettings, StorefrontStore } from "@/lib/menu-types";
-import { formatUZS } from "@/lib/money";
 import { createOrder } from "@/lib/orders/actions";
 import { createManualOrder } from "@/lib/orders/admin-actions";
 import { cn } from "@/lib/utils";
@@ -32,12 +32,6 @@ import {
 } from "@/lib/validators";
 
 const CUSTOMER_KEY = "order-customer";
-
-/** "901234567" -> "90 123 45 67" (yozish paytida) */
-function formatPhone(value: string) {
-  const d = value.replace(/\D/g, "").slice(0, 9);
-  return [d.slice(0, 2), d.slice(2, 5), d.slice(5, 7), d.slice(7, 9)].filter(Boolean).join(" ");
-}
 
 function loadCustomer(): { name?: string; phone?: string } {
   try {
@@ -57,7 +51,7 @@ function saveCustomer(name: string, phone: string) {
 
 /** Server xato kalitlari -> forma maydonlari */
 const FIELD_MAP: Record<string, keyof CheckoutFormInput> = {
-  customerPhone: "phoneDigits",
+  customerPhone: "phone",
 };
 
 /**
@@ -74,13 +68,13 @@ export function CheckoutForm({
   settings: CheckoutSettings;
   mode?: "customer" | "admin";
 }) {
+  const formatMoney = useFormatMoney();
   const isAdmin = mode === "admin";
   const cartKey = isAdmin ? adminCartKey(store.slug) : store.slug;
   const tAdmin = useTranslations("adminOrders");
   const t = useTranslations("checkout");
   const tCart = useTranslations("cart");
   const tPay = useTranslations("payment");
-  const locale = useLocale();
   const router = useRouter();
 
   const hydrated = useCartHydrated();
@@ -104,7 +98,7 @@ export function CheckoutForm({
     resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
       customerName: "",
-      phoneDigits: "",
+      phone: "",
       type: settings.deliveryEnabled ? "DELIVERY" : "PICKUP",
       zoneId: undefined,
       address: "",
@@ -123,7 +117,7 @@ export function CheckoutForm({
       reset({
         ...getValues(),
         customerName: saved.name ?? "",
-        phoneDigits: formatPhone(saved.phone ?? ""),
+        phone: saved.phone ?? "",
       });
     }
   }, [reset, getValues, isAdmin]);
@@ -155,9 +149,9 @@ export function CheckoutForm({
 
   async function onSubmit(values: CheckoutFormData) {
     const order = {
-      lang: locale === "ru" ? ("ru" as const) : ("uz" as const),
+      lang: "en" as const,
       customerName: values.customerName,
-      customerPhone: `+998${values.phoneDigits}`,
+      customerPhone: values.phone,
       type: values.type,
       zoneId: values.type === "DELIVERY" ? values.zoneId : undefined,
       address: values.address,
@@ -182,7 +176,7 @@ export function CheckoutForm({
         if (name in values) setError(name as keyof CheckoutFormInput, { message });
       }
       const minOrder = "minOrder" in result ? result.minOrder : undefined;
-      toast.error(t(`errors.${result.error}`, { amount: formatUZS(minOrder ?? store.minOrder) }));
+      toast.error(t(`errors.${result.error}`, { amount: formatMoney(minOrder ?? store.minOrder) }));
       return;
     }
 
@@ -193,7 +187,7 @@ export function CheckoutForm({
       toast.success(tAdmin("created", { number }));
       router.push("/admin/orders");
     } else {
-      saveCustomer(values.customerName, values.phoneDigits);
+      saveCustomer(values.customerName, values.phone);
       router.replace(`/o/${result.orderId}`);
     }
   }
@@ -259,7 +253,7 @@ export function CheckoutForm({
                 )}
               </div>
               <span className="shrink-0 text-sm font-medium tabular-nums">
-                {formatUZS(unitPrice(l) * l.quantity)}
+                {formatMoney(unitPrice(l) * l.quantity)}
               </span>
             </li>
           ))}
@@ -322,7 +316,7 @@ export function CheckoutForm({
                   {settings.zones.map((z) => (
                     <ChoiceCard key={z.id} value={z.id} checked={field.value === z.id}>
                       <span className="flex-1">{z.name}</span>
-                      <span className="text-muted-foreground text-sm">{formatUZS(z.fee)}</span>
+                      <span className="text-muted-foreground text-sm">{formatMoney(z.fee)}</span>
                     </ChoiceCard>
                   ))}
                 </RadioGroup>
@@ -378,33 +372,21 @@ export function CheckoutForm({
         </Field>
         <Field
           label={t("phone")}
-          htmlFor="phoneDigits"
+          htmlFor="phone"
           hint={isAdmin ? undefined : t("phoneHint")}
-          error={errorText(errors.phoneDigits?.message)}
+          error={errorText(errors.phone?.message)}
         >
-          <div
-            className={cn(
-              "focus-within:border-ring focus-within:ring-ring/50 flex h-11 items-center rounded-lg border focus-within:ring-3",
-              errors.phoneDigits && "border-destructive",
-            )}
-          >
-            <span className="text-muted-foreground pl-3 text-sm">+998</span>
-            <input
-              id="phoneDigits"
-              type="tel"
-              inputMode="numeric"
-              autoComplete="tel-national"
-              placeholder="90 123 45 67"
-              maxLength={12}
-              aria-invalid={!!errors.phoneDigits}
-              className="h-full min-w-0 flex-1 bg-transparent px-2 text-sm outline-none"
-              {...register("phoneDigits", {
-                onChange: (e) => {
-                  e.target.value = formatPhone(e.target.value);
-                },
-              })}
-            />
-          </div>
+          <Input
+            id="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder={t("phonePlaceholder")}
+            maxLength={24}
+            aria-invalid={!!errors.phone}
+            className="h-11"
+            {...register("phone")}
+          />
         </Field>
       </Card>
 
@@ -493,9 +475,12 @@ export function CheckoutForm({
       <div className="bg-background/95 sticky bottom-0 z-40 -mx-3 mt-1 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-2">
           <dl className="flex flex-col gap-0.5 text-sm">
-            <Row label={t("subtotal")} value={formatUZS(subtotal)} />
+            <Row label={t("subtotal")} value={formatMoney(subtotal)} />
             {type === "DELIVERY" && (
-              <Row label={t("deliveryFee")} value={zone ? formatUZS(zone.fee) : t("chooseZone")} />
+              <Row
+                label={t("deliveryFee")}
+                value={zone ? formatMoney(zone.fee) : t("chooseZone")}
+              />
             )}
           </dl>
           {!isAdmin && !isOpenNow && (
@@ -503,7 +488,7 @@ export function CheckoutForm({
           )}
           {!isAdmin && isOpenNow && missing > 0 && (
             <p className="text-center text-sm text-amber-600">
-              {tCart("addMore", { amount: formatUZS(missing) })}
+              {tCart("addMore", { amount: formatMoney(missing) })}
             </p>
           )}
           <Button
@@ -517,7 +502,7 @@ export function CheckoutForm({
               {isSubmitting ? t("submitting") : t("submit")}
             </span>
             <span className="flex items-center gap-1 font-bold tabular-nums">
-              {formatUZS(total)}
+              {formatMoney(total)}
               {!isSubmitting && <ChevronRight className="size-4" />}
             </span>
           </Button>

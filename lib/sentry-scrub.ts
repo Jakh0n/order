@@ -3,7 +3,8 @@ import type { ErrorEvent } from "@sentry/nextjs";
 // Mijozlarning shaxsiy ma'lumotlari (telefon, email) Sentry'ga ketmasin.
 // sendDefaultPii: false — IP, cookie, foydalanuvchi; bu esa xabar matnlaridagi qoldiqlar uchun.
 
-const PHONE = /\+?998[\s-]?\d{2}[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}/g;
+// International phones: "+1 (555) 123-4567", "+447911123456", or a bare 9–15 digit run
+const PHONE = /\+\d[\d\s().-]{5,18}\d|\b\d{9,15}\b/g;
 const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
 
 export function scrubText(text: string): string {

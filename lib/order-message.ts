@@ -1,12 +1,12 @@
 import type { OrderType, PaymentMethod } from "@prisma/client";
 
-import { formatUZS } from "@/lib/money";
-import ru from "@/messages/ru.json";
-import uz from "@/messages/uz.json";
+import { formatMoney } from "@/lib/money";
+import en from "@/messages/en.json";
 
-export type Lang = "uz" | "ru";
+// Add a language here (and its messages file) when the app supports more than English.
+export type Lang = "en";
 
-const dictionaries = { uz, ru } as const;
+const dictionaries = { en } as const;
 
 export interface OrderMessageItem {
   name: string;
@@ -31,6 +31,8 @@ export interface OrderMessageOrder {
   subtotal: number;
   deliveryFee: number;
   total: number;
+  /** Order currency snapshot (ISO 4217) */
+  currency: string;
   items: OrderMessageItem[];
 }
 
@@ -49,12 +51,13 @@ function optionNames(options: unknown): string[] {
 export function buildOrderMessage(
   order: OrderMessageOrder,
   store: OrderMessageStore,
-  lang: Lang = "uz",
+  lang: Lang = "en",
   origin?: string,
 ): string {
   const t = dictionaries[lang].orderMessage;
   const pay = dictionaries[lang].payment;
   const lines: string[] = [];
+  const money = (minor: number) => formatMoney(minor, order.currency);
 
   lines.push(t.header.replace("{number}", String(order.number)));
   lines.push(`${t.store}: ${store.name}`);
@@ -75,13 +78,13 @@ export function buildOrderMessage(
   for (const item of order.items) {
     const opts = optionNames(item.options);
     const suffix = opts.length ? ` (${opts.join(", ")})` : "";
-    lines.push(`• ${item.name}${suffix} × ${item.quantity} = ${formatUZS(item.lineTotal)}`);
+    lines.push(`• ${item.name}${suffix} × ${item.quantity} = ${money(item.lineTotal)}`);
   }
 
   lines.push("");
-  lines.push(`${t.subtotal}: ${formatUZS(order.subtotal)}`);
-  if (order.deliveryFee > 0) lines.push(`${t.deliveryFee}: ${formatUZS(order.deliveryFee)}`);
-  lines.push(`${t.total}: ${formatUZS(order.total)}`);
+  lines.push(`${t.subtotal}: ${money(order.subtotal)}`);
+  if (order.deliveryFee > 0) lines.push(`${t.deliveryFee}: ${money(order.deliveryFee)}`);
+  lines.push(`${t.total}: ${money(order.total)}`);
   lines.push(`${t.payment}: ${pay[order.paymentMethod]}`);
 
   if (origin) {

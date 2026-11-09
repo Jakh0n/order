@@ -12,8 +12,8 @@ description: Mijozga ko'rinadigan do'kon sahifalarini (/[store], /[store]/checko
 3. Do'kon slug bo'yicha topilmasa — `notFound()` (`next/navigation`).
 4. Har doim `storeId` bo'yicha filtrlang. `Category.isActive=false` va `Product.isAvailable=false` ni
    mijozga ko'rsatmang (yoki "Bugun yo'q" deb o'chirilgan holda — dizaynga qarab), `sort` bo'yicha tartiblang.
-5. Narxlar faqat `formatUZS(n)` (`@/lib/money`) orqali.
-6. Matnlar `getTranslations` / `useTranslations` orqali; yangi kalitlar `uz.json` va `ru.json` ga (i18n-text skill).
+5. Narxlar faqat `formatMoney(minor, store.currency)` (server) yoki `useFormatMoney()` (klient, `CurrencyProvider` ichida).
+6. Matnlar `getTranslations` / `useTranslations` orqali; yangi kalitlar `messages/en.json` ga (i18n-text skill).
 7. Mobil birinchi: 375px uchun yozing, keyin `sm:`/`md:` bilan kengaytiring. Pastki savat tugmasi `sticky bottom-0`.
 8. Rasmlar uchun `next/image`. Supabase domeni (`*.supabase.co`) `next.config.ts` → `images.remotePatterns` da bor;
    yangi domen kerak bo'lsa o'sha yerga qo'shing. `sizes` ni bering.

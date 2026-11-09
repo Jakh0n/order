@@ -13,16 +13,18 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { POPULAR_CURRENCIES, priceStep } from "@/lib/money";
 import { saveStoreSettings } from "@/lib/settings/actions";
 import { cn } from "@/lib/utils";
 import {
   normalizeTelegramUsername,
-  type StoreSettingsData,
-  type StoreSettingsInput,
-  storeSettingsSchema,
+  settingsFormToMinor,
+  type StoreSettingsFormData,
+  type StoreSettingsFormInput,
+  storeSettingsFormSchema,
 } from "@/lib/validators";
 
-export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsInput }) {
+export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsFormInput }) {
   const t = useTranslations("adminSettings");
 
   const {
@@ -32,26 +34,35 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsIn
     setError,
     reset,
     formState: { errors, isSubmitting, isDirty },
-  } = useForm<StoreSettingsInput, unknown, StoreSettingsData>({
-    resolver: zodResolver(storeSettingsSchema),
+  } = useForm<StoreSettingsFormInput, unknown, StoreSettingsFormData>({
+    resolver: zodResolver(storeSettingsFormSchema),
     defaultValues,
   });
   const zones = useFieldArray({ control, name: "zones" });
-  const [deliveryEnabled, acceptTransfer, channel, telegramUsername, whatsappNumber] = useWatch({
-    control,
-    name: ["deliveryEnabled", "acceptTransfer", "channel", "telegramUsername", "whatsappNumber"],
-  });
+  const [deliveryEnabled, acceptTransfer, channel, telegramUsername, whatsappNumber, currency] =
+    useWatch({
+      control,
+      name: [
+        "deliveryEnabled",
+        "acceptTransfer",
+        "channel",
+        "telegramUsername",
+        "whatsappNumber",
+        "currency",
+      ],
+    });
 
   const errorText = (message?: string) => {
     if (!message) return null;
     return t.has(`errors.${message}`) ? t(`errors.${message}`) : t("errors.invalid");
   };
 
-  async function onSubmit(values: StoreSettingsData) {
-    const result = await saveStoreSettings(values);
+  async function onSubmit(values: StoreSettingsFormData) {
+    // Amounts are typed in the selected currency's major units → minor units for the server
+    const result = await saveStoreSettings(settingsFormToMinor(values));
     if (!result.ok) {
       for (const [path, message] of Object.entries(result.fieldErrors ?? {})) {
-        setError(path as FieldPath<StoreSettingsInput>, { message });
+        setError(path as FieldPath<StoreSettingsFormInput>, { message });
       }
       toast.error(t(`errors.${result.error}`));
       return;
@@ -109,6 +120,40 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsIn
         </Field>
       </Card>
 
+      <Card title={t("regionSection")}>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Field
+            label={t("currency")}
+            htmlFor="currency"
+            error={errorText(errors.currency?.message)}
+          >
+            <select id="currency" className={selectClass} {...register("currency")}>
+              {currencyOptions().map((code) => (
+                <option key={code} value={code}>
+                  {code}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field
+            label={t("timeZone")}
+            htmlFor="timeZone"
+            error={errorText(errors.timeZone?.message)}
+          >
+            <select id="timeZone" className={selectClass} {...register("timeZone")}>
+              {timeZoneOptions(defaultValues.timeZone).map((tz) => (
+                <option key={tz} value={tz}>
+                  {tz.replaceAll("_", " ")}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+        <p className="text-muted-foreground -mt-2 text-xs">
+          {t("currencyHint")} {t("timeZoneHint")}
+        </p>
+      </Card>
+
       <Card title={t("hoursSection")}>
         <SwitchField control={control} name="isOpen" label={t("isOpen")} hint={t("isOpenHint")} />
         <div className="grid grid-cols-2 gap-3">
@@ -144,13 +189,17 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsIn
         <SwitchField control={control} name="pickupEnabled" label={t("pickup")} />
         <SwitchField control={control} name="deliveryEnabled" label={t("delivery")} />
         <ErrorLine text={errorText(errors.deliveryEnabled?.message)} />
-        <Field label={t("minOrder")} htmlFor="minOrder" error={errorText(errors.minOrder?.message)}>
+        <Field
+          label={t("minOrder", { currency })}
+          htmlFor="minOrder"
+          error={errorText(errors.minOrder?.message)}
+        >
           <Input
             id="minOrder"
             type="number"
             inputMode="numeric"
             min={0}
-            step={1000}
+            step={priceStep(currency)}
             className="w-40"
             aria-invalid={!!errors.minOrder}
             {...register("minOrder", { valueAsNumber: true })}
@@ -181,8 +230,8 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsIn
                       type="number"
                       inputMode="numeric"
                       min={0}
-                      step={1000}
-                      aria-label={t("zoneFee")}
+                      step={priceStep(currency)}
+                      aria-label={t("zoneFee", { currency })}
                       aria-invalid={!!zoneErrors?.fee}
                       {...register(`zones.${i}.fee`, { valueAsNumber: true })}
                     />
@@ -345,7 +394,9 @@ function SwitchField({
   label,
   hint,
 }: {
-  control: ReturnType<typeof useForm<StoreSettingsInput, unknown, StoreSettingsData>>["control"];
+  control: ReturnType<
+    typeof useForm<StoreSettingsFormInput, unknown, StoreSettingsFormData>
+  >["control"];
   name:
     | "isOpen"
     | "pickupEnabled"
@@ -396,4 +447,21 @@ function Field({
 function ErrorLine({ text }: { text?: string | null }) {
   if (!text) return null;
   return <p className="text-destructive text-sm">{text}</p>;
+}
+
+const selectClass =
+  "h-9 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
+
+/** Popular currencies first, then every ISO 4217 code the browser knows */
+function currencyOptions(): string[] {
+  const all =
+    typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("currency") : [];
+  return [...new Set([...POPULAR_CURRENCIES, ...all])];
+}
+
+/** All IANA time zones (current value kept even if the browser doesn't list it) */
+function timeZoneOptions(current: string): string[] {
+  const all =
+    typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : [];
+  return [...new Set(["UTC", current, ...all])];
 }

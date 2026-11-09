@@ -23,7 +23,14 @@ export const getCurrentUser = cache(async () => {
       stores: {
         orderBy: { createdAt: "asc" },
         take: 1,
-        select: { id: true, slug: true, name: true, isBlocked: true },
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+          isBlocked: true,
+          currency: true,
+          timeZone: true,
+        },
       },
     },
   });

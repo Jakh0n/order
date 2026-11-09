@@ -9,11 +9,11 @@ Server Action (`"use server"`) ichida, tartib bilan:
 
 1. **Validatsiya**: `checkoutSchema.safeParse(input)` (`@/lib/validators`). Xato bo'lsa maydon xatolarini qaytaring.
 2. **Do'kon**: slug bo'yicha oling. Yo'q → xato. `isOpen=false` yoki ish vaqtidan tashqari (`openTime`/`closeTime`,
-   Asia/Tashkent vaqti) → "yopiq" xatosi. Tanlangan `type` (pickup/delivery) va `paymentMethod` do'konda yoqilganini tekshiring.
+   do'kon vaqt zonasi — `store.timeZone`) → "yopiq" xatosi. Tanlangan `type` (pickup/delivery) va `paymentMethod` do'konda yoqilganini tekshiring.
 3. **Narxlar bazadan**: `items` dagi `productId` larni `storeId` bilan birga oling (`include: optionGroups.options`).
    Klientdan kelgan narxga ISHONMANG. Topilmagan yoki `isAvailable=false` mahsulot → xato.
 4. **Variantlar**: har `optionId` shu mahsulot guruhiga tegishli ekanini tekshiring; `required` guruh tanlanganini,
-   `maxSelect` oshmaganini tekshiring. `unitPrice = product.price + sum(option.price)`, `lineTotal = unitPrice * quantity`.
+   `maxSelect` oshmaganini tekshiring. `unitPrice = product.price + sum(option.price)` (hammasi sentlarda), `lineTotal = unitPrice * quantity`.
 5. **Tuman**: DELIVERY bo'lsa `zoneId` shu do'konniki ekanini tekshirib, `deliveryFee = zone.fee`, `zoneName` snapshot.
 6. **minOrder**: `subtotal < store.minOrder` → xato.
 7. **Saqlash** `prisma.$transaction` ichida: `aggregate({ _max: { number } })` + 1 → `order.create` (items bilan,

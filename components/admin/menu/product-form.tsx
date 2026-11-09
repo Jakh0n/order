@@ -25,7 +25,14 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { deleteProduct, saveProduct } from "@/lib/menu/admin-actions";
 import { cn } from "@/lib/utils";
-import { type ProductFormData, type ProductFormInput, productSchema } from "@/lib/validators";
+import { useCurrency } from "@/components/currency-provider";
+import { priceStep } from "@/lib/money";
+import {
+  type ProductFormData,
+  type ProductFormInput,
+  productFormSchema,
+  productFormToMinor,
+} from "@/lib/validators";
 
 import { ImageUpload } from "./image-upload";
 
@@ -44,6 +51,7 @@ export function ProductForm({
   categories: { id: string; name: string }[];
 }) {
   const t = useTranslations("adminMenu");
+  const currency = useCurrency();
   const router = useRouter();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, startDelete] = useTransition();
@@ -55,7 +63,7 @@ export function ProductForm({
     setError,
     formState: { errors, isSubmitting },
   } = useForm<ProductFormInput, unknown, ProductFormData>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(productFormSchema),
     defaultValues,
   });
   const groups = useFieldArray({ control, name: "optionGroups" });
@@ -66,7 +74,8 @@ export function ProductForm({
   };
 
   async function onSubmit(values: ProductFormData) {
-    const result = await saveProduct(productId, values);
+    // The form works in major units (8.99); the server stores minor units (899)
+    const result = await saveProduct(productId, productFormToMinor(values, currency));
     if (!result.ok) {
       for (const [path, message] of Object.entries(result.fieldErrors ?? {})) {
         setError(path as FieldPath<ProductFormInput>, { message });
@@ -115,13 +124,17 @@ export function ProductForm({
         </Field>
 
         <div className="grid grid-cols-2 gap-3">
-          <Field label={t("price")} htmlFor="price" error={errorText(errors.price?.message)}>
+          <Field
+            label={t("price", { currency })}
+            htmlFor="price"
+            error={errorText(errors.price?.message)}
+          >
             <Input
               id="price"
               type="number"
               inputMode="numeric"
               min={0}
-              step={500}
+              step={priceStep(currency)}
               aria-invalid={!!errors.price}
               {...register("price", { valueAsNumber: true })}
             />
@@ -269,6 +282,7 @@ function GroupEditor({
   onRemove: () => void;
 }) {
   const t = useTranslations("adminMenu");
+  const currency = useCurrency();
   const options = useFieldArray({ control, name: `optionGroups.${index}.options` });
   const groupErrors = errors.optionGroups?.[index];
 
@@ -342,7 +356,7 @@ function GroupEditor({
                 <Input
                   type="number"
                   inputMode="numeric"
-                  step={500}
+                  step={priceStep(currency)}
                   placeholder="0"
                   aria-label={t("optionPrice")}
                   aria-invalid={!!optionErrors?.price}

@@ -10,6 +10,8 @@ import { type PricingItem, priceItems } from "@/lib/orders/pricing";
 
 export interface InsertOrderInput {
   storeId: string;
+  /** Store currency at order time (snapshot on the order) */
+  currency: string;
   customerName: string;
   customerPhone: string;
   type: "PICKUP" | "DELIVERY";
@@ -88,6 +90,7 @@ export async function insertOrder(input: InsertOrderInput): Promise<InsertOrderR
         return tx.order.create({
           data: {
             storeId: input.storeId,
+            currency: input.currency,
             number: (last._max.number ?? 0) + 1,
             customerName: input.customerName,
             customerPhone: input.customerPhone,

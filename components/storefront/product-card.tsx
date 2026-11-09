@@ -4,15 +4,16 @@ import { Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { useFormatMoney } from "@/components/currency-provider";
 import { lineKey, useCart, useCartLines } from "@/lib/cart-store";
 import type { MenuProduct } from "@/lib/menu-types";
-import { formatUZS } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
 import { ProductDialog } from "./product-dialog";
 import { ProductImage } from "./product-image";
 
 export function ProductCard({ cartKey, product }: { cartKey: string; product: MenuProduct }) {
+  const formatMoney = useFormatMoney();
   const t = useTranslations();
   const [open, setOpen] = useState(false);
   const lines = useCartLines(cartKey);
@@ -55,7 +56,7 @@ export function ProductCard({ cartKey, product }: { cartKey: string; product: Me
         {product.description && (
           <p className="text-muted-foreground line-clamp-2 text-sm">{product.description}</p>
         )}
-        <p className="mt-auto pt-1 font-semibold">{formatUZS(product.price)}</p>
+        <p className="mt-auto pt-1 font-semibold">{formatMoney(product.price)}</p>
       </div>
 
       <div className="relative shrink-0">

@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { logout } from "@/lib/auth/actions";
 import { getCurrentUser, requireSuperadmin } from "@/lib/auth/owner";
-import { formatUZS } from "@/lib/money";
+import { formatMoney } from "@/lib/money";
 import { getPlatformStats, listStores, type SuperadminStore } from "@/lib/superadmin/data";
 import { cn } from "@/lib/utils";
 
@@ -72,7 +72,11 @@ async function Superadmin({
         <Stat label={t("orders30")} value={String(stats.orders30)} />
         <Stat
           label={t("revenue30")}
-          value={formatUZS(stats.revenue30)}
+          value={
+            stats.revenue30.length
+              ? stats.revenue30.map((r) => formatMoney(r.total, r.currency)).join(" · ")
+              : "—"
+          }
           className="col-span-2 md:col-span-1"
         />
       </div>

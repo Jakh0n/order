@@ -76,6 +76,10 @@ model Store {
   whatsappNumber       String?
   pickupEnabled        Boolean        @default(true)
   deliveryEnabled      Boolean        @default(true)
+  /// Pul summalari (narx, tuman, minOrder) shu valyutaning eng kichik birligida: USD → sent
+  currency             String         @default("USD")
+  /// IANA vaqt zonasi (ish vaqti va "bugun" hisobi uchun), masalan "Europe/London"
+  timeZone             String         @default("UTC")
   minOrder             Int            @default(0)
   acceptCash           Boolean        @default(true)
   acceptCardOnDelivery Boolean        @default(true)
@@ -183,7 +187,9 @@ model Order {
   subtotal      Int
   deliveryFee   Int           @default(0)
   total         Int
-  lang          String        @default("uz")
+  /// Buyurtma paytidagi do'kon valyutasi (snapshot)
+  currency      String        @default("USD")
+  lang          String        @default("en")
   items         OrderItem[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt

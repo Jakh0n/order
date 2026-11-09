@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getRequestOrigin } from "@/lib/app-url";
 import { requireOwner } from "@/lib/auth/owner";
 import { getStoreSettings } from "@/lib/settings/data";
+import { settingsToForm } from "@/lib/validators";
 
 export default function AdminSettingsPage() {
   return (
@@ -29,7 +30,7 @@ async function AdminSettings() {
       <SettingsForm
         // Saqlangandan keyin (refresh) yangi tuman id lari bilan formani qayta boshlash
         key={settings.zones.map((z) => z.dbId).join()}
-        defaultValues={settings}
+        defaultValues={settingsToForm(settings)}
       />
     </div>
   );

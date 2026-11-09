@@ -8,7 +8,7 @@ import { prisma } from "@/lib/db";
 import { rateLimit, RULES } from "@/lib/rate-limit";
 import { deleteMenuImage, MenuImageError, menuImagePrefix, uploadMenuImage } from "@/lib/storage";
 import { storeCacheTag } from "@/lib/storefront";
-import { categorySchema, type ProductFormInput, productSchema } from "@/lib/validators";
+import { categorySchema, type ProductInput, productSchema } from "@/lib/validators";
 import { reportError } from "@/lib/report-error";
 
 // Har bir action: requireOwner() → har bir so'rovda storeId → mijoz menyusi keshini yangilash.
@@ -196,7 +196,8 @@ export async function uploadProductImage(
 /** Yaratish (productId yo'q) yoki tahrirlash. Variant guruhlari id bo'yicha moslanadi — mijoz savatidagi variantlar saqlanib qoladi. */
 export async function saveProduct(
   productId: string | null,
-  input: ProductFormInput,
+  /** Amounts in minor units (the form converts with productFormToMinor) */
+  input: ProductInput,
 ): Promise<MenuActionResult<{ productId: string }>> {
   const { store } = await requireOwner();
 

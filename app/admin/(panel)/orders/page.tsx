@@ -10,9 +10,9 @@ import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { requireOwner } from "@/lib/auth/owner";
 import { JOIN, prisma } from "@/lib/db";
-import { formatUZS } from "@/lib/money";
+import { formatMoney } from "@/lib/money";
 import { ACTIVE_STATUSES } from "@/lib/orders/status";
-import { tashkentDayStart } from "@/lib/store-hours";
+import { startOfDayInZone } from "@/lib/store-hours";
 import { cn } from "@/lib/utils";
 
 const TABS = ["active", "completed", "cancelled", "all"] as const;
@@ -45,7 +45,7 @@ async function Orders({
   const tabParam = (await searchParams).tab;
   const tab: Tab = TABS.includes(tabParam as Tab) ? (tabParam as Tab) : "active";
 
-  const today = { storeId: store.id, createdAt: { gte: tashkentDayStart() } };
+  const today = { storeId: store.id, createdAt: { gte: startOfDayInZone(store.timeZone) } };
   const [orders, todayStats, todayPaid, activeCount] = await Promise.all([
     prisma.order.findMany({
       ...JOIN,
@@ -80,11 +80,14 @@ async function Orders({
       </div>
 
       <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
-        <Stat label={t("todayRevenue")} value={formatUZS(todayStats._sum.total ?? 0)} />
+        <Stat
+          label={t("todayRevenue")}
+          value={formatMoney(todayStats._sum.total ?? 0, store.currency)}
+        />
         <Stat label={t("todayOrders")} value={String(todayStats._count)} />
         <Stat
           label={t("todayPaid")}
-          value={formatUZS(todayPaid._sum.total ?? 0)}
+          value={formatMoney(todayPaid._sum.total ?? 0, store.currency)}
           className="col-span-2 md:col-span-1"
         />
       </div>
@@ -116,7 +119,7 @@ async function Orders({
       ) : (
         <div className="grid gap-3 lg:grid-cols-2">
           {orders.map((order) => (
-            <OrderCard key={order.id} order={order} />
+            <OrderCard key={order.id} order={order} timeZone={store.timeZone} />
           ))}
         </div>
       )}

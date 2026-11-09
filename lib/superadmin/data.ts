@@ -15,18 +15,21 @@ export async function getPlatformStats(now: Date) {
     prisma.store.count({
       where: { plan: "PAID", OR: [{ paidUntil: null }, { paidUntil: { gte: now } }] },
     }),
-    prisma.order.aggregate({
+    // Different stores use different currencies — sum per currency, never across them
+    prisma.order.groupBy({
+      by: ["currency"],
       where: { createdAt: { gte: since }, status: { not: "CANCELLED" } },
       _count: true,
       _sum: { total: true },
+      orderBy: { currency: "asc" },
     }),
   ]);
   return {
     stores,
     blocked,
     paid,
-    orders30: orders30._count,
-    revenue30: orders30._sum.total ?? 0,
+    orders30: orders30.reduce((sum, r) => sum + r._count, 0),
+    revenue30: orders30.map((r) => ({ currency: r.currency, total: r._sum.total ?? 0 })),
   };
 }
 

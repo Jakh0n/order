@@ -3,7 +3,7 @@ import { Clock, MapPin, Phone } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 import { Badge } from "@/components/ui/badge";
-import { formatUZS } from "@/lib/money";
+import { formatMoney } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
 import { OrderActions } from "./order-actions";
@@ -25,7 +25,14 @@ function optionNames(options: unknown): string | null {
   return names.length ? names.join(", ") : null;
 }
 
-export async function OrderCard({ order }: { order: Order & { items: OrderItem[] } }) {
+export async function OrderCard({
+  order,
+  timeZone,
+}: {
+  order: Order & { items: OrderItem[] };
+  /** Store time zone for the order time */
+  timeZone: string;
+}) {
   const t = await getTranslations();
   const format = await getFormatter();
   const paid = order.paymentStatus === "PAID";
@@ -42,7 +49,7 @@ export async function OrderCard({ order }: { order: Order & { items: OrderItem[]
         <div>
           <h2 className="text-lg font-semibold">#{order.number}</h2>
           <p className="text-muted-foreground text-xs">
-            {format.dateTime(order.createdAt, { dateStyle: "short", timeStyle: "short" })}
+            {format.dateTime(order.createdAt, { dateStyle: "short", timeStyle: "short", timeZone })}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
@@ -85,18 +92,20 @@ export async function OrderCard({ order }: { order: Order & { items: OrderItem[]
                 <span className="text-muted-foreground"> ({optionNames(item.options)})</span>
               )}
             </span>
-            <span className="shrink-0 tabular-nums">{formatUZS(item.lineTotal)}</span>
+            <span className="shrink-0 tabular-nums">
+              {formatMoney(item.lineTotal, order.currency)}
+            </span>
           </li>
         ))}
         {order.deliveryFee > 0 && (
           <li className="text-muted-foreground flex justify-between">
             <span>{t("checkout.deliveryFee")}</span>
-            <span className="tabular-nums">{formatUZS(order.deliveryFee)}</span>
+            <span className="tabular-nums">{formatMoney(order.deliveryFee, order.currency)}</span>
           </li>
         )}
         <li className="flex justify-between font-semibold">
           <span>{t("checkout.total")}</span>
-          <span className="tabular-nums">{formatUZS(order.total)}</span>
+          <span className="tabular-nums">{formatMoney(order.total, order.currency)}</span>
         </li>
       </ul>
 

@@ -19,6 +19,7 @@ description: /admin ichida CRUD (kategoriya, taom, variant, tuman, sozlamalar, b
 3. **Forma** (client component): `react-hook-form` + `zodResolver`, shadcn `Input`/`Label`/`Select`/`Checkbox`/`Button`.
    Yuborilganda `sonner` → `toast.success(t("..."))` / `toast.error(...)`.
 4. **Rasm**: serverda `uploadMenuImage(storeId, file)` (`@/lib/storage`) — faqat image/*, ≤2 MB. URL ni `imageUrl` ga saqlang.
-5. **Matnlar**: barcha yozuvlar `uz.json` va `ru.json` ga (i18n-text skill).
+5. **Matnlar**: barcha yozuvlar `messages/en.json` ga (i18n-text skill).
+6. **Pul maydonlari**: formada asosiy birlik (8.99, `step={priceStep(currency)}`), action'ga `toMinor` bilan sent.
 6. Ro'yxatlar mobil'da kartochka, desktop'da `Table`.
 7. `npm run check`.

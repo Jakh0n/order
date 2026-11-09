@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { useFormatMoney } from "@/components/currency-provider";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Sheet,
@@ -16,7 +17,6 @@ import {
 } from "@/components/ui/sheet";
 import { cartCount, cartSubtotal, unitPrice, useCart, useCartLines } from "@/lib/cart-store";
 import type { StorefrontStore } from "@/lib/menu-types";
-import { formatUZS } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
 import { ProductImage } from "./product-image";
@@ -25,6 +25,7 @@ import { useStoreOpen } from "./use-store-open";
 
 /** Pastdagi suzuvchi "Savatni ko'rish" tugmasi + savat varag'i. Savat bo'sh bo'lsa ko'rinmaydi. */
 export function CartBar({ store }: { store: StorefrontStore }) {
+  const formatMoney = useFormatMoney();
   const t = useTranslations("cart");
   const [open, setOpen] = useState(false);
   const lines = useCartLines(store.slug);
@@ -50,7 +51,7 @@ export function CartBar({ store }: { store: StorefrontStore }) {
             </span>
             {t("view")}
           </span>
-          <span className="font-semibold tabular-nums">{formatUZS(subtotal)}</span>
+          <span className="font-semibold tabular-nums">{formatMoney(subtotal)}</span>
         </Button>
       </div>
       <CartSheet store={store} open={open} onOpenChange={setOpen} />
@@ -67,6 +68,7 @@ function CartSheet({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const formatMoney = useFormatMoney();
   const t = useTranslations("cart");
   const lines = useCartLines(store.slug);
   const setQuantity = useCart((s) => s.setQuantity);
@@ -125,7 +127,7 @@ function CartSheet({
                 <div className="flex items-start justify-between gap-2">
                   <p className="leading-snug font-medium">{line.name}</p>
                   <span className="shrink-0 font-semibold tabular-nums">
-                    {formatUZS(unitPrice(line) * line.quantity)}
+                    {formatMoney(unitPrice(line) * line.quantity)}
                   </span>
                 </div>
                 {line.options.length > 0 && (
@@ -154,14 +156,14 @@ function CartSheet({
                 />
               </div>
               <p className="text-muted-foreground text-sm">
-                {t("addMore", { amount: formatUZS(missing) })}
+                {t("addMore", { amount: formatMoney(missing) })}
               </p>
             </div>
           )}
           {!isOpenNow && <p className="text-destructive text-sm">{t("closed")}</p>}
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">{t("subtotal")}</span>
-            <span className="text-lg font-bold tabular-nums">{formatUZS(subtotal)}</span>
+            <span className="text-lg font-bold tabular-nums">{formatMoney(subtotal)}</span>
           </div>
           <p className="text-muted-foreground -mt-2 text-xs">{t("deliveryNote")}</p>
           {canCheckout ? (

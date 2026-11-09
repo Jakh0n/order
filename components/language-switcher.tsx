@@ -14,6 +14,9 @@ export function LanguageSwitcher() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
+  // Faqat bitta til bo'lsa almashtirgich kerak emas
+  if (locales.length < 2) return null;
+
   return (
     <div className="flex items-center gap-1" role="group" aria-label={t("language")}>
       {locales.map((l) => (

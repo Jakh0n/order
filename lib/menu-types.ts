@@ -42,6 +42,10 @@ export interface StorefrontStore {
   /** Superadmin bloklagan — menyu va buyurtma yopiq */
   isBlocked: boolean;
   minOrder: number;
+  /** ISO 4217; money amounts are in its minor unit */
+  currency: string;
+  /** IANA time zone for opening hours */
+  timeZone: string;
 }
 
 export interface StorefrontData {

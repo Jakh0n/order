@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { AdminNav } from "@/components/admin/admin-nav";
+import { CurrencyProvider } from "@/components/currency-provider";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -81,7 +82,7 @@ async function Panel({ children }: { children: React.ReactNode }) {
             {t("blockedBanner")}
           </div>
         )}
-        {children}
+        <CurrencyProvider currency={store.currency}>{children}</CurrencyProvider>
         <form action={logout} className="px-4 py-4 md:hidden">
           <Button type="submit" variant="ghost" size="sm" className="text-muted-foreground">
             <LogOut />

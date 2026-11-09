@@ -7,6 +7,7 @@ import { ProductPageShell } from "@/components/admin/menu/product-page-shell";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { requireOwner } from "@/lib/auth/owner";
 import { getAdminCategories, getAdminProduct } from "@/lib/menu/admin-data";
+import { productToForm } from "@/lib/validators";
 
 export default function EditProductPage({ params }: PageProps<"/admin/menu/products/[productId]">) {
   return (
@@ -37,21 +38,25 @@ async function EditProduct({
         key={product.optionGroups.flatMap((g) => [g.id, ...g.options.map((o) => o.id)]).join()}
         productId={product.id}
         categories={categories}
-        defaultValues={{
-          name: product.name,
-          description: product.description ?? "",
-          price: product.price,
-          categoryId: product.categoryId,
-          isAvailable: product.isAvailable,
-          imageUrl: product.imageUrl,
-          optionGroups: product.optionGroups.map((g) => ({
-            dbId: g.id,
-            name: g.name,
-            required: g.required,
-            maxSelect: g.maxSelect,
-            options: g.options.map((o) => ({ dbId: o.id, name: o.name, price: o.price })),
-          })),
-        }}
+        // DB stores minor units (899) → the form shows major units (8.99)
+        defaultValues={productToForm(
+          {
+            name: product.name,
+            description: product.description ?? "",
+            price: product.price,
+            categoryId: product.categoryId,
+            isAvailable: product.isAvailable,
+            imageUrl: product.imageUrl,
+            optionGroups: product.optionGroups.map((g) => ({
+              dbId: g.id,
+              name: g.name,
+              required: g.required,
+              maxSelect: g.maxSelect,
+              options: g.options.map((o) => ({ dbId: o.id, name: o.name, price: o.price })),
+            })),
+          },
+          store.currency,
+        )}
       />
     </ProductPageShell>
   );

@@ -1,84 +1,102 @@
+// Demo store "Flami Grill" (USD). Safe to re-run: the menu and zones are recreated,
+// existing product photos are kept by item name, orders and the owner's password are untouched.
 import { PrismaClient } from "@prisma/client";
+
+import { FLAMI_MENU, FLAMI_ZONES } from "./flami-menu";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  // Owner without a password — set one with: npm run user:password -- admin@flami.org
   const owner = await prisma.user.upsert({
-    where: { email: "owner@order.uz" },
+    where: { email: "admin@flami.org" },
     update: {},
-    create: { email: "owner@order.uz", name: "Owner", role: "OWNER" },
+    create: { email: "admin@flami.org", name: "Flami admin", role: "SUPERADMIN" },
   });
 
   const storeData = {
-    name: "Mening oshxonam",
-    openTime: "09:00",
-    closeTime: "22:00",
-    channel: "TELEGRAM" as const,
-    telegramUsername: "my_oshxona",
-    minOrder: 50000,
+    name: "Flami Grill",
+    address: "Downtown (test store)",
+    landmark: "Next to the central station",
+    currency: "USD",
+    timeZone: "UTC",
+    openTime: null,
+    closeTime: null,
+    isOpen: true,
+    pickupEnabled: true,
+    deliveryEnabled: true,
+    minOrder: 1500,
+    acceptCash: true,
+    acceptCardOnDelivery: true,
+    acceptTransfer: true,
+    transferDetails:
+      "TEST bank details:\nAccount name: Flami Grill Ltd\nIBAN: GB00 TEST 0000 0000 0000 00\nBank: Test Bank",
   };
 
   const store = await prisma.store.upsert({
-    where: { slug: "oshxonam" },
+    where: { slug: "flami-grill" },
     update: storeData,
-    create: { ...storeData, slug: "oshxonam", ownerId: owner.id },
+    create: {
+      ...storeData,
+      slug: "flami-grill",
+      ownerId: owner.id,
+      telegramUsername: "flami_grill",
+    },
   });
 
-  // Menyu va tumanlarni qayta yaratamiz. Buyurtmalarga tegilmaydi:
-  // OrderItem'da nom va narx snapshot, productId esa FK emas.
-  await prisma.product.deleteMany({ where: { storeId: store.id } });
+  // Keep uploaded photos by item name
+  const photos = new Map(
+    (
+      await prisma.product.findMany({
+        where: { storeId: store.id },
+        select: { name: true, imageUrl: true },
+      })
+    )
+      .filter((p) => p.imageUrl)
+      .map((p) => [p.name, p.imageUrl]),
+  );
+
+  await prisma.product.deleteMany({ where: { storeId: store.id } }); // option groups cascade
   await prisma.category.deleteMany({ where: { storeId: store.id } });
   await prisma.deliveryZone.deleteMany({ where: { storeId: store.id } });
 
-  const [milliy, salatlar, ichimliklar] = await Promise.all(
-    ["Milliy taomlar", "Salatlar", "Ichimliklar"].map((name, sort) =>
-      prisma.category.create({ data: { storeId: store.id, name, sort } }),
-    ),
-  );
-
-  const products = [
-    { categoryId: milliy.id, name: "Osh", price: 45000 },
-    { categoryId: milliy.id, name: "Lag'mon", price: 35000 },
-    { categoryId: milliy.id, name: "Manti", price: 30000 },
-    { categoryId: salatlar.id, name: "Achchiq-chuchuk", price: 15000 },
-    { categoryId: ichimliklar.id, name: "Choy", price: 5000 },
-    { categoryId: ichimliklar.id, name: "Kompot", price: 8000 },
-  ];
-
-  for (const [sort, p] of products.entries()) {
-    await prisma.product.create({
-      data: {
-        ...p,
-        storeId: store.id,
-        sort,
-        ...(p.name === "Osh" && {
-          optionGroups: {
-            create: {
-              name: "Porsiya",
-              required: true,
-              maxSelect: 1,
-              options: {
-                create: [
-                  { name: "Yarim", price: -15000, sort: 0 },
-                  { name: "To'liq", price: 0, sort: 1 },
-                ],
-              },
-            },
-          },
-        }),
-      },
+  for (const [cSort, cat] of FLAMI_MENU.entries()) {
+    const category = await prisma.category.create({
+      data: { storeId: store.id, name: cat.category, sort: cSort },
     });
+    for (const [pSort, item] of cat.items.entries()) {
+      await prisma.product.create({
+        data: {
+          storeId: store.id,
+          categoryId: category.id,
+          name: item.name,
+          description: item.description,
+          price: item.price,
+          imageUrl: photos.get(item.name) ?? null,
+          sort: pSort,
+          optionGroups: {
+            create: (item.groups ?? []).map((g, gSort) => ({
+              name: g.name,
+              required: g.required,
+              maxSelect: g.maxSelect,
+              sort: gSort,
+              options: {
+                create: g.options.map(([name, price], oSort) => ({ name, price, sort: oSort })),
+              },
+            })),
+          },
+        },
+      });
+    }
   }
 
   await prisma.deliveryZone.createMany({
-    data: [
-      { name: "Chilonzor", fee: 10000 },
-      { name: "Yunusobod", fee: 15000 },
-      { name: "Sergeli", fee: 20000 },
-    ].map((z, sort) => ({ ...z, sort, storeId: store.id })),
+    data: FLAMI_ZONES.map(([name, fee], sort) => ({ storeId: store.id, name, fee, sort })),
   });
 
-  console.log(`Seed tayyor: /${store.slug}`);
+  console.log(
+    `Seed done: /${store.slug} — ${FLAMI_MENU.length} categories, ${photos.size} photos kept`,
+  );
 }
 
 main()

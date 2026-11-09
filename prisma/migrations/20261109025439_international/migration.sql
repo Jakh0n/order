@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Order" ADD COLUMN     "currency" TEXT NOT NULL DEFAULT 'USD',
+ALTER COLUMN "lang" SET DEFAULT 'en';
+
+-- AlterTable
+ALTER TABLE "Store" ADD COLUMN     "currency" TEXT NOT NULL DEFAULT 'USD',
+ADD COLUMN     "timeZone" TEXT NOT NULL DEFAULT 'UTC';

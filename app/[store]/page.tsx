@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { CurrencyProvider } from "@/components/currency-provider";
 import { CartBar } from "@/components/storefront/cart-sheet";
 import { CartSync } from "@/components/storefront/cart-sync";
 import { MenuBrowser } from "@/components/storefront/menu-browser";
@@ -38,14 +39,16 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
   const products = categories.flatMap((c) => c.products);
 
   return (
-    // Kulrang fon + oq kartochkalar — bo'limlar aniq ajralib turadi
-    <div className="bg-muted flex-1">
-      <div className="mx-auto w-full max-w-2xl pb-28">
-        <StoreHeader store={store} />
-        <MenuBrowser cartKey={store.slug} categories={categories} />
+    <CurrencyProvider currency={store.currency}>
+      {/* Gray background + white cards — sections stand apart clearly */}
+      <div className="bg-muted flex-1">
+        <div className="mx-auto w-full max-w-2xl pb-28">
+          <StoreHeader store={store} />
+          <MenuBrowser cartKey={store.slug} categories={categories} />
+        </div>
+        <CartSync cartKey={store.slug} products={products} />
+        <CartBar store={store} />
       </div>
-      <CartSync cartKey={store.slug} products={products} />
-      <CartBar store={store} />
-    </div>
+    </CurrencyProvider>
   );
 }

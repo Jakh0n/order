@@ -87,6 +87,7 @@ export async function createManualOrder(input: ManualOrderInput): Promise<Manual
     const result = await insertOrder({
       ...data,
       storeId: store.id,
+      currency: store.currency,
       paymentStatus: markPaid ? "PAID" : "UNPAID",
       minOrder: null,
     });

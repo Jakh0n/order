@@ -3,8 +3,7 @@
 import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 
-import ru from "@/messages/ru.json";
-import uz from "@/messages/uz.json";
+import en from "@/messages/en.json";
 
 // Root layout ham yiqilganda ishlaydi — NextIntlClientProvider yo'q, shuning uchun matn to'g'ridan-to'g'ri.
 export default function GlobalError({
@@ -18,13 +17,10 @@ export default function GlobalError({
     Sentry.captureException(error);
   }, [error]);
 
-  const t =
-    typeof document !== "undefined" && document.cookie.includes("NEXT_LOCALE=ru")
-      ? ru.errorPage
-      : uz.errorPage;
+  const t = en.errorPage;
 
   return (
-    <html lang="uz">
+    <html lang="en">
       <body
         style={{
           fontFamily: "system-ui, sans-serif",

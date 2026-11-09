@@ -67,7 +67,12 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
     }[data.paymentMethod];
     if (!paymentAllowed) return { ok: false, error: "paymentUnavailable" };
 
-    const result = await insertOrder({ ...data, storeId: store.id, minOrder: store.minOrder });
+    const result = await insertOrder({
+      ...data,
+      storeId: store.id,
+      currency: store.currency,
+      minOrder: store.minOrder,
+    });
     if (!result.ok) return { ok: false, error: result.error, minOrder: store.minOrder };
     return { ok: true, orderId: result.orderId };
   } catch (e) {

@@ -22,7 +22,7 @@ export function orderSendLink(
   store: SendStore,
   origin: string,
 ): { channel: Channel; href: string } | null {
-  const text = buildOrderMessage(order, store, isLocale(order.lang) ? order.lang : "uz", origin);
+  const text = buildOrderMessage(order, store, isLocale(order.lang) ? order.lang : "en", origin);
 
   if (store.channel === "WHATSAPP" && store.whatsappNumber) {
     return { channel: "WHATSAPP", href: whatsappLink(store.whatsappNumber, text) };

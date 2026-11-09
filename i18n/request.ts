@@ -9,7 +9,8 @@ export default getRequestConfig(async () => {
 
   return {
     locale,
-    timeZone: "Asia/Tashkent",
+    // Store-specific dates pass the store's own timeZone explicitly
+    timeZone: "UTC",
     messages: (await import(`../messages/${locale}.json`)).default,
   };
 });

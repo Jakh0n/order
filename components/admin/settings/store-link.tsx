@@ -14,7 +14,6 @@ export function StoreLink({ slug, origin }: { slug: string; origin: string }) {
   const [qr, setQr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-
   useEffect(() => {
     if (!url) return;
     let cancelled = false;

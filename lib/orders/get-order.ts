@@ -20,6 +20,7 @@ export async function getOrderForCustomer(id: string) {
           telegramUsername: true,
           whatsappNumber: true,
           transferDetails: true,
+          timeZone: true,
         },
       },
     },

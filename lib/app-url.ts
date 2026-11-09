@@ -31,7 +31,8 @@ export async function getRequestOrigin(): Promise<string> {
   const host = h.get("x-forwarded-host")?.split(",")[0]?.trim() || h.get("host");
   if (host) {
     const proto =
-      h.get("x-forwarded-proto")?.split(",")[0]?.trim() || (LOCAL_HOST.test(host) ? "http" : "https");
+      h.get("x-forwarded-proto")?.split(",")[0]?.trim() ||
+      (LOCAL_HOST.test(host) ? "http" : "https");
     return `${proto}://${host}`;
   }
   return "http://localhost:3000";
