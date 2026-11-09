@@ -196,6 +196,8 @@ model Order {
 
   @@unique([storeId, number])
   @@index([storeId, createdAt])
+  /// Admin "active orders" tab: status filter without scanning old completed orders
+  @@index([storeId, status, createdAt])
 }
 
 model OrderItem {

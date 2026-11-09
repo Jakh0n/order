@@ -163,3 +163,29 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 ## Skill'lar
 
 `.claude/skills/`: `prisma-change`, `storefront-page`, `order-flow`, `admin-crud`, `i18n-text`.
+
+## Deploy (Vercel)
+
+- `vercel.json`: region `hnd1` — baza bilan bir joyda (Supabase ap-northeast-1). Baza ko'chsa, region ham o'zgaradi.
+- Build: `vercel-build` = `prisma generate && prisma migrate deploy && next build` — migratsiyalar avtomatik.
+- Env: `DATABASE_URL` (6543, `pgbouncer=true&connection_limit=3`), `DIRECT_URL` (5432), `AUTH_SECRET`,
+  `APP_URL=https://flami.org`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (secret),
+  `NEXT_PUBLIC_SENTRY_DSN`, ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
+- Monitoring: `GET /api/health` (200 = ilova + baza ishlayapti, 503 = baza javob bermayapti) — uptime servisga ulang.
+- Yuklama testi: `BASE_URL=<preview url> npm run loadtest` (k6, `loadtest/storefront.js`), production'ga emas.
+
+## O'sish yo'l xaritasi (sekinlashmaslik uchun)
+
+Qoida: taxmin emas — o'lchash (Sentry Performance + Prisma spanlar, `/api/health`, Supabase Query Performance),
+keyin faqat eng tor joyni tuzatish. Mikroservislarga erta o'tilmaydi.
+
+1. **Hozir → ~1 000 do'kon** (stack yetadi):
+   - [x] Vercel region = baza regioni (`vercel.json`), `connection_limit`, migratsiyalar build'da
+   - [x] Menyu keshi (`use cache` + `updateTag`), JOIN + parallel so'rovlar, indekslar (shu jumladan `Order(storeId, status, createdAt)`)
+   - [x] Rate limit, Sentry (xatolar + performance + SQL spanlar), `/api/health`, k6 skripti
+   - [ ] Supabase Pro (backup, uxlamaslik) va Vercel Pro (tijoriy foydalanish) — birinchi pullik mijoz bilan
+   - [ ] Uptime monitor `/api/health` ga; deploy'dan keyin preview'da `npm run loadtest`
+2. **~1 000 → 10 000 do'kon**: Supabase Query Performance bo'yicha indekslar / kattaroq DB; admin polling → Supabase
+   Realtime; rate limit → Redis (Upstash); bildirishnomalar → navbat (queue); rasmlar → CDN / image transforms.
+3. **10 000+ / ko'p mamlakat**: read replica (menyu, hisobotlar), ko'p regionlik; alohida servislar faqat aniq
+   sabab bilan (Telegram bot, real-time, analitika) — `lib/` dagi biznes logika `packages/core` ga ajratiladi.

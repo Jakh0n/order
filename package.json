@@ -15,7 +15,9 @@
     "db:studio": "prisma studio",
     "postinstall": "prisma generate",
     "user:password": "tsx scripts/set-password.ts",
-    "user:role": "tsx scripts/set-role.ts"
+    "user:role": "tsx scripts/set-role.ts",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "loadtest": "k6 run loadtest/storefront.js"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
