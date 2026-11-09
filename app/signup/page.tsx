@@ -5,6 +5,7 @@ import { Suspense } from "react";
 
 import { SignupForm } from "@/components/auth/signup-form";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { getRequestOrigin } from "@/lib/app-url";
 import { getCurrentUser, homePathFor } from "@/lib/auth/owner";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -13,16 +14,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function SignupPage() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-  const host = appUrl ? appUrl.replace(/^https?:\/\//, "").replace(/\/$/, "") : "order";
-
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-6 px-4 py-12">
       <Suspense>
         <RedirectIfLoggedIn />
       </Suspense>
       <Header />
-      <SignupForm host={host} />
+      <Suspense fallback={<SignupForm host="" />}>
+        <SignupFormWithHost />
+      </Suspense>
     </main>
   );
 }
@@ -44,4 +44,10 @@ async function RedirectIfLoggedIn() {
   const current = await getCurrentUser();
   if (current) redirect(homePathFor(current.user.role, !!current.store));
   return null;
+}
+
+/** Slug oldidagi domen ("order.uz/") — so'rovdan, localhost bo'lib qolmasligi uchun */
+async function SignupFormWithHost() {
+  const host = (await getRequestOrigin()).replace(/^https?:\/\//, "");
+  return <SignupForm host={host} />;
 }

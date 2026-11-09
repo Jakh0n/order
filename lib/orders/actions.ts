@@ -38,15 +38,17 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
     return { ok: false, error: "invalid", fieldErrors: fieldErrors(parsed.error) };
   const data = parsed.data;
 
-  // Soxta buyurtmalar oqimidan himoya: IP va (do'kon + telefon) bo'yicha
-  const allowed = await rateLimitAll([
-    [RULES.orderIp, await clientIp()],
-    [RULES.orderPhone, `${data.storeSlug}:${data.customerPhone}`],
-  ]);
-  if (!allowed) return { ok: false, error: "tooMany" };
-
+  // Soxta buyurtmalardan himoya (IP, do'kon + telefon) — do'kon bilan parallel o'qiladi
+  const ip = await clientIp();
   try {
-    const store = await prisma.store.findUnique({ where: { slug: data.storeSlug } });
+    const [allowed, store] = await Promise.all([
+      rateLimitAll([
+        [RULES.orderIp, ip],
+        [RULES.orderPhone, `${data.storeSlug}:${data.customerPhone}`],
+      ]),
+      prisma.store.findUnique({ where: { slug: data.storeSlug } }),
+    ]);
+    if (!allowed) return { ok: false, error: "tooMany" };
     if (!store) return { ok: false, error: "storeNotFound" };
     if (store.isBlocked) return { ok: false, error: "blocked" };
     if (!isStoreOpenNow(store)) return { ok: false, error: "closed" };

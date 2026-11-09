@@ -14,6 +14,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { formatUZS } from "@/lib/money";
 import { type CustomerOrder, getOrderForCustomer } from "@/lib/orders/get-order";
 import { orderSendLink } from "@/lib/orders/send-link";
+import { getRequestOrigin } from "@/lib/app-url";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { robots: { index: false } };
@@ -33,7 +34,7 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
 
   const t = await getTranslations();
   const format = await getFormatter();
-  const send = orderSendLink(order, order.store);
+  const send = orderSendLink(order, order.store, await getRequestOrigin());
   const isFinal = order.status === "COMPLETED" || order.status === "CANCELLED";
 
   return (

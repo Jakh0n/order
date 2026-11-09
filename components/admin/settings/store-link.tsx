@@ -3,24 +3,17 @@
 import { Check, Copy, Download, ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
 import QRCode from "qrcode";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-const noopSubscribe = () => () => {};
-
-export function StoreLink({ slug, appUrl }: { slug: string; appUrl: string | null }) {
+export function StoreLink({ slug, origin }: { slug: string; origin: string }) {
   const t = useTranslations("adminSettings");
-  // NEXT_PUBLIC_APP_URL bo'lmasa — brauzerdagi manzil (serverda noma'lum)
-  const origin = useSyncExternalStore(
-    noopSubscribe,
-    () => appUrl ?? window.location.origin,
-    () => appUrl,
-  );
+  // origin serverda so'rovdan olinadi (getRequestOrigin) — QR hech qachon localhost bo'lib qolmaydi
+  const url = `${origin.replace(/\/$/, "")}/${slug}`;
   const [qr, setQr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const url = origin ? `${origin.replace(/\/$/, "")}/${slug}` : null;
 
   useEffect(() => {
     if (!url) return;

@@ -128,6 +128,12 @@ export function CheckoutForm({
     }
   }, [reset, getValues, isAdmin]);
 
+  // Checkout'ga savatsiz kelinsa (to'g'ridan-to'g'ri URL) — menyuga qaytaramiz
+  const cartEmpty = hydrated && !submitted && !isAdmin && lines.length === 0;
+  useEffect(() => {
+    if (cartEmpty) router.replace(`/${store.slug}`);
+  }, [cartEmpty, router, store.slug]);
+
   const [type, zoneId, paymentMethod] = useWatch({
     control,
     name: ["type", "zoneId", "paymentMethod"],

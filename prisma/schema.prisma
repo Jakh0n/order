@@ -1,5 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // relationLoadStrategy: "join" — bog'langan ma'lumotlar bitta so'rovda (bazaga kamroq borish)
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {

@@ -2,7 +2,7 @@ import "server-only";
 
 import type { Prisma } from "@prisma/client";
 
-import { prisma } from "@/lib/db";
+import { JOIN, prisma } from "@/lib/db";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -46,6 +46,7 @@ export async function listStores(query: string, now: Date) {
     : {};
 
   const stores = await prisma.store.findMany({
+    ...JOIN,
     where,
     orderBy: { createdAt: "desc" },
     take: PAGE_SIZE,

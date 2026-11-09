@@ -2,7 +2,7 @@ import "server-only";
 
 import { cacheLife, cacheTag } from "next/cache";
 
-import { prisma } from "@/lib/db";
+import { JOIN, prisma } from "@/lib/db";
 import type { CheckoutSettings, PaymentMethodValue, StorefrontData } from "@/lib/menu-types";
 
 /** Admin menyu/do'konni o'zgartirganda: revalidateTag(storeCacheTag(slug)) */
@@ -19,32 +19,32 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
   cacheLife("minutes");
   cacheTag(storeCacheTag(slug));
 
-  const store = await prisma.store.findUnique({
-    where: { slug },
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-      logoUrl: true,
-      phone: true,
-      address: true,
-      openTime: true,
-      closeTime: true,
-      isOpen: true,
-      minOrder: true,
-      isBlocked: true,
-    },
-  });
-  if (!store) return null;
-
-  const [categories, products] = await Promise.all([
+  // Uchalasi parallel: do'kon id sini kutmasdan, slug bo'yicha (bazaga bir marta borish)
+  const [store, categories, products] = await Promise.all([
+    prisma.store.findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        logoUrl: true,
+        phone: true,
+        address: true,
+        openTime: true,
+        closeTime: true,
+        isOpen: true,
+        minOrder: true,
+        isBlocked: true,
+      },
+    }),
     prisma.category.findMany({
-      where: { storeId: store.id, isActive: true },
+      where: { store: { slug }, isActive: true },
       orderBy: [{ sort: "asc" }, { name: "asc" }],
       select: { id: true, name: true },
     }),
     prisma.product.findMany({
-      where: { storeId: store.id, isAvailable: true, category: { isActive: true } },
+      ...JOIN,
+      where: { store: { slug }, isAvailable: true, category: { isActive: true } },
       orderBy: [{ sort: "asc" }, { name: "asc" }],
       select: {
         id: true,
@@ -69,6 +69,7 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
       },
     }),
   ]);
+  if (!store) return null;
 
   return {
     store,
@@ -98,6 +99,7 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
   cacheTag(storeCacheTag(slug));
 
   const store = await prisma.store.findUnique({
+    ...JOIN,
     where: { slug },
     select: {
       pickupEnabled: true,

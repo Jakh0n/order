@@ -2,7 +2,7 @@ import "server-only";
 
 import { Prisma } from "@prisma/client";
 
-import { prisma } from "@/lib/db";
+import { JOIN, prisma } from "@/lib/db";
 import { type PricingItem, priceItems } from "@/lib/orders/pricing";
 
 // Mijoz checkout'i va admin "qo'lda buyurtma" uchun umumiy qism:
@@ -33,41 +33,41 @@ export type InsertOrderResult =
 const MAX_NUMBER_RETRIES = 3;
 
 export async function insertOrder(input: InsertOrderInput): Promise<InsertOrderResult> {
-  // Tuman narxi — faqat shu do'konning tumani
-  let deliveryFee = 0;
-  let zoneName: string | null = null;
-  if (input.type === "DELIVERY") {
-    const zone = await prisma.deliveryZone.findFirst({
-      where: { id: input.zoneId, storeId: input.storeId },
-    });
-    if (!zone) return { ok: false, error: "zoneInvalid" };
-    deliveryFee = zone.fee;
-    zoneName = zone.name;
-  }
-
-  // Narxlar bazadan (klient narxiga ishonilmaydi)
-  const products = await prisma.product.findMany({
-    where: {
-      id: { in: [...new Set(input.items.map((i) => i.productId))] },
-      storeId: input.storeId,
-      isAvailable: true,
-      category: { isActive: true },
-    },
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      optionGroups: {
-        select: {
-          id: true,
-          name: true,
-          required: true,
-          maxSelect: true,
-          options: { select: { id: true, name: true, price: true } },
+  // Tuman va bazadagi narxlar — parallel (bir-biriga bog'liq emas)
+  const [zone, products] = await Promise.all([
+    // Tuman narxi — faqat shu do'konning tumani
+    input.type === "DELIVERY"
+      ? prisma.deliveryZone.findFirst({ where: { id: input.zoneId, storeId: input.storeId } })
+      : null,
+    // Narxlar bazadan (klient narxiga ishonilmaydi)
+    prisma.product.findMany({
+      ...JOIN,
+      where: {
+        id: { in: [...new Set(input.items.map((i) => i.productId))] },
+        storeId: input.storeId,
+        isAvailable: true,
+        category: { isActive: true },
+      },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        optionGroups: {
+          select: {
+            id: true,
+            name: true,
+            required: true,
+            maxSelect: true,
+            options: { select: { id: true, name: true, price: true } },
+          },
         },
       },
-    },
-  });
+    }),
+  ]);
+
+  if (input.type === "DELIVERY" && !zone) return { ok: false, error: "zoneInvalid" };
+  const deliveryFee = zone?.fee ?? 0;
+  const zoneName = zone?.name ?? null;
 
   const priced = priceItems(products, input.items);
   if (!priced.ok) return { ok: false, error: priced.error };
@@ -103,15 +103,18 @@ export async function insertOrder(input: InsertOrderInput): Promise<InsertOrderR
             deliveryFee,
             total: priced.subtotal + deliveryFee,
             lang: input.lang,
+            // Bitta INSERT bilan (har bir taom uchun alohida emas)
             items: {
-              create: priced.lines.map((l) => ({
-                productId: l.productId,
-                name: l.name,
-                unitPrice: l.unitPrice,
-                quantity: l.quantity,
-                options: l.options.length ? l.options : Prisma.JsonNull,
-                lineTotal: l.lineTotal,
-              })),
+              createMany: {
+                data: priced.lines.map((l) => ({
+                  productId: l.productId,
+                  name: l.name,
+                  unitPrice: l.unitPrice,
+                  quantity: l.quantity,
+                  options: l.options.length ? l.options : Prisma.JsonNull,
+                  lineTotal: l.lineTotal,
+                })),
+              },
             },
           },
           select: { id: true, number: true },

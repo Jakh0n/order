@@ -45,10 +45,12 @@ function optionNames(options: unknown): string[] {
     .filter((n): n is string => Boolean(n));
 }
 
+/** origin — saytning haqiqiy manzili (getRequestOrigin), xabar oxiridagi buyurtma havolasi uchun */
 export function buildOrderMessage(
   order: OrderMessageOrder,
   store: OrderMessageStore,
   lang: Lang = "uz",
+  origin?: string,
 ): string {
   const t = dictionaries[lang].orderMessage;
   const pay = dictionaries[lang].payment;
@@ -82,10 +84,9 @@ export function buildOrderMessage(
   lines.push(`${t.total}: ${formatUZS(order.total)}`);
   lines.push(`${t.payment}: ${pay[order.paymentMethod]}`);
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-  if (appUrl) {
+  if (origin) {
     lines.push("");
-    lines.push(`${t.link}: ${appUrl.replace(/\/$/, "")}/o/${order.id}`);
+    lines.push(`${t.link}: ${origin.replace(/\/$/, "")}/o/${order.id}`);
   }
 
   return lines.join("\n");

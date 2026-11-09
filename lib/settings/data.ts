@@ -1,11 +1,12 @@
 import "server-only";
 
-import { prisma } from "@/lib/db";
+import { JOIN, prisma } from "@/lib/db";
 import type { StoreSettingsInput } from "@/lib/validators";
 
 /** Sozlamalar formasi uchun boshlang'ich qiymatlar (faqat shu do'konniki) */
 export async function getStoreSettings(storeId: string): Promise<StoreSettingsInput | null> {
   const store = await prisma.store.findUnique({
+    ...JOIN,
     where: { id: storeId },
     include: { zones: { orderBy: [{ sort: "asc" }, { name: "asc" }] } },
   });

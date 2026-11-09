@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { SettingsForm } from "@/components/admin/settings/settings-form";
 import { StoreLink } from "@/components/admin/settings/store-link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getRequestOrigin } from "@/lib/app-url";
 import { requireOwner } from "@/lib/auth/owner";
 import { getStoreSettings } from "@/lib/settings/data";
 
@@ -24,7 +25,7 @@ async function AdminSettings() {
   return (
     <div className="flex max-w-2xl flex-col gap-4 p-4 md:p-6">
       <h1 className="text-2xl font-bold">{t("settings")}</h1>
-      <StoreLink slug={store.slug} appUrl={process.env.NEXT_PUBLIC_APP_URL || null} />
+      <StoreLink slug={store.slug} origin={await getRequestOrigin()} />
       <SettingsForm
         // Saqlangandan keyin (refresh) yangi tuman id lari bilan formani qayta boshlash
         key={settings.zones.map((z) => z.dbId).join()}

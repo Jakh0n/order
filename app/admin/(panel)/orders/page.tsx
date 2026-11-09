@@ -9,7 +9,7 @@ import { AutoRefresh } from "@/components/order/auto-refresh";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { requireOwner } from "@/lib/auth/owner";
-import { prisma } from "@/lib/db";
+import { JOIN, prisma } from "@/lib/db";
 import { formatUZS } from "@/lib/money";
 import { ACTIVE_STATUSES } from "@/lib/orders/status";
 import { tashkentDayStart } from "@/lib/store-hours";
@@ -48,6 +48,7 @@ async function Orders({
   const today = { storeId: store.id, createdAt: { gte: tashkentDayStart() } };
   const [orders, todayStats, todayPaid, activeCount] = await Promise.all([
     prisma.order.findMany({
+      ...JOIN,
       where: { storeId: store.id, ...TAB_FILTER[tab] },
       // Faol buyurtmalar: eng eskisi tepada (navbat), qolganlari: eng yangisi tepada
       orderBy: { createdAt: tab === "active" ? "asc" : "desc" },

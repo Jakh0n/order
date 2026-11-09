@@ -1,6 +1,6 @@
 import "server-only";
 
-import { prisma } from "@/lib/db";
+import { JOIN, prisma } from "@/lib/db";
 
 /** Admin menyusi: hamma kategoriya va taomlar (nofaol / "bugun yo'q" ham). Keshlanmaydi. */
 export async function getAdminMenu(storeId: string) {
@@ -54,6 +54,7 @@ export async function getAdminCategories(storeId: string) {
 /** Tahrirlash formasi uchun (faqat shu do'konniki) */
 export async function getAdminProduct(storeId: string, productId: string) {
   return prisma.product.findFirst({
+    ...JOIN,
     where: { id: productId, storeId },
     select: {
       id: true,

@@ -16,11 +16,13 @@ interface SendStore {
 }
 
 /** Do'kon kanaliga qarab tayyor xabarli havola. Kontakt sozlanmagan bo'lsa null. */
+/** origin — getRequestOrigin() (xabardagi buyurtma havolasi localhost bo'lib qolmasligi uchun) */
 export function orderSendLink(
   order: OrderMessageOrder & { lang: string },
   store: SendStore,
+  origin: string,
 ): { channel: Channel; href: string } | null {
-  const text = buildOrderMessage(order, store, isLocale(order.lang) ? order.lang : "uz");
+  const text = buildOrderMessage(order, store, isLocale(order.lang) ? order.lang : "uz", origin);
 
   if (store.channel === "WHATSAPP" && store.whatsappNumber) {
     return { channel: "WHATSAPP", href: whatsappLink(store.whatsappNumber, text) };

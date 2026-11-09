@@ -60,7 +60,8 @@ components/auth/              signup-form (2 qadamli usta)
 components/superadmin/        do'kon amallari (tarif, bloklash)
 i18n/                         next-intl sozlamasi (config, request, setLocale action)
 lib/
-  db.ts                       Prisma client singleton
+  db.ts                       Prisma client singleton, JOIN (relationLoadStrategy: "join")
+  app-url.ts                  getRequestOrigin — sayt manzili so'rovdan (QR, xabardagi havola)
   money.ts                    formatUZS
   order-message.ts            buildOrderMessage, telegramLink, whatsappLink
   validators.ts               zod sxemalar (checkoutFormSchema — klient, checkoutSchema — server)
@@ -124,6 +125,10 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
   (`console.error` emas) — aks holda Sentry'ga tushmaydi. Session Replay yoqilmaydi (checkout formasi).
 - Ommaviy (kirishsiz) yoki qimmat Server Action'lar `rateLimit` bilan cheklanadi (`lib/rate-limit.ts` dagi RULES):
   login, signup, checkSlug, createOrder, rasm yuklash. Yangi shunday action qo'shsangiz — qoida qo'shing.
+- Tezlik: bog'langan ma'lumot (include / nested select) o'qilsa — `...JOIN` qo'shing; bir-biriga bog'liq
+  bo'lmagan so'rovlarni `Promise.all` bilan parallel qiling. Har bir so'rov bazaga borish = vaqt.
+- Sayt manzilini `NEXT_PUBLIC_APP_URL` dan emas, `getRequestOrigin()` dan oling. U `APP_URL` (asosiy domen,
+  hozir https://flami.org) ni ishlatadi, bo'lmasa so'rovdagi manzilni — QR va xabardagi havola localhost bo'lib qolmaydi.
 - Narxlar Int, so'mda. Ko'rsatish faqat `formatUZS` orqali.
 - Buyurtma summasi SERVERDA bazadagi narxlardan qayta hisoblanadi, klient narxiga ishonilmaydi.
 - `minOrder`, tuman narxi, `isAvailable`, do'kon ochiqligi serverda tekshiriladi.

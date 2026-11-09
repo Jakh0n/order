@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
 
 import { readSession } from "@/lib/auth/session";
-import { prisma } from "@/lib/db";
+import { JOIN, prisma } from "@/lib/db";
 
 /** Joriy foydalanuvchi va (bo'lsa) birinchi do'koni. Bir so'rov ichida bir marta o'qiladi. */
 export const getCurrentUser = cache(async () => {
@@ -12,6 +12,7 @@ export const getCurrentUser = cache(async () => {
   if (!userId) return null;
 
   const user = await prisma.user.findUnique({
+    ...JOIN,
     where: { id: userId },
     select: {
       id: true,

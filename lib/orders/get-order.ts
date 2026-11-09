@@ -1,12 +1,13 @@
 import "server-only";
 
-import { prisma } from "@/lib/db";
+import { JOIN, prisma } from "@/lib/db";
 
 /** Mijoz buyurtma sahifasi uchun. Keshlanmaydi — holat o'zgarib turadi. */
 export async function getOrderForCustomer(id: string) {
   if (!/^[a-z0-9]{20,40}$/i.test(id)) return null;
 
   return prisma.order.findUnique({
+    ...JOIN,
     where: { id },
     include: {
       items: { orderBy: { id: "asc" } },
