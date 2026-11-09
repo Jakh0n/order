@@ -609,5 +609,14 @@
     "title": "Something went wrong",
     "description": "We've been notified and will fix it soon. Please try again.",
     "retry": "Try again"
+  },
+  "seo": {
+    "storeTitle": "{name} — order online",
+    "storeDescription": "Order online from {name}: {items} and more. See the full menu with prices and order for pickup or delivery.",
+    "storeDescriptionNoItems": "Order online from {name}. See the full menu with prices and order for pickup or delivery.",
+    "storeLocated": "{address}.",
+    "ogStoreCta": "Order online",
+    "ogHomeTitle": "Your menu on one link. Orders straight to your chat.",
+    "ogHomeBody": "Online menu and ordering for small food businesses — orders arrive in WhatsApp or Telegram."
   }
 }

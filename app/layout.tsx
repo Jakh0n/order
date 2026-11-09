@@ -6,6 +6,7 @@ import { Suspense } from "react";
 
 import { HtmlLang } from "@/components/html-lang";
 import { Toaster } from "@/components/ui/sonner";
+import { siteOrigin } from "@/lib/app-url";
 
 import "./globals.css";
 
@@ -25,6 +26,10 @@ export const metadata: Metadata = {
     template: "%s · Flami",
   },
   description: "Online menu and ordering for cafés and restaurants",
+  // Absolute URLs for canonical links, og:image and the sitemap (APP_URL)
+  metadataBase: new URL(siteOrigin()),
+  openGraph: { siteName: "Flami", type: "website", locale: "en_US" },
+  twitter: { card: "summary_large_image" },
 };
 
 // Til cookie'dan o'qiladi (runtime API) — cacheComponents rejimida Suspense ichida bo'lishi shart.

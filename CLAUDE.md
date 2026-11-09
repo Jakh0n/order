@@ -89,6 +89,7 @@ lib/
   orders/pricing.ts           priceItems — bazadagi narx + variant tekshiruvi (sof funksiya)
   orders/get-order.ts         getOrderForCustomer
   orders/send-link.ts         orderSendLink — do'kon kanaliga qarab t.me / wa.me havola
+  seo.ts                      storeJsonLd (schema.org FoodEstablishment + menyu), getSitemapStores, topItemNames
   storefront.ts               getStorefront(slug), getCheckoutSettings(slug) — "use cache" + cacheTag(storeCacheTag(slug))
   menu-types.ts               server → klient menyu tiplari
   store-hours.ts              isStoreOpenNow / opensAt / startOfDayInZone (do'kon vaqt zonasi)
@@ -133,6 +134,11 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
   bo'lmagan so'rovlarni `Promise.all` bilan parallel qiling. Har bir so'rov bazaga borish = vaqt.
 - Sayt manzilini `NEXT_PUBLIC_APP_URL` dan emas, `getRequestOrigin()` dan oling. U `APP_URL` (asosiy domen,
   hozir https://flami.org) ni ishlatadi, bo'lmasa so'rovdagi manzilni — QR va xabardagi havola localhost bo'lib qolmaydi.
+- SEO: `app/robots.ts`, `app/sitemap.ts` (bloklanmagan, taomi bor do'konlar), `metadataBase` = `siteOrigin()`
+  (APP_URL — redirect qilmaydigan asosiy domen bo'lishi shart). Do'kon sahifasi: title/description/canonical +
+  JSON-LD; preview rasm `app/[store]/opengraph-image.tsx` (JPEG, WebP rasm sharp bilan o'giriladi).
+  Shaxsiy sahifalar (`/o`, checkout, admin) — `robots: { index: false }`. Yangi top-level metadata fayli
+  (icon, opengraph-image) qo'shsangiz — nomini RESERVED_SLUGS ga qo'shing.
 - Pul: Int, do'kon valyutasining eng kichik birligida (sent). Ko'rsatish faqat `formatMoney(minor, currency)` /
   `useFormatMoney()` orqali. Admin formalarida asosiy birlik (8.99) — saqlashda `toMinor`; formalar uchun
   `productFormSchema` / `storeSettingsFormSchema`, server uchun `productSchema` / `storeSettingsSchema`.

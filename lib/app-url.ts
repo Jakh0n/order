@@ -23,6 +23,14 @@ function configuredOrigin(): string | null {
  * 2) bo'lmasa so'rovning o'zidan (Vercel: x-forwarded-host).
  * NEXT_PUBLIC_* ishlatilmaydi — u build paytida kodga yozilib qoladi (localhost bo'lib qolgan edi).
  */
+/**
+ * Canonical site origin for SEO (metadataBase, sitemap, robots, JSON-LD) — no request needed.
+ * Must be the host that serves pages without redirecting (APP_URL).
+ */
+export function siteOrigin(): string {
+  return configuredOrigin() ?? "http://localhost:3000";
+}
+
 export async function getRequestOrigin(): Promise<string> {
   const configured = configuredOrigin();
   if (configured) return configured;

@@ -17,6 +17,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import QRCode from "qrcode";
 
+import { JsonLd } from "@/components/json-ld";
 import { Faq } from "@/components/landing/faq";
 import { Hero } from "@/components/landing/hero";
 import { Logo } from "@/components/landing/logo";
@@ -24,6 +25,7 @@ import { Reveal, ScrollWords, StepsTrack } from "@/components/landing/motion-par
 import { OrderMessage } from "@/components/landing/order-message";
 import { SiteNav } from "@/components/landing/site-nav";
 import { buttonVariants } from "@/components/ui/button";
+import { siteOrigin } from "@/lib/app-url";
 import { cn } from "@/lib/utils";
 
 const display = Bricolage_Grotesque({
@@ -36,6 +38,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { absolute: t("metaTitle") },
     description: t("metaDescription"),
+    alternates: { canonical: "/" },
+    openGraph: { title: t("metaTitle"), description: t("metaDescription"), url: "/" },
   };
 }
 
@@ -64,6 +68,7 @@ export default async function Home() {
 
   return (
     <div className={cn(display.variable, "text-forest flex flex-1 flex-col bg-white")}>
+      <JsonLd data={homeJsonLd(t("metaDescription"))} />
       <SiteNav />
 
       <main className="flex-1">
@@ -310,6 +315,31 @@ export default async function Home() {
       </footer>
     </div>
   );
+}
+
+/** Organization + WebSite — tells search engines what Flami is and links the brand to its logo. */
+function homeJsonLd(description: string) {
+  const origin = siteOrigin();
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${origin}/#organization`,
+        name: "Flami",
+        url: origin,
+        logo: `${origin}/icon.svg`,
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${origin}/#website`,
+        name: "Flami",
+        url: origin,
+        description,
+        publisher: { "@id": `${origin}/#organization` },
+      },
+    ],
+  };
 }
 
 function MiniCard({ children }: { children: React.ReactNode }) {

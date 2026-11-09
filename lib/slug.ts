@@ -26,6 +26,10 @@ export const RESERVED_SLUGS = new Set([
   "settings",
   "dashboard",
   "monitoring", // Sentry tunnel (next.config.ts → tunnelRoute)
+  // SEO metadata routes (app/icon.svg, app/apple-icon.tsx, app/opengraph-image.tsx)
+  "icon",
+  "apple-icon",
+  "opengraph-image",
 ]);
 
 export const SLUG_MIN = 3;
