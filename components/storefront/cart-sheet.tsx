@@ -23,7 +23,7 @@ import { ProductImage } from "./product-image";
 import { QuantityStepper } from "./quantity-stepper";
 import { useStoreOpen } from "./use-store-open";
 
-/** Pastki "Savat" paneli + savat oynasi. Savat bo'sh bo'lsa ko'rinmaydi. */
+/** Pastdagi suzuvchi "Savatni ko'rish" tugmasi + savat varag'i. Savat bo'sh bo'lsa ko'rinmaydi. */
 export function CartBar({ store }: { store: StorefrontStore }) {
   const t = useTranslations("cart");
   const [open, setOpen] = useState(false);
@@ -35,18 +35,22 @@ export function CartBar({ store }: { store: StorefrontStore }) {
 
   return (
     <>
-      <div className="bg-background/95 fixed inset-x-0 bottom-0 z-40 border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         <Button
           size="lg"
-          className="mx-auto flex h-12 w-full max-w-2xl justify-between px-4 text-base"
+          className="pointer-events-auto mx-auto flex h-14 w-full max-w-2xl justify-between rounded-2xl px-4 text-base shadow-lg"
           onClick={() => setOpen(true)}
-          aria-label={t("open")}
         >
-          <span className="flex items-center gap-2">
-            <ShoppingBag />
-            {t("items", { count })}
+          <span className="flex items-center gap-3">
+            <span className="relative">
+              <ShoppingBag className="size-5" />
+              <span className="bg-background text-primary absolute -top-2 -right-2.5 flex size-5 items-center justify-center rounded-full text-xs font-bold">
+                {count}
+              </span>
+            </span>
+            {t("view")}
           </span>
-          <span className="font-semibold">{formatUZS(subtotal)}</span>
+          <span className="font-semibold tabular-nums">{formatUZS(subtotal)}</span>
         </Button>
       </div>
       <CartSheet store={store} open={open} onOpenChange={setOpen} />
@@ -71,16 +75,24 @@ function CartSheet({
 
   const subtotal = cartSubtotal(lines);
   const missing = Math.max(0, store.minOrder - subtotal);
+  const progress = store.minOrder > 0 ? Math.min(100, (subtotal / store.minOrder) * 100) : 100;
   const canCheckout = lines.length > 0 && isOpenNow && missing === 0;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        className="mx-auto max-h-[85dvh] w-full max-w-2xl gap-0 rounded-t-2xl"
+        className="mx-auto max-h-[88dvh] w-full max-w-2xl gap-0 rounded-t-3xl"
       >
+        <div
+          className="bg-muted-foreground/30 mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full"
+          aria-hidden
+        />
         <SheetHeader className="flex-row items-center justify-between gap-2 border-b pr-12">
-          <SheetTitle>{t("title")}</SheetTitle>
+          <div>
+            <SheetTitle className="text-lg">{t("title")}</SheetTitle>
+            <SheetDescription>{store.name}</SheetDescription>
+          </div>
           {lines.length > 0 && (
             <Button
               variant="ghost"
@@ -95,9 +107,6 @@ function CartSheet({
               {t("clear")}
             </Button>
           )}
-          <SheetDescription className="sr-only">
-            {t("items", { count: cartCount(lines) })}
-          </SheetDescription>
         </SheetHeader>
 
         <ul className="flex-1 divide-y overflow-y-auto px-4">
@@ -109,53 +118,62 @@ function CartSheet({
               <ProductImage
                 src={line.imageUrl}
                 alt=""
-                sizes="56px"
-                className="size-14 shrink-0 rounded-lg"
+                sizes="64px"
+                className="size-16 shrink-0 rounded-xl"
               />
               <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <p className="font-medium">{line.name}</p>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="leading-snug font-medium">{line.name}</p>
+                  <span className="shrink-0 font-semibold tabular-nums">
+                    {formatUZS(unitPrice(line) * line.quantity)}
+                  </span>
+                </div>
                 {line.options.length > 0 && (
                   <p className="text-muted-foreground text-xs">
                     {line.options.map((o) => o.name).join(", ")}
                   </p>
                 )}
-                <div className="flex items-center justify-between gap-2">
-                  <QuantityStepper
-                    size="sm"
-                    value={line.quantity}
-                    onChange={(q) => setQuantity(store.slug, line.key, q)}
-                  />
-                  <span className="font-semibold tabular-nums">
-                    {formatUZS(unitPrice(line) * line.quantity)}
-                  </span>
-                </div>
+                <QuantityStepper
+                  size="sm"
+                  className="mt-1 self-start rounded-full"
+                  value={line.quantity}
+                  onChange={(q) => setQuantity(store.slug, line.key, q)}
+                />
               </div>
             </li>
           ))}
         </ul>
 
-        <SheetFooter className="gap-3 border-t">
+        <SheetFooter className="gap-3 border-t pb-[max(1rem,env(safe-area-inset-bottom))]">
+          {store.minOrder > 0 && missing > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <div className="bg-muted h-1.5 overflow-hidden rounded-full">
+                <div
+                  className="bg-primary h-full rounded-full transition-all"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="text-muted-foreground text-sm">
+                {t("addMore", { amount: formatUZS(missing) })}
+              </p>
+            </div>
+          )}
+          {!isOpenNow && <p className="text-destructive text-sm">{t("closed")}</p>}
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">{t("subtotal")}</span>
-            <span className="text-lg font-semibold tabular-nums">{formatUZS(subtotal)}</span>
+            <span className="text-lg font-bold tabular-nums">{formatUZS(subtotal)}</span>
           </div>
-          <p className="text-muted-foreground text-xs">{t("deliveryNote")}</p>
-          {!isOpenNow && <p className="text-destructive text-sm">{t("closed")}</p>}
-          {isOpenNow && missing > 0 && (
-            <p className="text-sm text-amber-600 dark:text-amber-500">
-              {t("addMore", { amount: formatUZS(missing) })}
-            </p>
-          )}
+          <p className="text-muted-foreground -mt-2 text-xs">{t("deliveryNote")}</p>
           {canCheckout ? (
             <Link
               href={`/${store.slug}/checkout`}
-              className={cn(buttonVariants({ size: "lg" }), "h-12 text-base")}
+              className={cn(buttonVariants({ size: "lg" }), "h-12 rounded-2xl text-base")}
               onClick={() => onOpenChange(false)}
             >
               {t("checkout")}
             </Link>
           ) : (
-            <Button size="lg" className="h-12 text-base" disabled>
+            <Button size="lg" className="h-12 rounded-2xl text-base" disabled>
               {t("checkout")}
             </Button>
           )}

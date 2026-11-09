@@ -33,23 +33,25 @@ async function Checkout({ params }: { params: PageProps<"/[store]/checkout">["pa
   const t = await getTranslations("checkout");
 
   return (
-    <div className="mx-auto w-full max-w-2xl">
-      <header className="flex items-center gap-2 border-b px-2 py-2">
-        <Link
-          href={`/${slug}`}
-          aria-label={t("backToMenu")}
-          className="hover:bg-muted flex size-10 items-center justify-center rounded-lg"
-        >
-          <ArrowLeft className="size-5" />
-        </Link>
-        <div className="min-w-0">
-          <h1 className="leading-tight font-semibold">{t("title")}</h1>
-          <p className="text-muted-foreground truncate text-sm">{data.store.name}</p>
-        </div>
-      </header>
+    <div className="bg-muted flex-1">
+      <div className="mx-auto w-full max-w-2xl">
+        <header className="bg-background/95 sticky top-0 z-30 flex items-center gap-2 border-b px-2 py-2 backdrop-blur">
+          <Link
+            href={`/${slug}`}
+            aria-label={t("backToMenu")}
+            className="hover:bg-muted flex size-10 items-center justify-center rounded-full"
+          >
+            <ArrowLeft className="size-5" />
+          </Link>
+          <div className="min-w-0">
+            <h1 className="leading-tight font-bold">{t("title")}</h1>
+            <p className="text-muted-foreground truncate text-sm">{data.store.name}</p>
+          </div>
+        </header>
 
-      <CartSync cartKey={slug} products={data.categories.flatMap((c) => c.products)} />
-      <CheckoutForm store={data.store} settings={settings} />
+        <CartSync cartKey={slug} products={data.categories.flatMap((c) => c.products)} />
+        <CheckoutForm store={data.store} settings={settings} />
+      </div>
     </div>
   );
 }

@@ -1,17 +1,16 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { lineKey, useCart, useCartLines } from "@/lib/cart-store";
 import type { MenuProduct } from "@/lib/menu-types";
 import { formatUZS } from "@/lib/money";
+import { cn } from "@/lib/utils";
 
 import { ProductDialog } from "./product-dialog";
 import { ProductImage } from "./product-image";
-import { QuantityStepper } from "./quantity-stepper";
 
 export function ProductCard({ cartKey, product }: { cartKey: string; product: MenuProduct }) {
   const t = useTranslations();
@@ -25,6 +24,7 @@ export function ProductCard({ cartKey, product }: { cartKey: string; product: Me
     .filter((l) => l.productId === product.id)
     .reduce((sum, l) => sum + l.quantity, 0);
   const simpleKey = lineKey(product.id, []);
+  const showStepper = !hasOptions && inCart > 0;
 
   function quickAdd() {
     if (hasOptions) {
@@ -41,47 +41,99 @@ export function ProductCard({ cartKey, product }: { cartKey: string; product: Me
   }
 
   return (
-    <article className="flex gap-3 py-4">
+    <article className="relative flex gap-3 py-3">
+      {/* Butun kartochka bosiladi — tafsilot oynasi */}
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex min-w-0 flex-1 flex-col items-start gap-1 text-left"
-      >
-        <h3 className="font-medium">{product.name}</h3>
+        className="absolute inset-0 z-0 rounded-lg"
+        aria-label={product.name}
+      />
+
+      <div className="pointer-events-none relative flex min-w-0 flex-1 flex-col gap-1">
+        <h3 className="leading-snug font-semibold">{product.name}</h3>
         {product.description && (
           <p className="text-muted-foreground line-clamp-2 text-sm">{product.description}</p>
         )}
         <p className="mt-auto pt-1 font-semibold">{formatUZS(product.price)}</p>
+      </div>
+
+      <div className="relative shrink-0">
+        <ProductImage
+          src={product.imageUrl}
+          alt=""
+          sizes="104px"
+          className="pointer-events-none size-26 rounded-xl"
+        />
+
         {hasOptions && inCart > 0 && (
-          <p className="text-primary text-xs">{t("product.inCart", { count: inCart })}</p>
+          <span
+            className="bg-primary text-primary-foreground pointer-events-none absolute top-1.5 left-1.5 flex size-6 items-center justify-center rounded-full text-xs font-bold"
+            aria-label={t("product.inCart", { count: inCart })}
+          >
+            {inCart}
+          </span>
         )}
-      </button>
 
-      <div className="flex w-24 shrink-0 flex-col items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="block size-24 overflow-hidden rounded-xl"
-          aria-label={product.name}
-        >
-          <ProductImage src={product.imageUrl} alt="" sizes="96px" className="size-full" />
-        </button>
-
-        {!hasOptions && inCart > 0 ? (
-          <QuantityStepper
-            size="sm"
-            value={inCart}
-            onChange={(q) => setQuantity(cartKey, simpleKey, q)}
-          />
-        ) : (
-          <Button size="sm" variant="secondary" className="w-full" onClick={quickAdd}>
-            <Plus />
-            {t("menu.add")}
-          </Button>
-        )}
+        {/* Rasm ustidagi "+" yoki −/+ (take.app kabi) */}
+        <div className="absolute -right-1 -bottom-2 z-10">
+          {showStepper ? (
+            <div className="bg-background ring-border flex items-center rounded-full shadow-md ring-1">
+              <StepButton
+                label={t("product.decrease")}
+                onClick={() => setQuantity(cartKey, simpleKey, inCart - 1)}
+              >
+                <Minus className="size-4" />
+              </StepButton>
+              <span className="min-w-5 text-center text-sm font-semibold tabular-nums">
+                {inCart}
+              </span>
+              <StepButton
+                label={t("product.increase")}
+                onClick={() => setQuantity(cartKey, simpleKey, inCart + 1)}
+              >
+                <Plus className="size-4" />
+              </StepButton>
+            </div>
+          ) : (
+            <StepButton
+              label={t("menu.add")}
+              onClick={quickAdd}
+              className="bg-background ring-border shadow-md ring-1"
+            >
+              <Plus className="size-5" />
+            </StepButton>
+          )}
+        </div>
       </div>
 
       <ProductDialog cartKey={cartKey} product={product} open={open} onOpenChange={setOpen} />
     </article>
+  );
+}
+
+function StepButton({
+  label,
+  onClick,
+  className,
+  children,
+}: {
+  label: string;
+  onClick: () => void;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className={cn(
+        "text-primary hover:bg-primary/10 flex size-9 items-center justify-center rounded-full transition-colors active:scale-95",
+        className,
+      )}
+    >
+      {children}
+    </button>
   );
 }

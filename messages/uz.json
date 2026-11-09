@@ -22,7 +22,13 @@
     "workingHours": "Ish vaqti: {open} – {close}",
     "empty": "Menyu hozircha bo'sh",
     "closedBanner": "Hozir buyurtma qabul qilinmaydi. Menyuni ko'rishingiz mumkin.",
-    "categories": "Kategoriyalar"
+    "categories": "Kategoriyalar",
+    "search": "Taom qidirish",
+    "noResults": "\"{query}\" bo'yicha hech narsa topilmadi",
+    "clearSearch": "Tozalash",
+    "opensAt": "{time} da ochiladi",
+    "closedNow": "Hozir yopiq",
+    "closedBannerHours": "Hozir yopiq — {time} da ochiladi. Menyuni ko'rib turishingiz mumkin."
   },
   "cart": {
     "title": "Savat",
@@ -37,7 +43,9 @@
     "remove": "O'chirish",
     "closed": "Do'kon hozir yopiq",
     "deliveryNote": "Yetkazish narxi keyingi qadamda qo'shiladi",
-    "open": "Savatni ochish"
+    "open": "Savatni ochish",
+    "view": "Savatni ko'rish",
+    "minProgress": "Minimal buyurtma: {amount}"
   },
   "checkout": {
     "title": "Buyurtmani rasmiylashtirish",
@@ -89,7 +97,13 @@
       "server": "Xatolik yuz berdi. Qaytadan urinib ko'ring.",
       "blocked": "Do'kon vaqtincha ishlamayapti",
       "tooMany": "Juda ko'p buyurtma yuborildi. 10 daqiqadan keyin qayta urinib ko'ring."
-    }
+    },
+    "edit": "O'zgartirish",
+    "timeAsap": "Imkon qadar tez",
+    "timeScheduled": "Vaqtni tanlash",
+    "pickupAddress": "Qayerdan olib ketasiz",
+    "itemsCount": "{count} ta taom",
+    "phoneHint": "Do'kon shu raqamga qo'ng'iroq qiladi"
   },
   "payment": {
     "CASH": "Naqd",
@@ -121,7 +135,11 @@
     "placedAt": "Berilgan vaqt",
     "payment": "To'lov",
     "autoRefresh": "Holat avtomatik yangilanib turadi",
-    "backToMenu": "Menyuga qaytish"
+    "backToMenu": "Menyuga qaytish",
+    "savedTitle": "Buyurtma #{number} saqlandi",
+    "savedHint": "Do'kon buyurtmani qabul qilishi uchun xabarni yuboring.",
+    "statusTitle": "Buyurtma #{number}",
+    "sendAgain": "Xabarni qayta yuborish"
   },
   "admin": {
     "title": "Boshqaruv",
@@ -208,7 +226,9 @@
     "added": "Savatga qo'shildi",
     "increase": "Ko'paytirish",
     "decrease": "Kamaytirish",
-    "inCart": "Savatda: {count}"
+    "inCart": "Savatda: {count}",
+    "close": "Yopish",
+    "addShort": "Qo'shish"
   },
   "adminLogin": {
     "title": "Boshqaruv paneliga kirish",

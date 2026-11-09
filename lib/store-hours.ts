@@ -52,3 +52,12 @@ export function tashkentDayStart(now: Date = new Date()): Date {
   const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
   return new Date(Date.UTC(get("year"), get("month") - 1, get("day")) - 5 * 60 * 60 * 1000);
 }
+
+/**
+ * Ish vaqti tufayli yopiq bo'lsa — ochilish vaqti ("09:00"), aks holda null
+ * (ochiq, qo'lda yopilgan yoki vaqt belgilanmagan).
+ */
+export function opensAt(store: StoreHours, now: Date = new Date()): string | null {
+  if (!store.isOpen || !store.openTime || !store.closeTime) return null;
+  return isStoreOpenNow(store, now) ? null : store.openTime;
+}

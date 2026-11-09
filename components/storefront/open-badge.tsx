@@ -1,23 +1,50 @@
 "use client";
 
+import { Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { Badge } from "@/components/ui/badge";
 import type { StorefrontStore } from "@/lib/menu-types";
+import { cn } from "@/lib/utils";
 
 import { useStoreOpen } from "./use-store-open";
 
-export function OpenBadge({ store }: { store: StorefrontStore }) {
-  const t = useTranslations("store");
+/** Yopiq bo'lsa va sabab — ish vaqti, ochilish vaqti; qo'lda yopilgan bo'lsa null */
+function opensAtTime(store: StorefrontStore, open: boolean | null) {
+  return open === false && store.isOpen && store.openTime && store.closeTime
+    ? store.openTime
+    : null;
+}
+
+/** "● Ochiq · 09:00 – 22:00" yoki "● Yopiq · 09:00 da ochiladi" */
+export function OpenStatus({ store }: { store: StorefrontStore }) {
+  const t = useTranslations();
   const open = useStoreOpen(store);
-  if (open === null) return null;
+  const opensAt = opensAtTime(store, open);
+  const hours = store.openTime && store.closeTime ? `${store.openTime} – ${store.closeTime}` : null;
+
   return (
-    <Badge
-      variant={open ? "default" : "secondary"}
-      className={open ? "bg-emerald-600 text-white dark:bg-emerald-500" : undefined}
-    >
-      {open ? t("open") : t("closed")}
-    </Badge>
+    <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+      {open !== null && (
+        <span
+          className={cn(
+            "flex items-center gap-1.5 font-medium",
+            open ? "text-primary" : "text-destructive",
+          )}
+        >
+          <span
+            className={cn("size-2 rounded-full", open ? "bg-primary" : "bg-destructive")}
+            aria-hidden
+          />
+          {open ? t("store.open") : t("store.closed")}
+        </span>
+      )}
+      {(opensAt || hours) && (
+        <span className="text-muted-foreground flex items-center gap-1">
+          <Clock className="size-3.5" aria-hidden />
+          {opensAt ? t("menu.opensAt", { time: opensAt }) : hours}
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -25,9 +52,10 @@ export function ClosedBanner({ store }: { store: StorefrontStore }) {
   const t = useTranslations("menu");
   const open = useStoreOpen(store);
   if (open !== false) return null;
+  const opensAt = opensAtTime(store, open);
   return (
-    <div className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
-      {t("closedBanner")}
+    <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-sm text-amber-900">
+      {opensAt ? t("closedBannerHours", { time: opensAt }) : t("closedBanner")}
     </div>
   );
 }

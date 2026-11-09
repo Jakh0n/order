@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { CartBar } from "@/components/storefront/cart-sheet";
 import { CartSync } from "@/components/storefront/cart-sync";
-import { CategoryNav } from "@/components/storefront/category-nav";
+import { MenuBrowser } from "@/components/storefront/menu-browser";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
-import { ProductCard } from "@/components/storefront/product-card";
 import { StoreBlocked } from "@/components/storefront/store-blocked";
 import { StoreHeader } from "@/components/storefront/store-header";
 import { getStorefront } from "@/lib/storefront";
@@ -37,30 +35,15 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
   if (data.store.isBlocked) return <StoreBlocked name={data.store.name} />;
 
   const { store, categories } = data;
-  const t = await getTranslations("menu");
   const products = categories.flatMap((c) => c.products);
 
   return (
-    <div className="mx-auto w-full max-w-2xl pb-28">
-      <StoreHeader store={store} />
-      <CategoryNav categories={categories} />
-
-      <main className="px-4">
-        {categories.length === 0 && (
-          <p className="text-muted-foreground py-16 text-center">{t("empty")}</p>
-        )}
-        {categories.map((category) => (
-          <section key={category.id} id={`c-${category.id}`} className="scroll-mt-14 pt-6">
-            <h2 className="text-lg font-semibold">{category.name}</h2>
-            <div className="divide-y">
-              {category.products.map((product) => (
-                <ProductCard key={product.id} cartKey={store.slug} product={product} />
-              ))}
-            </div>
-          </section>
-        ))}
-      </main>
-
+    // Kulrang fon + oq kartochkalar — bo'limlar aniq ajralib turadi
+    <div className="bg-muted flex-1">
+      <div className="mx-auto w-full max-w-2xl pb-28">
+        <StoreHeader store={store} />
+        <MenuBrowser cartKey={store.slug} categories={categories} />
+      </div>
       <CartSync cartKey={store.slug} products={products} />
       <CartBar store={store} />
     </div>

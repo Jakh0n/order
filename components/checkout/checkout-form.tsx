@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Bike, ChevronRight, Loader2, MapPin, Store } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -14,6 +14,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ProductImage } from "@/components/storefront/product-image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,6 +32,12 @@ import {
 } from "@/lib/validators";
 
 const CUSTOMER_KEY = "order-customer";
+
+/** "901234567" -> "90 123 45 67" (yozish paytida) */
+function formatPhone(value: string) {
+  const d = value.replace(/\D/g, "").slice(0, 9);
+  return [d.slice(0, 2), d.slice(2, 5), d.slice(5, 7), d.slice(7, 9)].filter(Boolean).join(" ");
+}
 
 function loadCustomer(): { name?: string; phone?: string } {
   try {
@@ -82,6 +89,7 @@ export function CheckoutForm({
   const isOpenNow = useStoreOpen(store) ?? store.isOpen;
   const [submitted, setSubmitted] = useState(false);
   const [markPaid, setMarkPaid] = useState(false);
+  const [timeMode, setTimeMode] = useState<"asap" | "scheduled">("asap");
 
   const {
     control,
@@ -89,6 +97,7 @@ export function CheckoutForm({
     handleSubmit,
     reset,
     setError,
+    setValue,
     getValues,
     formState: { errors, isSubmitting },
   } = useForm<CheckoutFormInput, unknown, CheckoutFormData>({
@@ -114,7 +123,7 @@ export function CheckoutForm({
       reset({
         ...getValues(),
         customerName: saved.name ?? "",
-        phoneDigits: saved.phone ?? "",
+        phoneDigits: formatPhone(saved.phone ?? ""),
       });
     }
   }, [reset, getValues, isAdmin]);
@@ -208,73 +217,91 @@ export function CheckoutForm({
     );
   }
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col">
-      {/* Aloqa */}
-      <Section title={t("contact")}>
-        <Field
-          label={t("name")}
-          htmlFor="customerName"
-          error={errorText(errors.customerName?.message)}
-        >
-          <Input
-            id="customerName"
-            autoComplete="name"
-            placeholder={t("namePlaceholder")}
-            aria-invalid={!!errors.customerName}
-            {...register("customerName")}
-          />
-        </Field>
-        <Field
-          label={t("phone")}
-          htmlFor="phoneDigits"
-          error={errorText(errors.phoneDigits?.message)}
-        >
-          <div className="flex items-center gap-2">
-            <span className="bg-muted text-muted-foreground flex h-9 items-center rounded-lg border px-3 text-sm">
-              +998
-            </span>
-            <Input
-              id="phoneDigits"
-              type="tel"
-              inputMode="numeric"
-              autoComplete="tel-national"
-              placeholder="90 123 45 67"
-              maxLength={14}
-              aria-invalid={!!errors.phoneDigits}
-              {...register("phoneDigits")}
-            />
-          </div>
-        </Field>
-      </Section>
+  const pickupAddress = [store.address].filter(Boolean).join(", ");
 
-      {/* Qabul qilish usuli */}
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-3 px-3 py-3">
+      {/* Buyurtma tarkibi — birinchi: mijoz nima buyurtma qilayotganini ko'rib turadi */}
+      <Card
+        title={t("summary")}
+        action={
+          !isAdmin && (
+            <Link href={`/${store.slug}`} className="text-primary text-sm font-medium">
+              {t("edit")}
+            </Link>
+          )
+        }
+      >
+        <ul className="flex flex-col gap-3">
+          {lines.map((l) => (
+            <li key={l.key} className="flex items-center gap-3">
+              <ProductImage
+                src={l.imageUrl}
+                alt=""
+                sizes="48px"
+                className="size-12 shrink-0 rounded-lg"
+              />
+              <div className="min-w-0 flex-1 text-sm">
+                <p className="font-medium">
+                  <span className="text-muted-foreground">{l.quantity} × </span>
+                  {l.name}
+                </p>
+                {l.options.length > 0 && (
+                  <p className="text-muted-foreground truncate text-xs">
+                    {l.options.map((o) => o.name).join(", ")}
+                  </p>
+                )}
+              </div>
+              <span className="shrink-0 text-sm font-medium tabular-nums">
+                {formatUZS(unitPrice(l) * l.quantity)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </Card>
+
+      {/* Qabul qilish usuli — segment tugmalar */}
       {settings.pickupEnabled && settings.deliveryEnabled && (
-        <Section title={t("type")}>
-          <Controller
-            control={control}
-            name="type"
-            render={({ field }) => (
-              <RadioGroup
-                value={field.value}
-                onValueChange={(v) => field.onChange(v)}
-                className="grid-cols-2"
-              >
-                {(["DELIVERY", "PICKUP"] as const).map((value) => (
-                  <ChoiceCard key={value} value={value} checked={field.value === value}>
-                    {value === "DELIVERY" ? t("delivery") : t("pickup")}
-                  </ChoiceCard>
-                ))}
-              </RadioGroup>
-            )}
-          />
-        </Section>
+        <Controller
+          control={control}
+          name="type"
+          render={({ field }) => (
+            <div
+              className="bg-background grid grid-cols-2 gap-1 rounded-2xl p-1"
+              role="radiogroup"
+              aria-label={t("type")}
+            >
+              {(
+                [
+                  ["DELIVERY", t("delivery"), Bike],
+                  ["PICKUP", t("pickup"), Store],
+                ] as const
+              ).map(([value, label, Icon]) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={field.value === value}
+                  onClick={() => field.onChange(value)}
+                  className={cn(
+                    "flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-colors",
+                    field.value === value
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:bg-muted",
+                  )}
+                >
+                  <Icon className="size-4" />
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        />
       )}
 
-      {/* Manzil */}
-      {/* Yashiriladi, unmount qilinmaydi — aks holda qaytganda kiritilgan manzil bo'sh ko'rinadi */}
+      {/* Yetkazish manzili. Yashiriladi, unmount qilinmaydi — aks holda qaytganda kiritilgan manzil bo'sh ko'rinadi */}
       <div className={cn(type !== "DELIVERY" && "hidden")}>
-        <Section title={t("deliveryDetails")}>
+        <Card title={t("deliveryDetails")}>
           <Field label={t("zone")} error={errorText(errors.zoneId?.message)}>
             <Controller
               control={control}
@@ -284,6 +311,7 @@ export function CheckoutForm({
                   value={field.value ?? null}
                   onValueChange={(v) => field.onChange(String(v))}
                   aria-invalid={!!errors.zoneId}
+                  className="gap-2"
                 >
                   {settings.zones.map((z) => (
                     <ChoiceCard key={z.id} value={z.id} checked={field.value === z.id}>
@@ -301,26 +329,114 @@ export function CheckoutForm({
               autoComplete="street-address"
               placeholder={t("addressPlaceholder")}
               aria-invalid={!!errors.address}
+              className="h-11"
               {...register("address")}
             />
           </Field>
           <Field label={t("landmark")} htmlFor="landmark" optional={t("optional")}>
-            <Input id="landmark" placeholder={t("landmarkPlaceholder")} {...register("landmark")} />
+            <Input
+              id="landmark"
+              placeholder={t("landmarkPlaceholder")}
+              className="h-11"
+              {...register("landmark")}
+            />
           </Field>
-        </Section>
+        </Card>
       </div>
 
-      {/* Vaqt va izoh */}
-      <Section>
+      {/* Olib ketishda — qayerdan */}
+      {type === "PICKUP" && pickupAddress && (
+        <Card title={t("pickupAddress")}>
+          <p className="flex items-start gap-2 text-sm">
+            <MapPin className="text-primary mt-0.5 size-4 shrink-0" />
+            {pickupAddress}
+          </p>
+        </Card>
+      )}
+
+      {/* Aloqa */}
+      <Card title={t("contact")}>
         <Field
-          label={t("time")}
-          htmlFor="scheduledFor"
-          optional={t("optional")}
-          hint={t("timeHint")}
-          error={errorText(errors.scheduledFor?.message)}
+          label={t("name")}
+          htmlFor="customerName"
+          error={errorText(errors.customerName?.message)}
         >
-          <Input id="scheduledFor" type="time" className="w-36" {...register("scheduledFor")} />
+          <Input
+            id="customerName"
+            autoComplete="name"
+            placeholder={t("namePlaceholder")}
+            aria-invalid={!!errors.customerName}
+            className="h-11"
+            {...register("customerName")}
+          />
         </Field>
+        <Field
+          label={t("phone")}
+          htmlFor="phoneDigits"
+          hint={isAdmin ? undefined : t("phoneHint")}
+          error={errorText(errors.phoneDigits?.message)}
+        >
+          <div
+            className={cn(
+              "focus-within:border-ring focus-within:ring-ring/50 flex h-11 items-center rounded-lg border focus-within:ring-3",
+              errors.phoneDigits && "border-destructive",
+            )}
+          >
+            <span className="text-muted-foreground pl-3 text-sm">+998</span>
+            <input
+              id="phoneDigits"
+              type="tel"
+              inputMode="numeric"
+              autoComplete="tel-national"
+              placeholder="90 123 45 67"
+              maxLength={12}
+              aria-invalid={!!errors.phoneDigits}
+              className="h-full min-w-0 flex-1 bg-transparent px-2 text-sm outline-none"
+              {...register("phoneDigits", {
+                onChange: (e) => {
+                  e.target.value = formatPhone(e.target.value);
+                },
+              })}
+            />
+          </div>
+        </Field>
+      </Card>
+
+      {/* Vaqt va izoh */}
+      <Card title={t("time")}>
+        <div className="grid grid-cols-2 gap-2">
+          {(["asap", "scheduled"] as const).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              aria-pressed={timeMode === mode}
+              onClick={() => {
+                setTimeMode(mode);
+                if (mode === "asap") setValue("scheduledFor", "", { shouldValidate: true });
+              }}
+              className={cn(
+                "h-11 rounded-xl border text-sm font-medium transition-colors",
+                timeMode === mode ? "border-primary bg-primary/5 text-primary" : "hover:bg-muted",
+              )}
+            >
+              {mode === "asap" ? t("timeAsap") : t("timeScheduled")}
+            </button>
+          ))}
+        </div>
+        <div className={cn(timeMode !== "scheduled" && "hidden")}>
+          <Field
+            label={t("time")}
+            htmlFor="scheduledFor"
+            error={errorText(errors.scheduledFor?.message)}
+          >
+            <Input
+              id="scheduledFor"
+              type="time"
+              className="h-11 w-40"
+              {...register("scheduledFor")}
+            />
+          </Field>
+        </div>
         <Field label={t("comment")} htmlFor="comment" optional={t("optional")}>
           <Textarea
             id="comment"
@@ -330,15 +446,19 @@ export function CheckoutForm({
             {...register("comment")}
           />
         </Field>
-      </Section>
+      </Card>
 
       {/* To'lov */}
-      <Section title={t("payment")}>
+      <Card title={t("payment")}>
         <Controller
           control={control}
           name="paymentMethod"
           render={({ field }) => (
-            <RadioGroup value={field.value} onValueChange={(v) => field.onChange(v)}>
+            <RadioGroup
+              value={field.value}
+              onValueChange={(v) => field.onChange(v)}
+              className="gap-2"
+            >
               {settings.paymentMethods.map((m) => (
                 <ChoiceCard key={m} value={m} checked={field.value === m}>
                   {tPay(m)}
@@ -348,69 +468,52 @@ export function CheckoutForm({
           )}
         />
         {paymentMethod === "TRANSFER" && settings.transferDetails && (
-          <div className="bg-muted rounded-lg p-3 text-sm">
+          <div className="bg-muted rounded-xl p-3 text-sm">
             <p className="font-medium">{t("transferDetails")}</p>
             <p className="mt-1 whitespace-pre-line">{settings.transferDetails}</p>
             <p className="text-muted-foreground mt-2 text-xs">{t("transferNote")}</p>
           </div>
         )}
-      </Section>
+      </Card>
 
       {isAdmin && (
-        <label className="flex min-h-11 cursor-pointer items-center gap-3 border-b px-4 py-3">
+        <label className="bg-background flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl px-4">
           <Checkbox checked={markPaid} onCheckedChange={setMarkPaid} />
           <span className="font-medium">{tAdmin("markPaidNow")}</span>
         </label>
       )}
 
-      {/* Buyurtma tarkibi */}
-      <Section title={t("summary")}>
-        <ul className="flex flex-col gap-2 text-sm">
-          {lines.map((l) => (
-            <li key={l.key} className="flex justify-between gap-3">
-              <span className="min-w-0">
-                {l.quantity} × {l.name}
-                {l.options.length > 0 && (
-                  <span className="text-muted-foreground block text-xs">
-                    {l.options.map((o) => o.name).join(", ")}
-                  </span>
-                )}
-              </span>
-              <span className="shrink-0 tabular-nums">{formatUZS(unitPrice(l) * l.quantity)}</span>
-            </li>
-          ))}
-        </ul>
-        <dl className="flex flex-col gap-1 border-t pt-3 text-sm">
-          <Row label={t("subtotal")} value={formatUZS(subtotal)} />
-          {type === "DELIVERY" && (
-            <Row label={t("deliveryFee")} value={zone ? formatUZS(zone.fee) : t("chooseZone")} />
-          )}
-          <Row label={t("total")} value={formatUZS(total)} strong />
-        </dl>
-      </Section>
-
-      {/* Yuborish */}
-      <div className="bg-background/95 sticky bottom-0 z-40 border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
+      {/* Yakuniy summa va yuborish */}
+      <div className="bg-background/95 sticky bottom-0 z-40 -mx-3 mt-1 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-2">
+          <dl className="flex flex-col gap-0.5 text-sm">
+            <Row label={t("subtotal")} value={formatUZS(subtotal)} />
+            {type === "DELIVERY" && (
+              <Row label={t("deliveryFee")} value={zone ? formatUZS(zone.fee) : t("chooseZone")} />
+            )}
+          </dl>
           {!isAdmin && !isOpenNow && (
             <p className="text-destructive text-center text-sm">{tCart("closed")}</p>
           )}
           {!isAdmin && isOpenNow && missing > 0 && (
-            <p className="text-center text-sm text-amber-600 dark:text-amber-500">
+            <p className="text-center text-sm text-amber-600">
               {tCart("addMore", { amount: formatUZS(missing) })}
             </p>
           )}
           <Button
             type="submit"
             size="lg"
-            className="h-12 w-full justify-between px-4 text-base"
+            className="h-13 w-full justify-between rounded-2xl px-5 text-base"
             disabled={!canOrder || isSubmitting}
           >
             <span className="flex items-center gap-2">
-              {isSubmitting && <Loader2 className="animate-spin" />}
+              {isSubmitting ? <Loader2 className="animate-spin" /> : null}
               {isSubmitting ? t("submitting") : t("submit")}
             </span>
-            <span className="font-semibold tabular-nums">{formatUZS(total)}</span>
+            <span className="flex items-center gap-1 font-bold tabular-nums">
+              {formatUZS(total)}
+              {!isSubmitting && <ChevronRight className="size-4" />}
+            </span>
           </Button>
         </div>
       </div>
@@ -418,10 +521,23 @@ export function CheckoutForm({
   );
 }
 
-function Section({ title, children }: { title?: string; children: React.ReactNode }) {
+function Card({
+  title,
+  action,
+  children,
+}: {
+  title?: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="flex flex-col gap-3 border-b px-4 py-5">
-      {title && <h2 className="font-semibold">{title}</h2>}
+    <section className="bg-background flex flex-col gap-4 rounded-2xl p-4">
+      {(title || action) && (
+        <div className="flex items-center justify-between gap-2">
+          {title && <h2 className="font-bold">{title}</h2>}
+          {action}
+        </div>
+      )}
       {children}
     </section>
   );
@@ -467,7 +583,7 @@ function ChoiceCard({
   return (
     <label
       className={cn(
-        "flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 transition-colors",
+        "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 transition-colors",
         checked ? "border-primary bg-primary/5" : "hover:bg-muted/50",
       )}
     >
@@ -477,10 +593,10 @@ function ChoiceCard({
   );
 }
 
-function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className={cn("flex justify-between", strong && "text-base font-semibold")}>
-      <dt className={strong ? undefined : "text-muted-foreground"}>{label}</dt>
+    <div className="flex justify-between">
+      <dt className="text-muted-foreground">{label}</dt>
       <dd className="tabular-nums">{value}</dd>
     </div>
   );

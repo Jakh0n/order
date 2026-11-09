@@ -66,7 +66,7 @@ async function NewOrder() {
             </section>
           ))}
         </div>
-        <div className="border-t lg:border-t-0">
+        <div className="bg-muted border-t lg:border-t-0">
           <CheckoutForm store={data.store} settings={adminSettings} mode="admin" />
         </div>
       </div>
