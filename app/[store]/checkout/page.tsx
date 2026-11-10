@@ -7,6 +7,7 @@ import { Suspense } from "react";
 
 import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { CurrencyProvider } from "@/components/currency-provider";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { CartSync } from "@/components/storefront/cart-sync";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { StoreBlocked } from "@/components/storefront/store-blocked";
@@ -44,10 +45,11 @@ async function Checkout({ params }: { params: PageProps<"/[store]/checkout">["pa
           >
             <ArrowLeft className="size-5" />
           </Link>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <h1 className="leading-tight font-bold">{t("title")}</h1>
             <p className="text-muted-foreground truncate text-sm">{data.store.name}</p>
           </div>
+          <LanguageSwitcher />
         </header>
 
         <CartSync cartKey={slug} products={data.categories.flatMap((c) => c.products)} />

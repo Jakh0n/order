@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { formatMoney } from "@/lib/money";
 import { type CustomerOrder, getOrderForCustomer } from "@/lib/orders/get-order";
-import { mapsLink } from "@/lib/order-message";
+import { mapsLink } from "@/lib/maps";
 import { orderSendLink } from "@/lib/orders/send-link";
 import { getRequestOrigin } from "@/lib/app-url";
 import { isNextDaySlot } from "@/lib/store-hours";

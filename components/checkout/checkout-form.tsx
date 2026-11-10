@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
@@ -31,13 +31,14 @@ import { ProductImage } from "@/components/storefront/product-image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { defaultLocale, isLocale } from "@/i18n/config";
 import { adminCartKey } from "@/lib/cart-keys";
 import { cartSubtotal, unitPrice, useCart, useCartHydrated, useCartLines } from "@/lib/cart-store";
 import type { CheckoutSettings, StorefrontStore } from "@/lib/menu-types";
 import { lookupAddress } from "@/lib/geo/actions";
 import { saveLastOrder } from "@/lib/last-order";
 import { dialPrefix } from "@/lib/phone-prefix";
-import { mapsLink } from "@/lib/order-message";
+import { mapsLink } from "@/lib/maps";
 import { createOrder } from "@/lib/orders/actions";
 import { createManualOrder } from "@/lib/orders/admin-actions";
 import { cn } from "@/lib/utils";
@@ -89,6 +90,7 @@ export function CheckoutForm({
   const cartKey = isAdmin ? adminCartKey(store.slug) : store.slug;
   const tAdmin = useTranslations("adminOrders");
   const t = useTranslations("checkout");
+  const locale = useLocale();
   const tCart = useTranslations("cart");
   const tPay = useTranslations("payment");
   const tReceipt = useTranslations("receipt");
@@ -229,7 +231,7 @@ export function CheckoutForm({
       return;
     }
     const order = {
-      lang: "en" as const,
+      lang: isLocale(locale) ? locale : defaultLocale,
       customerName: values.customerName,
       customerPhone: values.phone,
       type: values.type,

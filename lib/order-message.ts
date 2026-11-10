@@ -1,12 +1,16 @@
 import type { OrderType, PaymentMethod, PaymentStatus } from "@prisma/client";
 
+import { mapsLink } from "@/lib/maps";
 import { formatMoney } from "@/lib/money";
+import type { Locale } from "@/i18n/config";
 import en from "@/messages/en.json";
+import ru from "@/messages/ru.json";
+import uz from "@/messages/uz.json";
 
-// Add a language here (and its messages file) when the app supports more than English.
-export type Lang = "en";
+// The message is written in the customer's language (Order.lang). New locale → add its messages here.
+export type Lang = Locale;
 
-const dictionaries = { en } as const;
+const dictionaries: Record<Lang, typeof en> = { en, ru, uz };
 
 export interface OrderMessageItem {
   name: string;
@@ -142,7 +146,3 @@ export function whatsappLink(phone: string, text: string): string {
 }
 
 /** Google Maps link for a customer's location (opens the native maps app on phones) */
-export function mapsLink(latitude?: number | null, longitude?: number | null): string | null {
-  if (latitude == null || longitude == null) return null;
-  return `https://www.google.com/maps/search/?api=1&query=${latitude.toFixed(6)},${longitude.toFixed(6)}`;
-}

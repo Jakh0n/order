@@ -22,8 +22,8 @@ export function StoreHeader({ store }: { store: StorefrontStore }) {
             className="object-cover"
           />
         )}
-        <div className="bg-background/90 absolute top-3 right-3 rounded-lg backdrop-blur">
-          <LanguageSwitcher />
+        <div className="absolute top-3 right-3">
+          <LanguageSwitcher variant="overlay" />
         </div>
       </div>
 

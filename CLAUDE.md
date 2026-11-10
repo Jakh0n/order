@@ -20,7 +20,9 @@ Birinchi do'kon — egasining oshxonasi (slug: `oshxonam`). Keyin boshqa kafelar
 
 To'lov: onlayn to'lov YO'Q. Faqat `CASH`, `CARD_ON_DELIVERY`, `TRANSFER` (biznes hisob raqamiga).
 Egasi admin'da qo'lda "To'landi" qiladi.
-Xalqaro platforma. Til: hozircha faqat ingliz (`messages/en.json`; yangi til = locale + messages fayli).
+Xalqaro platforma. Tillar: en, ru, uz (`messages/*.json`). Til: `NEXT_LOCALE` cookie → brauzer (Accept-Language) → en.
+Yangi til = `i18n/config.ts` locales + messages fayli + `lib/order-message.ts` dictionaries.
+Owner'ga xabar mijoz tilida (`Order.lang`).
 Valyuta: har bir do'konda alohida (`Store.currency`, ISO 4217). Summalar Int — valyutaning eng kichik
 birligida (USD → sent). Vaqt zonasi: har bir do'konda alohida (`Store.timeZone`, IANA).
 
@@ -106,7 +108,7 @@ lib/
   storage.ts                  uploadMenuImage, deleteMenuImage, menuImagePrefix; uploadReceipt, receiptUrls
                               (chek — yopiq `payment-receipts` bucket, admin'ga 1 soatlik signed URL)
   shrink-image.ts             shrinkImage — brauzerda rasmni kichraytirish (menyu, chek)
-messages/en.json              matnlar (hozircha faqat ingliz)
+messages/{en,ru,uz}.json      matnlar (kalitlar bir xil bo'lishi shart)
 components/currency-provider  CurrencyProvider + useFormatMoney (klient komponentlarda valyuta)
 prisma/schema.prisma, seed.ts
 ```
@@ -207,3 +209,31 @@ keyin faqat eng tor joyni tuzatish. Mikroservislarga erta o'tilmaydi.
 
 - Yetkazish: hududlar (DeliveryZone) endi ishlatilmaydi — `Store.deliveryFee` (yagona narx). Jadval ma'lumot yo'qolmasligi uchun qoldirilgan.
 - Buyurtmada `latitude/longitude` bo'lsa — xabarda, admin kartochkada va /o sahifada "Open in Maps" havolasi (`mapsLink`).
+
+## Mahsulot yo'l xaritasi (funksiyalar)
+
+Bozor: mahsulot global (barcha davlatlar), sotuv MDH'dan boshlanadi — O'zbekiston → Qozog'iston →
+Qirg'iziston/Tojikiston → Kavkaz. Rossiya hozircha yo'q (WhatsApp cheklovi, 152-FZ, sanksiyalar).
+Asosiy raqobatchi — Take App ($0 / $29 / $50, 0% komissiya). Bizning o'rin: faqat ovqatga ixtisoslashgan,
+oddiy va arzonroq; 5 daqiqada o'zi ro'yxatdan o'tadi; Telegram + WhatsApp.
+
+Tarif tamoyili: buyurtma qabul qilish HECH QACHON cheklanmaydi — pul o'sish vositalari uchun olinadi.
+- Free: hammasi asosiy + stol QR + chek chop etish; 100 saqlanadigan buyurtma/oy; analitika faqat "bugun"
+- Pro (~$15, mahalliy narx): cheksiz buyurtma, promo-kod, bepul yetkazish chegarasi, analitika, mijozlar bazasi, logotipsiz, 1 xodim
+- Business (~$35): 5 xodim, o'z domeni
+
+P1 (navbat bo'yicha):
+1. [x] Rus va o'zbek tillari (`messages/ru.json`, `uz.json`)
+2. [ ] Tarif limitlari kodda (`Store.plan`) + tarif sahifasi
+3. [ ] Stolga QR orqali buyurtma (`OrderType.DINE_IN`, stol raqami)
+4. [ ] Chek / oshxona varag'ini chop etish (80mm)
+5. [ ] Promo-kodlar + ma'lum summadan bepul yetkazish
+6. [ ] Analitika (tushum, o'rtacha chek, top taomlar, soatlar, qaytgan mijozlar) + mijozlar bazasi (telefon bo'yicha)
+7. [ ] Telegram Mini App
+8. [ ] Admin push-bildirishnoma (PWA) + onboarding checklist
+
+P2: shablon menyu, CSV/rasmdan menyu importi (AI), taom yorliqlari (achchiq, halol, hit), menyu tillari,
+bir nechta to'lov rekviziti (Click/Payme/Kaspi) + nusxa tugmasi, masofaga qarab yetkazish narxi,
+buyurtma qidiruvi / sana filtri, mijozlar eksporti, CSV hisobot, xodim rollari (kassir/oshpaz).
+
+P3: vaqtga bog'liq kategoriyalar (nonushta), sodiqlik dasturi ("6-kofe bepul").

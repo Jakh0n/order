@@ -13,7 +13,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 
 import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/money";
-import { mapsLink } from "@/lib/order-message";
+import { mapsLink } from "@/lib/maps";
 import { isNextDaySlot } from "@/lib/store-hours";
 import { cn } from "@/lib/utils";
 

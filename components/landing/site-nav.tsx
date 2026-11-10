@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -48,7 +49,8 @@ export function SiteNav() {
           ))}
         </ul>
 
-        <div className="ml-auto flex items-center gap-2 md:ml-0">
+        <div className="ml-auto flex items-center gap-1 sm:gap-2 md:ml-0">
+          <LanguageSwitcher className="text-forest/80 hover:text-forest hover:bg-forest/5 data-[popup-open]:bg-forest/5" />
           <Link
             href="/admin/login"
             className={cn(buttonVariants({ variant: "ghost" }), "hidden sm:inline-flex")}

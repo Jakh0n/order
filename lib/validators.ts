@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { defaultLocale, locales } from "@/i18n/config";
+
 import { isValidCurrency, toMajor, toMinor } from "@/lib/money";
 import { slugError } from "@/lib/slug";
 import { isValidTimeZone } from "@/lib/store-hours";
@@ -84,7 +86,7 @@ export const checkoutSchema = z
     ...orderFields,
     storeSlug: z.string().min(1).max(100),
     customerPhone: phoneSchema,
-    lang: z.enum(["en"]).default("en"),
+    lang: z.enum(locales).default(defaultLocale),
     items: z.array(cartItemSchema).min(1).max(50),
   })
   .superRefine(refineDelivery);
@@ -97,7 +99,7 @@ export const manualOrderSchema = z
   .object({
     ...orderFields,
     customerPhone: phoneSchema,
-    lang: z.enum(["en"]).default("en"),
+    lang: z.enum(locales).default(defaultLocale),
     markPaid: z.boolean().default(false),
     items: z.array(cartItemSchema).min(1).max(50),
   })
