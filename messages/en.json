@@ -546,7 +546,7 @@
     "addressPlaceholder": "e.g. 12 Market Street, Springfield",
     "landmark": "Directions",
     "landmarkPlaceholder": "e.g. next to the central station",
-    "regionSection": "Currency & time zone",
+    "regionSection": "Region & language",
     "currency": "Currency",
     "currencyHint": "Prices are shown in this currency. Changing it does not convert existing prices.",
     "timeZone": "Time zone",
@@ -607,7 +607,9 @@
     "deliveryFee": "Delivery fee ({currency})",
     "deliveryFeeHint": "Added to every delivery order. 0 — free delivery.",
     "cover": "Cover photo",
-    "coverHint": "Shown at the top of your store page. A wide photo works best (e.g. 1200×400)."
+    "coverHint": "Shown at the top of your store page. A wide photo works best (e.g. 1200×400).",
+    "language": "Store language",
+    "languageHint": "Your store page opens in this language. Customers can still switch it."
   },
   "signup": {
     "title": "Open your store",

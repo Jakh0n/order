@@ -82,6 +82,8 @@ model Store {
   currency             String         @default("USD")
   /// IANA vaqt zonasi (ish vaqti va "bugun" hisobi uchun), masalan "Europe/London"
   timeZone             String         @default("UTC")
+  /// Default language of the store page (i18n/config locales) — used when the customer hasn't picked one
+  locale               String         @default("en")
   minOrder             Int            @default(0)
   /// Flat delivery fee (minor units). Replaced per-area fees (DeliveryZone is no longer used).
   deliveryFee          Int            @default(0)

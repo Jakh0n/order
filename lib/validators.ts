@@ -251,6 +251,9 @@ const currencySchema = z.string().trim().toUpperCase().refine(isValidCurrency, "
 
 const timeZoneSchema = z.string().trim().refine(isValidTimeZone, "timeZoneInvalid");
 
+/** Store page default language */
+const storeLocaleSchema = z.enum(locales).catch(defaultLocale);
+
 function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
   return z
     .object({
@@ -263,6 +266,7 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
 
       currency: currencySchema,
       timeZone: timeZoneSchema,
+      locale: storeLocaleSchema,
 
       isOpen: z.boolean(),
       openTime: timeOrEmpty,
@@ -376,6 +380,8 @@ export const signupStoreSchema = z
       .string()
       .optional()
       .transform((v) => (v && isValidTimeZone(v) ? v : "UTC")),
+    /** The language the owner signed up in */
+    locale: storeLocaleSchema,
     channel: z.enum(["TELEGRAM", "WHATSAPP"]),
     telegramUsername: z
       .string()

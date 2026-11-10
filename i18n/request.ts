@@ -1,7 +1,11 @@
 import { cookies, headers } from "next/headers";
 import { getRequestConfig } from "next-intl/server";
 
+import { reportError } from "@/lib/report-error";
+import { getStoreLocale } from "@/lib/storefront";
+
 import { defaultLocale, isLocale, type Locale, LOCALE_COOKIE } from "./config";
+import { STORE_SLUG_HEADER } from "./store-header";
 
 /** First supported language from Accept-Language ("ru-RU,ru;q=0.9,en;q=0.8" -> "ru"). */
 function fromAcceptLanguage(header: string | null): Locale | null {
@@ -20,10 +24,22 @@ function fromAcceptLanguage(header: string | null): Locale | null {
 export default getRequestConfig(async () => {
   const [cookieStore, headerStore] = await Promise.all([cookies(), headers()]);
   const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value;
-  // Chosen language (cookie) wins; otherwise the browser's language; otherwise English.
-  const locale = isLocale(cookieLocale)
-    ? cookieLocale
-    : (fromAcceptLanguage(headerStore.get("accept-language")) ?? defaultLocale);
+  // 1) the customer's own choice (cookie) 2) on a store page — the store's language
+  // (header set by proxy.ts) 3) the browser's language 4) English
+  let locale: Locale | null = isLocale(cookieLocale) ? cookieLocale : null;
+  if (!locale) {
+    const slug = headerStore.get(STORE_SLUG_HEADER);
+    if (slug) {
+      try {
+        const storeLocale = await getStoreLocale(slug);
+        if (isLocale(storeLocale)) locale = storeLocale;
+      } catch (e) {
+        // Never break the page over the language — fall back to the browser's
+        reportError(e, "i18n.storeLocale");
+      }
+    }
+  }
+  locale ??= fromAcceptLanguage(headerStore.get("accept-language")) ?? defaultLocale;
 
   return {
     locale,

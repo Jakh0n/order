@@ -10,6 +10,15 @@ export function storeCacheTag(slug: string) {
   return `store:${slug}`;
 }
 
+/** Store page default language (null if the store doesn't exist). Used by i18n/request.ts. */
+export async function getStoreLocale(slug: string): Promise<string | null> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(storeCacheTag(slug));
+  const store = await prisma.store.findUnique({ where: { slug }, select: { locale: true } });
+  return store?.locale ?? null;
+}
+
 /**
  * Mijoz sahifasi uchun do'kon va menyu. Faqat faol kategoriyalar; tugagan taomlar isAvailable=false bilan.
  * Topilmasa null (notFound() ni chaqiruvchi qiladi).

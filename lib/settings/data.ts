@@ -1,5 +1,6 @@
 import "server-only";
 
+import { defaultLocale, isLocale } from "@/i18n/config";
 import { prisma } from "@/lib/db";
 import type { StoreSettingsInput } from "@/lib/validators";
 
@@ -19,6 +20,7 @@ export async function getStoreSettings(storeId: string): Promise<StoreSettingsIn
     landmark: store.landmark ?? "",
     currency: store.currency,
     timeZone: store.timeZone,
+    locale: isLocale(store.locale) ? store.locale : defaultLocale,
     isOpen: store.isOpen,
     openTime: store.openTime ?? "",
     closeTime: store.closeTime ?? "",

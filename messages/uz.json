@@ -546,7 +546,7 @@
     "addressPlaceholder": "masalan, Navoiy ko'chasi, 12",
     "landmark": "Mo'ljal",
     "landmarkPlaceholder": "masalan, markaziy vokzal yonida",
-    "regionSection": "Valyuta va vaqt zonasi",
+    "regionSection": "Hudud va til",
     "currency": "Valyuta",
     "currencyHint": "Narxlar shu valyutada ko'rsatiladi. O'zgartirilsa, mavjud narxlar qayta hisoblanmaydi.",
     "timeZone": "Vaqt zonasi",
@@ -607,7 +607,9 @@
     "deliveryFee": "Yetkazish narxi ({currency})",
     "deliveryFeeHint": "Har bir yetkazish buyurtmasiga qo'shiladi. 0 — bepul yetkazish.",
     "cover": "Muqova rasmi",
-    "coverHint": "Do'kon sahifasining tepasida ko'rinadi. Keng rasm yaxshi (masalan, 1200×400)."
+    "coverHint": "Do'kon sahifasining tepasida ko'rinadi. Keng rasm yaxshi (masalan, 1200×400).",
+    "language": "Do'kon tili",
+    "languageHint": "Do'kon sahifasi shu tilda ochiladi. Mijozlar uni o'zlari almashtira oladi."
   },
   "signup": {
     "title": "Do'koningizni oching",

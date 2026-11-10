@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { localeNames, locales } from "@/i18n/config";
 import { POPULAR_CURRENCIES, priceStep } from "@/lib/money";
 import { saveStoreSettings } from "@/lib/settings/actions";
 import { cn } from "@/lib/utils";
@@ -161,6 +162,16 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsFo
         <p className="text-muted-foreground -mt-2 text-xs">
           {t("currencyHint")} {t("timeZoneHint")}
         </p>
+        <Field label={t("language")} htmlFor="locale" error={errorText(errors.locale?.message)}>
+          <select id="locale" className={selectClass} {...register("locale")}>
+            {locales.map((l) => (
+              <option key={l} value={l}>
+                {localeNames[l]}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <p className="text-muted-foreground -mt-2 text-xs">{t("languageHint")}</p>
       </Card>
 
       <Card title={t("hoursSection")}>

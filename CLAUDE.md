@@ -3,7 +3,7 @@
 # order
 
 Kafe, oshxona va restoranlar uchun Take App'ga o'xshash multi-tenant SaaS.
-Birinchi do'kon — egasining oshxonasi (slug: `oshxonam`). Keyin boshqa kafelarga sotiladi.
+Birinchi do'kon — egasining oshxonasi (seed slug: `flami-grill`). Keyin boshqa kafelarga sotiladi.
 
 ## Ish jarayoni
 
@@ -20,7 +20,8 @@ Birinchi do'kon — egasining oshxonasi (slug: `oshxonam`). Keyin boshqa kafelar
 
 To'lov: onlayn to'lov YO'Q. Faqat `CASH`, `CARD_ON_DELIVERY`, `TRANSFER` (biznes hisob raqamiga).
 Egasi admin'da qo'lda "To'landi" qiladi.
-Xalqaro platforma. Tillar: en, ru, uz (`messages/*.json`). Til: `NEXT_LOCALE` cookie → brauzer (Accept-Language) → en.
+Xalqaro platforma. Tillar: en, ru, uz (`messages/*.json`). Til: `NEXT_LOCALE` cookie → do'kon sahifasida `Store.locale`
+(`proxy.ts` slug'ni header'da beradi, `getStoreLocale` keshlangan) → brauzer (Accept-Language) → en.
 Yangi til = `i18n/config.ts` locales + messages fayli + `lib/order-message.ts` dictionaries.
 Owner'ga xabar mijoz tilida (`Order.lang`).
 Valyuta: har bir do'konda alohida (`Store.currency`, ISO 4217). Summalar Int — valyutaning eng kichik

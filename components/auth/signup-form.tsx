@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Loader2, X } from "lucide-react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Controller, type FieldPath, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { defaultLocale, isLocale } from "@/i18n/config";
 import { checkSlug, signup, type SlugCheck } from "@/lib/auth/signup-actions";
 import { POPULAR_CURRENCIES } from "@/lib/money";
 import { slugify } from "@/lib/slug";
@@ -22,6 +23,8 @@ type SlugStatus = { state: "idle" | "checking" } | ({ state: "done" } & SlugChec
 
 export function SignupForm({ host }: { host: string }) {
   const t = useTranslations("signup");
+  const currentLocale = useLocale();
+  const locale = isLocale(currentLocale) ? currentLocale : defaultLocale;
   const [step, setStep] = useState<1 | 2>(1);
   const [slugTouched, setSlugTouched] = useState(false);
   const [slugStatus, setSlugStatus] = useState<SlugStatus>({ state: "idle" });
@@ -45,6 +48,8 @@ export function SignupForm({ host }: { host: string }) {
         currency: "USD",
         // The owner's current time zone; can be changed later in Settings
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        // The store page opens in the language the owner is signing up in; changeable in Settings
+        locale,
         channel: "TELEGRAM",
         telegramUsername: "",
         whatsappNumber: "",
