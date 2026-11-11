@@ -1,6 +1,7 @@
 import { ChevronRight, ScanLine, Send, UtensilsCrossed } from "lucide-react";
 
 import type { TableQr } from "@/lib/table-qr";
+import { cn } from "@/lib/utils";
 
 export interface TableCardText {
   /** "Table" — small label above the number */
@@ -19,18 +20,26 @@ export function TableCard({
   store,
   text,
   footer,
+  cellClassName,
 }: {
   table: TableQr;
   store: { name: string; logoUrl: string | null };
   text: TableCardText;
   /** Small line at the bottom (site host) */
   footer?: string;
+  /** Print cell size/padding for the chosen paper size (print page only) */
+  cellClassName?: string;
 }) {
   const stepIcons = [ScanLine, UtensilsCrossed, Send];
 
   return (
     // Print: each cell is a cut-out area with a dashed border; the card sits inside it
-    <div className="@container break-inside-avoid print:flex print:h-[148mm] print:items-stretch print:border print:border-dashed print:border-neutral-300 print:p-[6mm]">
+    <div
+      className={cn(
+        "@container break-inside-avoid print:flex print:items-center print:border print:border-dashed print:border-neutral-300",
+        cellClassName,
+      )}
+    >
       <article className="relative flex w-full flex-col items-center overflow-hidden rounded-[6cqw] bg-white text-neutral-900 shadow-sm ring-1 ring-black/10 [-webkit-print-color-adjust:exact] [print-color-adjust:exact] print:shadow-none">
         {/* Brand header */}
         <header className="from-primary to-primary/80 relative flex w-full flex-col items-center gap-[2.5cqw] bg-gradient-to-br px-[6cqw] pt-[7cqw] pb-[12cqw] text-white">

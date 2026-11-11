@@ -728,7 +728,7 @@
       "TRANSFER": "Pul o'tkazmasi"
     },
     "printTitle": "Stol QR kodlari",
-    "printHint": "{count, plural, other {# ta stol}} · A4 ga chop eting va punktir bo'ylab qirqing",
+    "printHint": "{count, plural, other {# ta stol}} · punktir bo'ylab qirqing",
     "print": "Chop etish",
     "scanToOrder": "Menyuni ko'rish va buyurtma uchun skanerlang",
     "printDisabled": "Avval QR kodlar sahifasida stoldan buyurtmani yoqing.",
@@ -750,6 +750,16 @@
       "scan": "Skanerlang",
       "choose": "Tanlang",
       "order": "Buyurtma bering"
+    },
+    "size": {
+      "label": "Kartochka o'lchami",
+      "a6": "Kichik",
+      "a6Hint": "A6 · varaqda 4 ta",
+      "a5": "O'rta",
+      "a5Hint": "A5 · varaqda 2 ta",
+      "a4": "Katta",
+      "a4Hint": "A4 · varaqda 1 ta",
+      "standHint": "O'rta (A5, 15 × 21 sm) — stol uchun odatiy o'lcham. Kartochkalarni shaffof akril stendga soling — tik turadi va kirlanmaydi."
     }
   }
 }

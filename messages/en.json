@@ -728,7 +728,7 @@
       "TRANSFER": "Bank transfer"
     },
     "printTitle": "Table QR codes",
-    "printHint": "{count, plural, one {# table} other {# tables}} · print on A4 and cut along the dashed lines",
+    "printHint": "{count, plural, one {# table} other {# tables}} · cut along the dashed lines",
     "print": "Print",
     "scanToOrder": "Scan to see the menu and order",
     "printDisabled": "Turn on table ordering on the QR codes page first.",
@@ -750,6 +750,16 @@
       "scan": "Scan",
       "choose": "Choose",
       "order": "Order"
+    },
+    "size": {
+      "label": "Card size",
+      "a6": "Small",
+      "a6Hint": "A6 · 4 per sheet",
+      "a5": "Medium",
+      "a5Hint": "A5 · 2 per sheet",
+      "a4": "Large",
+      "a4Hint": "A4 · 1 per sheet",
+      "standHint": "Medium (A5, 15 × 21 cm) is the usual size for tables. Put the cards in clear acrylic stands — they stand up and stay clean."
     }
   }
 }
