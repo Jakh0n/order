@@ -12,9 +12,6 @@ export async function getStoreSettings(storeId: string): Promise<StoreSettingsIn
   if (!store) return null;
 
   return {
-    name: store.name,
-    logoUrl: store.logoUrl,
-    coverUrl: store.coverUrl,
     phone: store.phone ?? "",
     address: store.address ?? "",
     landmark: store.landmark ?? "",

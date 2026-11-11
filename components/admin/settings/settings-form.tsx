@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl";
 import { Controller, type FieldPath, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
-import { ImageUpload } from "@/components/admin/menu/image-upload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -100,26 +99,6 @@ export function SettingsForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
       <Card title={t("storeSection")}>
-        <Field label={t("logo")}>
-          <Controller
-            control={control}
-            name="logoUrl"
-            render={({ field }) => <ImageUpload value={field.value} onChange={field.onChange} />}
-          />
-        </Field>
-        <Field label={t("cover")}>
-          <Controller
-            control={control}
-            name="coverUrl"
-            render={({ field }) => (
-              <ImageUpload value={field.value} onChange={field.onChange} wide />
-            )}
-          />
-          <p className="text-muted-foreground text-xs">{t("coverHint")}</p>
-        </Field>
-        <Field label={t("storeName")} htmlFor="name" error={errorText(errors.name?.message)}>
-          <Input id="name" maxLength={80} aria-invalid={!!errors.name} {...register("name")} />
-        </Field>
         <Field label={t("phone")} htmlFor="phone" error={errorText(errors.phone?.message)}>
           <Input
             id="phone"

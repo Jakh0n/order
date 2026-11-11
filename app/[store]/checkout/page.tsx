@@ -11,6 +11,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { CartSync } from "@/components/storefront/cart-sync";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { StoreBlocked } from "@/components/storefront/store-blocked";
+import { StoreTheme } from "@/components/storefront/store-theme";
 import { getCheckoutSettings, getStorefront } from "@/lib/storefront";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -35,7 +36,11 @@ async function Checkout({ params }: { params: PageProps<"/[store]/checkout">["pa
   const t = await getTranslations("checkout");
 
   return (
-    <div className="bg-muted flex-1">
+    <div className="flex-1 bg-(--store-bg)">
+      <StoreTheme
+        brandColor={data.store.brandColor}
+        pageBackground={data.store.pageBackground}
+      />
       <div className="mx-auto w-full max-w-2xl">
         <header className="bg-background/95 sticky top-0 z-30 flex items-center gap-2 border-b px-2 py-2 backdrop-blur">
           <Link

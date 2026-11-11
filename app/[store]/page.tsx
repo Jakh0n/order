@@ -14,6 +14,9 @@ import { StoreBlocked } from "@/components/storefront/store-blocked";
 import { StoreHeader } from "@/components/storefront/store-header";
 import { siteOrigin } from "@/lib/app-url";
 import { storeJsonLd, topItemNames } from "@/lib/seo";
+import { PreviewBridge } from "@/components/storefront/preview-bridge";
+import { StoreTheme } from "@/components/storefront/store-theme";
+import { asMenuLayout } from "@/lib/design";
 import { getStorefront } from "@/lib/storefront";
 
 export async function generateMetadata({ params }: PageProps<"/[store]">): Promise<Metadata> {
@@ -74,10 +77,16 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
       </a>
       <JsonLd data={storeJsonLd(data, siteOrigin())} />
       {/* Gray background + white cards — sections stand apart clearly */}
-      <div className="bg-muted flex-1">
+      <StoreTheme brandColor={store.brandColor} pageBackground={store.pageBackground} />
+      <PreviewBridge />
+      <div className="flex-1 bg-(--store-bg)">
         <div className="mx-auto w-full max-w-2xl pb-28">
           <StoreHeader store={store} />
-          <MenuBrowser cartKey={store.slug} categories={categories} />
+          <MenuBrowser
+            cartKey={store.slug}
+            categories={categories}
+            layout={asMenuLayout(store.menuLayout)}
+          />
           {/* Free plan: a quiet "Made with Flami" (Pro removes it) */}
           {store.showBranding && (
             <p className="text-muted-foreground py-6 text-center text-xs">

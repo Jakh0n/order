@@ -333,7 +333,8 @@
     "promos": "Promo",
     "analytics": "Analitika",
     "more": "Yana",
-    "plan": "Tarif"
+    "plan": "Tarif",
+    "design": "Dizayn"
   },
   "superadmin": {
     "title": "Platforma admini",
@@ -569,8 +570,6 @@
   },
   "adminSettings": {
     "storeSection": "Do'kon",
-    "storeName": "Do'kon nomi",
-    "logo": "Logotip",
     "phone": "Telefon",
     "phonePlaceholder": "+998 90 123 45 67",
     "address": "Manzil",
@@ -618,7 +617,6 @@
     "errors": {
       "invalid": "Ma'lumotlarni tekshiring",
       "server": "Nimadir xato ketdi",
-      "nameRequired": "Nomini kiriting",
       "tooLong": "Juda uzun",
       "timeInvalid": "Noto'g'ri vaqt",
       "bothTimes": "Ochilish va yopilish vaqtini kiriting",
@@ -631,14 +629,11 @@
       "telegramInvalid": "Noto'g'ri username (5–32 belgi: harflar, raqamlar, _)",
       "whatsappRequired": "WhatsApp raqamini kiriting",
       "whatsappInvalid": "Noto'g'ri raqam — mamlakat kodini qo'shing, masalan +998901234567",
-      "imageInvalid": "Noto'g'ri rasm",
       "currencyInvalid": "Noto'g'ri valyuta",
       "timeZoneInvalid": "Noto'g'ri vaqt zonasi"
     },
     "deliveryFee": "Yetkazish narxi ({currency})",
     "deliveryFeeHint": "Har bir yetkazish buyurtmasiga qo'shiladi. 0 — bepul yetkazish.",
-    "cover": "Muqova rasmi",
-    "coverHint": "Do'kon sahifasining tepasida ko'rinadi. Keng rasm yaxshi (masalan, 1200×400).",
     "language": "Do'kon tili",
     "languageHint": "Do'kon sahifasi shu tilda ochiladi. Mijozlar uni o'zlari almashtira oladi.",
     "freeDeliveryFrom": "Bepul yetkazish ({currency}) dan",
@@ -966,5 +961,54 @@
     "DINE_IN": "Stolda",
     "table": "{number}-stol",
     "at": "{time} ga"
+  },
+  "design": {
+    "title": "Dizayn",
+    "lead": "Do'koningiz mijozlarga qanday ko'rinadi. Ranglar preview'da darhol o'zgaradi, qolgani — saqlagandan keyin.",
+    "profile": "Profil",
+    "logo": "Logotip",
+    "cover": "Muqova rasmi",
+    "coverHint": "Do'kon sahifasining tepasida ko'rinadi. Keng rasm yaxshi (masalan, 1200×400).",
+    "name": "Do'kon nomi",
+    "description": "Tavsif",
+    "descriptionPlaceholder": "masalan, 2015 yildan beri ko'mirda kabob va yangi non",
+    "formatHint": "**qalin**, _kursiv_ yoki ~~chizilgan~~ yozish mumkin.",
+    "announcement": "E'lon",
+    "announcementPlaceholder": "masalan, Shu dam olish kunlari yetkazish bepul 🎉",
+    "announcementHint": "Do'kon sahifasining eng tepasidagi rangli chiziq. Yashirish uchun bo'sh qoldiring.",
+    "colors": "Ranglar",
+    "brandColor": "Brend rangi",
+    "brandColorHint": "Tugmalar, narxlar va urg'ular uchun — do'konda, checkout'da va buyurtma sahifasida.",
+    "customColor": "Istalgan rangni tanlash",
+    "lowContrast": "Bu rang juda och — tugmalarda to'q yozuv bo'ladi, oq fonda esa o'qish qiyin bo'lishi mumkin.",
+    "background": "Sahifa foni",
+    "backgrounds": {
+      "gray": "Kulrang",
+      "white": "Oq",
+      "cream": "Krem"
+    },
+    "menuLayout": "Menyu ko'rinishi",
+    "layouts": {
+      "list": "Ro'yxat",
+      "listHint": "Kichik rasmli qatorlar — uzun menyu uchun",
+      "grid": "Plitka",
+      "gridHint": "Katta rasmlar, qatorda 2 ta — novvoyxona va shirinliklar uchun"
+    },
+    "save": "Saqlash",
+    "saved": "Dizayn saqlandi",
+    "unsaved": "Saqlanmagan o'zgarishlar bor",
+    "allSaved": "Barcha o'zgarishlar saqlangan",
+    "preview": "Preview",
+    "previewHint": "Bu sizning haqiqiy do'kon sahifangiz. Bu yerda berilgan buyurtmalar haqiqiy.",
+    "reload": "Preview'ni yangilash",
+    "openStore": "Do'konni ochish",
+    "errors": {
+      "invalid": "Ma'lumotlarni tekshiring",
+      "server": "Nimadir xato ketdi",
+      "nameRequired": "Nomini kiriting",
+      "tooLong": "Juda uzun",
+      "colorInvalid": "Noto'g'ri rang",
+      "imageInvalid": "Noto'g'ri rasm"
+    }
   }
 }

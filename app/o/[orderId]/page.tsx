@@ -7,6 +7,7 @@ import { Suspense } from "react";
 
 import { CopyButton } from "@/components/copy-button";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { StoreTheme } from "@/components/storefront/store-theme";
 import { AutoRefresh } from "@/components/order/auto-refresh";
 import { ReceiptUpload } from "@/components/order/receipt-upload";
 import { ReorderButton } from "@/components/order/reorder-button";
@@ -58,7 +59,11 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
   );
 
   return (
-    <div className="bg-muted flex-1">
+    <div className="flex-1 bg-(--store-bg)">
+      <StoreTheme
+        brandColor={order.store.brandColor}
+        pageBackground={order.store.pageBackground}
+      />
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-3 px-3 pt-3 pb-8">
         <title>{t("order.title", { number: order.number })}</title>
 

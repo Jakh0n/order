@@ -69,6 +69,16 @@ model Store {
   logoUrl              String?
   /// Wide header photo on the store page (same bucket/folder as the logo)
   coverUrl             String?
+  /// Short text under the store name (**bold**, _italic_, ~~strike~~)
+  description          String?
+  /// Banner at the top of the store page ("Free delivery this weekend")
+  announcement         String?
+  /// Brand color "#16a05d" for buttons and highlights; null = platform green
+  brandColor           String?
+  /// Store page background: "gray" | "white" | "cream"
+  pageBackground       String         @default("gray")
+  /// Menu layout: "list" (rows) | "grid" (2 photo cards per row)
+  menuLayout           String         @default("list")
   phone                String?
   address              String?
   landmark             String?

@@ -7,6 +7,8 @@ import { prisma } from "@/lib/db";
 import { deleteMenuImage, menuImagePrefix } from "@/lib/storage";
 import { storeCacheTag } from "@/lib/storefront";
 import {
+  type DesignInput,
+  designSchema,
   type StoreSettingsInput,
   storeSettingsSchema,
   type TableSettingsInput,
@@ -30,18 +32,9 @@ export async function saveStoreSettings(input: StoreSettingsInput): Promise<Sett
   }
   const data = parsed.data;
 
-  // Logo va muqova faqat shu do'konning papkasidan
-  const prefix = menuImagePrefix(store.id);
-  for (const field of ["logoUrl", "coverUrl"] as const) {
-    const url = data[field];
-    if (url && (!prefix || !url.startsWith(prefix))) {
-      return { ok: false, error: "invalid", fieldErrors: { [field]: "imageInvalid" } };
-    }
-  }
-
   const current = await prisma.store.findUnique({
     where: { id: store.id },
-    select: { logoUrl: true, coverUrl: true, dineInEnabled: true },
+    select: { dineInEnabled: true },
   });
   if (!current) return { ok: false, error: "server" };
   // At least one way to order (table ordering is switched on the QR page)
@@ -56,12 +49,6 @@ export async function saveStoreSettings(input: StoreSettingsInput): Promise<Sett
     return { ok: false, error: "server" };
   }
 
-  if (current.logoUrl && current.logoUrl !== data.logoUrl) {
-    await deleteMenuImage(store.id, current.logoUrl);
-  }
-  if (current.coverUrl && current.coverUrl !== data.coverUrl) {
-    await deleteMenuImage(store.id, current.coverUrl);
-  }
   updateTag(storeCacheTag(store.slug));
   refresh();
   return { ok: true };
@@ -104,6 +91,56 @@ export async function saveTableSettings(input: TableSettingsInput): Promise<Tabl
     return { ok: false, error: "server" };
   }
 
+  updateTag(storeCacheTag(store.slug));
+  refresh();
+  return { ok: true };
+}
+
+export type DesignResult =
+  { ok: true } | { ok: false; error: "invalid" | "server"; fieldErrors?: Record<string, string> };
+
+/** Design page: name, logo, cover, description, announcement, colors, menu layout */
+export async function saveDesign(input: DesignInput): Promise<DesignResult> {
+  const { store } = await requireOwner();
+  const parsed = designSchema.safeParse(input);
+  if (!parsed.success) {
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) {
+      fieldErrors[issue.path.map(String).join(".")] ??= issue.message;
+    }
+    return { ok: false, error: "invalid", fieldErrors };
+  }
+  const data = parsed.data;
+
+  // Logo and cover only from this store's own folder
+  const prefix = menuImagePrefix(store.id);
+  for (const field of ["logoUrl", "coverUrl"] as const) {
+    const url = data[field];
+    if (url && (!prefix || !url.startsWith(prefix))) {
+      return { ok: false, error: "invalid", fieldErrors: { [field]: "imageInvalid" } };
+    }
+  }
+
+  const current = await prisma.store.findUnique({
+    where: { id: store.id },
+    select: { logoUrl: true, coverUrl: true },
+  });
+  if (!current) return { ok: false, error: "server" };
+
+  try {
+    await prisma.store.update({ where: { id: store.id }, data });
+  } catch (e) {
+    reportError(e, "saveDesign");
+    return { ok: false, error: "server" };
+  }
+
+  // Replaced images are deleted from storage
+  if (current.logoUrl && current.logoUrl !== data.logoUrl) {
+    await deleteMenuImage(store.id, current.logoUrl);
+  }
+  if (current.coverUrl && current.coverUrl !== data.coverUrl) {
+    await deleteMenuImage(store.id, current.coverUrl);
+  }
   updateTag(storeCacheTag(store.slug));
   refresh();
   return { ok: true };

@@ -38,6 +38,14 @@ export interface StorefrontStore {
   logoUrl: string | null;
   /** Wide header photo (optional) */
   coverUrl: string | null;
+  /** Short text under the name (**bold**, _italic_, ~~strike~~) */
+  description: string | null;
+  /** Banner at the top of the store page */
+  announcement: string | null;
+  /** Design (lib/design.ts) */
+  brandColor: string | null;
+  pageBackground: string;
+  menuLayout: string;
   phone: string | null;
   address: string | null;
   openTime: string | null;

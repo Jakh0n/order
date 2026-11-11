@@ -21,6 +21,8 @@ export async function getOrderForCustomer(id: string) {
           whatsappNumber: true,
           transferDetails: true,
           timeZone: true,
+          brandColor: true,
+          pageBackground: true,
         },
       },
     },

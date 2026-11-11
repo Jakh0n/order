@@ -56,7 +56,7 @@ app/
   admin/(panel)/qr/           QR kodlar: do'kon havolasi + stoldan buyurtma (yoqish, stollar soni) + kartochkalar
   admin/tables/               stol kartochkalarini chop etish, A6/A5/A4 ((panel) layout'idan tashqarida)
   admin/print/[orderId]/      80mm: ?type=kitchen (narxsiz, stol katta) | receipt (mijoz cheki); &auto=1 — chop etish oynasi
-  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], analytics, analytics/customers, qr, promos, settings
+  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], analytics, analytics/customers, design, qr, promos, settings, plan
   superadmin/                 platforma egasi: statistika, do'konlar, tarif (+1 oy / bepul), bloklash
 components/ui/                shadcn komponentlari
 components/storefront/        mijoz menyusi, variant oynasi, savat
@@ -82,6 +82,8 @@ lib/
   report-error.ts             reportError — try/catch'da yutilgan xatolarni Sentry'ga yuborish
   sentry-options.ts           Sentry sozlamalari (dataCollection: shaxsiy ma'lumot o'chiq)
   sentry-scrub.ts             telefon/email ni xabarlardan yashirish
+  design.ts                   brend rangi, fon, menyu ko'rinishi; themeCss (faqat tekshirilgan hex) — do'kon sahifasida :root ga
+                              (StoreTheme), Design preview'da jonli (PreviewBridge, postMessage, faqat shu sayt)
   plan.ts                     planOf / isPro (PAID + paidUntil kelajakda = Pro), FREE_MONTHLY_ORDERS, upgradeLink (SUPPORT_TELEGRAM)
   plan-history.ts             freeHistoryFilter — Free: oyiga 100 tadan keyingi YAKUNLANGAN buyurtmalar tarixda yashiriladi
   push/actions.ts             savePushSubscription / deletePushSubscription (requireOwner)
@@ -121,7 +123,8 @@ lib/
   cart-keys.ts                adminCartKey — admin savati alohida
   supabase/server.ts          service role client (server-only)
   settings/data.ts            getStoreSettings
-  settings/actions.ts         saveStoreSettings (do'kon, ish vaqti, to'lov, kanal); saveTableSettings (QR sahifasi)
+  settings/actions.ts         saveStoreSettings (aloqa, ish vaqti, to'lov, kanal); saveTableSettings (QR); saveDesign (nom, logo,
+                              muqova, tavsif, e'lon, rang, fon, menyu ko'rinishi)
   storage.ts                  uploadMenuImage, deleteMenuImage, menuImagePrefix; uploadReceipt, receiptUrls
                               (chek — yopiq `payment-receipts` bucket, admin'ga 1 soatlik signed URL)
   shrink-image.ts             shrinkImage — brauzerda rasmni kichraytirish (menyu, chek)

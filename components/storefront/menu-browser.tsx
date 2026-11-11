@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import type { MenuLayout } from "@/lib/design";
 import type { MenuCategory } from "@/lib/menu-types";
 import { cn } from "@/lib/utils";
 
@@ -24,9 +25,12 @@ function normalize(text: string) {
 export function MenuBrowser({
   cartKey,
   categories,
+  layout = "list",
 }: {
   cartKey: string;
   categories: MenuCategory[];
+  /** "list" — rows with a photo on the right; "grid" — 2 photo cards per row (Design page) */
+  layout?: MenuLayout;
 }) {
   const t = useTranslations("menu");
   const [query, setQuery] = useState("");
@@ -193,9 +197,15 @@ export function MenuBrowser({
             <h2 id={`c-${category.id}`} className="text-lg font-bold">
               {category.name}
             </h2>
-            <div className="divide-y">
+            <div
+              className={
+                layout === "grid"
+                  ? "grid grid-cols-2 gap-x-3 gap-y-4 pt-3 pb-4 sm:grid-cols-3"
+                  : "divide-y"
+              }
+            >
               {category.products.map((product) => (
-                <ProductCard key={product.id} cartKey={cartKey} product={product} />
+                <ProductCard key={product.id} cartKey={cartKey} product={product} layout={layout} />
               ))}
             </div>
           </section>

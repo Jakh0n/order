@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { defaultLocale, locales } from "@/i18n/config";
+import { MENU_LAYOUTS, PAGE_BACKGROUNDS } from "@/lib/design";
 import { normalizePromoCode, PROMO_CODE_PATTERN } from "@/lib/orders/promo";
 
 import { isValidCurrency, toMajor, toMinor } from "@/lib/money";
@@ -302,9 +303,6 @@ const storeLocaleSchema = z.enum(locales).catch(defaultLocale);
 function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
   return z
     .object({
-      name: z.string().trim().min(2, "nameRequired").max(80, "tooLong"),
-      logoUrl: z.string().url().max(500).nullable(),
-      coverUrl: z.string().url().max(500).nullable(),
       phone: optionalTrimmed(30),
       address: optionalTrimmed(200),
       landmark: optionalTrimmed(200),
@@ -441,6 +439,35 @@ export const promoFormSchema = z
 
 export type PromoFormInput = z.input<typeof promoFormSchema>;
 export type PromoFormData = z.output<typeof promoFormSchema>;
+
+/** Design page. Error messages — "design.errors.*" keys. */
+export const designSchema = z.object({
+  name: z.string().trim().min(2, "nameRequired").max(80, "tooLong"),
+  logoUrl: z.string().url().max(500).nullable(),
+  coverUrl: z.string().url().max(500).nullable(),
+  description: z
+    .string()
+    .trim()
+    .max(300, "tooLong")
+    .transform((v) => v || null)
+    .nullable(),
+  announcement: z
+    .string()
+    .trim()
+    .max(160, "tooLong")
+    .transform((v) => v || null)
+    .nullable(),
+  brandColor: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .regex(/^#[0-9a-f]{6}$/, "colorInvalid")
+    .nullable(),
+  pageBackground: z.enum(PAGE_BACKGROUNDS),
+  menuLayout: z.enum(MENU_LAYOUTS),
+});
+
+export type DesignInput = z.input<typeof designSchema>;
 
 /** QR page: table ordering. Error messages — "table.errors.*" keys. */
 export const tableSettingsSchema = z

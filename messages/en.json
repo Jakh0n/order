@@ -333,7 +333,8 @@
     "promos": "Promo",
     "analytics": "Analytics",
     "more": "More",
-    "plan": "Plan"
+    "plan": "Plan",
+    "design": "Design"
   },
   "superadmin": {
     "title": "Platform admin",
@@ -569,8 +570,6 @@
   },
   "adminSettings": {
     "storeSection": "Store",
-    "storeName": "Store name",
-    "logo": "Logo",
     "phone": "Phone",
     "phonePlaceholder": "+1 555 123 4567",
     "address": "Address",
@@ -618,7 +617,6 @@
     "errors": {
       "invalid": "Please check the details",
       "server": "Something went wrong",
-      "nameRequired": "Please enter a name",
       "tooLong": "Too long",
       "timeInvalid": "Invalid time",
       "bothTimes": "Enter both opening and closing time",
@@ -631,14 +629,11 @@
       "telegramInvalid": "Invalid username (5–32 characters: letters, digits, _)",
       "whatsappRequired": "Enter a WhatsApp number",
       "whatsappInvalid": "Invalid number — include the country code, e.g. +15551234567",
-      "imageInvalid": "Invalid image",
       "currencyInvalid": "Invalid currency",
       "timeZoneInvalid": "Invalid time zone"
     },
     "deliveryFee": "Delivery fee ({currency})",
     "deliveryFeeHint": "Added to every delivery order. 0 — free delivery.",
-    "cover": "Cover photo",
-    "coverHint": "Shown at the top of your store page. A wide photo works best (e.g. 1200×400).",
     "language": "Store language",
     "languageHint": "Your store page opens in this language. Customers can still switch it.",
     "freeDeliveryFrom": "Free delivery from ({currency})",
@@ -966,5 +961,54 @@
     "DINE_IN": "At a table",
     "table": "Table {number}",
     "at": "for {time}"
+  },
+  "design": {
+    "title": "Design",
+    "lead": "How your store looks to customers. Colors change in the preview right away; the rest after saving.",
+    "profile": "Profile",
+    "logo": "Logo",
+    "cover": "Cover photo",
+    "coverHint": "Shown at the top of your store page. A wide photo works best (e.g. 1200×400).",
+    "name": "Store name",
+    "description": "Description",
+    "descriptionPlaceholder": "e.g. Charcoal kebabs and fresh bread since 2015",
+    "formatHint": "Use **bold**, _italic_ or ~~strike~~.",
+    "announcement": "Announcement",
+    "announcementPlaceholder": "e.g. Free delivery this weekend 🎉",
+    "announcementHint": "A colored bar at the very top of your store. Leave empty to hide it.",
+    "colors": "Colors",
+    "brandColor": "Brand color",
+    "brandColorHint": "Used for buttons, prices and highlights — on your store, checkout and order page.",
+    "customColor": "Pick any color",
+    "lowContrast": "This color is very light — buttons will use dark text, and it may be hard to read on white.",
+    "background": "Page background",
+    "backgrounds": {
+      "gray": "Gray",
+      "white": "White",
+      "cream": "Cream"
+    },
+    "menuLayout": "Menu layout",
+    "layouts": {
+      "list": "List",
+      "listHint": "Rows with a small photo — fits long menus",
+      "grid": "Grid",
+      "gridHint": "Big photos, 2 per row — great for bakeries and desserts"
+    },
+    "save": "Save",
+    "saved": "Design saved",
+    "unsaved": "You have unsaved changes",
+    "allSaved": "All changes saved",
+    "preview": "Preview",
+    "previewHint": "This is your real store page. Tap around — orders placed here are real.",
+    "reload": "Reload preview",
+    "openStore": "Open store",
+    "errors": {
+      "invalid": "Please check the details",
+      "server": "Something went wrong",
+      "nameRequired": "Please enter a name",
+      "tooLong": "Too long",
+      "colorInvalid": "Invalid color",
+      "imageInvalid": "Invalid image"
+    }
   }
 }

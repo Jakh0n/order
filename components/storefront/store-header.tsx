@@ -5,6 +5,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import type { StorefrontStore } from "@/lib/menu-types";
 
 import { LastOrderBanner } from "./last-order-banner";
+import { RichText } from "./rich-text";
 import { ClosedBanner, OpenStatus } from "./open-badge";
 import { TableBanner } from "./table-banner";
 
@@ -12,6 +13,11 @@ import { TableBanner } from "./table-banner";
 export function StoreHeader({ store }: { store: StorefrontStore }) {
   return (
     <header className="bg-background">
+      {store.announcement && (
+        <p className="bg-primary text-primary-foreground px-4 py-2 text-center text-sm font-medium">
+          <RichText text={store.announcement} />
+        </p>
+      )}
       <div className="from-primary/80 via-primary to-primary/70 relative h-28 overflow-hidden bg-gradient-to-br sm:h-44">
         {store.coverUrl && (
           <Image
@@ -48,6 +54,11 @@ export function StoreHeader({ store }: { store: StorefrontStore }) {
 
         <div className="flex flex-col gap-1.5">
           <h1 className="text-2xl leading-tight font-bold">{store.name}</h1>
+          {store.description && (
+            <p className="text-muted-foreground text-sm">
+              <RichText text={store.description} />
+            </p>
+          )}
           <OpenStatus store={store} />
           {(store.address || store.phone) && (
             <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-sm">
