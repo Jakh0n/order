@@ -13,6 +13,7 @@ import { ReceiptUpload } from "@/components/order/receipt-upload";
 import { ReorderButton } from "@/components/order/reorder-button";
 import { SendMessage } from "@/components/order/send-message";
 import { StatusWatcher } from "@/components/order/status-watcher";
+import { ReviewForm } from "@/components/order/review-form";
 import { StatusSteps } from "@/components/order/status-steps";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -118,6 +119,9 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
             {!isFinal && <p className="text-muted-foreground text-xs">{t("order.autoRefresh")}</p>}
           </Card>
         </StatusWatcher>
+
+        {/* After a completed order: rate it (once) */}
+        {order.status === "COMPLETED" && <ReviewForm orderId={order.id} existing={order.review} />}
 
         <Card title={t("order.items")}>
           <ul className="flex flex-col gap-2 text-sm">

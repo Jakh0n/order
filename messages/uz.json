@@ -1093,7 +1093,8 @@
         "header": "Sarlavha",
         "menu": "Menyu",
         "text": "Matn bloki",
-        "image": "Rasmli banner"
+        "image": "Rasmli banner",
+        "reviews": "Sharhlar"
       },
       "up": "Yuqoriga",
       "down": "Pastga",
@@ -1102,7 +1103,8 @@
       "delete": "O'chirish",
       "add": {
         "text": "Matn bloki",
-        "image": "Rasmli banner"
+        "image": "Rasmli banner",
+        "reviews": "Sharhlar"
       },
       "hint": "Menyuni ko'chirish mumkin, lekin yashirib bo'lmaydi. E'lon matni «Ko'rinish» bo'limida.",
       "titlePlaceholder": "masalan, Biz haqimizda",
@@ -1181,5 +1183,65 @@
     "hours": "soat",
     "minutes": "daq",
     "seconds": "son"
+  },
+  "pages": {
+    "heading": "Sahifalar",
+    "lead": "Do'kon saytingizdagi o'z sahifalaringiz — Biz haqimizda, Yetkazish, Allergenlar…",
+    "new": "Yangi sahifa",
+    "newTitle": "Yangi sahifa",
+    "editTitle": "Sahifani tahrirlash",
+    "title": "Sarlavha",
+    "titlePlaceholder": "masalan, Biz haqimizda",
+    "slug": "Manzil",
+    "body": "Matn",
+    "bodyPlaceholder": "O'zingiz, yetkazish hududlari, ish kunlari haqida yozing…",
+    "formatHint": "**qalin**, _kursiv_ yoki ~~chizilgan~~ yozish mumkin. Bo'sh qator — yangi xatboshi.",
+    "published": "E'lon qilingan",
+    "publishedHint": "O'chiq — qoralama, faqat siz ko'rasiz.",
+    "save": "Saqlash",
+    "saved": "Sahifa saqlandi",
+    "cancel": "Bekor qilish",
+    "draft": "Qoralama",
+    "copyLink": "Havoladan nusxa",
+    "open": "Ochish",
+    "edit": "Tahrirlash",
+    "delete": "O'chirish",
+    "deleted": "Sahifa o'chirildi",
+    "deleteTitle": "«{title}» o'chirilsinmi?",
+    "deleteHint": "Sahifa va uning manzili ishlamay qoladi. Uni menyu havolalaridan ham olib tashlang.",
+    "empty": "Hozircha sahifa yo'q.",
+    "menuHint": "Sahifani do'konning ☰ menyusida ko'rsatish uchun havolani nusxalab, Sayt → Menyu'ga qo'shing.",
+    "errors": {
+      "titleRequired": "Sarlavhani kiriting",
+      "slugInvalid": "Faqat kichik lotin harflari, raqamlar va chiziqcha",
+      "slugTaken": "Bunday manzilli sahifa allaqachon bor",
+      "tooLong": "Juda uzun",
+      "invalid": "Ma'lumotlarni tekshiring",
+      "notFound": "Topilmadi",
+      "server": "Nimadir xato ketdi"
+    }
+  },
+  "reviews": {
+    "title": "Mijozlar fikri",
+    "count": "{count, plural, other {# ta sharh}}",
+    "ask": "Buyurtma qanday bo'ldi?",
+    "stars": "{count, plural, other {# yulduz}}",
+    "commentPlaceholder": "Nima yoqqanini yozing (ixtiyoriy)",
+    "send": "Sharh yuborish",
+    "thanks": "Sharhingiz uchun rahmat!",
+    "yourRating": "Bahoingiz: 5 dan {rating}",
+    "adminTitle": "Sharhlar",
+    "adminLead": "Mijozlar buyurtma yakunlangach baho bera oladi. Yashirilgan sharhlar do'konda ko'rinmaydi.",
+    "empty": "Hozircha sharh yo'q — mijozlar yakunlangan buyurtmalarni baholagach paydo bo'ladi.",
+    "hide": "Yashirish",
+    "show": "Ko'rsatish",
+    "hidden": "Yashirin",
+    "sectionHint": "Sharhlarni do'konda ko'rsatish uchun Sayt → Vitrina'da «Sharhlar» bo'limini qo'shing.",
+    "errors": {
+      "invalid": "Bahoni tanlang",
+      "notAllowed": "Bu buyurtmani baholab bo'lmaydi",
+      "tooMany": "Urinishlar juda ko'p. Keyinroq urinib ko'ring.",
+      "server": "Nimadir xato ketdi. Qayta urinib ko'ring."
+    }
   }
 }

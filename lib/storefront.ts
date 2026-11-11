@@ -6,6 +6,7 @@ import { JOIN, prisma } from "@/lib/db";
 import { asEmailMode } from "@/lib/orders/promo";
 import { isPro } from "@/lib/plan";
 import { parseNavLinks, parsePinned } from "@/lib/nav";
+import { getReviewSummary } from "@/lib/reviews/data";
 import { parsePopup } from "@/lib/popup";
 import { parseSections } from "@/lib/sections";
 import type { CheckoutSettings, PaymentMethodValue, StorefrontData } from "@/lib/menu-types";
@@ -34,7 +35,7 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
   cacheTag(storeCacheTag(slug));
 
   // Uchalasi parallel: do'kon id sini kutmasdan, slug bo'yicha (bazaga bir marta borish)
-  const [store, categories, products] = await Promise.all([
+  const [store, categories, products, reviews] = await Promise.all([
     prisma.store.findUnique({
       where: { slug },
       select: {
@@ -111,6 +112,7 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
         },
       },
     }),
+    getReviewSummary(slug),
   ]);
   if (!store) return null;
 
@@ -126,7 +128,9 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
       pinnedCategoryIds: parsePinned(rest.pinnedCategoryIds),
       freeDeliveryFrom: pro ? store.freeDeliveryFrom : null,
       showBranding: !pro,
+      rating: { average: reviews.average, count: reviews.count },
     },
+    reviews: reviews.recent,
     categories: categories
       .map((c) => ({
         ...c,

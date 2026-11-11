@@ -11,6 +11,7 @@ export async function getOrderForCustomer(id: string) {
     where: { id },
     include: {
       items: { orderBy: { id: "asc" } },
+      review: { select: { rating: true, comment: true } },
       store: {
         select: {
           slug: true,

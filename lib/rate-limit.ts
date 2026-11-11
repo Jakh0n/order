@@ -30,6 +30,8 @@ export const RULES = {
   reorderIp: { name: "reorder:ip", limit: 30, windowSeconds: 10 * 60 },
   /** Checking promo codes at checkout (stops guessing codes) */
   promoIp: { name: "promo:ip", limit: 20, windowSeconds: 10 * 60 },
+  /** Reviews from the order page (one per order anyway; this stops floods) */
+  reviewIp: { name: "review:ip", limit: 10, windowSeconds: 60 * 60 },
 } satisfies Record<string, RateLimitRule>;
 
 /**

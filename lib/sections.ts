@@ -5,13 +5,15 @@ import { z } from "zod";
 
 export const BUILT_IN_SECTIONS = ["announcement", "header", "menu"] as const;
 export type BuiltInSection = (typeof BUILT_IN_SECTIONS)[number];
-export const CUSTOM_SECTIONS = ["text", "image"] as const;
+export const CUSTOM_SECTIONS = ["text", "image", "reviews"] as const;
 export const MAX_SECTIONS = 12;
 
 const base = { id: z.string().min(1).max(40), hidden: z.boolean() };
 
 export const sectionSchema = z.discriminatedUnion("type", [
   z.object({ ...base, type: z.enum(BUILT_IN_SECTIONS) }),
+  // Customer reviews block (optional, at most once)
+  z.object({ ...base, type: z.literal("reviews") }),
   z.object({
     ...base,
     type: z.literal("text"),
@@ -40,7 +42,8 @@ export const sectionsSchema = z
     (list) => BUILT_IN_SECTIONS.every((b) => list.filter((s) => s.type === b).length === 1),
     "sectionsInvalid",
   )
-  .refine((list) => !list.some((s) => s.type === "menu" && s.hidden), "sectionsInvalid");
+  .refine((list) => !list.some((s) => s.type === "menu" && s.hidden), "sectionsInvalid")
+  .refine((list) => list.filter((s) => s.type === "reviews").length <= 1, "sectionsInvalid");
 
 export const DEFAULT_SECTIONS: Section[] = [
   { id: "announcement", type: "announcement", hidden: false },
@@ -60,7 +63,7 @@ export function isBuiltIn(section: Section): boolean {
 
 export function newSection(type: (typeof CUSTOM_SECTIONS)[number]): Section {
   const id = `${type}-${Math.random().toString(36).slice(2, 9)}`;
-  return type === "text"
-    ? { id, type, hidden: false, title: "", body: "" }
-    : { id, type, hidden: false, imageUrl: null, link: "" };
+  if (type === "text") return { id, type, hidden: false, title: "", body: "" };
+  if (type === "reviews") return { id, type, hidden: false };
+  return { id, type, hidden: false, imageUrl: null, link: "" };
 }

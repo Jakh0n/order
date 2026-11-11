@@ -12,6 +12,7 @@ import {
   Megaphone,
   PanelTop,
   Plus,
+  Star,
   Trash2,
   Type,
   UtensilsCrossed,
@@ -34,6 +35,7 @@ const ICONS = {
   menu: UtensilsCrossed,
   text: Type,
   image: ImageIcon,
+  reviews: Star,
 } as const;
 
 /**
@@ -62,14 +64,14 @@ export function SectionsEditor({
   const update = (i: number, patch: Partial<Section>) =>
     onChange(value.map((s, j) => (j === i ? ({ ...s, ...patch } as Section) : s)));
   const remove = (i: number) => onChange(value.filter((_, j) => j !== i));
-  function add(type: "text" | "image") {
+  function add(type: "text" | "image" | "reviews") {
     const section = newSection(type);
     // Added just above the menu, where extra content is usually wanted
     const menuIndex = value.findIndex((s) => s.type === "menu");
     const next = [...value];
     next.splice(menuIndex === -1 ? next.length : menuIndex, 0, section);
     onChange(next);
-    setOpenId(section.id);
+    if (type !== "reviews") setOpenId(section.id);
   }
 
   return (
@@ -78,7 +80,9 @@ export function SectionsEditor({
         {value.map((section, i) => {
           const Icon = ICONS[section.type];
           const custom = !isBuiltIn(section);
-          const open = custom && openId === section.id;
+          // The reviews block has nothing to edit; text / image open for editing
+          const editable = section.type === "text" || section.type === "image";
+          const open = editable && openId === section.id;
           const lockedVisible = section.type === "menu";
           return (
             <li
@@ -126,7 +130,7 @@ export function SectionsEditor({
                 </span>
                 <button
                   type="button"
-                  disabled={!custom}
+                  disabled={!editable}
                   onClick={() => setOpenId(open ? null : section.id)}
                   className="flex min-w-0 flex-1 items-center gap-1 text-left"
                 >
@@ -140,7 +144,7 @@ export function SectionsEditor({
                       ? section.title
                       : t(`types.${section.type}`)}
                   </span>
-                  {custom && (
+                  {editable && (
                     <ChevronDown
                       className={cn(
                         "text-muted-foreground size-4 shrink-0 transition-transform",
@@ -208,7 +212,7 @@ export function SectionsEditor({
       </ol>
 
       <div className="flex flex-wrap gap-2">
-        {(["text", "image"] as const).map((type) => {
+        {(["text", "image", "reviews"] as const).map((type) => {
           const Icon = ICONS[type];
           return (
             <Button
@@ -216,7 +220,10 @@ export function SectionsEditor({
               type="button"
               variant="outline"
               size="sm"
-              disabled={value.length >= MAX_SECTIONS}
+              disabled={
+                value.length >= MAX_SECTIONS ||
+                (type === "reviews" && value.some((s) => s.type === "reviews"))
+              }
               onClick={() => add(type)}
               className="gap-1.5"
             >

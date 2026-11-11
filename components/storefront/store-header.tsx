@@ -1,4 +1,4 @@
-import { MapPin, Phone } from "lucide-react";
+import { MapPin, Phone, Star } from "lucide-react";
 import Image from "next/image";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -64,7 +64,10 @@ export function StoreHeader({ store }: { store: StorefrontStore }) {
           {style === "compact" && (
             <div className="min-w-0 flex-1">
               <h1 className="truncate text-xl leading-tight font-bold">{store.name}</h1>
-              <OpenStatus store={store} />
+              <div className="flex flex-wrap items-center gap-x-3">
+                <OpenStatus store={store} />
+                <Rating store={store} />
+              </div>
             </div>
           )}
           {style === "compact" && <StoreNav store={store} variant="default" />}
@@ -82,7 +85,17 @@ export function StoreHeader({ store }: { store: StorefrontStore }) {
               <RichText text={store.description} />
             </p>
           )}
-          {style !== "compact" && <OpenStatus store={store} />}
+          {style !== "compact" && (
+            <div
+              className={cn(
+                "flex flex-wrap items-center gap-x-3 gap-y-1",
+                centered && "justify-center",
+              )}
+            >
+              <OpenStatus store={store} />
+              <Rating store={store} />
+            </div>
+          )}
           {(store.address || store.phone) && (
             <div
               className={cn(
@@ -150,5 +163,17 @@ function Logo({ store, size }: { store: StorefrontStore; size: "sm" | "md" | "lg
     >
       {store.name.charAt(0).toUpperCase()}
     </div>
+  );
+}
+
+/** "★ 4.8 (23)" — only when the store has reviews */
+function Rating({ store }: { store: StorefrontStore }) {
+  if (store.rating.count === 0) return null;
+  return (
+    <span className="flex items-center gap-1 text-sm font-semibold">
+      <Star className="size-3.5 fill-amber-400 text-amber-400" aria-hidden />
+      {store.rating.average.toFixed(1)}
+      <span className="text-muted-foreground font-normal">({store.rating.count})</span>
+    </span>
   );
 }

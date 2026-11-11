@@ -2,10 +2,11 @@ import Image from "next/image";
 
 import { asMenuLayout } from "@/lib/design";
 import { orderCategories } from "@/lib/nav";
-import type { MenuCategory, StorefrontStore } from "@/lib/menu-types";
+import type { MenuCategory, StorefrontData, StorefrontStore } from "@/lib/menu-types";
 import type { Section } from "@/lib/sections";
 
 import { MenuBrowser } from "./menu-browser";
+import { ReviewsSection } from "./reviews-section";
 import { RichText } from "./rich-text";
 import { StoreHeader } from "./store-header";
 
@@ -17,11 +18,13 @@ export function StorefrontSections({
   store,
   categories,
   sections,
+  reviews,
   cartKey = store.slug,
 }: {
   store: StorefrontStore;
   categories: MenuCategory[];
   sections: Section[];
+  reviews: StorefrontData["reviews"];
   /** The Design preview uses its own cart */
   cartKey?: string;
 }) {
@@ -55,6 +58,8 @@ export function StorefrontSections({
                   showDescriptions={store.showDescriptions}
                 />
               );
+            case "reviews":
+              return <ReviewsSection key={section.id} rating={store.rating} reviews={reviews} />;
             case "text":
               return section.title || section.body ? (
                 <section key={section.id} className="px-3 py-1.5 sm:px-4">

@@ -48,6 +48,7 @@ birligida (USD → sent). Vaqt zonasi: har bir do'konda alohida (`Store.timeZone
 app/
   page.tsx                    landing
   [store]/page.tsx            mijoz: menyu
+  [store]/p/[page]/page.tsx   egasining sahifalari (Website → Pages), faqat e'lon qilinganlari
   [store]/checkout/page.tsx   checkout
   o/[orderId]/page.tsx        buyurtma holati
   signup/                     ro'yxatdan o'tish ustasi (hisob + do'kon)
@@ -56,7 +57,10 @@ app/
   admin/(panel)/qr/           QR kodlar: do'kon havolasi + stoldan buyurtma (yoqish, stollar soni) + kartochkalar
   admin/tables/               stol kartochkalarini chop etish, A6/A5/A4 ((panel) layout'idan tashqarida)
   admin/print/[orderId]/      80mm: ?type=kitchen (narxsiz, stol katta) | receipt (mijoz cheki); &auto=1 — chop etish oynasi
-  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], analytics, analytics/customers, design, qr, promos, settings, plan
+  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu ("Products"), menu/products/[new|id], analytics,
+                              analytics/customers, website/(editor)/{storefront|checkout|appearance|menu} (forma layout'da —
+                              tab almashsa saqlanmagan o'zgarishlar yo'qolmaydi), website/pages, website/reviews, qr ("Dine-in"),
+                              promos, settings, plan
   superadmin/                 platforma egasi: statistika, do'konlar, tarif (+1 oy / bepul), bloklash
 components/ui/                shadcn komponentlari
 components/storefront/        mijoz menyusi, variant oynasi, savat
@@ -94,6 +98,9 @@ lib/
   plan-history.ts             freeHistoryFilter — Free: oyiga 100 tadan keyingi YAKUNLANGAN buyurtmalar tarixda yashiriladi
   push/actions.ts             savePushSubscription / deletePushSubscription (requireOwner)
   push/send.ts                notifyNewOrder — web-push (VAPID), do'kon tilida; createOrder'dan `after()` bilan
+  pages/                      StorePage: savePage / deletePage, getPublishedPage (kesh: storeCacheTag)
+  reviews/                    Review: submitReview (/o sahifasida, faqat COMPLETED, buyurtmaga bitta, rate limit),
+                              setReviewHidden; getReviewSummary (getStorefront ichida)
   rate-limit.ts               rateLimit / rateLimitAll (Postgres, qat'iy oyna), RULES, clientIp
   slug.ts                     slugify (kirill → lotin), RESERVED_SLUGS, slugError
   superadmin/data.ts          getPlatformStats, listStores
@@ -164,7 +171,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Xatolar: `catch` da foydalanuvchiga do'stona xato qaytarsangiz, `reportError(e, "joy")` ni chaqiring
   (`console.error` emas) — aks holda Sentry'ga tushmaydi. Session Replay yoqilmaydi (checkout formasi).
 - Ommaviy (kirishsiz) yoki qimmat Server Action'lar `rateLimit` bilan cheklanadi (`lib/rate-limit.ts` dagi RULES):
-  login, signup, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder, checkPromo. Yangi shunday action qo'shsangiz — qoida qo'shing.
+  login, signup, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder, checkPromo, submitReview. Yangi shunday action qo'shsangiz — qoida qo'shing.
 - Tezlik: bog'langan ma'lumot (include / nested select) o'qilsa — `...JOIN` qo'shing; bir-biriga bog'liq
   bo'lmagan so'rovlarni `Promise.all` bilan parallel qiling. Har bir so'rov bazaga borish = vaqt.
 - Sayt manzilini `NEXT_PUBLIC_APP_URL` dan emas, `getRequestOrigin()` dan oling. U `APP_URL` (asosiy domen,

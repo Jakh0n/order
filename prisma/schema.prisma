@@ -147,6 +147,8 @@ model Store {
   zones                DeliveryZone[]
   promoCodes           PromoCode[]
   pushSubscriptions    PushSubscription[]
+  pages                StorePage[]
+  reviews              Review[]
   orders               Order[]
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt
@@ -262,6 +264,7 @@ model Order {
   currency      String        @default("USD")
   lang          String        @default("en")
   items         OrderItem[]
+  review        Review?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
@@ -337,4 +340,40 @@ model PushSubscription {
   createdAt DateTime @default(now())
 
   @@index([storeId])
+}
+
+/// Owner's own page on the store site: /{store}/p/{slug} (About us, Delivery info…)
+model StorePage {
+  id          String   @id @default(cuid())
+  storeId     String
+  store       Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  /// URL part: lowercase letters, digits, dashes
+  slug        String
+  title       String
+  /// Text with **bold**, _italic_, ~~strike~~ and line breaks
+  body        String
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([storeId, slug])
+}
+
+/// Customer review of a completed order (one per order)
+model Review {
+  id           String   @id @default(cuid())
+  storeId      String
+  store        Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  orderId      String   @unique
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  /// 1..5
+  rating       Int
+  comment      String?
+  /// Snapshot of the order's customer name (first name shown publicly)
+  customerName String
+  /// Hidden by the owner — not shown on the store page
+  isHidden     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([storeId, isHidden, createdAt])
 }

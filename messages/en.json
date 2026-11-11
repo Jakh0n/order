@@ -1093,7 +1093,8 @@
         "header": "Header",
         "menu": "Menu",
         "text": "Text block",
-        "image": "Image banner"
+        "image": "Image banner",
+        "reviews": "Reviews"
       },
       "up": "Move up",
       "down": "Move down",
@@ -1102,7 +1103,8 @@
       "delete": "Delete",
       "add": {
         "text": "Text block",
-        "image": "Image banner"
+        "image": "Image banner",
+        "reviews": "Reviews"
       },
       "hint": "The menu can be moved but not hidden. Announcement text is set in Appearance.",
       "titlePlaceholder": "e.g. About us",
@@ -1181,5 +1183,65 @@
     "hours": "hrs",
     "minutes": "min",
     "seconds": "sec"
+  },
+  "pages": {
+    "heading": "Pages",
+    "lead": "Your own pages on your store site — About us, Delivery info, Allergens…",
+    "new": "New page",
+    "newTitle": "New page",
+    "editTitle": "Edit page",
+    "title": "Title",
+    "titlePlaceholder": "e.g. About us",
+    "slug": "Address",
+    "body": "Text",
+    "bodyPlaceholder": "Tell your story, delivery areas, opening days…",
+    "formatHint": "Use **bold**, _italic_ or ~~strike~~. Empty lines start a new paragraph.",
+    "published": "Published",
+    "publishedHint": "Off — a draft only you can see here.",
+    "save": "Save",
+    "saved": "Page saved",
+    "cancel": "Cancel",
+    "draft": "Draft",
+    "copyLink": "Copy link",
+    "open": "Open",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleted": "Page deleted",
+    "deleteTitle": "Delete “{title}”?",
+    "deleteHint": "The page and its address stop working. Remove it from your menu links too.",
+    "empty": "No pages yet.",
+    "menuHint": "To show a page in your store's ☰ menu, copy its link and add it in Website → Menu.",
+    "errors": {
+      "titleRequired": "Enter a title",
+      "slugInvalid": "Lowercase letters, digits and dashes only",
+      "slugTaken": "A page with this address already exists",
+      "tooLong": "Too long",
+      "invalid": "Please check the details",
+      "notFound": "Not found",
+      "server": "Something went wrong"
+    }
+  },
+  "reviews": {
+    "title": "What customers say",
+    "count": "{count, plural, one {# review} other {# reviews}}",
+    "ask": "How was your order?",
+    "stars": "{count, plural, one {# star} other {# stars}}",
+    "commentPlaceholder": "Tell others what you liked (optional)",
+    "send": "Send review",
+    "thanks": "Thank you for your review!",
+    "yourRating": "You rated {rating} out of 5",
+    "adminTitle": "Reviews",
+    "adminLead": "Customers can rate an order once it's completed. Hidden reviews don't show on your store.",
+    "empty": "No reviews yet — they appear after customers rate completed orders.",
+    "hide": "Hide",
+    "show": "Show",
+    "hidden": "Hidden",
+    "sectionHint": "To show reviews on your store page, add the Reviews section in Website → Storefront.",
+    "errors": {
+      "invalid": "Please choose a rating",
+      "notAllowed": "This order can't be reviewed",
+      "tooMany": "Too many attempts. Please try again later.",
+      "server": "Something went wrong. Please try again."
+    }
   }
 }

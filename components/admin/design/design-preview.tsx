@@ -151,6 +151,7 @@ export function DesignPreview({ data }: { data: StorefrontData }) {
               store={store}
               categories={data.categories}
               sections={store.sections}
+              reviews={data.reviews}
               cartKey={`preview:${store.slug}`}
             />
           )}

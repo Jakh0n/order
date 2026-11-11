@@ -55,6 +55,8 @@ export interface StorefrontStore {
   headerStyle: string;
   showSearch: boolean;
   showDescriptions: boolean;
+  /** Visible reviews: average 1..5 and how many (header stars) */
+  rating: { average: number; count: number };
   /** Website → Menu (lib/nav.ts), already validated */
   navLinks: NavLink[];
   pinnedCategoryIds: string[];
@@ -93,6 +95,8 @@ export interface StorefrontStore {
 export interface StorefrontData {
   store: StorefrontStore;
   categories: MenuCategory[];
+  /** Latest visible reviews with a comment (Reviews section) */
+  reviews: { id: string; rating: number; comment: string; name: string; createdAt: Date }[];
 }
 
 export type PaymentMethodValue = "CASH" | "CARD_ON_DELIVERY" | "TRANSFER";
