@@ -56,11 +56,11 @@ export function PromoItem({ promo }: { promo: PromoItemView }) {
       {/* Ticket-like discount badge */}
       <div
         className={cn(
-          "flex h-14 w-20 shrink-0 flex-col items-center justify-center rounded-lg border-2 border-dashed text-center",
+          "flex h-14 min-w-20 shrink-0 flex-col items-center justify-center rounded-lg border-2 border-dashed px-2 text-center",
           usable ? "border-primary/40 bg-primary/5 text-primary" : "border-muted-foreground/30",
         )}
       >
-        <span className="text-base leading-none font-black">{promo.discount}</span>
+        <span className="text-sm leading-none font-black whitespace-nowrap">{promo.discount}</span>
       </div>
 
       <div className="min-w-0 flex-1">
