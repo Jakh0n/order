@@ -313,7 +313,8 @@
     "settings": "Settings",
     "logout": "Log out",
     "viewStore": "View store",
-    "blockedBanner": "Your store has been temporarily blocked by the platform: customers can't see the menu or place orders. Please contact us for details."
+    "blockedBanner": "Your store has been temporarily blocked by the platform: customers can't see the menu or place orders. Please contact us for details.",
+    "qr": "QR codes"
   },
   "superadmin": {
     "title": "Platform admin",
@@ -611,21 +612,14 @@
       "whatsappInvalid": "Invalid number — include the country code, e.g. +15551234567",
       "imageInvalid": "Invalid image",
       "currencyInvalid": "Invalid currency",
-      "timeZoneInvalid": "Invalid time zone",
-      "tableCountInvalid": "Enter a number of tables from 1 to 200"
+      "timeZoneInvalid": "Invalid time zone"
     },
     "deliveryFee": "Delivery fee ({currency})",
     "deliveryFeeHint": "Added to every delivery order. 0 — free delivery.",
     "cover": "Cover photo",
     "coverHint": "Shown at the top of your store page. A wide photo works best (e.g. 1200×400).",
     "language": "Store language",
-    "languageHint": "Your store page opens in this language. Customers can still switch it.",
-    "dineInSection": "Table ordering",
-    "dineInHint": "Customers scan a QR code on the table and order without a waiter.",
-    "dineIn": "Orders from tables",
-    "tableCount": "Number of tables",
-    "printTables": "Print table QR codes",
-    "tablesHint": "Each table gets its own QR code. Orders show the table number in large type."
+    "languageHint": "Your store page opens in this language. Customers can still switch it."
   },
   "signup": {
     "title": "Open your store",
@@ -737,7 +731,20 @@
     "printHint": "{count, plural, one {# table} other {# tables}} · print on A4 and cut along the dashed lines",
     "print": "Print",
     "scanToOrder": "Scan to see the menu and order",
-    "printDisabled": "Turn on table ordering and set the number of tables in Settings first.",
-    "openSettings": "Settings"
+    "printDisabled": "Turn on table ordering on the QR codes page first.",
+    "section": "Order from tables",
+    "sectionHint": "Customers scan the QR code on their table and order without waiting for a waiter.",
+    "enable": "Take orders from tables",
+    "tableCount": "Number of tables",
+    "save": "Save",
+    "saved": "Saved",
+    "cardsTitle": "Table cards",
+    "backToQr": "QR codes",
+    "errors": {
+      "tableCountInvalid": "Enter a number of tables from 1 to 200",
+      "noOrderType": "Turn on pickup or delivery in Settings first — the store needs at least one way to order.",
+      "invalid": "Please check the details",
+      "server": "Something went wrong. Please try again."
+    }
   }
 }

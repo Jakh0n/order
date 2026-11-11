@@ -313,7 +313,8 @@
     "settings": "Sozlamalar",
     "logout": "Chiqish",
     "viewStore": "Do'konni ko'rish",
-    "blockedBanner": "Do'koningiz platforma tomonidan vaqtincha bloklangan: mijozlar menyuni ko'ra olmaydi va buyurtma bera olmaydi. Tafsilotlar uchun biz bilan bog'laning."
+    "blockedBanner": "Do'koningiz platforma tomonidan vaqtincha bloklangan: mijozlar menyuni ko'ra olmaydi va buyurtma bera olmaydi. Tafsilotlar uchun biz bilan bog'laning.",
+    "qr": "QR kodlar"
   },
   "superadmin": {
     "title": "Platforma admini",
@@ -611,21 +612,14 @@
       "whatsappInvalid": "Noto'g'ri raqam — mamlakat kodini qo'shing, masalan +998901234567",
       "imageInvalid": "Noto'g'ri rasm",
       "currencyInvalid": "Noto'g'ri valyuta",
-      "timeZoneInvalid": "Noto'g'ri vaqt zonasi",
-      "tableCountInvalid": "Stollar sonini 1 dan 200 gacha kiriting"
+      "timeZoneInvalid": "Noto'g'ri vaqt zonasi"
     },
     "deliveryFee": "Yetkazish narxi ({currency})",
     "deliveryFeeHint": "Har bir yetkazish buyurtmasiga qo'shiladi. 0 — bepul yetkazish.",
     "cover": "Muqova rasmi",
     "coverHint": "Do'kon sahifasining tepasida ko'rinadi. Keng rasm yaxshi (masalan, 1200×400).",
     "language": "Do'kon tili",
-    "languageHint": "Do'kon sahifasi shu tilda ochiladi. Mijozlar uni o'zlari almashtira oladi.",
-    "dineInSection": "Stoldan buyurtma",
-    "dineInHint": "Mijozlar stoldagi QR kodni skanerlab, ofitsiantsiz buyurtma beradi.",
-    "dineIn": "Stollardan buyurtma",
-    "tableCount": "Stollar soni",
-    "printTables": "Stol QR kodlarini chop etish",
-    "tablesHint": "Har bir stolning o'z QR kodi bor. Buyurtmada stol raqami katta ko'rinadi."
+    "languageHint": "Do'kon sahifasi shu tilda ochiladi. Mijozlar uni o'zlari almashtira oladi."
   },
   "signup": {
     "title": "Do'koningizni oching",
@@ -737,7 +731,20 @@
     "printHint": "{count, plural, other {# ta stol}} · A4 ga chop eting va punktir bo'ylab qirqing",
     "print": "Chop etish",
     "scanToOrder": "Menyuni ko'rish va buyurtma uchun skanerlang",
-    "printDisabled": "Avval Sozlamalarda stoldan buyurtmani yoqing va stollar sonini kiriting.",
-    "openSettings": "Sozlamalar"
+    "printDisabled": "Avval QR kodlar sahifasida stoldan buyurtmani yoqing.",
+    "section": "Stoldan buyurtma",
+    "sectionHint": "Mijozlar stoldagi QR kodni skanerlab, ofitsiantni kutmasdan buyurtma beradi.",
+    "enable": "Stollardan buyurtma qabul qilish",
+    "tableCount": "Stollar soni",
+    "save": "Saqlash",
+    "saved": "Saqlandi",
+    "cardsTitle": "Stol kartochkalari",
+    "backToQr": "QR kodlar",
+    "errors": {
+      "tableCountInvalid": "Stollar sonini 1 dan 200 gacha kiriting",
+      "noOrderType": "Avval Sozlamalarda olib ketish yoki yetkazishni yoqing — kamida bitta buyurtma usuli kerak.",
+      "invalid": "Ma'lumotlarni tekshiring",
+      "server": "Nimadir xato ketdi. Qayta urinib ko'ring."
+    }
   }
 }

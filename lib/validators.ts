@@ -312,13 +312,6 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
 
       pickupEnabled: z.boolean(),
       deliveryEnabled: z.boolean(),
-      /** Table QR ordering; tables 1..tableCount */
-      dineInEnabled: z.boolean(),
-      tableCount: z
-        .number({ error: "tableCountInvalid" })
-        .int("tableCountInvalid")
-        .min(0, "tableCountInvalid")
-        .max(MAX_TABLES, "tableCountInvalid"),
       minOrder,
       /** Flat delivery fee */
       deliveryFee: fee,
@@ -345,10 +338,7 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
       if (!!s2.openTime !== !!s2.closeTime) {
         issue(s2.openTime ? "closeTime" : "openTime", "bothTimes");
       }
-      if (!s2.pickupEnabled && !s2.deliveryEnabled && !s2.dineInEnabled) {
-        issue("deliveryEnabled", "noOrderType");
-      }
-      if (s2.dineInEnabled && s2.tableCount < 1) issue("tableCount", "tableCountInvalid");
+      // "no order type at all" is checked in saveStoreSettings: table ordering lives on the QR page
       if (!s2.acceptCash && !s2.acceptCardOnDelivery && !s2.acceptTransfer) {
         issue("acceptTransfer", "noPayment");
       }
@@ -402,6 +392,24 @@ export function settingsToForm(v: StoreSettingsInput): StoreSettingsFormInput {
     deliveryFee: toMajor(v.deliveryFee, v.currency),
   };
 }
+
+/** QR page: table ordering. Error messages — "table.errors.*" keys. */
+export const tableSettingsSchema = z
+  .object({
+    dineInEnabled: z.boolean(),
+    tableCount: z
+      .number({ error: "tableCountInvalid" })
+      .int("tableCountInvalid")
+      .min(0, "tableCountInvalid")
+      .max(MAX_TABLES, "tableCountInvalid"),
+  })
+  .superRefine((v, ctx) => {
+    if (v.dineInEnabled && v.tableCount < 1) {
+      ctx.addIssue({ code: "custom", path: ["tableCount"], message: "tableCountInvalid" });
+    }
+  });
+
+export type TableSettingsInput = z.input<typeof tableSettingsSchema>;
 
 // ---------- Ro'yxatdan o'tish ----------
 // Xato xabarlari — "signup.errors.*" kalitlari.

@@ -1,14 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ExternalLink, Loader2, QrCode } from "lucide-react";
-import Link from "next/link";
+import { ExternalLink, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Controller, type FieldPath, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { ImageUpload } from "@/components/admin/menu/image-upload";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -19,7 +18,6 @@ import { priceStep } from "@/lib/money";
 import { saveStoreSettings } from "@/lib/settings/actions";
 import { cn } from "@/lib/utils";
 import {
-  MAX_TABLES,
   normalizeTelegramUsername,
   settingsFormToMinor,
   type StoreSettingsFormData,
@@ -65,7 +63,6 @@ export function SettingsForm({
         "currency",
       ],
     });
-  const dineInEnabled = useWatch({ control, name: "dineInEnabled" });
 
   const errorText = (message?: string) => {
     if (!message) return null;
@@ -263,41 +260,6 @@ export function SettingsForm({
         </div>
       </Card>
 
-      <Card title={t("dineInSection")} hint={t("dineInHint")}>
-        <SwitchField control={control} name="dineInEnabled" label={t("dineIn")} />
-        {/* Hidden, not unmounted — keeps the table count while toggled */}
-        <div className={cn("flex flex-col gap-3", !dineInEnabled && "hidden")}>
-          <Field
-            label={t("tableCount")}
-            htmlFor="tableCount"
-            error={errorText(errors.tableCount?.message)}
-          >
-            <Input
-              id="tableCount"
-              type="number"
-              inputMode="numeric"
-              min={1}
-              max={MAX_TABLES}
-              step={1}
-              className="w-28"
-              aria-invalid={!!errors.tableCount}
-              {...register("tableCount", { valueAsNumber: true })}
-            />
-          </Field>
-          {defaultValues.dineInEnabled && defaultValues.tableCount > 0 && (
-            <Link
-              href="/admin/tables"
-              target="_blank"
-              className={cn(buttonVariants({ variant: "outline" }), "w-fit gap-2")}
-            >
-              <QrCode className="size-4" aria-hidden />
-              {t("printTables")}
-            </Link>
-          )}
-          <p className="text-muted-foreground text-xs">{t("tablesHint")}</p>
-        </div>
-      </Card>
-
       <Card title={t("paymentSection")}>
         <SwitchField control={control} name="acceptCash" label={t("cash")} />
         <SwitchField control={control} name="acceptCardOnDelivery" label={t("card")} />
@@ -434,7 +396,6 @@ function SwitchField({
     | "isOpen"
     | "pickupEnabled"
     | "deliveryEnabled"
-    | "dineInEnabled"
     | "acceptCash"
     | "acceptCardOnDelivery"
     | "acceptTransfer";

@@ -26,8 +26,6 @@ export async function getStoreSettings(storeId: string): Promise<StoreSettingsIn
     closeTime: store.closeTime ?? "",
     pickupEnabled: store.pickupEnabled,
     deliveryEnabled: store.deliveryEnabled,
-    dineInEnabled: store.dineInEnabled,
-    tableCount: store.tableCount,
     minOrder: store.minOrder,
     deliveryFee: store.deliveryFee,
     acceptCash: store.acceptCash,

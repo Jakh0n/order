@@ -52,8 +52,9 @@ app/
   o/[orderId]/page.tsx        buyurtma holati
   signup/                     ro'yxatdan o'tish ustasi (hisob + do'kon)
   admin/login/                kirish (email + parol)
-  admin/tables/               stol QR kartochkalari (A4 chop etish; (panel) layout'idan tashqarida)
-  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], settings
+  admin/(panel)/qr/           QR kodlar: do'kon havolasi + stoldan buyurtma (yoqish, stollar soni) + kartochkalar
+  admin/tables/               stol kartochkalarini A4 chop etish ((panel) layout'idan tashqarida)
+  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], qr, settings
   superadmin/                 platforma egasi: statistika, do'konlar, tarif (+1 oy / bepul), bloklash
 components/ui/                shadcn komponentlari
 components/storefront/        mijoz menyusi, variant oynasi, savat
@@ -108,7 +109,7 @@ lib/
   cart-keys.ts                adminCartKey — admin savati alohida
   supabase/server.ts          service role client (server-only)
   settings/data.ts            getStoreSettings
-  settings/actions.ts         saveStoreSettings (do'kon, ish vaqti, tumanlar, to'lov, kanal)
+  settings/actions.ts         saveStoreSettings (do'kon, ish vaqti, to'lov, kanal); saveTableSettings (QR sahifasi)
   storage.ts                  uploadMenuImage, deleteMenuImage, menuImagePrefix; uploadReceipt, receiptUrls
                               (chek — yopiq `payment-receipts` bucket, admin'ga 1 soatlik signed URL)
   shrink-image.ts             shrinkImage — brauzerda rasmni kichraytirish (menyu, chek)
@@ -212,7 +213,7 @@ keyin faqat eng tor joyni tuzatish. Mikroservislarga erta o'tilmaydi.
    sabab bilan (Telegram bot, real-time, analitika) — `lib/` dagi biznes logika `packages/core` ga ajratiladi.
 
 - Yetkazish: hududlar (DeliveryZone) endi ishlatilmaydi — `Store.deliveryFee` (yagona narx). Jadval ma'lumot yo'qolmasligi uchun qoldirilgan.
-- Stoldan buyurtma (`DINE_IN`): `Store.dineInEnabled` + `tableCount`; telefon bo'sh (""), manzil/vaqt yo'q, oldindan buyurtma yo'q;
+- Stoldan buyurtma (`DINE_IN`): `Store.dineInEnabled` + `tableCount` (QR kodlar sahifasida, Sozlamalarda emas); telefon bo'sh (""), manzil/vaqt yo'q, oldindan buyurtma yo'q;
   serverda stol raqami 1..tableCount tekshiriladi. Xabar sarlavhasida stol raqami.
 - Buyurtmada `latitude/longitude` bo'lsa — xabarda, admin kartochkada va /o sahifada "Open in Maps" havolasi (`mapsLink`).
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { ClipboardList, Settings, UtensilsCrossed } from "lucide-react";
+import { ClipboardList, QrCode, Settings, UtensilsCrossed } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { href: "/admin/orders", key: "orders", icon: ClipboardList },
   { href: "/admin/menu", key: "menu", icon: UtensilsCrossed },
+  { href: "/admin/qr", key: "qr", icon: QrCode },
   { href: "/admin/settings", key: "settings", icon: Settings },
 ] as const;
 
@@ -21,7 +22,7 @@ export function AdminNav({ variant }: { variant: "sidebar" | "bottom" }) {
 
   if (variant === "bottom") {
     return (
-      <nav className="bg-background/95 fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+      <nav className="bg-background/95 fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
         {NAV.map(({ href, key, icon: Icon }) => (
           <Link
             key={href}
