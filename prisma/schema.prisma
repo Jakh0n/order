@@ -28,6 +28,8 @@ enum Channel {
 enum OrderType {
   PICKUP
   DELIVERY
+  /// Ordered from a table QR code (/{slug}?t=5) — no phone or address
+  DINE_IN
 }
 
 enum PaymentMethod {
@@ -78,6 +80,9 @@ model Store {
   whatsappNumber       String?
   pickupEnabled        Boolean        @default(true)
   deliveryEnabled      Boolean        @default(true)
+  /// Table QR ordering (OrderType.DINE_IN); tables are numbered 1..tableCount
+  dineInEnabled        Boolean        @default(false)
+  tableCount           Int            @default(0)
   /// Pul summalari (narx, tuman, minOrder) shu valyutaning eng kichik birligida: USD → sent
   currency             String         @default("USD")
   /// IANA vaqt zonasi (ish vaqti va "bugun" hisobi uchun), masalan "Europe/London"
@@ -181,8 +186,11 @@ model Order {
   store         Store         @relation(fields: [storeId], references: [id])
   number        Int
   customerName  String
+  /// Empty for DINE_IN orders (the customer is in the shop)
   customerPhone String
   type          OrderType
+  /// DINE_IN: table number from the QR code
+  tableNumber   Int?
   zoneName      String?
   address       String?
   landmark      String?

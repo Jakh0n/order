@@ -14,7 +14,9 @@ export interface InsertOrderInput {
   currency: string;
   customerName: string;
   customerPhone: string;
-  type: "PICKUP" | "DELIVERY";
+  type: "PICKUP" | "DELIVERY" | "DINE_IN";
+  /** DINE_IN only */
+  tableNumber?: number;
   /** Store's flat delivery fee (minor units), applied to DELIVERY orders */
   deliveryFee: number;
   latitude?: number;
@@ -92,6 +94,7 @@ export async function insertOrder(input: InsertOrderInput): Promise<InsertOrderR
             customerName: input.customerName,
             customerPhone: input.customerPhone,
             type: input.type,
+            tableNumber: input.type === "DINE_IN" ? (input.tableNumber ?? null) : null,
             latitude: hasLocation ? input.latitude : null,
             longitude: hasLocation ? input.longitude : null,
             address: input.type === "DELIVERY" ? input.address : null,

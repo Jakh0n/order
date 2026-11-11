@@ -27,6 +27,8 @@ export interface OrderMessageOrder {
   customerPhone: string;
   type: OrderType;
   zoneName?: string | null;
+  /** DINE_IN */
+  tableNumber?: number | null;
   latitude?: number | null;
   longitude?: number | null;
   address?: string | null;
@@ -77,7 +79,13 @@ export function buildOrderMessage(
   const base = origin?.replace(/\/$/, "");
   const lines: string[] = [];
 
-  lines.push(bold(t.header.replace("{number}", String(order.number))));
+  const tableLabel =
+    order.type === "DINE_IN" && order.tableNumber
+      ? t.table.replace("{number}", String(order.tableNumber))
+      : null;
+  // The table goes in the first line — the first thing the kitchen reads
+  const header = t.header.replace("{number}", String(order.number));
+  lines.push(bold(tableLabel ? `${header} · ${tableLabel}` : header));
   lines.push("");
 
   // *1x* Chicken Doner Wrap (Large, Cheese) $10.99
@@ -94,7 +102,7 @@ export function buildOrderMessage(
   lines.push(bold(`${t.total}: ${money(order.total)}`));
   lines.push("");
 
-  lines.push(`${t.customer}: ${bold(order.customerName)} ${order.customerPhone}`);
+  lines.push(`${t.customer}: ${bold(order.customerName)} ${order.customerPhone}`.trimEnd());
   lines.push("");
 
   if (order.type === "DELIVERY") {
@@ -105,15 +113,17 @@ export function buildOrderMessage(
     if (order.landmark) lines.push(`└ ${order.landmark}`);
     const map = mapsLink(order.latitude, order.longitude);
     if (map) lines.push(`└ 📍 ${map}`);
+  } else if (order.type === "DINE_IN") {
+    lines.push(`${t.service}: ${bold(tableLabel ? `${t.DINE_IN} · ${tableLabel}` : t.DINE_IN)}`);
   } else {
     lines.push(`${t.service}: ${bold(t.PICKUP)}`);
   }
-  lines.push(`${t.time}: ${order.scheduledFor ?? t.asap}`);
+  if (order.type !== "DINE_IN") lines.push(`${t.time}: ${order.scheduledFor ?? t.asap}`);
   if (order.comment) lines.push(`${t.comment}: ${order.comment}`);
   lines.push("");
 
   lines.push(
-    `${t.payment}: ${bold(t.paymentMethods[order.paymentMethod])} (${t.paymentStatus[order.paymentStatus ?? "UNPAID"]})`,
+    `${t.payment}: ${bold((order.type === "DINE_IN" ? t.paymentMethodsDineIn : t.paymentMethods)[order.paymentMethod])} (${t.paymentStatus[order.paymentStatus ?? "UNPAID"]})`,
   );
 
   if (base && order.paymentMethod === "TRANSFER" && order.receiptPath) {

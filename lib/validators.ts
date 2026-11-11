@@ -40,9 +40,14 @@ const scheduledForSchema = z
       .optional(),
   );
 
+/** Upper bound for Store.tableCount and an order's table number */
+export const MAX_TABLES = 200;
+
 const orderFields = {
   customerName: z.string().trim().min(2, "nameRequired").max(80),
-  type: z.enum(["PICKUP", "DELIVERY"]),
+  type: z.enum(["PICKUP", "DELIVERY", "DINE_IN"]),
+  /** DINE_IN: table number from the QR code */
+  tableNumber: z.number().int().min(1).max(MAX_TABLES).optional(),
   address: optionalText(300),
   landmark: optionalText(200),
   /** From "Use my current location" — both or neither */
@@ -53,23 +58,54 @@ const orderFields = {
   paymentMethod: z.enum(["CASH", "CARD_ON_DELIVERY", "TRANSFER"]),
 };
 
-function refineDelivery(
-  data: { type: "PICKUP" | "DELIVERY"; address?: string },
-  ctx: z.RefinementCtx,
-) {
-  if (data.type !== "DELIVERY") return;
-  if (!data.address || data.address.length < 3) {
-    ctx.addIssue({ code: "custom", path: ["address"], message: "addressRequired" });
-  }
+type OrderType = "PICKUP" | "DELIVERY" | "DINE_IN";
+
+/**
+ * Per-type rules. The phone is raw text here: required (and validated) except at a table,
+ * where it is hidden in the form and dropped. normalizeOrderPhone() runs after this.
+ */
+function refineOrder(phoneKey: "phone" | "customerPhone") {
+  return (
+    data: { type: OrderType; address?: string; tableNumber?: number } & Record<string, unknown>,
+    ctx: z.RefinementCtx,
+  ) => {
+    if (data.type === "DELIVERY" && (!data.address || data.address.length < 3)) {
+      ctx.addIssue({ code: "custom", path: ["address"], message: "addressRequired" });
+    }
+    if (data.type === "DINE_IN") {
+      if (!data.tableNumber) {
+        ctx.addIssue({ code: "custom", path: ["tableNumber"], message: "tableRequired" });
+      }
+    } else if (!phoneSchema.safeParse(data[phoneKey]).success) {
+      ctx.addIssue({ code: "custom", path: [phoneKey], message: "phoneInvalid" });
+    }
+  };
 }
+
+/** Normalized phone, or "" for a table order; table number only on DINE_IN */
+function normalizeOrder<T extends { type: OrderType; tableNumber?: number }>(
+  data: T,
+  phoneKey: "phone" | "customerPhone",
+): T {
+  const dineIn = data.type === "DINE_IN";
+  const phone = data[phoneKey as keyof T] as unknown as string;
+  return {
+    ...data,
+    [phoneKey]: dineIn ? "" : normalizePhone(phone),
+    tableNumber: dineIn ? data.tableNumber : undefined,
+  };
+}
+
+const rawPhone = z.string().max(30);
 
 /** Checkout form (client). Phone in international format with country code. */
 export const checkoutFormSchema = z
   .object({
     ...orderFields,
-    phone: phoneSchema,
+    phone: rawPhone,
   })
-  .superRefine(refineDelivery);
+  .superRefine(refineOrder("phone"))
+  .transform((d) => normalizeOrder(d, "phone"));
 
 export type CheckoutFormInput = z.input<typeof checkoutFormSchema>;
 export type CheckoutFormData = z.output<typeof checkoutFormSchema>;
@@ -85,11 +121,12 @@ export const checkoutSchema = z
   .object({
     ...orderFields,
     storeSlug: z.string().min(1).max(100),
-    customerPhone: phoneSchema,
+    customerPhone: rawPhone,
     lang: z.enum(locales).default(defaultLocale),
     items: z.array(cartItemSchema).min(1).max(50),
   })
-  .superRefine(refineDelivery);
+  .superRefine(refineOrder("customerPhone"))
+  .transform((d) => normalizeOrder(d, "customerPhone"));
 
 export type CheckoutInput = z.input<typeof checkoutSchema>;
 export type CheckoutData = z.output<typeof checkoutSchema>;
@@ -98,12 +135,13 @@ export type CheckoutData = z.output<typeof checkoutSchema>;
 export const manualOrderSchema = z
   .object({
     ...orderFields,
-    customerPhone: phoneSchema,
+    customerPhone: rawPhone,
     lang: z.enum(locales).default(defaultLocale),
     markPaid: z.boolean().default(false),
     items: z.array(cartItemSchema).min(1).max(50),
   })
-  .superRefine(refineDelivery);
+  .superRefine(refineOrder("customerPhone"))
+  .transform((d) => normalizeOrder(d, "customerPhone"));
 
 export type ManualOrderInput = z.input<typeof manualOrderSchema>;
 
@@ -274,6 +312,13 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
 
       pickupEnabled: z.boolean(),
       deliveryEnabled: z.boolean(),
+      /** Table QR ordering; tables 1..tableCount */
+      dineInEnabled: z.boolean(),
+      tableCount: z
+        .number({ error: "tableCountInvalid" })
+        .int("tableCountInvalid")
+        .min(0, "tableCountInvalid")
+        .max(MAX_TABLES, "tableCountInvalid"),
       minOrder,
       /** Flat delivery fee */
       deliveryFee: fee,
@@ -300,7 +345,10 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
       if (!!s2.openTime !== !!s2.closeTime) {
         issue(s2.openTime ? "closeTime" : "openTime", "bothTimes");
       }
-      if (!s2.pickupEnabled && !s2.deliveryEnabled) issue("deliveryEnabled", "noOrderType");
+      if (!s2.pickupEnabled && !s2.deliveryEnabled && !s2.dineInEnabled) {
+        issue("deliveryEnabled", "noOrderType");
+      }
+      if (s2.dineInEnabled && s2.tableCount < 1) issue("tableCount", "tableCountInvalid");
       if (!s2.acceptCash && !s2.acceptCardOnDelivery && !s2.acceptTransfer) {
         issue("acceptTransfer", "noPayment");
       }

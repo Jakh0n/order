@@ -8,6 +8,7 @@ import {
   Navigation,
   Phone,
   Receipt,
+  Armchair,
 } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
@@ -91,7 +92,16 @@ export async function OrderCard({
     >
       <header className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h2 className="text-lg font-semibold">#{order.number}</h2>
+          <h2 className="flex items-center gap-2 text-lg font-semibold">
+            #{order.number}
+            {order.type === "DINE_IN" && order.tableNumber && (
+              // Large and coloured: the kitchen needs the table at a glance
+              <span className="bg-primary text-primary-foreground inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-sm">
+                <Armchair className="size-3.5" aria-hidden />
+                {t("table.label", { number: order.tableNumber })}
+              </span>
+            )}
+          </h2>
           <p className="text-muted-foreground text-xs">
             {format.dateTime(order.createdAt, { dateStyle: "short", timeStyle: "short", timeZone })}
           </p>
@@ -99,7 +109,10 @@ export async function OrderCard({
         <div className="flex flex-wrap items-center gap-1.5">
           <Badge className={STATUS_STYLE[order.status]}>{t(`status.${order.status}`)}</Badge>
           <Badge variant={paid ? "default" : "outline"}>
-            {t(`payment.${order.paymentMethod}`)} · {t(`payment.${order.paymentStatus}`)}
+            {order.type === "DINE_IN"
+              ? t(`table.pay.${order.paymentMethod}`)
+              : t(`payment.${order.paymentMethod}`)}{" "}
+            · {t(`payment.${order.paymentStatus}`)}
           </Badge>
         </div>
       </header>
@@ -113,27 +126,34 @@ export async function OrderCard({
 
       <div className="flex flex-col gap-1 text-sm">
         <p className="font-medium">{order.customerName}</p>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-          <a href={`tel:${order.customerPhone}`} className="text-primary flex items-center gap-1.5">
-            <Phone className="size-3.5" aria-hidden />
-            {order.customerPhone}
-          </a>
-          <a
-            href={chatHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary flex items-center gap-1.5 font-medium"
-          >
-            <MessageCircle className="size-3.5" aria-hidden />
-            {t("adminOrders.messageCustomer")}
-          </a>
-        </div>
+        {order.customerPhone && (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <a
+              href={`tel:${order.customerPhone}`}
+              className="text-primary flex items-center gap-1.5"
+            >
+              <Phone className="size-3.5" aria-hidden />
+              {order.customerPhone}
+            </a>
+            <a
+              href={chatHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary flex items-center gap-1.5 font-medium"
+            >
+              <MessageCircle className="size-3.5" aria-hidden />
+              {t("adminOrders.messageCustomer")}
+            </a>
+          </div>
+        )}
         <p className="text-muted-foreground flex items-start gap-1.5">
           <MapPin className="mt-0.5 size-3.5 shrink-0" />
           <span>
             {order.type === "DELIVERY"
               ? [order.zoneName, order.address, order.landmark].filter(Boolean).join(", ")
-              : t("checkout.pickup")}
+              : order.type === "DINE_IN"
+                ? t("table.dineIn")
+                : t("checkout.pickup")}
           </span>
         </p>
         {mapsLink(order.latitude, order.longitude) && (
@@ -147,10 +167,12 @@ export async function OrderCard({
             {t("order.openMap")}
           </a>
         )}
-        <p className="text-muted-foreground flex items-center gap-1.5">
-          <Clock className="size-3.5 shrink-0" />
-          {scheduled ?? t("checkout.asap")}
-        </p>
+        {order.type !== "DINE_IN" && (
+          <p className="text-muted-foreground flex items-center gap-1.5">
+            <Clock className="size-3.5 shrink-0" />
+            {scheduled ?? t("checkout.asap")}
+          </p>
+        )}
         {order.comment && (
           <p className="bg-muted flex items-start gap-1.5 rounded-md px-2 py-1 text-sm">
             <MessageSquare className="text-muted-foreground mt-0.5 size-3.5 shrink-0" aria-hidden />

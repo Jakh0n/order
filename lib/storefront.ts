@@ -49,6 +49,8 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
         isBlocked: true,
         deliveryEnabled: true,
         deliveryFee: true,
+        dineInEnabled: true,
+        tableCount: true,
       },
     }),
     prisma.category.findMany({

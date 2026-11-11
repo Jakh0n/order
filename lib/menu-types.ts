@@ -53,6 +53,9 @@ export interface StorefrontStore {
   deliveryEnabled: boolean;
   /** Flat delivery fee (minor units) */
   deliveryFee: number;
+  /** Table QR ordering; valid tables are 1..tableCount */
+  dineInEnabled: boolean;
+  tableCount: number;
 }
 
 export interface StorefrontData {

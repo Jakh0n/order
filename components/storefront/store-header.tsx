@@ -6,6 +6,7 @@ import type { StorefrontStore } from "@/lib/menu-types";
 
 import { LastOrderBanner } from "./last-order-banner";
 import { ClosedBanner, OpenStatus } from "./open-badge";
+import { TableBanner } from "./table-banner";
 
 /** take.app uslubidagi sarlavha: rangli muqova, ustiga chiqib turgan logo, holat va manzil */
 export function StoreHeader({ store }: { store: StorefrontStore }) {
@@ -69,6 +70,7 @@ export function StoreHeader({ store }: { store: StorefrontStore }) {
           )}
         </div>
 
+        <TableBanner store={store} />
         <ClosedBanner store={store} />
         <LastOrderBanner slug={store.slug} />
       </div>

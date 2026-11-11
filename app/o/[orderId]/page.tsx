@@ -142,8 +142,20 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
           <dl className="flex flex-col gap-2 text-sm">
             <Row
               label={t("checkout.type")}
-              value={order.type === "DELIVERY" ? t("checkout.delivery") : t("checkout.pickup")}
+              value={
+                order.type === "DELIVERY"
+                  ? t("checkout.delivery")
+                  : order.type === "DINE_IN"
+                    ? t("table.dineIn")
+                    : t("checkout.pickup")
+              }
             />
+            {order.tableNumber && (
+              <Row
+                label={t("table.table")}
+                value={t("table.label", { number: order.tableNumber })}
+              />
+            )}
             {order.zoneName && <Row label={t("checkout.zone")} value={order.zoneName} />}
             {order.address && <Row label={t("checkout.address")} value={order.address} />}
             {order.landmark && <Row label={t("checkout.landmark")} value={order.landmark} />}
@@ -162,16 +174,22 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
                 </dd>
               </div>
             )}
-            <Row label={t("checkout.time")} value={scheduled ?? t("checkout.asap")} />
+            {order.type !== "DINE_IN" && (
+              <Row label={t("checkout.time")} value={scheduled ?? t("checkout.asap")} />
+            )}
             {order.comment && <Row label={t("checkout.comment")} value={order.comment} />}
             <Row label={t("checkout.name")} value={order.customerName} />
-            <Row label={t("checkout.phone")} value={order.customerPhone} />
+            {order.customerPhone && <Row label={t("checkout.phone")} value={order.customerPhone} />}
           </dl>
         </Card>
 
         <Card title={t("order.payment")}>
           <div className="flex items-center justify-between gap-2 text-sm">
-            <span>{t(`payment.${order.paymentMethod}`)}</span>
+            <span>
+              {order.type === "DINE_IN"
+                ? t(`table.pay.${order.paymentMethod}`)
+                : t(`payment.${order.paymentMethod}`)}
+            </span>
             <Badge variant={order.paymentStatus === "PAID" ? "default" : "secondary"}>
               {t(`payment.${order.paymentStatus}`)}
             </Badge>

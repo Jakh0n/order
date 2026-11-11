@@ -19,6 +19,7 @@ export type CreateOrderError =
   | "minOrder"
   | "tooMany"
   | "timeUnavailable"
+  | "tableUnavailable"
   | "server";
 
 export type CreateOrderResult =
@@ -44,7 +45,11 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
     const [allowed, store] = await Promise.all([
       rateLimitAll([
         [RULES.orderIp, ip],
-        [RULES.orderPhone, `${data.storeSlug}:${data.customerPhone}`],
+        // Table orders have no phone — limit per table instead
+        [
+          RULES.orderPhone,
+          `${data.storeSlug}:${data.customerPhone || `table-${data.tableNumber}`}`,
+        ],
       ]),
       prisma.store.findUnique({ where: { slug: data.storeSlug } }),
     ]);
@@ -56,6 +61,15 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
     if (!isStoreOpenNow(store, now)) {
       if (!store.isOpen) return { ok: false, error: "closed" };
       if (!data.scheduledFor) return { ok: false, error: "closed" };
+    }
+    if (data.type === "DINE_IN") {
+      // At a table: only while open, only real tables, no pre-orders
+      if (!store.dineInEnabled) return { ok: false, error: "typeUnavailable" };
+      if (!data.tableNumber || data.tableNumber > store.tableCount) {
+        return { ok: false, error: "tableUnavailable" };
+      }
+      if (!isStoreOpenNow(store, now)) return { ok: false, error: "closed" };
+      data.scheduledFor = undefined;
     }
     if (data.scheduledFor && !isValidSlot(store, data.scheduledFor, now)) {
       return {

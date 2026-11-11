@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getRequestOrigin } from "@/lib/app-url";
 import { requireOwner } from "@/lib/auth/owner";
 import { getStoreSettings } from "@/lib/settings/data";
+import { currencyOptions, timeZoneOptions } from "@/lib/settings/options";
 import { settingsToForm } from "@/lib/validators";
 
 export default function AdminSettingsPage() {
@@ -27,7 +28,11 @@ async function AdminSettings() {
     <div className="flex max-w-2xl flex-col gap-4 p-4 md:p-6">
       <h1 className="text-2xl font-bold">{t("settings")}</h1>
       <StoreLink slug={store.slug} origin={await getRequestOrigin()} />
-      <SettingsForm defaultValues={settingsToForm(settings)} />
+      <SettingsForm
+        defaultValues={settingsToForm(settings)}
+        currencies={currencyOptions(settings.currency)}
+        timeZones={timeZoneOptions(settings.timeZone)}
+      />
     </div>
   );
 }

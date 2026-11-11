@@ -231,7 +231,9 @@
       "locationUnsupported": "Your browser can't share location. Please type the address.",
       "geocodeFailed": "Your location is attached, but we couldn't find the street name — please type the address.",
       "timeRequired": "Please choose a time",
-      "timeUnavailable": "This time isn't available anymore. Please choose another one."
+      "timeUnavailable": "This time isn't available anymore. Please choose another one.",
+      "tableRequired": "Scan the QR code on your table again",
+      "tableUnavailable": "This table isn't available. Please scan the QR code on your table again."
     },
     "edit": "Edit",
     "timeAsap": "As soon as possible",
@@ -378,7 +380,14 @@
     },
     "seeOrder": "See order",
     "receipt": "Payment receipt",
-    "sentFrom": "Sent from {store}"
+    "sentFrom": "Sent from {store}",
+    "DINE_IN": "Dine-in",
+    "table": "Table {number}",
+    "paymentMethodsDineIn": {
+      "CASH": "Cash",
+      "CARD_ON_DELIVERY": "Card",
+      "TRANSFER": "Bank Transfer"
+    }
   },
   "store": {
     "notFound": "Store not found",
@@ -602,14 +611,21 @@
       "whatsappInvalid": "Invalid number — include the country code, e.g. +15551234567",
       "imageInvalid": "Invalid image",
       "currencyInvalid": "Invalid currency",
-      "timeZoneInvalid": "Invalid time zone"
+      "timeZoneInvalid": "Invalid time zone",
+      "tableCountInvalid": "Enter a number of tables from 1 to 200"
     },
     "deliveryFee": "Delivery fee ({currency})",
     "deliveryFeeHint": "Added to every delivery order. 0 — free delivery.",
     "cover": "Cover photo",
     "coverHint": "Shown at the top of your store page. A wide photo works best (e.g. 1200×400).",
     "language": "Store language",
-    "languageHint": "Your store page opens in this language. Customers can still switch it."
+    "languageHint": "Your store page opens in this language. Customers can still switch it.",
+    "dineInSection": "Table ordering",
+    "dineInHint": "Customers scan a QR code on the table and order without a waiter.",
+    "dineIn": "Orders from tables",
+    "tableCount": "Number of tables",
+    "printTables": "Print table QR codes",
+    "tablesHint": "Each table gets its own QR code. Orders show the table number in large type."
   },
   "signup": {
     "title": "Open your store",
@@ -704,5 +720,24 @@
     "hours": "Set your opening hours",
     "channel": "Connect Telegram or WhatsApp for orders",
     "testOrder": "Open your store and place a test order"
+  },
+  "table": {
+    "label": "Table {number}",
+    "table": "Table",
+    "dineIn": "Dine-in",
+    "bannerHint": "You're ordering for this table",
+    "notAtTable": "Not at a table?",
+    "checkoutHint": "Your order will be served at this table.",
+    "pay": {
+      "CASH": "Cash",
+      "CARD_ON_DELIVERY": "Card",
+      "TRANSFER": "Bank transfer"
+    },
+    "printTitle": "Table QR codes",
+    "printHint": "{count, plural, one {# table} other {# tables}} · print on A4 and cut along the dashed lines",
+    "print": "Print",
+    "scanToOrder": "Scan to see the menu and order",
+    "printDisabled": "Turn on table ordering and set the number of tables in Settings first.",
+    "openSettings": "Settings"
   }
 }

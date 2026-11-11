@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   AlertCircle,
+  Armchair,
   Bike,
   CheckCircle2,
   ChevronRight,
@@ -22,6 +23,7 @@ import { toast } from "sonner";
 import { CopyButton } from "@/components/copy-button";
 import { useFormatMoney } from "@/components/currency-provider";
 import { ReceiptPicker, sendReceipt } from "@/components/order/receipt-upload";
+import { validTable } from "@/components/storefront/table-banner";
 import { useStoreOpen, useTimeSlots } from "@/components/storefront/use-store-open";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +40,7 @@ import type { CheckoutSettings, StorefrontStore } from "@/lib/menu-types";
 import { lookupAddress } from "@/lib/geo/actions";
 import { saveLastOrder } from "@/lib/last-order";
 import { dialPrefix } from "@/lib/phone-prefix";
+import { setTable, useTable } from "@/lib/table-session";
 import { mapsLink } from "@/lib/maps";
 import { createOrder } from "@/lib/orders/actions";
 import { createManualOrder } from "@/lib/orders/admin-actions";
@@ -94,6 +97,7 @@ export function CheckoutForm({
   const tCart = useTranslations("cart");
   const tPay = useTranslations("payment");
   const tReceipt = useTranslations("receipt");
+  const tTable = useTranslations("table");
   const router = useRouter();
 
   const hydrated = useCartHydrated();
@@ -101,8 +105,12 @@ export function CheckoutForm({
   const clearCart = useCart((s) => s.clear);
   const isOpenNow = useStoreOpen(store) ?? store.isOpen;
   const slots = useTimeSlots(store);
-  // Closed now, but the customer can pick a time after opening
-  const preorder = !isAdmin && !isOpenNow && slots.length > 0;
+  // Ordering from a table QR code: name + payment only, no phone/address/time
+  const sessionTable = validTable(store, useTable(store.slug));
+  const table = isAdmin ? null : sessionTable;
+  const dineIn = table !== null;
+  // Closed now, but the customer can pick a time after opening (not at a table)
+  const preorder = !isAdmin && !dineIn && !isOpenNow && slots.length > 0;
   const [submitted, setSubmitted] = useState(false);
   const [uploadingReceipt, setUploadingReceipt] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -112,6 +120,7 @@ export function CheckoutForm({
   // Bank transfer receipt photo — uploaded right after the order is saved
   const [receipt, setReceipt] = useState<File | null>(null);
 
+  const defaultType = settings.deliveryEnabled ? "DELIVERY" : "PICKUP";
   const {
     control,
     register,
@@ -127,7 +136,8 @@ export function CheckoutForm({
       customerName: "",
       // Pre-filled with the store's country code — the most common mistake is a local number
       phone: dialPrefix(store.phone),
-      type: settings.deliveryEnabled ? "DELIVERY" : "PICKUP",
+      type: defaultType,
+      tableNumber: undefined,
       latitude: undefined,
       longitude: undefined,
       address: "",
@@ -150,6 +160,17 @@ export function CheckoutForm({
       });
     }
   }, [reset, getValues, isAdmin]);
+
+  // Table from the QR session drives the order type (and back, if "not at a table")
+  useEffect(() => {
+    if (dineIn) {
+      setValue("type", "DINE_IN");
+      setValue("tableNumber", table);
+    } else if (getValues("type") === "DINE_IN") {
+      setValue("type", defaultType);
+      setValue("tableNumber", undefined);
+    }
+  }, [dineIn, table, setValue, getValues, defaultType]);
 
   // Checkout'ga savatsiz kelinsa (to'g'ridan-to'g'ri URL) — menyuga qaytaramiz
   const cartEmpty = hydrated && !submitted && !isAdmin && lines.length === 0;
@@ -220,13 +241,13 @@ export function CheckoutForm({
     : (isOpenNow || preorder) &&
       missing === 0 &&
       settings.paymentMethods.length > 0 &&
-      (settings.pickupEnabled || settings.deliveryEnabled);
+      (dineIn || settings.pickupEnabled || settings.deliveryEnabled);
 
   const errorText = (key?: string) => (key ? t(`errors.${key}`) : null);
 
   async function onSubmit(values: CheckoutFormData) {
     setServerError(null);
-    if (!isAdmin && timeMode === "scheduled" && !values.scheduledFor) {
+    if (!isAdmin && !dineIn && timeMode === "scheduled" && !values.scheduledFor) {
       setError("scheduledFor", { message: "timeRequired" }, { shouldFocus: true });
       return;
     }
@@ -235,11 +256,12 @@ export function CheckoutForm({
       customerName: values.customerName,
       customerPhone: values.phone,
       type: values.type,
+      tableNumber: values.tableNumber,
       latitude: values.type === "DELIVERY" ? values.latitude : undefined,
       longitude: values.type === "DELIVERY" ? values.longitude : undefined,
       address: values.address,
       landmark: values.landmark,
-      scheduledFor: values.scheduledFor,
+      scheduledFor: dineIn ? undefined : values.scheduledFor,
       comment: values.comment,
       paymentMethod: values.paymentMethod,
       items: lines.map((l) => ({
@@ -273,7 +295,8 @@ export function CheckoutForm({
       toast.success(tAdmin("created", { number }));
       router.push("/admin/orders");
     } else {
-      saveCustomer(values.customerName, values.phone);
+      // A table order has no phone — keep the one saved from earlier orders
+      saveCustomer(values.customerName, values.phone || loadCustomer().phone || "");
       if ("number" in result) {
         saveLastOrder(store.slug, { id: result.orderId, number: result.number });
       }
@@ -375,6 +398,26 @@ export function CheckoutForm({
         </ul>
       </Card>
 
+      {/* At a table (QR) — replaces pickup/delivery */}
+      {table !== null && (
+        <section className="border-primary/20 bg-background flex items-center gap-3 rounded-2xl border p-4">
+          <span className="bg-primary text-primary-foreground flex size-11 shrink-0 items-center justify-center rounded-xl">
+            <Armchair className="size-5" aria-hidden />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="font-bold">{tTable("label", { number: table })}</p>
+            <p className="text-muted-foreground text-sm">{tTable("checkoutHint")}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setTable(store.slug, null)}
+            className="text-primary shrink-0 text-sm font-medium"
+          >
+            {tTable("notAtTable")}
+          </button>
+        </section>
+      )}
+
       {/* Aloqa */}
       <Card title={t("contact")}>
         <Field
@@ -391,28 +434,31 @@ export function CheckoutForm({
             {...register("customerName")}
           />
         </Field>
-        <Field
-          label={t("phone")}
-          htmlFor="phone"
-          hint={t("phoneHint")}
-          error={errorText(errors.phone?.message)}
-        >
-          <Input
-            id="phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            placeholder={t("phonePlaceholder")}
-            maxLength={24}
-            aria-invalid={!!errors.phone}
-            className="h-11"
-            {...register("phone")}
-          />
-        </Field>
+        {/* Not needed at a table — hidden, not unmounted (keeps the typed number) */}
+        <div className={cn(dineIn && "hidden")}>
+          <Field
+            label={t("phone")}
+            htmlFor="phone"
+            hint={t("phoneHint")}
+            error={errorText(errors.phone?.message)}
+          >
+            <Input
+              id="phone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder={t("phonePlaceholder")}
+              maxLength={24}
+              aria-invalid={!!errors.phone}
+              className="h-11"
+              {...register("phone")}
+            />
+          </Field>
+        </div>
       </Card>
 
       {/* Qabul qilish usuli — segment tugmalar */}
-      {settings.pickupEnabled && settings.deliveryEnabled && (
+      {!dineIn && settings.pickupEnabled && settings.deliveryEnabled && (
         <Controller
           control={control}
           name="type"
@@ -532,62 +578,64 @@ export function CheckoutForm({
       )}
 
       {/* Vaqt va izoh */}
-      <Card title={t("time")}>
-        {preorder && (
-          <p className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
-            {t("preorderNote")}
-          </p>
-        )}
-        <div className="grid grid-cols-2 gap-2">
-          {(["asap", "scheduled"] as const).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              aria-pressed={timeMode === mode}
-              disabled={mode === "asap" && preorder}
-              onClick={() => {
-                setTimeMode(mode);
-                if (mode === "asap") setValue("scheduledFor", "", { shouldValidate: true });
-              }}
-              className={cn(
-                "h-11 rounded-xl border text-sm font-medium transition-colors disabled:opacity-40",
-                timeMode === mode ? "border-primary bg-primary/5 text-primary" : "hover:bg-muted",
-              )}
-            >
-              {mode === "asap" ? t("timeAsap") : t("timeScheduled")}
-            </button>
-          ))}
-        </div>
-        <div className={cn(timeMode !== "scheduled" && "hidden")}>
-          <Field
-            label={t("time")}
-            htmlFor="scheduledFor"
-            error={errorText(errors.scheduledFor?.message)}
-          >
-            {isAdmin ? (
-              <Input
-                id="scheduledFor"
-                type="time"
-                className="h-11 w-40"
-                {...register("scheduledFor")}
-              />
-            ) : (
-              // Only real slots: inside opening hours, not in the past, with preparation time
-              <select
-                id="scheduledFor"
-                aria-invalid={!!errors.scheduledFor}
-                className="border-input bg-background focus-visible:ring-ring/50 h-11 w-full rounded-md border px-3 text-base outline-none focus-visible:ring-3 sm:w-56"
-                {...register("scheduledFor")}
+      <Card title={dineIn ? undefined : t("time")}>
+        <div className={cn("flex flex-col gap-4", dineIn && "hidden")}>
+          {preorder && (
+            <p className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+              {t("preorderNote")}
+            </p>
+          )}
+          <div className="grid grid-cols-2 gap-2">
+            {(["asap", "scheduled"] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                aria-pressed={timeMode === mode}
+                disabled={mode === "asap" && preorder}
+                onClick={() => {
+                  setTimeMode(mode);
+                  if (mode === "asap") setValue("scheduledFor", "", { shouldValidate: true });
+                }}
+                className={cn(
+                  "h-11 rounded-xl border text-sm font-medium transition-colors disabled:opacity-40",
+                  timeMode === mode ? "border-primary bg-primary/5 text-primary" : "hover:bg-muted",
+                )}
               >
-                <option value="">{t("chooseTime")}</option>
-                {slots.map((slot) => (
-                  <option key={`${slot.tomorrow}-${slot.value}`} value={slot.value}>
-                    {slot.tomorrow ? t("tomorrowAt", { time: slot.value }) : slot.value}
-                  </option>
-                ))}
-              </select>
-            )}
-          </Field>
+                {mode === "asap" ? t("timeAsap") : t("timeScheduled")}
+              </button>
+            ))}
+          </div>
+          <div className={cn(timeMode !== "scheduled" && "hidden")}>
+            <Field
+              label={t("time")}
+              htmlFor="scheduledFor"
+              error={errorText(errors.scheduledFor?.message)}
+            >
+              {isAdmin ? (
+                <Input
+                  id="scheduledFor"
+                  type="time"
+                  className="h-11 w-40"
+                  {...register("scheduledFor")}
+                />
+              ) : (
+                // Only real slots: inside opening hours, not in the past, with preparation time
+                <select
+                  id="scheduledFor"
+                  aria-invalid={!!errors.scheduledFor}
+                  className="border-input bg-background focus-visible:ring-ring/50 h-11 w-full rounded-md border px-3 text-base outline-none focus-visible:ring-3 sm:w-56"
+                  {...register("scheduledFor")}
+                >
+                  <option value="">{t("chooseTime")}</option>
+                  {slots.map((slot) => (
+                    <option key={`${slot.tomorrow}-${slot.value}`} value={slot.value}>
+                      {slot.tomorrow ? t("tomorrowAt", { time: slot.value }) : slot.value}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </Field>
+          </div>
         </div>
         <Field label={t("comment")} htmlFor="comment" optional={t("optional")}>
           <Textarea
@@ -613,7 +661,7 @@ export function CheckoutForm({
             >
               {settings.paymentMethods.map((m) => (
                 <ChoiceCard key={m} value={m} checked={field.value === m}>
-                  {tPay(m)}
+                  {dineIn ? tTable(`pay.${m}`) : tPay(m)}
                 </ChoiceCard>
               ))}
             </RadioGroup>

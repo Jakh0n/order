@@ -3,7 +3,7 @@
 export type OrderStatusValue =
   "NEW" | "ACCEPTED" | "READY" | "ON_THE_WAY" | "COMPLETED" | "CANCELLED";
 
-export type OrderTypeValue = "PICKUP" | "DELIVERY";
+export type OrderTypeValue = "PICKUP" | "DELIVERY" | "DINE_IN";
 
 export const ACTIVE_STATUSES: OrderStatusValue[] = ["NEW", "ACCEPTED", "READY", "ON_THE_WAY"];
 

@@ -52,6 +52,7 @@ app/
   o/[orderId]/page.tsx        buyurtma holati
   signup/                     ro'yxatdan o'tish ustasi (hisob + do'kon)
   admin/login/                kirish (email + parol)
+  admin/tables/               stol QR kartochkalari (A4 chop etish; (panel) layout'idan tashqarida)
   admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], settings
   superadmin/                 platforma egasi: statistika, do'konlar, tarif (+1 oy / bepul), bloklash
 components/ui/                shadcn komponentlari
@@ -100,6 +101,8 @@ lib/
   store-hours.ts              isStoreOpenNow / opensAt / startOfDayInZone; timeSlots / isValidSlot
                               (vaqt tanlash va yopiq paytda oldindan buyurtma — klient va server bitta manba)
   last-order.ts               mijozning oxirgi buyurtmasi (localStorage) — menyuda "Track" banner
+  table-session.ts            stol QR: /{slug}?t=5 → stol raqami localStorage'da 4 soat (useTable, setTable)
+  settings/options.ts         valyuta / vaqt zonasi ro'yxati — FAQAT serverda (brauzer ICU boshqacha → hydration xatosi)
   phone-prefix.ts             dialPrefix — telefon maydoniga do'kon mamlakat kodi
   cart-store.ts               zustand savat (cartKey bo'yicha, localStorage)
   cart-keys.ts                adminCartKey — admin savati alohida
@@ -209,6 +212,8 @@ keyin faqat eng tor joyni tuzatish. Mikroservislarga erta o'tilmaydi.
    sabab bilan (Telegram bot, real-time, analitika) — `lib/` dagi biznes logika `packages/core` ga ajratiladi.
 
 - Yetkazish: hududlar (DeliveryZone) endi ishlatilmaydi — `Store.deliveryFee` (yagona narx). Jadval ma'lumot yo'qolmasligi uchun qoldirilgan.
+- Stoldan buyurtma (`DINE_IN`): `Store.dineInEnabled` + `tableCount`; telefon bo'sh (""), manzil/vaqt yo'q, oldindan buyurtma yo'q;
+  serverda stol raqami 1..tableCount tekshiriladi. Xabar sarlavhasida stol raqami.
 - Buyurtmada `latitude/longitude` bo'lsa — xabarda, admin kartochkada va /o sahifada "Open in Maps" havolasi (`mapsLink`).
 
 ## Mahsulot yo'l xaritasi (funksiyalar)
@@ -226,7 +231,7 @@ Tarif tamoyili: buyurtma qabul qilish HECH QACHON cheklanmaydi — pul o'sish vo
 P1 (navbat bo'yicha):
 1. [x] Rus va o'zbek tillari (`messages/ru.json`, `uz.json`)
 2. [ ] Tarif limitlari kodda (`Store.plan`) + tarif sahifasi
-3. [ ] Stolga QR orqali buyurtma (`OrderType.DINE_IN`, stol raqami)
+3. [x] Stolga QR orqali buyurtma (`OrderType.DINE_IN`, stol raqami)
 4. [ ] Chek / oshxona varag'ini chop etish (80mm)
 5. [ ] Promo-kodlar + ma'lum summadan bepul yetkazish
 6. [ ] Analitika (tushum, o'rtacha chek, top taomlar, soatlar, qaytgan mijozlar) + mijozlar bazasi (telefon bo'yicha)

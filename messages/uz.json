@@ -231,7 +231,9 @@
       "locationUnsupported": "Brauzeringiz joylashuvni ulasha olmaydi. Manzilni yozing.",
       "geocodeFailed": "Joylashuvingiz biriktirildi, lekin ko'cha nomini topa olmadik — manzilni yozing.",
       "timeRequired": "Vaqtni tanlang",
-      "timeUnavailable": "Bu vaqt endi mavjud emas. Boshqasini tanlang."
+      "timeUnavailable": "Bu vaqt endi mavjud emas. Boshqasini tanlang.",
+      "tableRequired": "Stoldagi QR kodni qayta skanerlang",
+      "tableUnavailable": "Bu stol mavjud emas. Stoldagi QR kodni qayta skanerlang."
     },
     "edit": "O'zgartirish",
     "timeAsap": "Imkon qadar tezroq",
@@ -378,7 +380,14 @@
     },
     "seeOrder": "Buyurtmani ko'rish",
     "receipt": "To'lov cheki",
-    "sentFrom": "{store} orqali yuborildi"
+    "sentFrom": "{store} orqali yuborildi",
+    "DINE_IN": "Joyida",
+    "table": "{number}-stol",
+    "paymentMethodsDineIn": {
+      "CASH": "Naqd",
+      "CARD_ON_DELIVERY": "Karta",
+      "TRANSFER": "Pul o'tkazmasi"
+    }
   },
   "store": {
     "notFound": "Do'kon topilmadi",
@@ -602,14 +611,21 @@
       "whatsappInvalid": "Noto'g'ri raqam — mamlakat kodini qo'shing, masalan +998901234567",
       "imageInvalid": "Noto'g'ri rasm",
       "currencyInvalid": "Noto'g'ri valyuta",
-      "timeZoneInvalid": "Noto'g'ri vaqt zonasi"
+      "timeZoneInvalid": "Noto'g'ri vaqt zonasi",
+      "tableCountInvalid": "Stollar sonini 1 dan 200 gacha kiriting"
     },
     "deliveryFee": "Yetkazish narxi ({currency})",
     "deliveryFeeHint": "Har bir yetkazish buyurtmasiga qo'shiladi. 0 — bepul yetkazish.",
     "cover": "Muqova rasmi",
     "coverHint": "Do'kon sahifasining tepasida ko'rinadi. Keng rasm yaxshi (masalan, 1200×400).",
     "language": "Do'kon tili",
-    "languageHint": "Do'kon sahifasi shu tilda ochiladi. Mijozlar uni o'zlari almashtira oladi."
+    "languageHint": "Do'kon sahifasi shu tilda ochiladi. Mijozlar uni o'zlari almashtira oladi.",
+    "dineInSection": "Stoldan buyurtma",
+    "dineInHint": "Mijozlar stoldagi QR kodni skanerlab, ofitsiantsiz buyurtma beradi.",
+    "dineIn": "Stollardan buyurtma",
+    "tableCount": "Stollar soni",
+    "printTables": "Stol QR kodlarini chop etish",
+    "tablesHint": "Har bir stolning o'z QR kodi bor. Buyurtmada stol raqami katta ko'rinadi."
   },
   "signup": {
     "title": "Do'koningizni oching",
@@ -704,5 +720,24 @@
     "hours": "Ish vaqtini belgilang",
     "channel": "Buyurtmalar uchun Telegram yoki WhatsApp'ni ulang",
     "testOrder": "Do'koningizni ochib, sinov buyurtmasini bering"
+  },
+  "table": {
+    "label": "{number}-stol",
+    "table": "Stol",
+    "dineIn": "Joyida",
+    "bannerHint": "Shu stol uchun buyurtma beryapsiz",
+    "notAtTable": "Stolda emasmisiz?",
+    "checkoutHint": "Buyurtmangiz shu stolga keltiriladi.",
+    "pay": {
+      "CASH": "Naqd",
+      "CARD_ON_DELIVERY": "Karta",
+      "TRANSFER": "Pul o'tkazmasi"
+    },
+    "printTitle": "Stol QR kodlari",
+    "printHint": "{count, plural, other {# ta stol}} · A4 ga chop eting va punktir bo'ylab qirqing",
+    "print": "Chop etish",
+    "scanToOrder": "Menyuni ko'rish va buyurtma uchun skanerlang",
+    "printDisabled": "Avval Sozlamalarda stoldan buyurtmani yoqing va stollar sonini kiriting.",
+    "openSettings": "Sozlamalar"
   }
 }

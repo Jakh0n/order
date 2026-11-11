@@ -1,23 +1,25 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { ExternalLink, Loader2, QrCode } from "lucide-react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Controller, type FieldPath, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { ImageUpload } from "@/components/admin/menu/image-upload";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { localeNames, locales } from "@/i18n/config";
-import { POPULAR_CURRENCIES, priceStep } from "@/lib/money";
+import { priceStep } from "@/lib/money";
 import { saveStoreSettings } from "@/lib/settings/actions";
 import { cn } from "@/lib/utils";
 import {
+  MAX_TABLES,
   normalizeTelegramUsername,
   settingsFormToMinor,
   type StoreSettingsFormData,
@@ -25,7 +27,19 @@ import {
   storeSettingsFormSchema,
 } from "@/lib/validators";
 
-export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsFormInput }) {
+/**
+ * currencies / timeZones are built on the server (lib/settings/options.ts): the browser's ICU
+ * lists differ from Node's (e.g. SLE vs SLL), which broke hydration when built here.
+ */
+export function SettingsForm({
+  defaultValues,
+  currencies,
+  timeZones,
+}: {
+  defaultValues: StoreSettingsFormInput;
+  currencies: string[];
+  timeZones: string[];
+}) {
   const t = useTranslations("adminSettings");
 
   const {
@@ -51,6 +65,7 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsFo
         "currency",
       ],
     });
+  const dineInEnabled = useWatch({ control, name: "dineInEnabled" });
 
   const errorText = (message?: string) => {
     if (!message) return null;
@@ -138,7 +153,7 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsFo
             error={errorText(errors.currency?.message)}
           >
             <select id="currency" className={selectClass} {...register("currency")}>
-              {currencyOptions().map((code) => (
+              {currencies.map((code) => (
                 <option key={code} value={code}>
                   {code}
                 </option>
@@ -151,7 +166,7 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsFo
             error={errorText(errors.timeZone?.message)}
           >
             <select id="timeZone" className={selectClass} {...register("timeZone")}>
-              {timeZoneOptions(defaultValues.timeZone).map((tz) => (
+              {timeZones.map((tz) => (
                 <option key={tz} value={tz}>
                   {tz.replaceAll("_", " ")}
                 </option>
@@ -245,6 +260,41 @@ export function SettingsForm({ defaultValues }: { defaultValues: StoreSettingsFo
             />
           </Field>
           <p className="text-muted-foreground text-xs">{t("deliveryFeeHint")}</p>
+        </div>
+      </Card>
+
+      <Card title={t("dineInSection")} hint={t("dineInHint")}>
+        <SwitchField control={control} name="dineInEnabled" label={t("dineIn")} />
+        {/* Hidden, not unmounted — keeps the table count while toggled */}
+        <div className={cn("flex flex-col gap-3", !dineInEnabled && "hidden")}>
+          <Field
+            label={t("tableCount")}
+            htmlFor="tableCount"
+            error={errorText(errors.tableCount?.message)}
+          >
+            <Input
+              id="tableCount"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={MAX_TABLES}
+              step={1}
+              className="w-28"
+              aria-invalid={!!errors.tableCount}
+              {...register("tableCount", { valueAsNumber: true })}
+            />
+          </Field>
+          {defaultValues.dineInEnabled && defaultValues.tableCount > 0 && (
+            <Link
+              href="/admin/tables"
+              target="_blank"
+              className={cn(buttonVariants({ variant: "outline" }), "w-fit gap-2")}
+            >
+              <QrCode className="size-4" aria-hidden />
+              {t("printTables")}
+            </Link>
+          )}
+          <p className="text-muted-foreground text-xs">{t("tablesHint")}</p>
         </div>
       </Card>
 
@@ -384,6 +434,7 @@ function SwitchField({
     | "isOpen"
     | "pickupEnabled"
     | "deliveryEnabled"
+    | "dineInEnabled"
     | "acceptCash"
     | "acceptCardOnDelivery"
     | "acceptTransfer";
@@ -436,15 +487,3 @@ const selectClass =
   "h-9 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
 
 /** Popular currencies first, then every ISO 4217 code the browser knows */
-function currencyOptions(): string[] {
-  const all =
-    typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("currency") : [];
-  return [...new Set([...POPULAR_CURRENCIES, ...all])];
-}
-
-/** All IANA time zones (current value kept even if the browser doesn't list it) */
-function timeZoneOptions(current: string): string[] {
-  const all =
-    typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : [];
-  return [...new Set(["UTC", current, ...all])];
-}
