@@ -1029,7 +1029,8 @@
       "imageInvalid": "Invalid image",
       "socialInvalid": "Check the username",
       "sectionsInvalid": "Check the sections",
-      "linkInvalid": "Link must start with https://"
+      "linkInvalid": "Link must start with https://",
+      "dateInvalid": "Invalid date"
     },
     "tabs": {
       "storefront": "Storefront",
@@ -1134,6 +1135,31 @@
       "deliveryPayment": "Delivery and payment",
       "deliveryPaymentHint": "Pickup, delivery fee, minimum order and payment methods are in Settings.",
       "openSettings": "Open Settings"
+    },
+    "popup": {
+      "title": "Popup",
+      "lead": "A one-time window when customers open your store — for an offer, a new dish or holiday hours.",
+      "enable": "Show a popup",
+      "enableHint": "Each visitor sees it once. If you change it, they see it once more.",
+      "image": "Image",
+      "imageHint": "Optional. Square or 4:3 works best.",
+      "removeImage": "Remove image",
+      "heading": "Title",
+      "headingPlaceholder": "e.g. −20% this weekend",
+      "text": "Text",
+      "textPlaceholder": "e.g. On all combos until Sunday night.",
+      "button": "Button text",
+      "buttonPlaceholder": "e.g. See the menu",
+      "buttonLink": "Button link",
+      "buttonLinkHint": "Empty — the button just closes the popup.",
+      "countdown": "Countdown until",
+      "countdownHint": "Optional. Shows a timer; the popup stops showing when it ends."
     }
+  },
+  "popup": {
+    "days": "days",
+    "hours": "hrs",
+    "minutes": "min",
+    "seconds": "sec"
   }
 }

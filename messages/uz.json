@@ -1029,7 +1029,8 @@
       "imageInvalid": "Noto'g'ri rasm",
       "socialInvalid": "Username'ni tekshiring",
       "sectionsInvalid": "Bo'limlarni tekshiring",
-      "linkInvalid": "Havola https:// bilan boshlanishi kerak"
+      "linkInvalid": "Havola https:// bilan boshlanishi kerak",
+      "dateInvalid": "Noto'g'ri sana"
     },
     "tabs": {
       "storefront": "Vitrina",
@@ -1134,6 +1135,31 @@
       "deliveryPayment": "Yetkazish va to'lov",
       "deliveryPaymentHint": "Olib ketish, yetkazish narxi, minimal buyurtma va to'lov usullari — Sozlamalarda.",
       "openSettings": "Sozlamalarni ochish"
+    },
+    "popup": {
+      "title": "Qalqib chiquvchi oyna",
+      "lead": "Do'kon ochilganda bir marta chiqadigan oyna — aksiya, yangi taom yoki bayram jadvali uchun.",
+      "enable": "Oynani ko'rsatish",
+      "enableHint": "Har bir mijoz uni bir marta ko'radi. O'zgartirsangiz — yana bir marta.",
+      "image": "Rasm",
+      "imageHint": "Ixtiyoriy. Kvadrat yoki 4:3 yaxshi.",
+      "removeImage": "Rasmni o'chirish",
+      "heading": "Sarlavha",
+      "headingPlaceholder": "masalan, Dam olish kunlari −20%",
+      "text": "Matn",
+      "textPlaceholder": "masalan, Yakshanba kechgacha barcha kombolarga.",
+      "button": "Tugma matni",
+      "buttonPlaceholder": "masalan, Menyuni ko'rish",
+      "buttonLink": "Tugma havolasi",
+      "buttonLinkHint": "Bo'sh — tugma faqat oynani yopadi.",
+      "countdown": "Taymer tugashi",
+      "countdownHint": "Ixtiyoriy. Teskari sanoq ko'rsatadi; tugagach oyna boshqa chiqmaydi."
     }
+  },
+  "popup": {
+    "days": "kun",
+    "hours": "soat",
+    "minutes": "daq",
+    "seconds": "son"
   }
 }

@@ -16,6 +16,7 @@ import {
   PROMO_CODE_PATTERN,
   TIP_PERCENTS,
 } from "@/lib/orders/promo";
+import { popupSchema } from "@/lib/popup";
 import { sectionsSchema } from "@/lib/sections";
 
 import { isValidCurrency, toMajor, toMinor } from "@/lib/money";
@@ -517,6 +518,7 @@ export const designSchema = z.object({
   checkoutNote: z.boolean(),
   checkoutPromo: z.boolean(),
   tipsEnabled: z.boolean(),
+  popup: popupSchema,
 });
 
 export type DesignInput = z.input<typeof designSchema>;

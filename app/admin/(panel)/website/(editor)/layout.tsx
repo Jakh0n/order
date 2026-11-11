@@ -13,6 +13,7 @@ import {
   asPageBackground,
 } from "@/lib/design";
 import { asEmailMode } from "@/lib/orders/promo";
+import { parsePopup } from "@/lib/popup";
 import { parseSections } from "@/lib/sections";
 
 /**
@@ -56,6 +57,7 @@ async function Design() {
       checkoutNote: true,
       checkoutPromo: true,
       tipsEnabled: true,
+      popup: true,
     },
   });
   if (!design) notFound();
@@ -77,6 +79,7 @@ async function Design() {
         headerStyle: asHeaderStyle(design.headerStyle),
         sections: parseSections(design.sections),
         checkoutEmail: asEmailMode(design.checkoutEmail),
+        popup: parsePopup(design.popup),
       }}
     />
   );

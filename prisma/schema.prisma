@@ -95,6 +95,8 @@ model Store {
   checkoutPromo        Boolean        @default(true)
   /// Tip choice on the checkout (None / 5 / 10 / 15 % of the items subtotal)
   tipsEnabled          Boolean        @default(false)
+  /// One-time popup on the store page (lib/popup.ts): title, text, image, button, countdown
+  popup                Json?
   /// Store page sections in order (lib/sections.ts): built-ins + owner text / image blocks; null = default order
   sections             Json?
   /// Social profiles (usernames, no @) shown as icons in the store header

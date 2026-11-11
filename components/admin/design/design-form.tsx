@@ -22,7 +22,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { type Control, Controller, useForm, useWatch } from "react-hook-form";
+import {
+  type Control,
+  Controller,
+  type FieldErrors,
+  useForm,
+  type UseFormRegister,
+  type UseFormSetValue,
+  useWatch,
+} from "react-hook-form";
 import { toast } from "sonner";
 
 import { SectionsEditor } from "@/components/admin/design/sections-editor";
@@ -223,6 +231,16 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
                   {...register("announcement")}
                 />
               </Field>
+            </Card>
+
+            <Card title={t("popup.title")} hint={t("popup.lead")}>
+              <PopupEditor
+                control={control}
+                register={register}
+                setValue={setValue}
+                errorText={errorText}
+                errors={errors}
+              />
             </Card>
 
             <Card title={t("social")} hint={t("socialHint")}>
@@ -944,5 +962,165 @@ function SwitchRow({
         </label>
       )}
     />
+  );
+}
+
+/** ISO (UTC) ⇄ the browser's local "YYYY-MM-DDTHH:mm" for <input type="datetime-local"> */
+function toLocalInput(iso: string): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function PopupEditor({
+  control,
+  register,
+  setValue,
+  errorText,
+  errors,
+}: {
+  control: Control<DesignInput>;
+  register: UseFormRegister<DesignInput>;
+  setValue: UseFormSetValue<DesignInput>;
+  errorText: (key?: string) => string | null;
+  errors: FieldErrors<DesignInput>;
+}) {
+  const t = useTranslations("design.popup");
+  const popup = useWatch({ control, name: "popup" });
+  const { inputRef, pending, handleFile } = useImageUpload((url) =>
+    setValue("popup.imageUrl", url, { shouldDirty: true }),
+  );
+
+  return (
+    <div className="flex flex-col gap-4">
+      <Controller
+        control={control}
+        name="popup.enabled"
+        render={({ field }) => (
+          <label className="flex min-h-11 cursor-pointer items-center justify-between gap-3">
+            <span>
+              <span className="block text-sm font-medium">{t("enable")}</span>
+              <span className="text-muted-foreground text-xs">{t("enableHint")}</span>
+            </span>
+            <Switch checked={field.value} onCheckedChange={field.onChange} />
+          </label>
+        )}
+      />
+      {/* Hidden, not unmounted, while off — the typed content is kept */}
+      <div className={cn("flex flex-col gap-4", !popup?.enabled && "hidden")}>
+        <div className="flex items-start gap-3">
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="bg-muted relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-dashed"
+            aria-label={t("image")}
+          >
+            {popup?.imageUrl ? (
+              <Image src={popup.imageUrl} alt="" fill sizes="80px" className="object-cover" />
+            ) : (
+              <ImagePlus className="text-muted-foreground size-5" aria-hidden />
+            )}
+            {pending && <Busy />}
+          </button>
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => handleFile(e.target.files?.[0])}
+          />
+          <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1">
+            <p className="text-sm font-medium">{t("image")}</p>
+            <p className="text-muted-foreground text-xs">{t("imageHint")}</p>
+            {popup?.imageUrl && (
+              <button
+                type="button"
+                onClick={() => setValue("popup.imageUrl", null, { shouldDirty: true })}
+                className="text-muted-foreground hover:text-destructive w-fit text-xs"
+              >
+                {t("removeImage")}
+              </button>
+            )}
+          </div>
+        </div>
+        <Field
+          label={t("heading")}
+          htmlFor="popup-title"
+          error={errorText(errors.popup?.title?.message)}
+        >
+          <Input
+            id="popup-title"
+            maxLength={60}
+            placeholder={t("headingPlaceholder")}
+            {...register("popup.title")}
+          />
+        </Field>
+        <Field
+          label={t("text")}
+          htmlFor="popup-text"
+          error={errorText(errors.popup?.text?.message)}
+        >
+          <Textarea
+            id="popup-text"
+            rows={2}
+            maxLength={300}
+            placeholder={t("textPlaceholder")}
+            {...register("popup.text")}
+          />
+        </Field>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field
+            label={t("button")}
+            htmlFor="popup-button"
+            error={errorText(errors.popup?.buttonLabel?.message)}
+          >
+            <Input
+              id="popup-button"
+              maxLength={30}
+              placeholder={t("buttonPlaceholder")}
+              {...register("popup.buttonLabel")}
+            />
+          </Field>
+          <Field
+            label={t("buttonLink")}
+            htmlFor="popup-link"
+            hint={t("buttonLinkHint")}
+            error={errorText(errors.popup?.buttonLink?.message)}
+          >
+            <Input
+              id="popup-link"
+              type="url"
+              maxLength={300}
+              placeholder="https://"
+              {...register("popup.buttonLink")}
+            />
+          </Field>
+        </div>
+        <Field
+          label={t("countdown")}
+          htmlFor="popup-ends"
+          hint={t("countdownHint")}
+          error={errorText(errors.popup?.endsAt?.message)}
+        >
+          <Input
+            id="popup-ends"
+            type="datetime-local"
+            className="w-60"
+            value={toLocalInput(popup?.endsAt ?? "")}
+            onChange={(e) =>
+              setValue(
+                "popup.endsAt",
+                e.target.value ? new Date(e.target.value).toISOString() : "",
+                {
+                  shouldDirty: true,
+                },
+              )
+            }
+          />
+        </Field>
+      </div>
+    </div>
   );
 }

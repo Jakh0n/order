@@ -1,3 +1,4 @@
+import type { Popup } from "@/lib/popup";
 import type { Section } from "@/lib/sections";
 
 // Server → klient uzatiladigan menyu tiplari (faqat serializable maydonlar).
@@ -53,6 +54,8 @@ export interface StorefrontStore {
   headerStyle: string;
   showSearch: boolean;
   showDescriptions: boolean;
+  /** One-time popup (lib/popup.ts), already validated */
+  popup: Popup;
   /** Ordered page sections (lib/sections.ts), already validated */
   sections: Section[];
   /** Social usernames (no @) */

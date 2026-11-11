@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { CurrencyProvider } from "@/components/currency-provider";
 import { CheckoutMock } from "@/components/admin/design/checkout-mock";
+import { PromoPopup } from "@/components/storefront/promo-popup";
 import { StorefrontSections } from "@/components/storefront/storefront-sections";
 import { asEmailMode, type EmailMode } from "@/lib/orders/promo";
 import {
@@ -18,6 +19,7 @@ import {
   themeCss,
 } from "@/lib/design";
 import type { StorefrontData, StorefrontStore } from "@/lib/menu-types";
+import { type Popup, popupSchema } from "@/lib/popup";
 import { type Section, sectionsSchema } from "@/lib/sections";
 
 export const PREVIEW_MESSAGE = "flami-design-preview";
@@ -43,6 +45,7 @@ export type DesignDraft = Partial<
     | "telegramChannel"
     | "tiktok"
     | "sections"
+    | "popup"
   >
 >;
 
@@ -74,6 +77,7 @@ function applyDraft(store: StorefrontStore, d: Record<string, unknown>): Storefr
     telegramChannel: social(d.telegramChannel, "telegramChannel"),
     tiktok: social(d.tiktok, "tiktok"),
     // Invalid / half-edited sections keep the last good order
+    popup: popupSchema.safeParse(d.popup).success ? (d.popup as Popup) : store.popup,
     sections: sectionsSchema.safeParse(d.sections).success
       ? (d.sections as Section[])
       : store.sections,
@@ -94,6 +98,8 @@ export function DesignPreview({ data }: { data: StorefrontData }) {
     promo: boolean;
     tips: boolean;
   }>({ on: false, email: "off", note: true, promo: true, tips: false });
+  // Appearance tab: the popup is shown so the owner sees what they're editing
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     function onMessage(event: MessageEvent) {
@@ -102,6 +108,7 @@ export function DesignPreview({ data }: { data: StorefrontData }) {
       if (msg?.type !== PREVIEW_MESSAGE || !msg.draft) return;
       setStore(applyDraft(data.store, msg.draft));
       const d = msg.draft;
+      setShowPopup(msg.tab === "appearance");
       setCheckout({
         on: msg.tab === "checkout",
         email: asEmailMode(d.checkoutEmail),
@@ -137,6 +144,7 @@ export function DesignPreview({ data }: { data: StorefrontData }) {
               cartKey={`preview:${store.slug}`}
             />
           )}
+          {showPopup && <PromoPopup slug={store.slug} popup={store.popup} forceOpen />}
         </div>
       </div>
     </CurrencyProvider>

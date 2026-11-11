@@ -10,6 +10,7 @@ import { CartBar } from "@/components/storefront/cart-sheet";
 import { CartSync } from "@/components/storefront/cart-sync";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { StoreBlocked } from "@/components/storefront/store-blocked";
+import { PromoPopup } from "@/components/storefront/promo-popup";
 import { StorefrontSections } from "@/components/storefront/storefront-sections";
 import { siteOrigin } from "@/lib/app-url";
 import { storeJsonLd, topItemNames } from "@/lib/seo";
@@ -83,6 +84,7 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
       <div className="flex-1 bg-(--store-bg)">
         <div className="mx-auto w-full max-w-2xl pb-28">
           <StorefrontSections store={store} categories={categories} sections={store.sections} />
+          <PromoPopup slug={store.slug} popup={store.popup} />
           {/* Free plan: a quiet "Made with Flami" (Pro removes it) */}
           {store.showBranding && (
             <p className="text-muted-foreground py-6 text-center text-xs">
