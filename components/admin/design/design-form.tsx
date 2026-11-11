@@ -33,6 +33,7 @@ import {
 } from "react-hook-form";
 import { toast } from "sonner";
 
+import { NavLinksEditor, PinnedCategoriesEditor } from "@/components/admin/design/menu-editor";
 import { SectionsEditor } from "@/components/admin/design/sections-editor";
 import { useImageUpload } from "@/components/admin/menu/image-upload";
 import { PREVIEW_MESSAGE } from "@/components/admin/design/design-preview";
@@ -68,7 +69,16 @@ export type EditorTab = (typeof EDITOR_TABS)[number]["key"];
 const RADIUS_PX = { sharp: 4, soft: 12, round: 20 } as const;
 
 /** Design page: tabs on the left, the real store page in a phone frame on the right */
-export function DesignForm({ slug, defaultValues }: { slug: string; defaultValues: DesignInput }) {
+export function DesignForm({
+  slug,
+  defaultValues,
+  categories,
+}: {
+  slug: string;
+  defaultValues: DesignInput;
+  /** Active categories in menu order (Menu tab: pinning) */
+  categories: { id: string; name: string }[];
+}) {
   const t = useTranslations("design");
   const pathname = usePathname();
   const tab: EditorTab =
@@ -470,6 +480,38 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
               >
                 {t("checkout.openSettings")}
               </Link>
+            </Card>
+          </div>
+
+          <div className={cn("flex flex-col gap-4", tab !== "menu" && "hidden")}>
+            <Card title={t("menu.links")} hint={t("menu.linksLead")}>
+              <Controller
+                control={control}
+                name="navLinks"
+                render={({ field }) => (
+                  <NavLinksEditor
+                    value={field.value}
+                    onChange={field.onChange}
+                    errors={(
+                      errors.navLinks as
+                        { url?: { message?: string }; label?: { message?: string } }[] | undefined
+                    )?.map((e) => errorText(e?.label?.message ?? e?.url?.message) ?? undefined)}
+                  />
+                )}
+              />
+            </Card>
+            <Card title={t("menu.pinned")} hint={t("menu.pinnedLead")}>
+              <Controller
+                control={control}
+                name="pinnedCategoryIds"
+                render={({ field }) => (
+                  <PinnedCategoriesEditor
+                    categories={categories}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
             </Card>
           </div>
 

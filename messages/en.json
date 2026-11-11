@@ -156,7 +156,8 @@
     "lastOrder": "Your order #{number}",
     "trackOrder": "Track",
     "skipToMenu": "Skip to menu",
-    "madeWith": "Made with Flami"
+    "madeWith": "Made with Flami",
+    "openNav": "Open menu"
   },
   "cart": {
     "title": "Your cart",
@@ -1030,7 +1031,8 @@
       "socialInvalid": "Check the username",
       "sectionsInvalid": "Check the sections",
       "linkInvalid": "Link must start with https://",
-      "dateInvalid": "Invalid date"
+      "dateInvalid": "Invalid date",
+      "linkLabelRequired": "Enter a label"
     },
     "tabs": {
       "storefront": "Storefront",
@@ -1154,6 +1156,24 @@
       "buttonLinkHint": "Empty — the button just closes the popup.",
       "countdown": "Countdown until",
       "countdownHint": "Optional. Shows a timer; the popup stops showing when it ends."
+    },
+    "menu": {
+      "links": "Menu links",
+      "linksLead": "Links in the ☰ menu at the top of your store.",
+      "noLinks": "No links yet — the ☰ menu is hidden until you add one.",
+      "label": "Label",
+      "labelPlaceholder": "e.g. About us",
+      "url": "Link",
+      "urlPlaceholder": "https://… or /your-store/p/about",
+      "addLink": "Add link",
+      "linksHint": "Up to 8. Use https:// for other sites; your own pages (Website → Pages) start with /.",
+      "up": "Move up",
+      "down": "Move down",
+      "delete": "Delete",
+      "pinned": "Pinned categories",
+      "pinnedLead": "Shown first on your menu, in this order. Tap a category to pin it.",
+      "unpin": "Unpin",
+      "noCategories": "Add categories in Products first."
     }
   },
   "popup": {

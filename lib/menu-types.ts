@@ -1,3 +1,4 @@
+import type { NavLink } from "@/lib/nav";
 import type { Popup } from "@/lib/popup";
 import type { Section } from "@/lib/sections";
 
@@ -54,6 +55,9 @@ export interface StorefrontStore {
   headerStyle: string;
   showSearch: boolean;
   showDescriptions: boolean;
+  /** Website → Menu (lib/nav.ts), already validated */
+  navLinks: NavLink[];
+  pinnedCategoryIds: string[];
   /** One-time popup (lib/popup.ts), already validated */
   popup: Popup;
   /** Ordered page sections (lib/sections.ts), already validated */

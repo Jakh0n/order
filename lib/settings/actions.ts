@@ -121,11 +121,17 @@ export async function saveDesign(input: DesignInput): Promise<DesignResult> {
     }
   }
 
-  const current = await prisma.store.findUnique({
-    where: { id: store.id },
-    select: { logoUrl: true, coverUrl: true },
-  });
+  const [current, ownCategories] = await Promise.all([
+    prisma.store.findUnique({
+      where: { id: store.id },
+      select: { logoUrl: true, coverUrl: true },
+    }),
+    prisma.category.findMany({ where: { storeId: store.id }, select: { id: true } }),
+  ]);
   if (!current) return { ok: false, error: "server" };
+  // Only this store's categories can be pinned
+  const own = new Set(ownCategories.map((c) => c.id));
+  data.pinnedCategoryIds = data.pinnedCategoryIds.filter((id) => own.has(id));
 
   try {
     await prisma.store.update({ where: { id: store.id }, data });

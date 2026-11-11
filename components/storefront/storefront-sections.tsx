@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { asMenuLayout } from "@/lib/design";
+import { orderCategories } from "@/lib/nav";
 import type { MenuCategory, StorefrontStore } from "@/lib/menu-types";
 import type { Section } from "@/lib/sections";
 
@@ -44,9 +45,11 @@ export function StorefrontSections({
             case "menu":
               return (
                 <MenuBrowser
-                  key={section.id}
+                  // A new pin order restarts the menu (active category chip = the new first one)
+                  key={`${section.id}:${store.pinnedCategoryIds.join(",")}`}
                   cartKey={cartKey}
-                  categories={categories}
+                  // Website → Menu: pinned categories first
+                  categories={orderCategories(categories, store.pinnedCategoryIds)}
                   layout={asMenuLayout(store.menuLayout)}
                   showSearch={store.showSearch}
                   showDescriptions={store.showDescriptions}

@@ -19,6 +19,7 @@ import {
   themeCss,
 } from "@/lib/design";
 import type { StorefrontData, StorefrontStore } from "@/lib/menu-types";
+import { type NavLink, navLinkSchema, pinnedSchema } from "@/lib/nav";
 import { type Popup, popupSchema } from "@/lib/popup";
 import { type Section, sectionsSchema } from "@/lib/sections";
 
@@ -46,6 +47,8 @@ export type DesignDraft = Partial<
     | "tiktok"
     | "sections"
     | "popup"
+    | "navLinks"
+    | "pinnedCategoryIds"
   >
 >;
 
@@ -78,6 +81,13 @@ function applyDraft(store: StorefrontStore, d: Record<string, unknown>): Storefr
     tiktok: social(d.tiktok, "tiktok"),
     // Invalid / half-edited sections keep the last good order
     popup: popupSchema.safeParse(d.popup).success ? (d.popup as Popup) : store.popup,
+    // Half-typed links are skipped, not shown broken
+    navLinks: Array.isArray(d.navLinks)
+      ? d.navLinks.filter((l): l is NavLink => navLinkSchema.safeParse(l).success)
+      : store.navLinks,
+    pinnedCategoryIds: pinnedSchema.safeParse(d.pinnedCategoryIds).success
+      ? (d.pinnedCategoryIds as string[])
+      : store.pinnedCategoryIds,
     sections: sectionsSchema.safeParse(d.sections).success
       ? (d.sections as Section[])
       : store.sections,

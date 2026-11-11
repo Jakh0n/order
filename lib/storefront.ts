@@ -5,6 +5,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { JOIN, prisma } from "@/lib/db";
 import { asEmailMode } from "@/lib/orders/promo";
 import { isPro } from "@/lib/plan";
+import { parseNavLinks, parsePinned } from "@/lib/nav";
 import { parsePopup } from "@/lib/popup";
 import { parseSections } from "@/lib/sections";
 import type { CheckoutSettings, PaymentMethodValue, StorefrontData } from "@/lib/menu-types";
@@ -54,6 +55,8 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
         showDescriptions: true,
         sections: true,
         popup: true,
+        navLinks: true,
+        pinnedCategoryIds: true,
         instagram: true,
         telegramChannel: true,
         tiktok: true,
@@ -119,6 +122,8 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
       ...rest,
       sections: parseSections(rest.sections),
       popup: parsePopup(rest.popup),
+      navLinks: parseNavLinks(rest.navLinks),
+      pinnedCategoryIds: parsePinned(rest.pinnedCategoryIds),
       freeDeliveryFrom: pro ? store.freeDeliveryFrom : null,
       showBranding: !pro,
     },

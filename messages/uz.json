@@ -156,7 +156,8 @@
     "lastOrder": "Buyurtmangiz №{number}",
     "trackOrder": "Kuzatish",
     "skipToMenu": "Menyuga o'tish",
-    "madeWith": "Flami bilan yaratilgan"
+    "madeWith": "Flami bilan yaratilgan",
+    "openNav": "Menyuni ochish"
   },
   "cart": {
     "title": "Savatingiz",
@@ -1030,7 +1031,8 @@
       "socialInvalid": "Username'ni tekshiring",
       "sectionsInvalid": "Bo'limlarni tekshiring",
       "linkInvalid": "Havola https:// bilan boshlanishi kerak",
-      "dateInvalid": "Noto'g'ri sana"
+      "dateInvalid": "Noto'g'ri sana",
+      "linkLabelRequired": "Nomini kiriting"
     },
     "tabs": {
       "storefront": "Vitrina",
@@ -1154,6 +1156,24 @@
       "buttonLinkHint": "Bo'sh — tugma faqat oynani yopadi.",
       "countdown": "Taymer tugashi",
       "countdownHint": "Ixtiyoriy. Teskari sanoq ko'rsatadi; tugagach oyna boshqa chiqmaydi."
+    },
+    "menu": {
+      "links": "Menyu havolalari",
+      "linksLead": "Do'kon tepasidagi ☰ menyudagi havolalar.",
+      "noLinks": "Hozircha havola yo'q — havola qo'shmaguningizcha ☰ menyu yashirin.",
+      "label": "Nomi",
+      "labelPlaceholder": "masalan, Biz haqimizda",
+      "url": "Havola",
+      "urlPlaceholder": "https://… yoki /dokoningiz/p/about",
+      "addLink": "Havola qo'shish",
+      "linksHint": "8 tagacha. Boshqa saytlar uchun https://; o'z sahifalaringiz (Sayt → Sahifalar) / bilan boshlanadi.",
+      "up": "Yuqoriga",
+      "down": "Pastga",
+      "delete": "O'chirish",
+      "pinned": "Mahkamlangan kategoriyalar",
+      "pinnedLead": "Menyuda birinchi bo'lib, shu tartibda ko'rinadi. Mahkamlash uchun kategoriyani bosing.",
+      "unpin": "Olib tashlash",
+      "noCategories": "Avval «Mahsulotlar»da kategoriya qo'shing."
     }
   },
   "popup": {

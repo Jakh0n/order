@@ -97,6 +97,10 @@ model Store {
   tipsEnabled          Boolean        @default(false)
   /// One-time popup on the store page (lib/popup.ts): title, text, image, button, countdown
   popup                Json?
+  /// Website → Menu: links in the store's ☰ menu [{ id, label, url }] (lib/nav.ts)
+  navLinks             Json?
+  /// Website → Menu: category ids shown first, in this order
+  pinnedCategoryIds    Json?
   /// Store page sections in order (lib/sections.ts): built-ins + owner text / image blocks; null = default order
   sections             Json?
   /// Social profiles (usernames, no @) shown as icons in the store header

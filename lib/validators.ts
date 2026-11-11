@@ -16,6 +16,7 @@ import {
   PROMO_CODE_PATTERN,
   TIP_PERCENTS,
 } from "@/lib/orders/promo";
+import { navLinksSchema, pinnedSchema } from "@/lib/nav";
 import { popupSchema } from "@/lib/popup";
 import { sectionsSchema } from "@/lib/sections";
 
@@ -519,6 +520,8 @@ export const designSchema = z.object({
   checkoutPromo: z.boolean(),
   tipsEnabled: z.boolean(),
   popup: popupSchema,
+  navLinks: navLinksSchema,
+  pinnedCategoryIds: pinnedSchema,
 });
 
 export type DesignInput = z.input<typeof designSchema>;

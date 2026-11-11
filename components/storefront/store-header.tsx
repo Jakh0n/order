@@ -10,6 +10,7 @@ import { LastOrderBanner } from "./last-order-banner";
 import { ClosedBanner, OpenStatus } from "./open-badge";
 import { RichText } from "./rich-text";
 import { SocialLinks } from "./social-links";
+import { StoreNav } from "./store-nav";
 import { TableBanner } from "./table-banner";
 
 /**
@@ -41,6 +42,9 @@ export function StoreHeader({ store }: { store: StorefrontStore }) {
               className="object-cover"
             />
           )}
+          <div className="absolute top-3 left-3">
+            <StoreNav store={store} />
+          </div>
           <div className="absolute top-3 right-3">
             <LanguageSwitcher variant="overlay" />
           </div>
@@ -63,6 +67,7 @@ export function StoreHeader({ store }: { store: StorefrontStore }) {
               <OpenStatus store={store} />
             </div>
           )}
+          {style === "compact" && <StoreNav store={store} variant="default" />}
           {style === "compact" && <LanguageSwitcher />}
         </div>
 
