@@ -79,6 +79,18 @@ model Store {
   pageBackground       String         @default("gray")
   /// Menu layout: "list" (rows) | "grid" (2 photo cards per row)
   menuLayout           String         @default("list")
+  /// Font: "modern" | "friendly" | "elegant" | "classic" | "bold" (lib/design.ts)
+  fontStyle            String         @default("modern")
+  /// Corner rounding: "sharp" | "soft" | "round"
+  cornerStyle          String         @default("soft")
+  /// Store page header: "cover" | "centered" | "compact"
+  headerStyle          String         @default("cover")
+  showSearch           Boolean        @default(true)
+  showDescriptions     Boolean        @default(true)
+  /// Social profiles (usernames, no @) shown as icons in the store header
+  instagram            String?
+  telegramChannel      String?
+  tiktok               String?
   phone                String?
   address              String?
   landmark             String?

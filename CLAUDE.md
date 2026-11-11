@@ -82,7 +82,8 @@ lib/
   report-error.ts             reportError — try/catch'da yutilgan xatolarni Sentry'ga yuborish
   sentry-options.ts           Sentry sozlamalari (dataCollection: shaxsiy ma'lumot o'chiq)
   sentry-scrub.ts             telefon/email ni xabarlardan yashirish
-  design.ts                   brend rangi, fon, menyu ko'rinishi; themeCss (faqat tekshirilgan hex) — do'kon sahifasida :root ga
+  design.ts                   brend rangi, fon, shrift, burchak, sarlavha uslubi, menyu ko'rinishi, ijtimoiy tarmoqlar;
+                              themeCss (faqat tekshirilgan hex va qat'iy kalitlar) — do'kon sahifasida :root ga
                               (StoreTheme), Design preview'da jonli (PreviewBridge, postMessage, faqat shu sayt)
   plan.ts                     planOf / isPro (PAID + paidUntil kelajakda = Pro), FREE_MONTHLY_ORDERS, upgradeLink (SUPPORT_TELEGRAM)
   plan-history.ts             freeHistoryFilter — Free: oyiga 100 tadan keyingi YAKUNLANGAN buyurtmalar tarixda yashiriladi
@@ -171,6 +172,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Pul: Int, do'kon valyutasining eng kichik birligida (sent). Ko'rsatish faqat `formatMoney(minor, currency)` /
   `useFormatMoney()` orqali. Admin formalarida asosiy birlik (8.99) — saqlashda `toMinor`; formalar uchun
   `productFormSchema` / `storeSettingsFormSchema`, server uchun `productSchema` / `storeSettingsSchema`.
+- Holat ranglari (Ochiq / Yopiq, to'landi) brend rangiga bog'lanmaydi — doim yashil/qizil.
 - Buyurtma o'z valyutasini saqlaydi (`Order.currency`) — summalar shu bilan ko'rsatiladi.
 - Promo-kod: `Order.total = subtotal - discount + deliveryFee`. Chegirma taomlar summasiga; kod serverda qayta tekshiriladi
   va `usedCount` tranzaksiya ichida atomik oshiriladi (`maxUses` oshib ketmaydi). Bepul yetkazish (`Store.freeDeliveryFrom`)

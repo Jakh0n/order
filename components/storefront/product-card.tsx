@@ -17,10 +17,12 @@ export function ProductCard({
   cartKey,
   product,
   layout = "list",
+  showDescription = true,
 }: {
   cartKey: string;
   product: MenuProduct;
   layout?: MenuLayout;
+  showDescription?: boolean;
 }) {
   const formatMoney = useFormatMoney();
   const t = useTranslations();
@@ -155,7 +157,7 @@ export function ProductCard({
         )}
       >
         <h3 className="leading-snug font-semibold">{product.name}</h3>
-        {product.description && (
+        {showDescription && product.description && (
           <p className="text-muted-foreground line-clamp-2 text-sm">{product.description}</p>
         )}
         <div className="mt-auto pt-1">{price}</div>

@@ -26,11 +26,16 @@ export function MenuBrowser({
   cartKey,
   categories,
   layout = "list",
+  showSearch = true,
+  showDescriptions = true,
 }: {
   cartKey: string;
   categories: MenuCategory[];
   /** "list" — rows with a photo on the right; "grid" — 2 photo cards per row (Design page) */
   layout?: MenuLayout;
+  /** Design page toggles */
+  showSearch?: boolean;
+  showDescriptions?: boolean;
 }) {
   const t = useTranslations("menu");
   const [query, setQuery] = useState("");
@@ -114,7 +119,12 @@ export function MenuBrowser({
         ref={barRef}
         className="bg-background/95 sticky top-0 z-30 border-b px-4 pt-3 pb-2 backdrop-blur"
       >
-        <label className="bg-muted focus-within:ring-ring/40 flex h-10 items-center gap-2 rounded-xl px-3 focus-within:ring-2">
+        <label
+          className={cn(
+            "bg-muted focus-within:ring-ring/40 flex h-10 items-center gap-2 rounded-xl px-3 focus-within:ring-2",
+            !showSearch && "hidden",
+          )}
+        >
           <Search className="text-muted-foreground size-4 shrink-0" aria-hidden />
           <input
             type="search"
@@ -137,7 +147,7 @@ export function MenuBrowser({
         </label>
 
         {!q && categories.length > 1 && (
-          <nav aria-label={t("categories")} className="-mx-4 mt-2">
+          <nav aria-label={t("categories")} className={cn("-mx-4", showSearch && "mt-2")}>
             <div
               ref={chipsRef}
               className="flex [scrollbar-width:none] gap-2 overflow-x-auto px-4 pb-1"
@@ -205,7 +215,13 @@ export function MenuBrowser({
               }
             >
               {category.products.map((product) => (
-                <ProductCard key={product.id} cartKey={cartKey} product={product} layout={layout} />
+                <ProductCard
+                  key={product.id}
+                  cartKey={cartKey}
+                  product={product}
+                  layout={layout}
+                  showDescription={showDescriptions}
+                />
               ))}
             </div>
           </section>

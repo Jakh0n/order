@@ -23,6 +23,8 @@ export async function getOrderForCustomer(id: string) {
           timeZone: true,
           brandColor: true,
           pageBackground: true,
+          fontStyle: true,
+          cornerStyle: true,
         },
       },
     },

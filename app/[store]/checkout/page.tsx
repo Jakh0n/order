@@ -40,6 +40,8 @@ async function Checkout({ params }: { params: PageProps<"/[store]/checkout">["pa
       <StoreTheme
         brandColor={data.store.brandColor}
         pageBackground={data.store.pageBackground}
+        fontStyle={data.store.fontStyle}
+        cornerStyle={data.store.cornerStyle}
       />
       <div className="mx-auto w-full max-w-2xl">
         <header className="bg-background/95 sticky top-0 z-30 flex items-center gap-2 border-b px-2 py-2 backdrop-blur">

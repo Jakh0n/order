@@ -63,6 +63,8 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
       <StoreTheme
         brandColor={order.store.brandColor}
         pageBackground={order.store.pageBackground}
+        fontStyle={order.store.fontStyle}
+        cornerStyle={order.store.cornerStyle}
       />
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-3 px-3 pt-3 pb-8">
         <title>{t("order.title", { number: order.number })}</title>

@@ -964,11 +964,7 @@
   },
   "design": {
     "title": "Design",
-    "lead": "How your store looks to customers. Colors change in the preview right away; the rest after saving.",
-    "profile": "Profile",
-    "logo": "Logo",
-    "cover": "Cover photo",
-    "coverHint": "Shown at the top of your store page. A wide photo works best (e.g. 1200×400).",
+    "lead": "How your store looks to customers. Colors, font and corners change in the preview right away; the rest after saving.",
     "name": "Store name",
     "description": "Description",
     "descriptionPlaceholder": "e.g. Charcoal kebabs and fresh bread since 2015",
@@ -976,16 +972,16 @@
     "announcement": "Announcement",
     "announcementPlaceholder": "e.g. Free delivery this weekend 🎉",
     "announcementHint": "A colored bar at the very top of your store. Leave empty to hide it.",
-    "colors": "Colors",
     "brandColor": "Brand color",
     "brandColorHint": "Used for buttons, prices and highlights — on your store, checkout and order page.",
-    "customColor": "Pick any color",
+    "customColor": "Custom",
     "lowContrast": "This color is very light — buttons will use dark text, and it may be hard to read on white.",
     "background": "Page background",
     "backgrounds": {
       "gray": "Gray",
       "white": "White",
-      "cream": "Cream"
+      "cream": "Cream",
+      "tint": "Brand tint"
     },
     "menuLayout": "Menu layout",
     "layouts": {
@@ -999,8 +995,8 @@
     "unsaved": "You have unsaved changes",
     "allSaved": "All changes saved",
     "preview": "Preview",
-    "previewHint": "This is your real store page. Tap around — orders placed here are real.",
-    "reload": "Reload preview",
+    "previewHint": "Your real store page. Orders placed here are real orders.",
+    "reload": "Reload",
     "openStore": "Open store",
     "errors": {
       "invalid": "Please check the details",
@@ -1008,7 +1004,58 @@
       "nameRequired": "Please enter a name",
       "tooLong": "Too long",
       "colorInvalid": "Invalid color",
-      "imageInvalid": "Invalid image"
+      "imageInvalid": "Invalid image",
+      "socialInvalid": "Check the username"
+    },
+    "tabs": {
+      "brand": "Brand",
+      "style": "Style",
+      "layout": "Layout"
+    },
+    "header": "Header",
+    "headerHint": "Your cover photo and logo, as customers see them at the top of your store.",
+    "addCover": "Add a cover photo",
+    "changeCover": "Change",
+    "removeCover": "Remove cover",
+    "addLogo": "Add logo",
+    "changeLogo": "Change logo",
+    "removeLogo": "Remove",
+    "imagesHint": "Logo: square, at least 200×200. Cover: wide, e.g. 1200×400. JPG, PNG or WebP.",
+    "text": "Name and text",
+    "social": "Social links",
+    "socialHint": "Shown as icons on your store page. Leave empty to hide.",
+    "socialPlaceholder": "username",
+    "socials": {
+      "instagram": "Instagram",
+      "telegramChannel": "Telegram channel",
+      "tiktok": "TikTok"
+    },
+    "font": "Font",
+    "fonts": {
+      "modern": "Modern",
+      "friendly": "Friendly",
+      "elegant": "Elegant",
+      "classic": "Classic",
+      "bold": "Bold"
+    },
+    "corners": "Corners",
+    "cornerStyles": {
+      "sharp": "Sharp",
+      "soft": "Soft",
+      "round": "Round"
+    },
+    "headerStyle": "Header style",
+    "headerStyles": {
+      "cover": "Cover",
+      "centered": "Centered",
+      "compact": "Compact"
+    },
+    "show": "Show on the menu",
+    "toggles": {
+      "showSearch": "Search bar",
+      "showSearchHint": "Useful for long menus",
+      "showDescriptions": "Dish descriptions",
+      "showDescriptionsHint": "Short text under each dish name (list layout)"
     }
   }
 }

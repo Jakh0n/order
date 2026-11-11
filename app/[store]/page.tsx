@@ -77,7 +77,12 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
       </a>
       <JsonLd data={storeJsonLd(data, siteOrigin())} />
       {/* Gray background + white cards — sections stand apart clearly */}
-      <StoreTheme brandColor={store.brandColor} pageBackground={store.pageBackground} />
+      <StoreTheme
+        brandColor={store.brandColor}
+        pageBackground={store.pageBackground}
+        fontStyle={store.fontStyle}
+        cornerStyle={store.cornerStyle}
+      />
       <PreviewBridge />
       <div className="flex-1 bg-(--store-bg)">
         <div className="mx-auto w-full max-w-2xl pb-28">
@@ -86,6 +91,8 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
             cartKey={store.slug}
             categories={categories}
             layout={asMenuLayout(store.menuLayout)}
+            showSearch={store.showSearch}
+            showDescriptions={store.showDescriptions}
           />
           {/* Free plan: a quiet "Made with Flami" (Pro removes it) */}
           {store.showBranding && (

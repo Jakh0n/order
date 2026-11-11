@@ -46,6 +46,15 @@ export interface StorefrontStore {
   brandColor: string | null;
   pageBackground: string;
   menuLayout: string;
+  fontStyle: string;
+  cornerStyle: string;
+  headerStyle: string;
+  showSearch: boolean;
+  showDescriptions: boolean;
+  /** Social usernames (no @) */
+  instagram: string | null;
+  telegramChannel: string | null;
+  tiktok: string | null;
   phone: string | null;
   address: string | null;
   openTime: string | null;

@@ -22,20 +22,7 @@ export function ImageUpload({
   wide?: boolean;
 }) {
   const t = useTranslations("adminMenu");
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [pending, startTransition] = useTransition();
-
-  function handleFile(file: File | undefined) {
-    if (!file) return;
-    startTransition(async () => {
-      const formData = new FormData();
-      formData.set("file", await shrinkImage(file));
-      const result = await uploadProductImage(formData);
-      if (result.ok) onChange(result.url);
-      else toast.error(t(`errors.${result.error}`));
-      if (inputRef.current) inputRef.current.value = "";
-    });
-  }
+  const { inputRef, pending, handleFile } = useImageUpload(onChange);
 
   return (
     <div className="flex items-center gap-3">
@@ -89,4 +76,29 @@ export function ImageUpload({
       </div>
     </div>
   );
+}
+
+/**
+ * Upload logic without UI (shrink in the browser → store's folder in Supabase).
+ * Render your own button (onClick: inputRef.current?.click()) and a hidden
+ * <input type="file" ref={inputRef} onChange={…handleFile} />.
+ */
+export function useImageUpload(onChange: (url: string) => void) {
+  const t = useTranslations("adminMenu");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [pending, startTransition] = useTransition();
+
+  function handleFile(file: File | undefined) {
+    if (!file) return;
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.set("file", await shrinkImage(file));
+      const result = await uploadProductImage(formData);
+      if (result.ok) onChange(result.url);
+      else toast.error(t(`errors.${result.error}`));
+      if (inputRef.current) inputRef.current.value = "";
+    });
+  }
+
+  return { inputRef, pending, handleFile };
 }

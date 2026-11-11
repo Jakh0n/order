@@ -28,11 +28,12 @@ export function OpenStatus({ store }: { store: StorefrontStore }) {
         <span
           className={cn(
             "flex items-center gap-1.5 font-medium",
-            open ? "text-primary" : "text-destructive",
+            // Status color is fixed green, never the brand color (a red brand would read as "closed")
+            open ? "text-emerald-700 dark:text-emerald-400" : "text-destructive",
           )}
         >
           <span
-            className={cn("size-2 rounded-full", open ? "bg-primary" : "bg-destructive")}
+            className={cn("size-2 rounded-full", open ? "bg-emerald-600" : "bg-destructive")}
             aria-hidden
           />
           {open ? t("store.open") : t("store.closed")}

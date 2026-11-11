@@ -16,7 +16,13 @@ export function PreviewBridge() {
     if (window.parent === window) return;
     function onMessage(event: MessageEvent) {
       if (event.origin !== window.location.origin) return;
-      const data = event.data as { type?: string; brandColor?: unknown; pageBackground?: unknown };
+      const data = event.data as {
+        type?: string;
+        brandColor?: unknown;
+        pageBackground?: unknown;
+        fontStyle?: unknown;
+        cornerStyle?: unknown;
+      };
       if (data?.type !== PREVIEW_MESSAGE) return;
       let style = document.getElementById("flami-preview-theme");
       if (!style) {
@@ -28,6 +34,9 @@ export function PreviewBridge() {
       style.textContent = themeCss({
         brandColor: typeof data.brandColor === "string" ? data.brandColor : null,
         pageBackground: typeof data.pageBackground === "string" ? data.pageBackground : "gray",
+        // themeCss maps these to fixed values; anything unknown falls back to the default
+        fontStyle: typeof data.fontStyle === "string" ? data.fontStyle : undefined,
+        cornerStyle: typeof data.cornerStyle === "string" ? data.cornerStyle : undefined,
       });
     }
     window.addEventListener("message", onMessage);

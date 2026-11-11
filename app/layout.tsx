@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import {
+  Inter,
+  JetBrains_Mono,
+  Lora,
+  Montserrat,
+  Nunito,
+  Playfair_Display,
+} from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { Suspense } from "react";
@@ -13,6 +20,33 @@ import "./globals.css";
 const fontSans = Inter({
   variable: "--font-sans",
   subsets: ["latin", "cyrillic"],
+});
+
+// Store fonts (Design page). Only CSS variables here; the files download only when a store uses one.
+// next/font needs literal options in every call.
+const fontNunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin", "cyrillic"],
+  display: "swap",
+  preload: false,
+});
+const fontPlayfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin", "cyrillic"],
+  display: "swap",
+  preload: false,
+});
+const fontLora = Lora({
+  variable: "--font-lora",
+  subsets: ["latin", "cyrillic"],
+  display: "swap",
+  preload: false,
+});
+const fontMontserrat = Montserrat({
+  variable: "--font-montserrat",
+  subsets: ["latin", "cyrillic"],
+  display: "swap",
+  preload: false,
 });
 
 const fontMono = JetBrains_Mono({
@@ -49,7 +83,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     // Faqat shu tegning atributlariga ta'sir qiladi — ichki komponentlar tekshirilaveradi.
     <html
       lang="en"
-      className={`${fontSans.variable} ${fontMono.variable} h-full antialiased`}
+      className={`${fontSans.variable} ${fontMono.variable} ${fontNunito.variable} ${fontPlayfair.variable} ${fontLora.variable} ${fontMontserrat.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">

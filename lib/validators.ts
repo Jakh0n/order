@@ -1,7 +1,15 @@
 import { z } from "zod";
 
 import { defaultLocale, locales } from "@/i18n/config";
-import { MENU_LAYOUTS, PAGE_BACKGROUNDS } from "@/lib/design";
+import {
+  CORNER_STYLES,
+  FONT_STYLES,
+  HEADER_STYLES,
+  MENU_LAYOUTS,
+  PAGE_BACKGROUNDS,
+  SOCIAL_PATTERNS,
+  socialHandle,
+} from "@/lib/design";
 import { normalizePromoCode, PROMO_CODE_PATTERN } from "@/lib/orders/promo";
 
 import { isValidCurrency, toMajor, toMinor } from "@/lib/money";
@@ -440,6 +448,16 @@ export const promoFormSchema = z
 export type PromoFormInput = z.input<typeof promoFormSchema>;
 export type PromoFormData = z.output<typeof promoFormSchema>;
 
+/** "@name" / profile URL → "name"; empty → null */
+function socialField(pattern: RegExp) {
+  return z
+    .string()
+    .max(100)
+    .nullable()
+    .transform((v) => (v ? socialHandle(v) : null))
+    .refine((v) => v === null || pattern.test(v), "socialInvalid");
+}
+
 /** Design page. Error messages — "design.errors.*" keys. */
 export const designSchema = z.object({
   name: z.string().trim().min(2, "nameRequired").max(80, "tooLong"),
@@ -465,6 +483,14 @@ export const designSchema = z.object({
     .nullable(),
   pageBackground: z.enum(PAGE_BACKGROUNDS),
   menuLayout: z.enum(MENU_LAYOUTS),
+  fontStyle: z.enum(FONT_STYLES),
+  cornerStyle: z.enum(CORNER_STYLES),
+  headerStyle: z.enum(HEADER_STYLES),
+  showSearch: z.boolean(),
+  showDescriptions: z.boolean(),
+  instagram: socialField(SOCIAL_PATTERNS.instagram),
+  telegramChannel: socialField(SOCIAL_PATTERNS.telegramChannel),
+  tiktok: socialField(SOCIAL_PATTERNS.tiktok),
 });
 
 export type DesignInput = z.input<typeof designSchema>;

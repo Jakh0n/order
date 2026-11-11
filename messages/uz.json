@@ -964,11 +964,7 @@
   },
   "design": {
     "title": "Dizayn",
-    "lead": "Do'koningiz mijozlarga qanday ko'rinadi. Ranglar preview'da darhol o'zgaradi, qolgani — saqlagandan keyin.",
-    "profile": "Profil",
-    "logo": "Logotip",
-    "cover": "Muqova rasmi",
-    "coverHint": "Do'kon sahifasining tepasida ko'rinadi. Keng rasm yaxshi (masalan, 1200×400).",
+    "lead": "Do'koningiz mijozlarga qanday ko'rinadi. Rang, shrift va burchaklar preview'da darhol o'zgaradi, qolgani — saqlagandan keyin.",
     "name": "Do'kon nomi",
     "description": "Tavsif",
     "descriptionPlaceholder": "masalan, 2015 yildan beri ko'mirda kabob va yangi non",
@@ -976,16 +972,16 @@
     "announcement": "E'lon",
     "announcementPlaceholder": "masalan, Shu dam olish kunlari yetkazish bepul 🎉",
     "announcementHint": "Do'kon sahifasining eng tepasidagi rangli chiziq. Yashirish uchun bo'sh qoldiring.",
-    "colors": "Ranglar",
     "brandColor": "Brend rangi",
     "brandColorHint": "Tugmalar, narxlar va urg'ular uchun — do'konda, checkout'da va buyurtma sahifasida.",
-    "customColor": "Istalgan rangni tanlash",
+    "customColor": "Boshqa",
     "lowContrast": "Bu rang juda och — tugmalarda to'q yozuv bo'ladi, oq fonda esa o'qish qiyin bo'lishi mumkin.",
     "background": "Sahifa foni",
     "backgrounds": {
       "gray": "Kulrang",
       "white": "Oq",
-      "cream": "Krem"
+      "cream": "Krem",
+      "tint": "Brend tusi"
     },
     "menuLayout": "Menyu ko'rinishi",
     "layouts": {
@@ -999,8 +995,8 @@
     "unsaved": "Saqlanmagan o'zgarishlar bor",
     "allSaved": "Barcha o'zgarishlar saqlangan",
     "preview": "Preview",
-    "previewHint": "Bu sizning haqiqiy do'kon sahifangiz. Bu yerda berilgan buyurtmalar haqiqiy.",
-    "reload": "Preview'ni yangilash",
+    "previewHint": "Haqiqiy do'kon sahifangiz. Bu yerdagi buyurtmalar haqiqiy.",
+    "reload": "Yangilash",
     "openStore": "Do'konni ochish",
     "errors": {
       "invalid": "Ma'lumotlarni tekshiring",
@@ -1008,7 +1004,58 @@
       "nameRequired": "Nomini kiriting",
       "tooLong": "Juda uzun",
       "colorInvalid": "Noto'g'ri rang",
-      "imageInvalid": "Noto'g'ri rasm"
+      "imageInvalid": "Noto'g'ri rasm",
+      "socialInvalid": "Username'ni tekshiring"
+    },
+    "tabs": {
+      "brand": "Brend",
+      "style": "Uslub",
+      "layout": "Tuzilish"
+    },
+    "header": "Sarlavha",
+    "headerHint": "Muqova va logotip — mijozlar do'koningiz tepasida shunday ko'radi.",
+    "addCover": "Muqova rasmini qo'shish",
+    "changeCover": "Almashtirish",
+    "removeCover": "Muqovani o'chirish",
+    "addLogo": "Logotip qo'shish",
+    "changeLogo": "Logotipni almashtirish",
+    "removeLogo": "O'chirish",
+    "imagesHint": "Logotip: kvadrat, kamida 200×200. Muqova: keng, masalan 1200×400. JPG, PNG yoki WebP.",
+    "text": "Nom va matn",
+    "social": "Ijtimoiy tarmoqlar",
+    "socialHint": "Do'kon sahifasida belgi bo'lib ko'rinadi. Yashirish uchun bo'sh qoldiring.",
+    "socialPlaceholder": "username",
+    "socials": {
+      "instagram": "Instagram",
+      "telegramChannel": "Telegram kanal",
+      "tiktok": "TikTok"
+    },
+    "font": "Shrift",
+    "fonts": {
+      "modern": "Zamonaviy",
+      "friendly": "Do'stona",
+      "elegant": "Nafis",
+      "classic": "Klassik",
+      "bold": "Qalin"
+    },
+    "corners": "Burchaklar",
+    "cornerStyles": {
+      "sharp": "O'tkir",
+      "soft": "Yumshoq",
+      "round": "Dumaloq"
+    },
+    "headerStyle": "Sarlavha ko'rinishi",
+    "headerStyles": {
+      "cover": "Muqova",
+      "centered": "Markazda",
+      "compact": "Ixcham"
+    },
+    "show": "Menyuda ko'rsatish",
+    "toggles": {
+      "showSearch": "Qidiruv",
+      "showSearchHint": "Uzun menyu uchun qulay",
+      "showDescriptions": "Taom tavsiflari",
+      "showDescriptionsHint": "Taom nomi ostidagi qisqa matn (ro'yxat ko'rinishida)"
     }
   }
 }
