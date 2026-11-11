@@ -761,5 +761,13 @@
       "a4Hint": "A4 · varaqda 1 ta",
       "standHint": "O'rta (A5, 15 × 21 sm) — stol uchun odatiy o'lcham. Kartochkalarni shaffof akril stendga soling — tik turadi va kirlanmaydi."
     }
+  },
+  "print": {
+    "kitchen": "Oshxona",
+    "receipt": "Chek",
+    "print": "Chop etish",
+    "customer": "Mijoz",
+    "receiptTitle": "Chek №{number}",
+    "thanks": "Rahmat!"
   }
 }

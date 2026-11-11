@@ -53,7 +53,8 @@ app/
   signup/                     ro'yxatdan o'tish ustasi (hisob + do'kon)
   admin/login/                kirish (email + parol)
   admin/(panel)/qr/           QR kodlar: do'kon havolasi + stoldan buyurtma (yoqish, stollar soni) + kartochkalar
-  admin/tables/               stol kartochkalarini A4 chop etish ((panel) layout'idan tashqarida)
+  admin/tables/               stol kartochkalarini chop etish, A6/A5/A4 ((panel) layout'idan tashqarida)
+  admin/print/[orderId]/      80mm: ?type=kitchen (narxsiz, stol katta) | receipt (mijoz cheki); &auto=1 — chop etish oynasi
   admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], qr, settings
   superadmin/                 platforma egasi: statistika, do'konlar, tarif (+1 oy / bepul), bloklash
 components/ui/                shadcn komponentlari
@@ -233,7 +234,7 @@ P1 (navbat bo'yicha):
 1. [x] Rus va o'zbek tillari (`messages/ru.json`, `uz.json`)
 2. [ ] Tarif limitlari kodda (`Store.plan`) + tarif sahifasi
 3. [x] Stolga QR orqali buyurtma (`OrderType.DINE_IN`, stol raqami)
-4. [ ] Chek / oshxona varag'ini chop etish (80mm)
+4. [x] Chek / oshxona varag'ini chop etish (80mm)
 5. [ ] Promo-kodlar + ma'lum summadan bepul yetkazish
 6. [ ] Analitika (tushum, o'rtacha chek, top taomlar, soatlar, qaytgan mijozlar) + mijozlar bazasi (telefon bo'yicha)
 7. [ ] Telegram Mini App

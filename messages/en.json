@@ -761,5 +761,13 @@
       "a4Hint": "A4 · 1 per sheet",
       "standHint": "Medium (A5, 15 × 21 cm) is the usual size for tables. Put the cards in clear acrylic stands — they stand up and stay clean."
     }
+  },
+  "print": {
+    "kitchen": "Kitchen",
+    "receipt": "Receipt",
+    "print": "Print",
+    "customer": "Customer",
+    "receiptTitle": "Receipt #{number}",
+    "thanks": "Thank you!"
   }
 }

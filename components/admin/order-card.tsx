@@ -9,6 +9,8 @@ import {
   Phone,
   Receipt,
   Armchair,
+  ChefHat,
+  Printer,
 } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
@@ -248,6 +250,27 @@ export async function OrderCard({
           )}
         </div>
       )}
+
+      {/* 80 mm printer: kitchen ticket and customer receipt (opens the print dialog) */}
+      <div className="flex gap-2">
+        {(
+          [
+            ["kitchen", ChefHat],
+            ["receipt", Printer],
+          ] as const
+        ).map(([type, Icon]) => (
+          <a
+            key={type}
+            href={`/admin/print/${order.id}?type=${type}&auto=1`}
+            target="_blank"
+            rel="noopener"
+            className="hover:bg-muted text-muted-foreground hover:text-foreground flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-medium transition-colors"
+          >
+            <Icon className="size-3.5" aria-hidden />
+            {t(`print.${type}`)}
+          </a>
+        ))}
+      </div>
 
       <OrderActions
         orderId={order.id}
