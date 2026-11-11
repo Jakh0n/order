@@ -334,7 +334,18 @@
     "analytics": "Analytics",
     "more": "More",
     "plan": "Plan",
-    "design": "Design"
+    "products": "Products",
+    "salesChannels": "Sales channels",
+    "website": "Website",
+    "dineIn": "Dine-in",
+    "websiteItems": {
+      "storefront": "Storefront",
+      "checkout": "Checkout",
+      "appearance": "Appearance",
+      "menu": "Menu",
+      "pages": "Pages",
+      "reviews": "Reviews"
+    }
   },
   "superadmin": {
     "title": "Platform admin",
@@ -963,8 +974,8 @@
     "at": "for {time}"
   },
   "design": {
-    "title": "Design",
-    "lead": "How your store looks to customers. Every change shows in the preview right away — save when you like it.",
+    "title": "Website",
+    "lead": "How your online store looks and works. Every change shows in the preview right away — save when you like it.",
     "name": "Store name",
     "description": "Description",
     "descriptionPlaceholder": "e.g. Charcoal kebabs and fresh bread since 2015",
@@ -1008,9 +1019,10 @@
       "socialInvalid": "Check the username"
     },
     "tabs": {
-      "brand": "Brand",
-      "style": "Style",
-      "layout": "Layout"
+      "storefront": "Storefront",
+      "checkout": "Checkout",
+      "appearance": "Appearance",
+      "menu": "Menu"
     },
     "header": "Header",
     "headerHint": "Your cover photo and logo, as customers see them at the top of your store.",

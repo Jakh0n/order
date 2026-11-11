@@ -334,7 +334,18 @@
     "analytics": "Analitika",
     "more": "Yana",
     "plan": "Tarif",
-    "design": "Dizayn"
+    "products": "Mahsulotlar",
+    "salesChannels": "Savdo kanallari",
+    "website": "Sayt",
+    "dineIn": "Joyida",
+    "websiteItems": {
+      "storefront": "Vitrina",
+      "checkout": "Rasmiylashtirish",
+      "appearance": "Ko'rinish",
+      "menu": "Menyu",
+      "pages": "Sahifalar",
+      "reviews": "Sharhlar"
+    }
   },
   "superadmin": {
     "title": "Platforma admini",
@@ -963,8 +974,8 @@
     "at": "{time} ga"
   },
   "design": {
-    "title": "Dizayn",
-    "lead": "Do'koningiz mijozlarga qanday ko'rinadi. Har bir o'zgarish preview'da darhol ko'rinadi — yoqsa, saqlang.",
+    "title": "Sayt",
+    "lead": "Onlayn do'koningiz qanday ko'rinadi va ishlaydi. Har bir o'zgarish preview'da darhol ko'rinadi — yoqsa, saqlang.",
     "name": "Do'kon nomi",
     "description": "Tavsif",
     "descriptionPlaceholder": "masalan, 2015 yildan beri ko'mirda kabob va yangi non",
@@ -1008,9 +1019,10 @@
       "socialInvalid": "Username'ni tekshiring"
     },
     "tabs": {
-      "brand": "Brend",
-      "style": "Uslub",
-      "layout": "Tuzilish"
+      "storefront": "Vitrina",
+      "checkout": "Rasmiylashtirish",
+      "appearance": "Ko'rinish",
+      "menu": "Menyu"
     },
     "header": "Sarlavha",
     "headerHint": "Muqova va logotip — mijozlar do'koningiz tepasida shunday ko'radi.",

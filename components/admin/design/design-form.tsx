@@ -13,10 +13,13 @@ import {
   Palette,
   PanelsTopLeft,
   RotateCw,
+  ShoppingBag,
   Store,
   Trash2,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -44,18 +47,22 @@ import { cn } from "@/lib/utils";
 import { type DesignInput, designSchema } from "@/lib/validators";
 
 const DEFAULT_BRAND = "#16a05d";
-const TABS = [
-  { key: "brand", icon: Store },
-  { key: "style", icon: Palette },
-  { key: "layout", icon: PanelsTopLeft },
+/** Website editor tabs = routes /admin/website/<tab> (the form lives in their shared layout) */
+export const EDITOR_TABS = [
+  { key: "storefront", icon: Store },
+  { key: "checkout", icon: ShoppingBag },
+  { key: "appearance", icon: Palette },
+  { key: "menu", icon: PanelsTopLeft },
 ] as const;
-type Tab = (typeof TABS)[number]["key"];
+export type EditorTab = (typeof EDITOR_TABS)[number]["key"];
 const RADIUS_PX = { sharp: 4, soft: 12, round: 20 } as const;
 
 /** Design page: tabs on the left, the real store page in a phone frame on the right */
 export function DesignForm({ slug, defaultValues }: { slug: string; defaultValues: DesignInput }) {
   const t = useTranslations("design");
-  const [tab, setTab] = useState<Tab>("brand");
+  const pathname = usePathname();
+  const tab: EditorTab =
+    EDITOR_TABS.find((x) => pathname.endsWith(`/${x.key}`))?.key ?? "storefront";
   const {
     control,
     register,
@@ -142,15 +149,15 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
           {/* Tabs */}
           <div
             role="tablist"
-            className="bg-background grid grid-cols-3 gap-1 rounded-xl border p-1"
+            className="bg-background grid grid-cols-2 gap-1 rounded-xl border p-1 sm:grid-cols-4"
           >
-            {TABS.map(({ key, icon: Icon }) => (
-              <button
+            {EDITOR_TABS.map(({ key, icon: Icon }) => (
+              <Link
                 key={key}
-                type="button"
+                href={`/admin/website/${key}`}
+                scroll={false}
                 role="tab"
                 aria-selected={tab === key}
-                onClick={() => setTab(key)}
                 className={cn(
                   "flex h-10 items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors",
                   tab === key
@@ -160,12 +167,12 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
               >
                 <Icon className="size-4" aria-hidden />
                 {t(`tabs.${key}`)}
-              </button>
+              </Link>
             ))}
           </div>
 
           {/* All tabs stay mounted (hidden), so typed values survive switching tabs */}
-          <div className={cn("flex flex-col gap-4", tab !== "brand" && "hidden")}>
+          <div className={cn("flex flex-col gap-4", tab !== "appearance" && "hidden")}>
             <Card title={t("header")} hint={t("headerHint")}>
               <HeaderEditor
                 name={name ?? ""}
@@ -247,7 +254,7 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
             </Card>
           </div>
 
-          <div className={cn("flex flex-col gap-4", tab !== "style" && "hidden")}>
+          <div className={cn("flex flex-col gap-4", tab !== "appearance" && "hidden")}>
             <Card title={t("brandColor")} hint={t("brandColorHint")}>
               <div
                 className="flex flex-wrap items-center gap-2.5"
@@ -371,7 +378,7 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
             </Card>
           </div>
 
-          <div className={cn("flex flex-col gap-4", tab !== "layout" && "hidden")}>
+          <div className={cn("flex flex-col gap-4", tab !== "storefront" && "hidden")}>
             <Card title={t("headerStyle")}>
               <Controller
                 control={control}
