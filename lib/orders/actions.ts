@@ -98,7 +98,8 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
       storeId: store.id,
       currency: store.currency,
       deliveryFee: store.deliveryFee,
-      minOrder: store.minOrder,
+      // No minimum at a table (a single coffee is a fine order); applies to pickup/delivery
+      minOrder: data.type === "DINE_IN" ? null : store.minOrder,
     });
     if (!result.ok) return { ok: false, error: result.error, minOrder: store.minOrder };
     return { ok: true, orderId: result.orderId, number: result.number };

@@ -235,7 +235,8 @@ export function CheckoutForm({
     setLocationNote(null);
   }
   const total = subtotal + deliveryFee;
-  const missing = Math.max(0, store.minOrder - subtotal);
+  // No minimum order at a table (same rule as the server)
+  const missing = dineIn ? 0 : Math.max(0, store.minOrder - subtotal);
   const canOrder = isAdmin
     ? lines.length > 0
     : (isOpenNow || preorder) &&

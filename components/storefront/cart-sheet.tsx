@@ -18,10 +18,12 @@ import {
 } from "@/components/ui/sheet";
 import { cartCount, cartSubtotal, unitPrice, useCart, useCartLines } from "@/lib/cart-store";
 import type { MenuProduct, StorefrontStore } from "@/lib/menu-types";
+import { useTable } from "@/lib/table-session";
 import { cn } from "@/lib/utils";
 
 import { ProductImage } from "./product-image";
 import { QuantityStepper } from "./quantity-stepper";
+import { validTable } from "./table-banner";
 import { useStoreOpen, useTimeSlots } from "./use-store-open";
 
 /** Pastdagi suzuvchi "Savatni ko'rish" tugmasi + savat varag'i. Savat bo'sh bo'lsa ko'rinmaydi. */
@@ -100,9 +102,13 @@ function CartSheet({
   // Closed now, but there are times to schedule for → pre-order
   const canPreorder = useTimeSlots(store).length > 0;
 
+  // No minimum order at a table (QR) — same rule as the server
+  const atTable = validTable(store, useTable(store.slug)) !== null;
+  const minOrder = atTable ? 0 : store.minOrder;
+
   const subtotal = cartSubtotal(lines);
-  const missing = Math.max(0, store.minOrder - subtotal);
-  const progress = store.minOrder > 0 ? Math.min(100, (subtotal / store.minOrder) * 100) : 100;
+  const missing = Math.max(0, minOrder - subtotal);
+  const progress = minOrder > 0 ? Math.min(100, (subtotal / minOrder) * 100) : 100;
   const canCheckout = lines.length > 0 && (isOpenNow || canPreorder) && missing === 0;
   const suggestions =
     missing > 0
@@ -183,7 +189,7 @@ function CartSheet({
         </ul>
 
         <SheetFooter className="gap-3 border-t pb-[max(1rem,env(safe-area-inset-bottom))]">
-          {store.minOrder > 0 && missing > 0 && (
+          {minOrder > 0 && missing > 0 && (
             <div className="flex flex-col gap-1.5">
               <div className="bg-muted h-1.5 overflow-hidden rounded-full">
                 <div

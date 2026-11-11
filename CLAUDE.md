@@ -160,7 +160,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Vaqt: hech qachon qattiq vaqt zonasi yozilmaydi — `store.timeZone` (ish vaqti, "bugun", sanalar).
 - Telefon: xalqaro format (+mamlakat kodi), `phoneSchema` / `normalizePhone`.
 - Buyurtma summasi SERVERDA bazadagi narxlardan qayta hisoblanadi, klient narxiga ishonilmaydi.
-- `minOrder`, tuman narxi, `isAvailable`, do'kon ochiqligi serverda tekshiriladi.
+- `minOrder` (stoldan buyurtmadan tashqari), tuman narxi, `isAvailable`, do'kon ochiqligi serverda tekshiriladi.
 - Buyurtma raqami `prisma.$transaction` ichida: do'kondagi `max(number) + 1`.
 - `OrderItem`'da nom va narx snapshot qilib saqlanadi.
 - Har bir yangi matn `messages/en.json` ga qo'shiladi (kodda matn yozilmaydi).
@@ -213,7 +213,7 @@ keyin faqat eng tor joyni tuzatish. Mikroservislarga erta o'tilmaydi.
    sabab bilan (Telegram bot, real-time, analitika) — `lib/` dagi biznes logika `packages/core` ga ajratiladi.
 
 - Yetkazish: hududlar (DeliveryZone) endi ishlatilmaydi — `Store.deliveryFee` (yagona narx). Jadval ma'lumot yo'qolmasligi uchun qoldirilgan.
-- Stoldan buyurtma (`DINE_IN`): `Store.dineInEnabled` + `tableCount` (QR kodlar sahifasida, Sozlamalarda emas); telefon bo'sh (""), manzil/vaqt yo'q, oldindan buyurtma yo'q;
+- Stoldan buyurtma (`DINE_IN`): `Store.dineInEnabled` + `tableCount` (QR kodlar sahifasida, Sozlamalarda emas); telefon bo'sh (""), manzil/vaqt yo'q, oldindan buyurtma yo'q, minOrder qo'llanmaydi;
   serverda stol raqami 1..tableCount tekshiriladi. Xabar sarlavhasida stol raqami.
 - Buyurtmada `latitude/longitude` bo'lsa — xabarda, admin kartochkada va /o sahifada "Open in Maps" havolasi (`mapsLink`).
 
