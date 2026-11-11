@@ -329,7 +329,9 @@
     "viewStore": "Do'konni ko'rish",
     "blockedBanner": "Do'koningiz platforma tomonidan vaqtincha bloklangan: mijozlar menyuni ko'ra olmaydi va buyurtma bera olmaydi. Tafsilotlar uchun biz bilan bog'laning.",
     "qr": "QR kodlar",
-    "promos": "Promo"
+    "promos": "Promo",
+    "analytics": "Analitika",
+    "more": "Yana"
   },
   "superadmin": {
     "title": "Platforma admini",
@@ -838,5 +840,60 @@
       "notFound": "Topilmadi",
       "server": "Nimadir xato ketdi"
     }
+  },
+  "analytics": {
+    "title": "Analitika",
+    "overview": "Umumiy",
+    "customers": "Mijozlar",
+    "period": "Davr",
+    "periods": {
+      "today": "Bugun",
+      "7d": "7 kun",
+      "30d": "30 kun",
+      "90d": "90 kun"
+    },
+    "vs": {
+      "today": "kechagiga nisbatan",
+      "7d": "oldingi 7 kunga nisbatan",
+      "30d": "oldingi 30 kunga nisbatan",
+      "90d": "oldingi 90 kunga nisbatan"
+    },
+    "noCompare": "Hozircha solishtirish uchun ma'lumot yo'q",
+    "revenue": "Tushum",
+    "orders": "Buyurtmalar",
+    "avgOrder": "O'rtacha chek",
+    "returning": "Qaytgan mijozlar",
+    "returningOf": "{total} ta mijozdan {returning} tasi oldin ham buyurtma bergan",
+    "revenueByDay": "Kunlik tushum",
+    "byHour": "Gavjum soatlar",
+    "byHourHint": "Buyurtmalar berilgan soat bo'yicha (do'kon vaqt zonasi)",
+    "byType": "Qanday buyurtma berishadi",
+    "topItems": "Eng ko'p sotilgan taomlar",
+    "types": {
+      "PICKUP": "Olib ketish",
+      "DELIVERY": "Yetkazib berish",
+      "DINE_IN": "Stolda"
+    },
+    "ordersCount": "{count, plural, other {# ta buyurtma}}",
+    "sold": "{count} ta sotildi",
+    "empty": "Bu davrda hozircha buyurtma yo'q.",
+    "note": "Bekor qilingan buyurtmalar hisobga olinmaydi. Summalar faqat {currency} dagi buyurtmalar bo'yicha.",
+    "customersLead": "{count, plural, =0 {Hozircha mijoz yo'q} other {# ta mijoz}} — telefon raqami bilan buyurtma berganlar.",
+    "search": "Mijozlarni qidirish",
+    "searchPlaceholder": "Ism yoki telefon",
+    "sortBy": "Saralash",
+    "sort": {
+      "recent": "Yaqinda",
+      "orders": "Ko'p buyurtma",
+      "spent": "Ko'p sarflagan"
+    },
+    "noCustomers": "Mijozlar birinchi buyurtmadan keyin shu yerda ko'rinadi.",
+    "noMatches": "Hech qanday mijoz topilmadi.",
+    "regular": "Doimiy",
+    "spent": "Sarfladi",
+    "lastOrder": "Oxirgi buyurtma",
+    "call": "Qo'ng'iroq: {name}",
+    "message": "Yozish: {name}",
+    "limitNote": "Birinchi 200 tasi ko'rsatilgan — qidiruvdan foydalaning."
   }
 }

@@ -329,7 +329,9 @@
     "viewStore": "View store",
     "blockedBanner": "Your store has been temporarily blocked by the platform: customers can't see the menu or place orders. Please contact us for details.",
     "qr": "QR codes",
-    "promos": "Promo"
+    "promos": "Promo",
+    "analytics": "Analytics",
+    "more": "More"
   },
   "superadmin": {
     "title": "Platform admin",
@@ -838,5 +840,60 @@
       "notFound": "Not found",
       "server": "Something went wrong"
     }
+  },
+  "analytics": {
+    "title": "Analytics",
+    "overview": "Overview",
+    "customers": "Customers",
+    "period": "Period",
+    "periods": {
+      "today": "Today",
+      "7d": "7 days",
+      "30d": "30 days",
+      "90d": "90 days"
+    },
+    "vs": {
+      "today": "vs yesterday",
+      "7d": "vs previous 7 days",
+      "30d": "vs previous 30 days",
+      "90d": "vs previous 90 days"
+    },
+    "noCompare": "Nothing to compare yet",
+    "revenue": "Revenue",
+    "orders": "Orders",
+    "avgOrder": "Average order",
+    "returning": "Returning customers",
+    "returningOf": "{returning} of {total} customers ordered before",
+    "revenueByDay": "Revenue by day",
+    "byHour": "Busiest hours",
+    "byHourHint": "Orders by the hour they were placed (your time zone)",
+    "byType": "How customers order",
+    "topItems": "Top dishes",
+    "types": {
+      "PICKUP": "Pickup",
+      "DELIVERY": "Delivery",
+      "DINE_IN": "At a table"
+    },
+    "ordersCount": "{count, plural, one {# order} other {# orders}}",
+    "sold": "{count} sold",
+    "empty": "No orders in this period yet.",
+    "note": "Cancelled orders are not counted. Money totals include orders in {currency} only.",
+    "customersLead": "{count, plural, =0 {No customers yet} one {# customer} other {# customers}} — everyone who ordered with a phone number.",
+    "search": "Search customers",
+    "searchPlaceholder": "Name or phone",
+    "sortBy": "Sort by",
+    "sort": {
+      "recent": "Recent",
+      "orders": "Most orders",
+      "spent": "Top spenders"
+    },
+    "noCustomers": "Customers appear here after their first order.",
+    "noMatches": "No customers match your search.",
+    "regular": "Regular",
+    "spent": "Spent",
+    "lastOrder": "Last order",
+    "call": "Call {name}",
+    "message": "Message {name}",
+    "limitNote": "Showing the first 200 — use search to find someone."
   }
 }

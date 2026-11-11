@@ -55,7 +55,7 @@ app/
   admin/(panel)/qr/           QR kodlar: do'kon havolasi + stoldan buyurtma (yoqish, stollar soni) + kartochkalar
   admin/tables/               stol kartochkalarini chop etish, A6/A5/A4 ((panel) layout'idan tashqarida)
   admin/print/[orderId]/      80mm: ?type=kitchen (narxsiz, stol katta) | receipt (mijoz cheki); &auto=1 — chop etish oynasi
-  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], qr, promos, settings
+  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], analytics, analytics/customers, qr, promos, settings
   superadmin/                 platforma egasi: statistika, do'konlar, tarif (+1 oy / bepul), bloklash
 components/ui/                shadcn komponentlari
 components/storefront/        mijoz menyusi, variant oynasi, savat
@@ -97,6 +97,9 @@ lib/
   orders/promo.ts             promoProblem, promoDiscount, deliveryFeeFor (sof funksiyalar: klient preview + server)
   orders/promo-actions.ts     checkPromo — checkout'da "Qo'llash" (kirishsiz, rate limit)
   promos/                     admin: listPromos, createPromo / setPromoActive / deletePromo
+  analytics/data.ts           getAnalytics(store, period) — SQL (do'kon vaqt zonasida), bekor qilinganlarsiz,
+                              pul faqat joriy valyutadagi buyurtmalardan
+  customers/data.ts           listCustomers — telefon bo'yicha guruhlangan mijozlar bazasi (qidiruv, saralash)
   orders/pricing.ts           priceItems — bazadagi narx + variant tekshiruvi (sof funksiya)
   orders/get-order.ts         getOrderForCustomer
   orders/send-link.ts         orderSendLink — do'kon kanaliga qarab t.me / wa.me havola
@@ -242,7 +245,7 @@ P1 (navbat bo'yicha):
 3. [x] Stolga QR orqali buyurtma (`OrderType.DINE_IN`, stol raqami)
 4. [x] Chek / oshxona varag'ini chop etish (80mm)
 5. [x] Promo-kodlar + ma'lum summadan bepul yetkazish
-6. [ ] Analitika (tushum, o'rtacha chek, top taomlar, soatlar, qaytgan mijozlar) + mijozlar bazasi (telefon bo'yicha)
+6. [x] Analitika (tushum, o'rtacha chek, top taomlar, soatlar, qaytgan mijozlar) + mijozlar bazasi (telefon bo'yicha)
 7. [ ] Telegram Mini App
 8. [ ] Admin push-bildirishnoma (PWA) + onboarding checklist
 
