@@ -745,6 +745,11 @@
       "noOrderType": "Avval Sozlamalarda olib ketish yoki yetkazishni yoqing — kamida bitta buyurtma usuli kerak.",
       "invalid": "Ma'lumotlarni tekshiring",
       "server": "Nimadir xato ketdi. Qayta urinib ko'ring."
+    },
+    "steps": {
+      "scan": "Skanerlang",
+      "choose": "Tanlang",
+      "order": "Buyurtma bering"
     }
   }
 }

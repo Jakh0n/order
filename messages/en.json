@@ -745,6 +745,11 @@
       "noOrderType": "Turn on pickup or delivery in Settings first — the store needs at least one way to order.",
       "invalid": "Please check the details",
       "server": "Something went wrong. Please try again."
+    },
+    "steps": {
+      "scan": "Scan",
+      "choose": "Choose",
+      "order": "Order"
     }
   }
 }

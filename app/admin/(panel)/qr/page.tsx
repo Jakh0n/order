@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { TableCard } from "@/components/admin/qr/table-card";
+import { tableCardText } from "@/components/admin/qr/table-card-text";
 import { TableSettingsForm } from "@/components/admin/qr/table-settings-form";
 import { StoreLink } from "@/components/admin/settings/store-link";
 import { buttonVariants } from "@/components/ui/button";
@@ -28,7 +29,7 @@ async function AdminQr() {
   const [settings, origin, t, tAdmin] = await Promise.all([
     prisma.store.findUnique({
       where: { id: store.id },
-      select: { name: true, slug: true, dineInEnabled: true, tableCount: true },
+      select: { name: true, slug: true, logoUrl: true, dineInEnabled: true, tableCount: true },
     }),
     getRequestOrigin(),
     getTranslations("table"),
@@ -38,6 +39,9 @@ async function AdminQr() {
 
   const showTables = settings.dineInEnabled && settings.tableCount > 0;
   const tables = showTables ? await buildTableQrs(origin, settings.slug, settings.tableCount) : [];
+
+  const cardText = tableCardText(t);
+  const footer = new URL(origin).host;
 
   return (
     <div className="flex max-w-3xl flex-col gap-4 p-4 md:p-6">
@@ -74,15 +78,14 @@ async function AdminQr() {
               {t("print")}
             </Link>
           </div>
-          <div className="bg-muted/50 grid grid-cols-2 gap-3 rounded-lg p-3 sm:grid-cols-3 md:grid-cols-4">
+          <div className="bg-muted/50 grid grid-cols-2 gap-3 rounded-lg p-3 sm:grid-cols-3">
             {tables.map((table) => (
               <TableCard
                 key={table.number}
                 table={table}
-                storeName={settings.name}
-                label={t("label", { number: table.number })}
-                cta={t("scanToOrder")}
-                size="sm"
+                store={settings}
+                text={cardText}
+                footer={footer}
               />
             ))}
           </div>

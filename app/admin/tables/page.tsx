@@ -5,6 +5,7 @@ import { Suspense } from "react";
 
 import { PrintButton } from "@/components/admin/print-button";
 import { TableCard } from "@/components/admin/qr/table-card";
+import { tableCardText } from "@/components/admin/qr/table-card-text";
 import { buttonVariants } from "@/components/ui/button";
 import { getRequestOrigin } from "@/lib/app-url";
 import { requireOwner } from "@/lib/auth/owner";
@@ -27,7 +28,7 @@ async function TableCards() {
   const [settings, origin, t] = await Promise.all([
     prisma.store.findUnique({
       where: { id: store.id },
-      select: { name: true, slug: true, dineInEnabled: true, tableCount: true },
+      select: { name: true, slug: true, logoUrl: true, dineInEnabled: true, tableCount: true },
     }),
     getRequestOrigin(),
     getTranslations("table"),
@@ -45,6 +46,8 @@ async function TableCards() {
   }
 
   const tables = await buildTableQrs(origin, settings.slug, settings.tableCount);
+  const cardText = tableCardText(t);
+  const footer = new URL(origin).host;
 
   return (
     <div className="bg-muted/40 min-h-full print:bg-white">
@@ -63,15 +66,16 @@ async function TableCards() {
         </div>
       </header>
 
-      {/* A4: 2 × 3 cards per page; each card is cut out and stands on a table */}
-      <main className="mx-auto grid max-w-[210mm] grid-cols-1 gap-4 p-4 sm:grid-cols-2 print:grid-cols-2 print:gap-0 print:p-0">
+      {/* A4 without browser margins: 2 × 2 cards per page, cut along the dashed lines */}
+      <style>{`@page { size: A4; margin: 0; }`}</style>
+      <main className="mx-auto grid max-w-[210mm] grid-cols-1 gap-5 p-4 sm:grid-cols-2 print:w-[210mm] print:max-w-none print:grid-cols-2 print:gap-0 print:p-0">
         {tables.map((table) => (
           <TableCard
             key={table.number}
             table={table}
-            storeName={settings.name}
-            label={t("label", { number: table.number })}
-            cta={t("scanToOrder")}
+            store={settings}
+            text={cardText}
+            footer={footer}
           />
         ))}
       </main>
