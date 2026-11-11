@@ -155,7 +155,8 @@
     "closedBannerPreorder": "Hozir yopiq — {time} da ochilamiz. Oldindan buyurtma berishingiz mumkin.",
     "lastOrder": "Buyurtmangiz №{number}",
     "trackOrder": "Kuzatish",
-    "skipToMenu": "Menyuga o'tish"
+    "skipToMenu": "Menyuga o'tish",
+    "madeWith": "Flami bilan yaratilgan"
   },
   "cart": {
     "title": "Savatingiz",
@@ -331,7 +332,8 @@
     "qr": "QR kodlar",
     "promos": "Promo",
     "analytics": "Analitika",
-    "more": "Yana"
+    "more": "Yana",
+    "plan": "Tarif"
   },
   "superadmin": {
     "title": "Platforma admini",
@@ -348,7 +350,7 @@
     "products": "{count, plural, other {# ta taom}}",
     "ordersCount": "{total} ta buyurtma, 30 kunda {recent} ta",
     "planFree": "Bepul",
-    "planPaid": "Pullik",
+    "planPaid": "Pro",
     "paidUntil": "{date} gacha",
     "expired": "Muddati tugagan: {date}",
     "unlimited": "Muddatsiz",
@@ -490,7 +492,8 @@
     "date": "Sana",
     "searchButton": "Qidirish",
     "clearFilters": "Tozalash",
-    "noMatches": "Hech qanday buyurtma topilmadi"
+    "noMatches": "Hech qanday buyurtma topilmadi",
+    "historyLimit": "Bu oy {count} ta buyurtma oldingiz. Free tarixda {limit} tasini saqlaydi — undan keyingi yakunlangan buyurtmalar yashirilgan (faollari doim ko'rinadi)."
   },
   "adminMenu": {
     "addCategory": "Kategoriya qo'shish",
@@ -838,8 +841,11 @@
       "maxUsesInvalid": "Butun son kiriting yoki bo'sh qoldiring",
       "dateInvalid": "Noto'g'ri sana",
       "notFound": "Topilmadi",
-      "server": "Nimadir xato ketdi"
-    }
+      "server": "Nimadir xato ketdi",
+      "planRequired": "Promo-kodlar uchun Pro tarifi kerak"
+    },
+    "lockedTitle": "Promo-kodlar — Pro imkoniyati",
+    "lockedText": "Chegirma kodlari bilan mijozlarni qaytaring — Instagram, doimiy mijozlar yoki tinch soatlar uchun."
   },
   "analytics": {
     "title": "Analitika",
@@ -894,6 +900,51 @@
     "lastOrder": "Oxirgi buyurtma",
     "call": "Qo'ng'iroq: {name}",
     "message": "Yozish: {name}",
-    "limitNote": "Birinchi 200 tasi ko'rsatilgan — qidiruvdan foydalaning."
+    "limitNote": "Birinchi 200 tasi ko'rsatilgan — qidiruvdan foydalaning.",
+    "lockedPeriod": "Pro'da mavjud",
+    "customersLockedTitle": "Doimiy mijozlaringizni biling",
+    "customersLockedText": "Har bir mijoz buyurtmalari va sarflagan summasi bilan, bir bosishda yozish. Pro'da mavjud."
+  },
+  "plan": {
+    "pro": "Pro",
+    "proFeature": "Pro imkoniyati",
+    "seePro": "Pro haqida",
+    "title": "Tarif",
+    "lead": "Buyurtma qabul qilish doim bepul va cheksiz. Pro o'sish uchun vositalar qo'shadi.",
+    "current": "Joriy tarif",
+    "freeName": "Free",
+    "proName": "Pro",
+    "until": "{date} gacha",
+    "noEnd": "muddatsiz",
+    "expired": "Pro {date} da tugadi — hozir Free'dasiz. Ma'lumotlaringiz saqlangan; qayta ochish uchun uzaytiring.",
+    "forever": "doimiy",
+    "perMonth": "/ oy",
+    "yourPlan": "Sizning tarifingiz",
+    "freeIntro": "Onlayn buyurtma qabul qilish uchun hammasi.",
+    "proIntro": "Free'dagi hammasi, va qo'shimcha:",
+    "f": {
+      "orders": "Cheksiz buyurtmalar, doim",
+      "menu": "Rasmli va variantli menyu",
+      "chat": "Buyurtmalar Telegram yoki WhatsApp'ga",
+      "tables": "Stoldan QR orqali buyurtma",
+      "print": "Oshxona varag'i va chek chop etish",
+      "today": "Bugungi ko'rsatkichlar",
+      "history": "Buyurtmalar tarixi: oyiga {limit} ta"
+    },
+    "p": {
+      "history": "To'liq buyurtmalar tarixi",
+      "promos": "Promo-kodlar",
+      "freeDelivery": "Ma'lum summadan bepul yetkazish",
+      "analytics": "7, 30 va 90 kunlik analitika",
+      "customers": "Buyurtma tarixi bilan mijozlar bazasi",
+      "branding": "«Flami bilan yaratilgan» yozuvisiz"
+    },
+    "upgrade": "Pro'ga o'tish",
+    "renew": "Pro'ni uzaytirish",
+    "howToPay": "Bizga Telegram'da yozing — to'lovdan keyin (o'tkazma yoki karta) Pro'ga o'tkazamiz.",
+    "contactSoon": "Tez orada ulanadi — platforma jamoasi bilan bog'laning.",
+    "upgradeMessage": "Assalomu alaykum! \"{store}\" do'konim uchun Pro olmoqchiman.",
+    "renewMessage": "Assalomu alaykum! \"{store}\" do'konim uchun Pro'ni uzaytirmoqchiman.",
+    "neverLimit": "Free hech qachon buyurtmani to'xtatmaydi: yangi va faol buyurtmalar doim keladi va ko'rinadi."
   }
 }

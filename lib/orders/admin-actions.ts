@@ -6,6 +6,7 @@ import { z } from "zod";
 import { requireOwner } from "@/lib/auth/owner";
 import { prisma } from "@/lib/db";
 import { insertOrder } from "@/lib/orders/insert";
+import { isPro } from "@/lib/plan";
 import { canRevert, canTransition } from "@/lib/orders/status";
 import { type ManualOrderInput, manualOrderSchema } from "@/lib/validators";
 import { reportError } from "@/lib/report-error";
@@ -105,7 +106,7 @@ export async function createManualOrder(input: ManualOrderInput): Promise<Manual
   const { store } = await requireOwner();
   const settings = await prisma.store.findUniqueOrThrow({
     where: { id: store.id },
-    select: { deliveryFee: true, freeDeliveryFrom: true },
+    select: { deliveryFee: true, freeDeliveryFrom: true, plan: true, paidUntil: true },
   });
 
   const parsed = manualOrderSchema.safeParse(input);
@@ -124,7 +125,7 @@ export async function createManualOrder(input: ManualOrderInput): Promise<Manual
       storeId: store.id,
       currency: store.currency,
       deliveryFee: settings.deliveryFee,
-      freeDeliveryFrom: settings.freeDeliveryFrom,
+      freeDeliveryFrom: isPro(settings) ? settings.freeDeliveryFrom : null,
       // Promo codes are for customers; a manual order has none
       promoCode: undefined,
       paymentStatus: markPaid ? "PAID" : "UNPAID",

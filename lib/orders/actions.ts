@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db";
 import { insertOrder } from "@/lib/orders/insert";
 import type { PromoProblem } from "@/lib/orders/promo";
+import { isPro } from "@/lib/plan";
 import { clientIp, rateLimitAll, RULES } from "@/lib/rate-limit";
 import { isStoreOpenNow, isValidSlot } from "@/lib/store-hours";
 import { checkoutSchema, type CheckoutInput } from "@/lib/validators";
@@ -73,6 +74,9 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
       if (!isStoreOpenNow(store, now)) return { ok: false, error: "closed" };
       data.scheduledFor = undefined;
     }
+    if (data.promoCode && !isPro(store)) {
+      return { ok: false, error: "promoInvalid", fieldErrors: { promoCode: "promoInvalid" } };
+    }
     if (data.scheduledFor && !isValidSlot(store, data.scheduledFor, now)) {
       return {
         ok: false,
@@ -100,7 +104,8 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
       storeId: store.id,
       currency: store.currency,
       deliveryFee: store.deliveryFee,
-      freeDeliveryFrom: store.freeDeliveryFrom,
+      // Pro-only: free delivery threshold and promo codes
+      freeDeliveryFrom: isPro(store) ? store.freeDeliveryFrom : null,
       // No minimum at a table (a single coffee is a fine order); applies to pickup/delivery
       minOrder: data.type === "DINE_IN" ? null : store.minOrder,
     });

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
@@ -77,6 +78,14 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
         <div className="mx-auto w-full max-w-2xl pb-28">
           <StoreHeader store={store} />
           <MenuBrowser cartKey={store.slug} categories={categories} />
+          {/* Free plan: a quiet "Made with Flami" (Pro removes it) */}
+          {store.showBranding && (
+            <p className="text-muted-foreground py-6 text-center text-xs">
+              <Link href="/" className="hover:text-foreground">
+                {t("madeWith")}
+              </Link>
+            </p>
+          )}
         </div>
         <CartSync cartKey={store.slug} products={products} />
         <CartBar store={store} products={products} />

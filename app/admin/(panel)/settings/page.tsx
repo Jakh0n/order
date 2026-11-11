@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { SettingsForm } from "@/components/admin/settings/settings-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { requireOwner } from "@/lib/auth/owner";
+import { isPro } from "@/lib/plan";
 import { getStoreSettings } from "@/lib/settings/data";
 import { currencyOptions, timeZoneOptions } from "@/lib/settings/options";
 import { settingsToForm } from "@/lib/validators";
@@ -29,6 +30,7 @@ async function AdminSettings() {
         defaultValues={settingsToForm(settings)}
         currencies={currencyOptions(settings.currency)}
         timeZones={timeZoneOptions(settings.timeZone)}
+        pro={isPro(store)}
       />
     </div>
   );

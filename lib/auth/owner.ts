@@ -31,6 +31,8 @@ export const getCurrentUser = cache(async () => {
           currency: true,
           timeZone: true,
           channel: true,
+          plan: true,
+          paidUntil: true,
         },
       },
     },

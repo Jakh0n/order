@@ -5,6 +5,7 @@ import {
   ChevronRight,
   ClipboardList,
   Ellipsis,
+  Gem,
   QrCode,
   Settings,
   TicketPercent,
@@ -25,6 +26,7 @@ const NAV = [
   { href: "/admin/qr", key: "qr", icon: QrCode },
   { href: "/admin/promos", key: "promos", icon: TicketPercent },
   { href: "/admin/settings", key: "settings", icon: Settings },
+  { href: "/admin/plan", key: "plan", icon: Gem },
 ] as const;
 
 /** Phone tab bar: the daily three + "More" (the rest opens in a bottom sheet) */

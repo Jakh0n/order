@@ -11,7 +11,10 @@ import { AutoRefresh } from "@/components/order/auto-refresh";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { UpgradeBanner } from "@/components/admin/upgrade";
 import { requireOwner } from "@/lib/auth/owner";
+import { FREE_MONTHLY_ORDERS, isPro } from "@/lib/plan";
+import { freeHistoryFilter, ordersThisMonth } from "@/lib/plan-history";
 import { JOIN, prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { ACTIVE_STATUSES, staleNewOrderIds } from "@/lib/orders/status";
@@ -84,12 +87,18 @@ async function Orders({
     (f): f is Prisma.OrderWhereInput => f !== null,
   );
   const filtering = filters.length > 0;
+  // Free plan: finished orders past 100/month are hidden (active ones never are)
+  const free = !isPro(store);
+  const [historyFilter, monthCount] = free
+    ? await Promise.all([freeHistoryFilter(store), ordersThisMonth(store)])
+    : [null, 0];
+  const listFilters = historyFilter ? [...filters, historyFilter] : filters;
 
   const today = { storeId: store.id, createdAt: { gte: startOfDayInZone(store.timeZone) } };
   const [orders, todayStats, todayPaid, activeCount, newOrders] = await Promise.all([
     prisma.order.findMany({
       ...JOIN,
-      where: { storeId: store.id, ...TAB_FILTER[tab], AND: filters },
+      where: { storeId: store.id, ...TAB_FILTER[tab], AND: listFilters },
       // Faol buyurtmalar: eng eskisi tepada (navbat), qolganlari: eng yangisi tepada
       orderBy: { createdAt: tab === "active" ? "asc" : "desc" },
       take: PAGE_SIZE,
@@ -133,6 +142,12 @@ async function Orders({
       </div>
 
       <SetupChecklist storeId={store.id} slug={store.slug} />
+
+      {free && monthCount > FREE_MONTHLY_ORDERS && (
+        <UpgradeBanner
+          text={t("historyLimit", { count: monthCount, limit: FREE_MONTHLY_ORDERS })}
+        />
+      )}
 
       <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
         <Stat

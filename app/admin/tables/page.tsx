@@ -10,6 +10,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { getRequestOrigin } from "@/lib/app-url";
 import { requireOwner } from "@/lib/auth/owner";
 import { prisma } from "@/lib/db";
+import { isPro } from "@/lib/plan";
 import { buildTableQrs } from "@/lib/table-qr";
 import { cn } from "@/lib/utils";
 
@@ -80,7 +81,8 @@ async function TableCards({ searchParams }: Pick<PageProps<"/admin/tables">, "se
 
   const tables = await buildTableQrs(origin, settings.slug, settings.tableCount);
   const cardText = tableCardText(t);
-  const footer = new URL(origin).host;
+  // Free plan shows the platform address on the card; Pro removes it
+  const footer = isPro(store) ? undefined : new URL(origin).host;
 
   return (
     <div className="bg-muted/40 min-h-full print:bg-white">

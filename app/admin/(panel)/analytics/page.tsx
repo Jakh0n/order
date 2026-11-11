@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Lock, Minus } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getAnalytics, parsePeriod, PERIODS } from "@/lib/analytics/data";
 import { requireOwner } from "@/lib/auth/owner";
 import { formatMoney } from "@/lib/money";
+import { isPro } from "@/lib/plan";
 import { cn } from "@/lib/utils";
 
 export default function AnalyticsPage({ searchParams }: PageProps<"/admin/analytics">) {
@@ -25,7 +26,9 @@ async function AnalyticsView({
   searchParams,
 }: Pick<PageProps<"/admin/analytics">, "searchParams">) {
   const [{ store }, params] = await Promise.all([requireOwner(), searchParams]);
-  const period = parsePeriod(params.period);
+  // Free plan: today only (the other periods are shown locked)
+  const pro = isPro(store);
+  const period = pro ? parsePeriod(params.period) : "today";
   const [data, t, format] = await Promise.all([
     getAnalytics(store, period),
     getTranslations("analytics"),
@@ -64,23 +67,35 @@ async function AnalyticsView({
         aria-label={t("period")}
         className="bg-muted flex w-fit rounded-xl p-1"
       >
-        {PERIODS.map((p) => (
-          <Link
-            key={p}
-            href={`/admin/analytics?period=${p}`}
-            replace
-            role="radio"
-            aria-checked={p === period}
-            className={cn(
-              "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
-              p === period
-                ? "bg-background shadow-sm"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {t(`periods.${p}`)}
-          </Link>
-        ))}
+        {PERIODS.map((p) =>
+          !pro && p !== "today" ? (
+            <Link
+              key={p}
+              href="/admin/plan"
+              title={t("lockedPeriod")}
+              className="text-muted-foreground/70 hover:text-foreground flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium"
+            >
+              <Lock className="size-3" aria-hidden />
+              {t(`periods.${p}`)}
+            </Link>
+          ) : (
+            <Link
+              key={p}
+              href={`/admin/analytics?period=${p}`}
+              replace
+              role="radio"
+              aria-checked={p === period}
+              className={cn(
+                "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                p === period
+                  ? "bg-background shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {t(`periods.${p}`)}
+            </Link>
+          ),
+        )}
       </div>
 
       {/* KPI tiles — the headline numbers, each compared with the previous period */}

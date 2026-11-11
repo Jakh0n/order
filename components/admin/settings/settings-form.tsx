@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { ExternalLink, Loader2, Lock } from "lucide-react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Controller, type FieldPath, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
@@ -33,12 +34,16 @@ export function SettingsForm({
   defaultValues,
   currencies,
   timeZones,
+  pro,
 }: {
   defaultValues: StoreSettingsFormInput;
   currencies: string[];
   timeZones: string[];
+  /** Pro plan: free-delivery threshold is editable */
+  pro: boolean;
 }) {
   const t = useTranslations("adminSettings");
+  const tPlan = useTranslations("plan");
 
   const {
     control,
@@ -262,13 +267,26 @@ export function SettingsForm({
             htmlFor="freeDeliveryFrom"
             error={errorText(errors.freeDeliveryFrom?.message)}
           >
+            {!pro && (
+              <Link
+                href="/admin/plan"
+                className="bg-primary/10 text-primary inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold"
+              >
+                <Lock className="size-3" aria-hidden />
+                {tPlan("pro")}
+              </Link>
+            )}
             <Input
               id="freeDeliveryFrom"
+              // readOnly, not disabled: a disabled field is submitted as undefined and would wipe the value
+              readOnly={!pro}
+              aria-disabled={!pro}
+              tabIndex={pro ? undefined : -1}
               type="number"
               inputMode="decimal"
               min={0}
               step={priceStep(currency)}
-              className="w-40"
+              className={cn("w-40", !pro && "bg-muted text-muted-foreground cursor-not-allowed")}
               aria-invalid={!!errors.freeDeliveryFrom}
               {...register("freeDeliveryFrom", {
                 // Empty = off

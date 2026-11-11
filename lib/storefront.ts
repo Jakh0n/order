@@ -3,6 +3,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 
 import { JOIN, prisma } from "@/lib/db";
+import { isPro } from "@/lib/plan";
 import type { CheckoutSettings, PaymentMethodValue, StorefrontData } from "@/lib/menu-types";
 
 /** Admin menyu/do'konni o'zgartirganda: revalidateTag(storeCacheTag(slug)) */
@@ -52,6 +53,8 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
         dineInEnabled: true,
         tableCount: true,
         freeDeliveryFrom: true,
+        plan: true,
+        paidUntil: true,
       },
     }),
     prisma.category.findMany({
@@ -90,8 +93,15 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
   ]);
   if (!store) return null;
 
+  // Plan is resolved here (cached for minutes): Pro-only settings are dropped on Free
+  const { plan, paidUntil, ...rest } = store;
+  const pro = isPro({ plan, paidUntil });
   return {
-    store,
+    store: {
+      ...rest,
+      freeDeliveryFrom: pro ? store.freeDeliveryFrom : null,
+      showBranding: !pro,
+    },
     categories: categories
       .map((c) => ({
         ...c,
@@ -131,6 +141,8 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
       transferDetails: true,
       deliveryFee: true,
       freeDeliveryFrom: true,
+      plan: true,
+      paidUntil: true,
       _count: { select: { promoCodes: { where: { isActive: true } } } },
     },
   });
@@ -148,7 +160,8 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
     paymentMethods,
     transferDetails: store.transferDetails,
     deliveryFee: store.deliveryFee,
-    freeDeliveryFrom: store.freeDeliveryFrom,
-    hasPromoCodes: store._count.promoCodes > 0,
+    // Pro-only on Free: no free-delivery threshold, no promo field
+    freeDeliveryFrom: isPro(store) ? store.freeDeliveryFrom : null,
+    hasPromoCodes: isPro(store) && store._count.promoCodes > 0,
   };
 }

@@ -81,6 +81,8 @@ lib/
   report-error.ts             reportError — try/catch'da yutilgan xatolarni Sentry'ga yuborish
   sentry-options.ts           Sentry sozlamalari (dataCollection: shaxsiy ma'lumot o'chiq)
   sentry-scrub.ts             telefon/email ni xabarlardan yashirish
+  plan.ts                     planOf / isPro (PAID + paidUntil kelajakda = Pro), FREE_MONTHLY_ORDERS, upgradeLink (SUPPORT_TELEGRAM)
+  plan-history.ts             freeHistoryFilter — Free: oyiga 100 tadan keyingi YAKUNLANGAN buyurtmalar tarixda yashiriladi
   rate-limit.ts               rateLimit / rateLimitAll (Postgres, qat'iy oyna), RULES, clientIp
   slug.ts                     slugify (kirill → lotin), RESERVED_SLUGS, slugError
   superadmin/data.ts          getPlatformStats, listStores
@@ -202,7 +204,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Build: `vercel-build` = `prisma generate && prisma migrate deploy && next build` — migratsiyalar avtomatik.
 - Env: `DATABASE_URL` (6543, `pgbouncer=true&connection_limit=3`), `DIRECT_URL` (5432), `AUTH_SECRET`,
   `APP_URL=https://flami.org`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (secret),
-  `NEXT_PUBLIC_SENTRY_DSN`, ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
+  `NEXT_PUBLIC_SENTRY_DSN`, `SUPPORT_TELEGRAM` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
 - Monitoring: `GET /api/health` (200 = ilova + baza ishlayapti, 503 = baza javob bermayapti) — uptime servisga ulang.
 - Yuklama testi: `BASE_URL=<preview url> npm run loadtest` (k6, `loadtest/storefront.js`), production'ga emas.
 
@@ -235,13 +237,16 @@ Asosiy raqobatchi — Take App ($0 / $29 / $50, 0% komissiya). Bizning o'rin: fa
 oddiy va arzonroq; 5 daqiqada o'zi ro'yxatdan o'tadi; Telegram + WhatsApp.
 
 Tarif tamoyili: buyurtma qabul qilish HECH QACHON cheklanmaydi — pul o'sish vositalari uchun olinadi.
+Kodda: Pro funksiyasi qo'shsangiz — `isPro(store)` ni SERVERDA tekshiring (action + mijozga ta'sir qiluvchi hisob),
+UI'da `UpgradeCard` / `ProBadge` (`components/admin/upgrade.tsx`). Do'kon sahifasi keshida plan hisobga olinadi —
+plan o'zgarganda `updateTag(storeCacheTag(slug))`.
 - Free: hammasi asosiy + stol QR + chek chop etish; 100 saqlanadigan buyurtma/oy; analitika faqat "bugun"
 - Pro (~$15, mahalliy narx): cheksiz buyurtma, promo-kod, bepul yetkazish chegarasi, analitika, mijozlar bazasi, logotipsiz, 1 xodim
 - Business (~$35): 5 xodim, o'z domeni
 
 P1 (navbat bo'yicha):
 1. [x] Rus va o'zbek tillari (`messages/ru.json`, `uz.json`)
-2. [ ] Tarif limitlari kodda (`Store.plan`) + tarif sahifasi
+2. [x] Tarif limitlari kodda (`Store.plan`) + tarif sahifasi
 3. [x] Stolga QR orqali buyurtma (`OrderType.DINE_IN`, stol raqami)
 4. [x] Chek / oshxona varag'ini chop etish (80mm)
 5. [x] Promo-kodlar + ma'lum summadan bepul yetkazish

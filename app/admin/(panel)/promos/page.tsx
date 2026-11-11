@@ -4,9 +4,11 @@ import { Suspense } from "react";
 
 import { PromoForm } from "@/components/admin/promos/promo-form";
 import { PromoItem, type PromoItemView } from "@/components/admin/promos/promo-item";
+import { UpgradeCard } from "@/components/admin/upgrade";
 import { Skeleton } from "@/components/ui/skeleton";
 import { requireOwner } from "@/lib/auth/owner";
 import { formatMoney } from "@/lib/money";
+import { isPro } from "@/lib/plan";
 import { type AdminPromo, listPromos } from "@/lib/promos/data";
 
 export default function AdminPromosPage() {
@@ -63,10 +65,14 @@ async function AdminPromos() {
         <p className="text-muted-foreground text-sm">{t("lead")}</p>
       </div>
 
-      <section className="bg-card flex flex-col gap-4 rounded-xl border p-4">
-        <h2 className="font-semibold">{t("newTitle")}</h2>
-        <PromoForm currency={store.currency} />
-      </section>
+      {isPro(store) ? (
+        <section className="bg-card flex flex-col gap-4 rounded-xl border p-4">
+          <h2 className="font-semibold">{t("newTitle")}</h2>
+          <PromoForm currency={store.currency} />
+        </section>
+      ) : (
+        <UpgradeCard title={t("lockedTitle")} text={t("lockedText")} />
+      )}
 
       {promos.length === 0 ? (
         <div className="text-muted-foreground flex flex-col items-center gap-2 rounded-xl border border-dashed px-4 py-10 text-center">

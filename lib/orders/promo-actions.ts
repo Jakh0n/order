@@ -8,6 +8,7 @@ import {
   type PromoProblem,
   promoProblem,
 } from "@/lib/orders/promo";
+import { isPro } from "@/lib/plan";
 import { clientIp, rateLimit, RULES } from "@/lib/rate-limit";
 import { reportError } from "@/lib/report-error";
 
@@ -45,11 +46,13 @@ export async function checkPromo(input: {
           code,
           store: { slug: String(input.storeSlug ?? "").slice(0, 100), isBlocked: false },
         },
+        include: { store: { select: { plan: true, paidUntil: true } } },
       }),
     ]);
     if (!allowed) return { ok: false, error: "tooMany" };
 
-    const problem = promoProblem(promo, subtotal);
+    // Promo codes are a Pro feature: on Free they simply don't work
+    const problem = promo && !isPro(promo.store) ? "promoInvalid" : promoProblem(promo, subtotal);
     if (problem || !promo) {
       return {
         ok: false,

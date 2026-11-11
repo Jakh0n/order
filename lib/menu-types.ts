@@ -55,6 +55,8 @@ export interface StorefrontStore {
   deliveryFee: number;
   /** Free delivery from this items subtotal (minor units); null = off */
   freeDeliveryFrom: number | null;
+  /** Free plan: small "Made with Flami" link on the store page */
+  showBranding: boolean;
   /** Table QR ordering; valid tables are 1..tableCount */
   dineInEnabled: boolean;
   tableCount: number;

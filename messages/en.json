@@ -155,7 +155,8 @@
     "closedBannerPreorder": "Closed now — opens at {time}. You can pre-order for later.",
     "lastOrder": "Your order #{number}",
     "trackOrder": "Track",
-    "skipToMenu": "Skip to menu"
+    "skipToMenu": "Skip to menu",
+    "madeWith": "Made with Flami"
   },
   "cart": {
     "title": "Your cart",
@@ -331,7 +332,8 @@
     "qr": "QR codes",
     "promos": "Promo",
     "analytics": "Analytics",
-    "more": "More"
+    "more": "More",
+    "plan": "Plan"
   },
   "superadmin": {
     "title": "Platform admin",
@@ -348,7 +350,7 @@
     "products": "{count, plural, one {# item} other {# items}}",
     "ordersCount": "{total} orders, {recent} in 30 days",
     "planFree": "Free",
-    "planPaid": "Paid",
+    "planPaid": "Pro",
     "paidUntil": "until {date}",
     "expired": "Expired: {date}",
     "unlimited": "No end date",
@@ -490,7 +492,8 @@
     "date": "Date",
     "searchButton": "Search",
     "clearFilters": "Clear",
-    "noMatches": "No orders match your search"
+    "noMatches": "No orders match your search",
+    "historyLimit": "You got {count} orders this month. The Free plan keeps {limit} in history — finished orders after that are hidden (active ones always show)."
   },
   "adminMenu": {
     "addCategory": "Add category",
@@ -838,8 +841,11 @@
       "maxUsesInvalid": "Enter a whole number, or leave empty",
       "dateInvalid": "Invalid date",
       "notFound": "Not found",
-      "server": "Something went wrong"
-    }
+      "server": "Something went wrong",
+      "planRequired": "Promo codes need the Pro plan"
+    },
+    "lockedTitle": "Promo codes are a Pro feature",
+    "lockedText": "Bring customers back with discount codes for Instagram, regulars or quiet hours."
   },
   "analytics": {
     "title": "Analytics",
@@ -894,6 +900,51 @@
     "lastOrder": "Last order",
     "call": "Call {name}",
     "message": "Message {name}",
-    "limitNote": "Showing the first 200 — use search to find someone."
+    "limitNote": "Showing the first 200 — use search to find someone.",
+    "lockedPeriod": "Available on Pro",
+    "customersLockedTitle": "Know your regulars",
+    "customersLockedText": "See every customer with their orders and total spent, and message them in one tap. Available on Pro."
+  },
+  "plan": {
+    "pro": "Pro",
+    "proFeature": "Pro feature",
+    "seePro": "See Pro",
+    "title": "Plan",
+    "lead": "Taking orders is always free and unlimited. Pro adds tools to grow.",
+    "current": "Current plan",
+    "freeName": "Free",
+    "proName": "Pro",
+    "until": "until {date}",
+    "noEnd": "no end date",
+    "expired": "Pro ended on {date} — you're on Free now. Your data is safe; renew to unlock it again.",
+    "forever": "forever",
+    "perMonth": "/ month",
+    "yourPlan": "Your plan",
+    "freeIntro": "Everything to take orders online.",
+    "proIntro": "Everything in Free, plus:",
+    "f": {
+      "orders": "Unlimited orders, always",
+      "menu": "Menu with photos and options",
+      "chat": "Orders to Telegram or WhatsApp",
+      "tables": "Table QR ordering",
+      "print": "Kitchen tickets and receipts",
+      "today": "Today's numbers",
+      "history": "Order history: {limit} orders per month"
+    },
+    "p": {
+      "history": "Full order history",
+      "promos": "Promo codes",
+      "freeDelivery": "Free delivery from an amount",
+      "analytics": "Analytics for 7, 30 and 90 days",
+      "customers": "Customer base with order history",
+      "branding": "No “Made with Flami”"
+    },
+    "upgrade": "Upgrade to Pro",
+    "renew": "Extend Pro",
+    "howToPay": "Write to us in Telegram — we'll switch you to Pro after payment (transfer or card).",
+    "contactSoon": "Upgrades open soon — contact the platform team.",
+    "upgradeMessage": "Hi! I'd like Pro for my store \"{store}\".",
+    "renewMessage": "Hi! I'd like to extend Pro for my store \"{store}\".",
+    "neverLimit": "Free never blocks orders: new and active orders always arrive and stay visible."
   }
 }

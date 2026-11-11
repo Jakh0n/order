@@ -4,12 +4,14 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { AnalyticsTabs } from "@/components/admin/analytics/analytics-tabs";
+import { UpgradeCard } from "@/components/admin/upgrade";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { requireOwner } from "@/lib/auth/owner";
 import { CUSTOMER_SORTS, type CustomerSort, listCustomers } from "@/lib/customers/data";
 import { formatMoney } from "@/lib/money";
+import { isPro } from "@/lib/plan";
 import { cn } from "@/lib/utils";
 
 export default function CustomersPage({ searchParams }: PageProps<"/admin/analytics/customers">) {
@@ -26,6 +28,18 @@ async function CustomersView({
   searchParams,
 }: Pick<PageProps<"/admin/analytics/customers">, "searchParams">) {
   const [{ store }, params] = await Promise.all([requireOwner(), searchParams]);
+  if (!isPro(store)) {
+    const t = await getTranslations("analytics");
+    return (
+      <>
+        <div className="flex flex-col gap-3">
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
+          <AnalyticsTabs />
+        </div>
+        <UpgradeCard title={t("customersLockedTitle")} text={t("customersLockedText")} />
+      </>
+    );
+  }
   const q = typeof params.q === "string" ? params.q : "";
   const sort: CustomerSort = CUSTOMER_SORTS.includes(params.sort as CustomerSort)
     ? (params.sort as CustomerSort)

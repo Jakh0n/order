@@ -6,6 +6,7 @@ import { refresh, updateTag } from "next/cache";
 import { requireOwner } from "@/lib/auth/owner";
 import { prisma } from "@/lib/db";
 import { toMinor } from "@/lib/money";
+import { isPro } from "@/lib/plan";
 import { reportError } from "@/lib/report-error";
 import { startOfDayInZone } from "@/lib/store-hours";
 import { storeCacheTag } from "@/lib/storefront";
@@ -15,7 +16,7 @@ export type PromoResult =
   | { ok: true }
   | {
       ok: false;
-      error: "invalid" | "codeTaken" | "notFound" | "server";
+      error: "invalid" | "codeTaken" | "notFound" | "planRequired" | "server";
       fieldErrors?: Record<string, string>;
     };
 
@@ -29,6 +30,7 @@ function endOfDay(date: string, timeZone: string): Date {
 
 export async function createPromo(input: PromoFormInput): Promise<PromoResult> {
   const { store } = await requireOwner();
+  if (!isPro(store)) return { ok: false, error: "planRequired" };
   const parsed = promoFormSchema.safeParse(input);
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
@@ -64,6 +66,8 @@ export async function createPromo(input: PromoFormInput): Promise<PromoResult> {
 
 export async function setPromoActive(id: string, isActive: boolean): Promise<PromoResult> {
   const { store } = await requireOwner();
+  // Switching off is always allowed (e.g. after Pro ended); switching on needs Pro
+  if (isActive && !isPro(store)) return { ok: false, error: "planRequired" };
   try {
     const { count } = await prisma.promoCode.updateMany({
       where: { id: String(id), storeId: store.id },

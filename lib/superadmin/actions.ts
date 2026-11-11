@@ -39,7 +39,7 @@ export async function extendPaidPlan(storeId: string, months: number): Promise<S
 
   const store = await prisma.store.findUnique({
     where: { id: id.data },
-    select: { plan: true, paidUntil: true },
+    select: { plan: true, paidUntil: true, slug: true },
   });
   if (!store) return { ok: false, error: "notFound" };
 
@@ -50,6 +50,8 @@ export async function extendPaidPlan(storeId: string, months: number): Promise<S
   paidUntil.setMonth(paidUntil.getMonth() + m.data);
 
   await prisma.store.update({ where: { id: id.data }, data: { plan: "PAID", paidUntil } });
+  // The store page caches plan-dependent bits (promo field, free delivery, branding)
+  updateTag(storeCacheTag(store.slug));
   refresh();
   return { ok: true };
 }
@@ -59,11 +61,15 @@ export async function setFreePlan(storeId: string): Promise<SuperadminResult> {
   const id = idSchema.safeParse(storeId);
   if (!id.success) return { ok: false, error: "invalid" };
 
-  const { count } = await prisma.store.updateMany({
-    where: { id: id.data },
-    data: { plan: "FREE", paidUntil: null },
-  });
-  if (count === 0) return { ok: false, error: "notFound" };
+  const store = await prisma.store
+    .update({
+      where: { id: id.data },
+      data: { plan: "FREE", paidUntil: null },
+      select: { slug: true },
+    })
+    .catch(() => null);
+  if (!store) return { ok: false, error: "notFound" };
+  updateTag(storeCacheTag(store.slug));
   refresh();
   return { ok: true };
 }

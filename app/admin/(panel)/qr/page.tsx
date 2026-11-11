@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getRequestOrigin } from "@/lib/app-url";
 import { requireOwner } from "@/lib/auth/owner";
 import { prisma } from "@/lib/db";
+import { isPro } from "@/lib/plan";
 import { buildTableQrs } from "@/lib/table-qr";
 
 /** QR codes: the store link for Instagram / flyers, and one code per table */
@@ -41,7 +42,8 @@ async function AdminQr() {
   const tables = showTables ? await buildTableQrs(origin, settings.slug, settings.tableCount) : [];
 
   const cardText = tableCardText(t);
-  const footer = new URL(origin).host;
+  // Free plan shows the platform address on the card; Pro removes it
+  const footer = isPro(store) ? undefined : new URL(origin).host;
 
   return (
     <div className="flex max-w-3xl flex-col gap-4 p-4 md:p-6">

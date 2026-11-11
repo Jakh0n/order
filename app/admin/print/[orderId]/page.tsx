@@ -10,6 +10,7 @@ import { getRequestOrigin } from "@/lib/app-url";
 import { requireOwner } from "@/lib/auth/owner";
 import { JOIN, prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
+import { isPro } from "@/lib/plan";
 import { isNextDaySlot } from "@/lib/store-hours";
 import { cn } from "@/lib/utils";
 
@@ -213,7 +214,9 @@ async function OrderPrint({
 
             <Divider />
             <p className="text-center font-bold">{t("print.thanks")}</p>
-            <p className="mt-1 text-center text-[10px]">{new URL(origin).host}</p>
+            {!isPro(store) && (
+              <p className="mt-1 text-center text-[10px]">{new URL(origin).host}</p>
+            )}
           </>
         )}
       </main>
