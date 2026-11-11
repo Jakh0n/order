@@ -197,6 +197,12 @@ export async function OrderCard({
             </span>
           </li>
         ))}
+        {order.discount > 0 && (
+          <li className="text-primary flex justify-between">
+            <span>{t("checkout.promo.discountRow", { code: order.promoCode ?? "" })}</span>
+            <span className="tabular-nums">−{formatMoney(order.discount, order.currency)}</span>
+          </li>
+        )}
         {order.deliveryFee > 0 && (
           <li className="text-muted-foreground flex justify-between">
             <span>{t("checkout.deliveryFee")}</span>

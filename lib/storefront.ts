@@ -51,6 +51,7 @@ export async function getStorefront(slug: string): Promise<StorefrontData | null
         deliveryFee: true,
         dineInEnabled: true,
         tableCount: true,
+        freeDeliveryFrom: true,
       },
     }),
     prisma.category.findMany({
@@ -129,6 +130,8 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
       acceptTransfer: true,
       transferDetails: true,
       deliveryFee: true,
+      freeDeliveryFrom: true,
+      _count: { select: { promoCodes: { where: { isActive: true } } } },
     },
   });
   if (!store) return null;
@@ -145,5 +148,7 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
     paymentMethods,
     transferDetails: store.transferDetails,
     deliveryFee: store.deliveryFee,
+    freeDeliveryFrom: store.freeDeliveryFrom,
+    hasPromoCodes: store._count.promoCodes > 0,
   };
 }

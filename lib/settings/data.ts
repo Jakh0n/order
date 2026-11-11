@@ -28,6 +28,7 @@ export async function getStoreSettings(storeId: string): Promise<StoreSettingsIn
     deliveryEnabled: store.deliveryEnabled,
     minOrder: store.minOrder,
     deliveryFee: store.deliveryFee,
+    freeDeliveryFrom: store.freeDeliveryFrom,
     acceptCash: store.acceptCash,
     acceptCardOnDelivery: store.acceptCardOnDelivery,
     acceptTransfer: store.acceptTransfer,

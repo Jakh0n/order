@@ -131,6 +131,12 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
           </ul>
           <dl className="flex flex-col gap-1 border-t pt-3 text-sm">
             <Row label={t("checkout.subtotal")} value={money(order.subtotal)} />
+            {order.discount > 0 && (
+              <Row
+                label={t("checkout.promo.discountRow", { code: order.promoCode ?? "" })}
+                value={`−${money(order.discount)}`}
+              />
+            )}
             {order.type === "DELIVERY" && (
               <Row label={t("checkout.deliveryFee")} value={money(order.deliveryFee)} />
             )}

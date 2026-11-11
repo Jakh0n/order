@@ -176,7 +176,8 @@
     "undo": "Undo",
     "preorder": "Closed now — you can pre-order for a time after opening.",
     "deliveryFee": "Delivery: {amount}",
-    "freeDelivery": "Free delivery"
+    "freeDelivery": "Free delivery",
+    "freeDeliveryMore": "Add {amount} more for free delivery"
   },
   "checkout": {
     "title": "Checkout",
@@ -233,7 +234,11 @@
       "timeRequired": "Please choose a time",
       "timeUnavailable": "This time isn't available anymore. Please choose another one.",
       "tableRequired": "Scan the QR code on your table again",
-      "tableUnavailable": "This table isn't available. Please scan the QR code on your table again."
+      "tableUnavailable": "This table isn't available. Please scan the QR code on your table again.",
+      "promoInvalid": "This code doesn't work",
+      "promoExpired": "This code has expired",
+      "promoUsedUp": "This code has been used up",
+      "promoMinSubtotal": "This code works for orders from {amount}"
     },
     "edit": "Edit",
     "timeAsap": "As soon as possible",
@@ -254,7 +259,16 @@
     "chooseTime": "Choose a time",
     "tomorrowAt": "Tomorrow {time}",
     "editOrder": "Edit order",
-    "submitPreorder": "Place pre-order"
+    "submitPreorder": "Place pre-order",
+    "promo": {
+      "title": "Promo code",
+      "placeholder": "Enter code",
+      "apply": "Apply",
+      "applied": "You save {amount}",
+      "remove": "Remove code",
+      "discountRow": "Promo {code}",
+      "tooMany": "Too many attempts. Please try again in a few minutes."
+    }
   },
   "payment": {
     "CASH": "Cash",
@@ -314,7 +328,8 @@
     "logout": "Log out",
     "viewStore": "View store",
     "blockedBanner": "Your store has been temporarily blocked by the platform: customers can't see the menu or place orders. Please contact us for details.",
-    "qr": "QR codes"
+    "qr": "QR codes",
+    "promos": "Promo"
   },
   "superadmin": {
     "title": "Platform admin",
@@ -388,7 +403,8 @@
       "CASH": "Cash",
       "CARD_ON_DELIVERY": "Card",
       "TRANSFER": "Bank Transfer"
-    }
+    },
+    "discount": "Discount"
   },
   "store": {
     "notFound": "Store not found",
@@ -619,7 +635,9 @@
     "cover": "Cover photo",
     "coverHint": "Shown at the top of your store page. A wide photo works best (e.g. 1200×400).",
     "language": "Store language",
-    "languageHint": "Your store page opens in this language. Customers can still switch it."
+    "languageHint": "Your store page opens in this language. Customers can still switch it.",
+    "freeDeliveryFrom": "Free delivery from ({currency})",
+    "freeDeliveryFromHint": "Leave empty to always charge delivery. Counted on the items total."
   },
   "signup": {
     "title": "Open your store",
@@ -769,5 +787,56 @@
     "customer": "Customer",
     "receiptTitle": "Receipt #{number}",
     "thanks": "Thank you!"
+  },
+  "adminPromos": {
+    "title": "Promo codes",
+    "lead": "Give customers a code for a discount — for Instagram posts, regulars or quiet hours.",
+    "newTitle": "New code",
+    "code": "Code",
+    "codeHint": "3–20 characters: letters, digits, dash",
+    "codePlaceholder": "e.g. SUMMER10",
+    "type": "Discount",
+    "percent": "Percent (%)",
+    "fixed": "Amount ({currency})",
+    "valuePercent": "Discount (%)",
+    "valueFixed": "Discount ({currency})",
+    "minSubtotal": "Minimum order ({currency})",
+    "minSubtotalHint": "0 — any order",
+    "maxUses": "Usage limit",
+    "maxUsesHint": "Empty — unlimited",
+    "expiresOn": "Works until",
+    "expiresOnHint": "Empty — no end date",
+    "create": "Create code",
+    "created": "Code {code} created",
+    "empty": "No promo codes yet",
+    "fromAmount": "from {amount}",
+    "anyAmount": "any order",
+    "usesOf": "used {used} of {max}",
+    "uses": "used {used}",
+    "until": "until {date}",
+    "state": {
+      "active": "Active",
+      "off": "Off",
+      "expired": "Expired",
+      "usedUp": "Used up"
+    },
+    "activeToggle": "Code {code} on/off",
+    "delete": "Delete",
+    "deleted": "Deleted",
+    "deleteTitle": "Delete code {code}?",
+    "deleteHint": "Customers won't be able to use it. Past orders keep their discount.",
+    "cancel": "Cancel",
+    "errors": {
+      "invalid": "Please check the details",
+      "codeInvalid": "3–20 characters: letters, digits, dash",
+      "codeTaken": "This code already exists",
+      "valueInvalid": "Enter the discount",
+      "percentInvalid": "Percent must be a whole number from 1 to 100",
+      "amountInvalid": "Invalid amount",
+      "maxUsesInvalid": "Enter a whole number, or leave empty",
+      "dateInvalid": "Invalid date",
+      "notFound": "Not found",
+      "server": "Something went wrong"
+    }
   }
 }

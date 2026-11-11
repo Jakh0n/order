@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/db";
 import { insertOrder } from "@/lib/orders/insert";
+import type { PromoProblem } from "@/lib/orders/promo";
 import { clientIp, rateLimitAll, RULES } from "@/lib/rate-limit";
 import { isStoreOpenNow, isValidSlot } from "@/lib/store-hours";
 import { checkoutSchema, type CheckoutInput } from "@/lib/validators";
@@ -20,6 +21,7 @@ export type CreateOrderError =
   | "tooMany"
   | "timeUnavailable"
   | "tableUnavailable"
+  | PromoProblem
   | "server";
 
 export type CreateOrderResult =
@@ -98,10 +100,14 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
       storeId: store.id,
       currency: store.currency,
       deliveryFee: store.deliveryFee,
+      freeDeliveryFrom: store.freeDeliveryFrom,
       // No minimum at a table (a single coffee is a fine order); applies to pickup/delivery
       minOrder: data.type === "DINE_IN" ? null : store.minOrder,
     });
-    if (!result.ok) return { ok: false, error: result.error, minOrder: store.minOrder };
+    if (!result.ok) {
+      const promoField = result.error.startsWith("promo") ? { promoCode: result.error } : undefined;
+      return { ok: false, error: result.error, minOrder: store.minOrder, fieldErrors: promoField };
+    }
     return { ok: true, orderId: result.orderId, number: result.number };
   } catch (e) {
     reportError(e, "createOrder", { store: data.storeSlug });

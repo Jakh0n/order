@@ -238,12 +238,12 @@ function CartSheet({
             <span className="text-muted-foreground">{t("subtotal")}</span>
             <span className="text-lg font-bold tabular-nums">{formatMoney(subtotal)}</span>
           </div>
-          {store.deliveryEnabled && (
-            <p className="text-muted-foreground -mt-2 text-xs">
-              {store.deliveryFee > 0
-                ? t("deliveryFee", { amount: formatMoney(store.deliveryFee) })
-                : t("freeDelivery")}
-            </p>
+          {store.deliveryEnabled && !atTable && (
+            <DeliveryNote
+              fee={store.deliveryFee}
+              freeFrom={store.freeDeliveryFrom}
+              subtotal={subtotal}
+            />
           )}
           {canCheckout ? (
             <Link
@@ -261,5 +261,43 @@ function CartSheet({
         </SheetFooter>
       </SheetContent>
     </Sheet>
+  );
+}
+
+/** "Delivery: ₩3,000" / "Free delivery" / progress to free delivery */
+function DeliveryNote({
+  fee,
+  freeFrom,
+  subtotal,
+}: {
+  fee: number;
+  freeFrom: number | null;
+  subtotal: number;
+}) {
+  const t = useTranslations("cart");
+  const formatMoney = useFormatMoney();
+  if (fee === 0 || (freeFrom !== null && subtotal >= freeFrom)) {
+    return <p className="text-primary -mt-2 text-xs font-medium">{t("freeDelivery")}</p>;
+  }
+  if (freeFrom === null) {
+    return (
+      <p className="text-muted-foreground -mt-2 text-xs">
+        {t("deliveryFee", { amount: formatMoney(fee) })}
+      </p>
+    );
+  }
+  return (
+    <div className="-mt-1 flex flex-col gap-1">
+      <div className="bg-muted h-1 overflow-hidden rounded-full">
+        <div
+          className="bg-primary h-full rounded-full transition-all"
+          style={{ width: `${Math.min(100, (subtotal / freeFrom) * 100)}%` }}
+        />
+      </div>
+      <p className="text-muted-foreground text-xs">
+        {t("freeDeliveryMore", { amount: formatMoney(freeFrom - subtotal) })} ·{" "}
+        {t("deliveryFee", { amount: formatMoney(fee) })}
+      </p>
+    </div>
   );
 }

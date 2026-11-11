@@ -176,7 +176,8 @@
     "undo": "Qaytarish",
     "preorder": "Hozir yopiq — ochilgandan keyingi vaqtga oldindan buyurtma berishingiz mumkin.",
     "deliveryFee": "Yetkazish: {amount}",
-    "freeDelivery": "Bepul yetkazish"
+    "freeDelivery": "Bepul yetkazish",
+    "freeDeliveryMore": "Bepul yetkazish uchun yana {amount} qo'shing"
   },
   "checkout": {
     "title": "Buyurtmani rasmiylashtirish",
@@ -233,7 +234,11 @@
       "timeRequired": "Vaqtni tanlang",
       "timeUnavailable": "Bu vaqt endi mavjud emas. Boshqasini tanlang.",
       "tableRequired": "Stoldagi QR kodni qayta skanerlang",
-      "tableUnavailable": "Bu stol mavjud emas. Stoldagi QR kodni qayta skanerlang."
+      "tableUnavailable": "Bu stol mavjud emas. Stoldagi QR kodni qayta skanerlang.",
+      "promoInvalid": "Bu kod ishlamaydi",
+      "promoExpired": "Bu kodning muddati tugagan",
+      "promoUsedUp": "Bu koddan endi foydalanib bo'lmaydi",
+      "promoMinSubtotal": "Bu kod {amount} dan boshlab buyurtmalar uchun ishlaydi"
     },
     "edit": "O'zgartirish",
     "timeAsap": "Imkon qadar tezroq",
@@ -254,7 +259,16 @@
     "chooseTime": "Vaqtni tanlang",
     "tomorrowAt": "Ertaga {time}",
     "editOrder": "Buyurtmani o'zgartirish",
-    "submitPreorder": "Oldindan buyurtma berish"
+    "submitPreorder": "Oldindan buyurtma berish",
+    "promo": {
+      "title": "Promo-kod",
+      "placeholder": "Kodni kiriting",
+      "apply": "Qo'llash",
+      "applied": "Chegirma: {amount}",
+      "remove": "Kodni olib tashlash",
+      "discountRow": "Promo-kod {code}",
+      "tooMany": "Urinishlar juda ko'p. Bir necha daqiqadan keyin qayta urinib ko'ring."
+    }
   },
   "payment": {
     "CASH": "Naqd",
@@ -314,7 +328,8 @@
     "logout": "Chiqish",
     "viewStore": "Do'konni ko'rish",
     "blockedBanner": "Do'koningiz platforma tomonidan vaqtincha bloklangan: mijozlar menyuni ko'ra olmaydi va buyurtma bera olmaydi. Tafsilotlar uchun biz bilan bog'laning.",
-    "qr": "QR kodlar"
+    "qr": "QR kodlar",
+    "promos": "Promo"
   },
   "superadmin": {
     "title": "Platforma admini",
@@ -388,7 +403,8 @@
       "CASH": "Naqd",
       "CARD_ON_DELIVERY": "Karta",
       "TRANSFER": "Pul o'tkazmasi"
-    }
+    },
+    "discount": "Chegirma"
   },
   "store": {
     "notFound": "Do'kon topilmadi",
@@ -619,7 +635,9 @@
     "cover": "Muqova rasmi",
     "coverHint": "Do'kon sahifasining tepasida ko'rinadi. Keng rasm yaxshi (masalan, 1200×400).",
     "language": "Do'kon tili",
-    "languageHint": "Do'kon sahifasi shu tilda ochiladi. Mijozlar uni o'zlari almashtira oladi."
+    "languageHint": "Do'kon sahifasi shu tilda ochiladi. Mijozlar uni o'zlari almashtira oladi.",
+    "freeDeliveryFrom": "Bepul yetkazish ({currency}) dan",
+    "freeDeliveryFromHint": "Yetkazish doim pullik bo'lishi uchun bo'sh qoldiring. Taomlar summasi bo'yicha hisoblanadi."
   },
   "signup": {
     "title": "Do'koningizni oching",
@@ -769,5 +787,56 @@
     "customer": "Mijoz",
     "receiptTitle": "Chek №{number}",
     "thanks": "Rahmat!"
+  },
+  "adminPromos": {
+    "title": "Promo-kodlar",
+    "lead": "Mijozlarga chegirma kodi bering — Instagram postlari, doimiy mijozlar yoki tinch soatlar uchun.",
+    "newTitle": "Yangi kod",
+    "code": "Kod",
+    "codeHint": "3–20 belgi: harflar, raqamlar, chiziqcha",
+    "codePlaceholder": "masalan, YOZ10",
+    "type": "Chegirma",
+    "percent": "Foiz (%)",
+    "fixed": "Summa ({currency})",
+    "valuePercent": "Chegirma (%)",
+    "valueFixed": "Chegirma ({currency})",
+    "minSubtotal": "Minimal buyurtma ({currency})",
+    "minSubtotalHint": "0 — istalgan buyurtma",
+    "maxUses": "Foydalanish limiti",
+    "maxUsesHint": "Bo'sh — cheksiz",
+    "expiresOn": "Amal qiladi",
+    "expiresOnHint": "Bo'sh — muddatsiz",
+    "create": "Kod yaratish",
+    "created": "{code} kodi yaratildi",
+    "empty": "Hozircha promo-kod yo'q",
+    "fromAmount": "{amount} dan",
+    "anyAmount": "istalgan buyurtma",
+    "usesOf": "{max} tadan {used} ta ishlatilgan",
+    "uses": "{used} ta ishlatilgan",
+    "until": "{date} gacha",
+    "state": {
+      "active": "Faol",
+      "off": "O'chiq",
+      "expired": "Muddati tugagan",
+      "usedUp": "Tugagan"
+    },
+    "activeToggle": "{code} kodini yoqish/o'chirish",
+    "delete": "O'chirish",
+    "deleted": "O'chirildi",
+    "deleteTitle": "{code} kodi o'chirilsinmi?",
+    "deleteHint": "Mijozlar undan foydalana olmaydi. Oldingi buyurtmalardagi chegirma saqlanadi.",
+    "cancel": "Bekor qilish",
+    "errors": {
+      "invalid": "Ma'lumotlarni tekshiring",
+      "codeInvalid": "3–20 belgi: harflar, raqamlar, chiziqcha",
+      "codeTaken": "Bunday kod allaqachon bor",
+      "valueInvalid": "Chegirmani kiriting",
+      "percentInvalid": "Foiz 1 dan 100 gacha butun son bo'lishi kerak",
+      "amountInvalid": "Noto'g'ri summa",
+      "maxUsesInvalid": "Butun son kiriting yoki bo'sh qoldiring",
+      "dateInvalid": "Noto'g'ri sana",
+      "notFound": "Topilmadi",
+      "server": "Nimadir xato ketdi"
+    }
   }
 }

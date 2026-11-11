@@ -11,6 +11,7 @@ import {
   Loader2,
   MapPin,
   Store,
+  TicketPercent,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -43,6 +44,8 @@ import { dialPrefix } from "@/lib/phone-prefix";
 import { setTable, useTable } from "@/lib/table-session";
 import { mapsLink } from "@/lib/maps";
 import { createOrder } from "@/lib/orders/actions";
+import { deliveryFeeFor, promoDiscount } from "@/lib/orders/promo";
+import { checkPromo, type CheckPromoResult } from "@/lib/orders/promo-actions";
 import { createManualOrder } from "@/lib/orders/admin-actions";
 import { cn } from "@/lib/utils";
 import {
@@ -115,6 +118,13 @@ export function CheckoutForm({
   const [uploadingReceipt, setUploadingReceipt] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [markPaid, setMarkPaid] = useState(false);
+  // Promo code: checked on "Apply" (preview), re-checked and counted when the order is placed
+  const [promoInput, setPromoInput] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<
+    Extract<CheckPromoResult, { ok: true }>["promo"] | null
+  >(null);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [checkingPromo, setCheckingPromo] = useState(false);
   const [chosenTimeMode, setTimeMode] = useState<"asap" | "scheduled">("asap");
   const timeMode = preorder ? "scheduled" : chosenTimeMode;
   // Bank transfer receipt photo — uploaded right after the order is saved
@@ -184,7 +194,20 @@ export function CheckoutForm({
   });
 
   const subtotal = cartSubtotal(lines);
-  const deliveryFee = type === "DELIVERY" ? settings.deliveryFee : 0;
+  const deliveryFee = deliveryFeeFor(
+    type,
+    subtotal,
+    settings.deliveryFee,
+    settings.freeDeliveryFrom,
+  );
+  // Free delivery: how much is missing (only shown for delivery)
+  const toFreeDelivery =
+    type === "DELIVERY" && settings.freeDeliveryFrom !== null && settings.deliveryFee > 0
+      ? Math.max(0, settings.freeDeliveryFrom - subtotal)
+      : 0;
+  // The code may stop applying if the cart drops below its minimum
+  const promoBelowMin = appliedPromo !== null && subtotal < appliedPromo.minSubtotal;
+  const discount = appliedPromo && !promoBelowMin ? promoDiscount(appliedPromo, subtotal) : 0;
 
   // "Use my current location": browser geolocation → coordinates on the order + address text
   const [locating, setLocating] = useState(false);
@@ -234,7 +257,31 @@ export function CheckoutForm({
     setValue("longitude", undefined);
     setLocationNote(null);
   }
-  const total = subtotal + deliveryFee;
+  const total = subtotal - discount + deliveryFee;
+
+  async function applyPromo() {
+    const code = promoInput.trim();
+    if (!code) return;
+    setCheckingPromo(true);
+    setPromoError(null);
+    const result = await checkPromo({ storeSlug: store.slug, code, subtotal });
+    setCheckingPromo(false);
+    if (result.ok) {
+      setAppliedPromo(result.promo);
+      setPromoInput("");
+      return;
+    }
+    setPromoError(
+      result.error === "tooMany"
+        ? t("promo.tooMany")
+        : t(`errors.${result.error}`, { amount: formatMoney(result.minSubtotal ?? 0) }),
+    );
+  }
+
+  function removePromo() {
+    setAppliedPromo(null);
+    setPromoError(null);
+  }
   // No minimum order at a table (same rule as the server)
   const missing = dineIn ? 0 : Math.max(0, store.minOrder - subtotal);
   const canOrder = isAdmin
@@ -263,6 +310,7 @@ export function CheckoutForm({
       address: values.address,
       landmark: values.landmark,
       scheduledFor: dineIn ? undefined : values.scheduledFor,
+      promoCode: isAdmin || promoBelowMin ? undefined : appliedPromo?.code,
       comment: values.comment,
       paymentMethod: values.paymentMethod,
       items: lines.map((l) => ({
@@ -277,6 +325,11 @@ export function CheckoutForm({
       : await createOrder({ ...order, storeSlug: store.slug });
 
     if (!result.ok) {
+      if (result.error.startsWith("promo")) {
+        // The code stopped working (used up / expired) — drop it, the customer can order without it
+        setAppliedPromo(null);
+        setPromoError(t(`errors.${result.error}`, { amount: formatMoney(0) }));
+      }
       for (const [field, message] of Object.entries(result.fieldErrors ?? {})) {
         const name = FIELD_MAP[field] ?? field;
         if (name in values) setError(name as keyof CheckoutFormInput, { message });
@@ -649,6 +702,71 @@ export function CheckoutForm({
         </Field>
       </Card>
 
+      {/* Promo code (only when the store has active codes) */}
+      {!isAdmin && settings.hasPromoCodes && (
+        <Card title={t("promo.title")}>
+          {appliedPromo ? (
+            <div className="border-primary/30 bg-primary/5 flex items-center gap-3 rounded-xl border px-3 py-2.5">
+              <TicketPercent className="text-primary size-5 shrink-0" aria-hidden />
+              <div className="min-w-0 flex-1">
+                <p className="font-mono text-sm font-bold tracking-wide">{appliedPromo.code}</p>
+                <p className="text-muted-foreground text-xs">
+                  {promoBelowMin
+                    ? t("errors.promoMinSubtotal", {
+                        amount: formatMoney(appliedPromo.minSubtotal),
+                      })
+                    : t("promo.applied", { amount: formatMoney(discount) })}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={removePromo}
+                aria-label={t("promo.remove")}
+                className="text-muted-foreground hover:bg-background rounded-full p-1.5"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-1.5">
+              <div className="flex gap-2">
+                <Input
+                  value={promoInput}
+                  onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      void applyPromo();
+                    }
+                  }}
+                  placeholder={t("promo.placeholder")}
+                  aria-label={t("promo.title")}
+                  aria-invalid={!!promoError}
+                  autoCapitalize="characters"
+                  autoComplete="off"
+                  maxLength={20}
+                  className="h-11 flex-1 font-mono uppercase"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-11 px-4"
+                  disabled={!promoInput.trim() || checkingPromo}
+                  onClick={applyPromo}
+                >
+                  {checkingPromo ? <Loader2 className="animate-spin" /> : t("promo.apply")}
+                </Button>
+              </div>
+              {promoError && (
+                <p className="text-destructive text-sm" role="alert">
+                  {promoError}
+                </p>
+              )}
+            </div>
+          )}
+        </Card>
+      )}
+
       {/* To'lov */}
       <Card title={t("payment")}>
         <Controller
@@ -703,10 +821,26 @@ export function CheckoutForm({
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-2">
           <dl className="flex flex-col gap-0.5 text-sm">
             <Row label={t("subtotal")} value={formatMoney(subtotal)} />
+            {discount > 0 && appliedPromo && (
+              <Row
+                label={t("promo.discountRow", { code: appliedPromo.code })}
+                value={`−${formatMoney(discount)}`}
+                accent
+              />
+            )}
             {type === "DELIVERY" && (
-              <Row label={t("deliveryFee")} value={formatMoney(settings.deliveryFee)} />
+              <Row
+                label={t("deliveryFee")}
+                value={deliveryFee === 0 ? tCart("freeDelivery") : formatMoney(deliveryFee)}
+                accent={deliveryFee === 0}
+              />
             )}
           </dl>
+          {toFreeDelivery > 0 && (
+            <p className="text-primary text-center text-sm font-medium">
+              {tCart("freeDeliveryMore", { amount: formatMoney(toFreeDelivery) })}
+            </p>
+          )}
           {!isAdmin && !isOpenNow && !preorder && (
             <p className="text-destructive text-center text-sm">{tCart("closed")}</p>
           )}
@@ -822,11 +956,11 @@ function ChoiceCard({
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div className="flex justify-between">
       <dt className="text-muted-foreground">{label}</dt>
-      <dd className="tabular-nums">{value}</dd>
+      <dd className={cn("tabular-nums", accent && "text-primary font-medium")}>{value}</dd>
     </div>
   );
 }

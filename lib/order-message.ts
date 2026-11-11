@@ -40,6 +40,9 @@ export interface OrderMessageOrder {
   /** Bank transfer receipt uploaded by the customer (adds a link for the store owner) */
   receiptPath?: string | null;
   subtotal: number;
+  /** Promo discount (minor units) and the code text */
+  discount?: number;
+  promoCode?: string | null;
   deliveryFee: number;
   total: number;
   /** Order currency snapshot (ISO 4217) */
@@ -98,6 +101,10 @@ export function buildOrderMessage(
 
   const qty = order.items.reduce((sum, i) => sum + i.quantity, 0);
   lines.push(`${t.itemTotal}: ${money(order.subtotal)} (${t.qty}: ${qty})`);
+  if (order.discount) {
+    const code = order.promoCode ? ` (${order.promoCode})` : "";
+    lines.push(`${t.discount}${code}: −${money(order.discount)}`);
+  }
   if (order.deliveryFee > 0) lines.push(`${t.deliveryFee}: ${money(order.deliveryFee)}`);
   lines.push(bold(`${t.total}: ${money(order.total)}`));
   lines.push("");

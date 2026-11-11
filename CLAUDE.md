@@ -55,7 +55,7 @@ app/
   admin/(panel)/qr/           QR kodlar: do'kon havolasi + stoldan buyurtma (yoqish, stollar soni) + kartochkalar
   admin/tables/               stol kartochkalarini chop etish, A6/A5/A4 ((panel) layout'idan tashqarida)
   admin/print/[orderId]/      80mm: ?type=kitchen (narxsiz, stol katta) | receipt (mijoz cheki); &auto=1 — chop etish oynasi
-  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], qr, settings
+  admin/(panel)/              do'kon egasi paneli: orders, orders/new, menu, menu/products/[new|id], qr, promos, settings
   superadmin/                 platforma egasi: statistika, do'konlar, tarif (+1 oy / bepul), bloklash
 components/ui/                shadcn komponentlari
 components/storefront/        mijoz menyusi, variant oynasi, savat
@@ -94,6 +94,9 @@ lib/
   geo/                        lookupAddress (server action) → reverseGeocode (Nominatim; provayderni shu faylda almashtiring)
   menu/admin-data.ts          getAdminMenu, getAdminProduct (keshsiz, nofaollar ham)
   menu/admin-actions.ts       kategoriya/taom CRUD, tartiblash, "bugun yo'q", saveProduct (variantlar id bo'yicha moslanadi), rasm
+  orders/promo.ts             promoProblem, promoDiscount, deliveryFeeFor (sof funksiyalar: klient preview + server)
+  orders/promo-actions.ts     checkPromo — checkout'da "Qo'llash" (kirishsiz, rate limit)
+  promos/                     admin: listPromos, createPromo / setPromoActive / deletePromo
   orders/pricing.ts           priceItems — bazadagi narx + variant tekshiruvi (sof funksiya)
   orders/get-order.ts         getOrderForCustomer
   orders/send-link.ts         orderSendLink — do'kon kanaliga qarab t.me / wa.me havola
@@ -144,7 +147,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Xatolar: `catch` da foydalanuvchiga do'stona xato qaytarsangiz, `reportError(e, "joy")` ni chaqiring
   (`console.error` emas) — aks holda Sentry'ga tushmaydi. Session Replay yoqilmaydi (checkout formasi).
 - Ommaviy (kirishsiz) yoki qimmat Server Action'lar `rateLimit` bilan cheklanadi (`lib/rate-limit.ts` dagi RULES):
-  login, signup, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder. Yangi shunday action qo'shsangiz — qoida qo'shing.
+  login, signup, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder, checkPromo. Yangi shunday action qo'shsangiz — qoida qo'shing.
 - Tezlik: bog'langan ma'lumot (include / nested select) o'qilsa — `...JOIN` qo'shing; bir-biriga bog'liq
   bo'lmagan so'rovlarni `Promise.all` bilan parallel qiling. Har bir so'rov bazaga borish = vaqt.
 - Sayt manzilini `NEXT_PUBLIC_APP_URL` dan emas, `getRequestOrigin()` dan oling. U `APP_URL` (asosiy domen,
@@ -158,6 +161,9 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
   `useFormatMoney()` orqali. Admin formalarida asosiy birlik (8.99) — saqlashda `toMinor`; formalar uchun
   `productFormSchema` / `storeSettingsFormSchema`, server uchun `productSchema` / `storeSettingsSchema`.
 - Buyurtma o'z valyutasini saqlaydi (`Order.currency`) — summalar shu bilan ko'rsatiladi.
+- Promo-kod: `Order.total = subtotal - discount + deliveryFee`. Chegirma taomlar summasiga; kod serverda qayta tekshiriladi
+  va `usedCount` tranzaksiya ichida atomik oshiriladi (`maxUses` oshib ketmaydi). Bepul yetkazish (`Store.freeDeliveryFrom`)
+  taomlar summasi bo'yicha (chegirmadan oldin). minOrder ham chegirmadan oldingi summa bo'yicha.
 - Vaqt: hech qachon qattiq vaqt zonasi yozilmaydi — `store.timeZone` (ish vaqti, "bugun", sanalar).
 - Telefon: xalqaro format (+mamlakat kodi), `phoneSchema` / `normalizePhone`.
 - Buyurtma summasi SERVERDA bazadagi narxlardan qayta hisoblanadi, klient narxiga ishonilmaydi.
@@ -235,7 +241,7 @@ P1 (navbat bo'yicha):
 2. [ ] Tarif limitlari kodda (`Store.plan`) + tarif sahifasi
 3. [x] Stolga QR orqali buyurtma (`OrderType.DINE_IN`, stol raqami)
 4. [x] Chek / oshxona varag'ini chop etish (80mm)
-5. [ ] Promo-kodlar + ma'lum summadan bepul yetkazish
+5. [x] Promo-kodlar + ma'lum summadan bepul yetkazish
 6. [ ] Analitika (tushum, o'rtacha chek, top taomlar, soatlar, qaytgan mijozlar) + mijozlar bazasi (telefon bo'yicha)
 7. [ ] Telegram Mini App
 8. [ ] Admin push-bildirishnoma (PWA) + onboarding checklist

@@ -257,6 +257,26 @@ export function SettingsForm({
             />
           </Field>
           <p className="text-muted-foreground text-xs">{t("deliveryFeeHint")}</p>
+          <Field
+            label={t("freeDeliveryFrom", { currency })}
+            htmlFor="freeDeliveryFrom"
+            error={errorText(errors.freeDeliveryFrom?.message)}
+          >
+            <Input
+              id="freeDeliveryFrom"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              step={priceStep(currency)}
+              className="w-40"
+              aria-invalid={!!errors.freeDeliveryFrom}
+              {...register("freeDeliveryFrom", {
+                // Empty = off
+                setValueAs: (v) => (v === "" || v === null ? null : Number(v)),
+              })}
+            />
+          </Field>
+          <p className="text-muted-foreground text-xs">{t("freeDeliveryFromHint")}</p>
         </div>
       </Card>
 

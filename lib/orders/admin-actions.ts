@@ -105,7 +105,7 @@ export async function createManualOrder(input: ManualOrderInput): Promise<Manual
   const { store } = await requireOwner();
   const settings = await prisma.store.findUniqueOrThrow({
     where: { id: store.id },
-    select: { deliveryFee: true },
+    select: { deliveryFee: true, freeDeliveryFrom: true },
   });
 
   const parsed = manualOrderSchema.safeParse(input);
@@ -124,12 +124,19 @@ export async function createManualOrder(input: ManualOrderInput): Promise<Manual
       storeId: store.id,
       currency: store.currency,
       deliveryFee: settings.deliveryFee,
+      freeDeliveryFrom: settings.freeDeliveryFrom,
+      // Promo codes are for customers; a manual order has none
+      promoCode: undefined,
       paymentStatus: markPaid ? "PAID" : "UNPAID",
       minOrder: null,
     });
     if (!result.ok) {
-      // minOrder admin uchun tekshirilmaydi
-      return { ok: false, error: result.error === "minOrder" ? "server" : result.error };
+      // minOrder admin uchun tekshirilmaydi; promo kod yo'q
+      const error =
+        result.error === "unavailable" || result.error === "invalidOptions"
+          ? result.error
+          : "server";
+      return { ok: false, error };
     }
     return { ok: true, orderId: result.orderId, number: result.number };
   } catch (e) {

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { defaultLocale, locales } from "@/i18n/config";
+import { normalizePromoCode, PROMO_CODE_PATTERN } from "@/lib/orders/promo";
 
 import { isValidCurrency, toMajor, toMinor } from "@/lib/money";
 import { slugError } from "@/lib/slug";
@@ -56,6 +57,12 @@ const orderFields = {
   scheduledFor: scheduledForSchema,
   comment: optionalText(500),
   paymentMethod: z.enum(["CASH", "CARD_ON_DELIVERY", "TRANSFER"]),
+  /** Applied promo code (normalized; checked against the DB on the server) */
+  promoCode: z
+    .string()
+    .max(30)
+    .optional()
+    .transform((v) => (v ? normalizePromoCode(v) : undefined)),
 };
 
 type OrderType = "PICKUP" | "DELIVERY" | "DINE_IN";
@@ -315,6 +322,8 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
       minOrder,
       /** Flat delivery fee */
       deliveryFee: fee,
+      /** Free delivery from this items subtotal; null = off */
+      freeDeliveryFrom: fee.nullable(),
 
       acceptCash: z.boolean(),
       acceptCardOnDelivery: z.boolean(),
@@ -381,6 +390,7 @@ export function settingsFormToMinor(v: StoreSettingsFormData): StoreSettingsInpu
     ...v,
     minOrder: toMinor(v.minOrder, v.currency),
     deliveryFee: toMinor(v.deliveryFee, v.currency),
+    freeDeliveryFrom: v.freeDeliveryFrom === null ? null : toMinor(v.freeDeliveryFrom, v.currency),
   };
 }
 
@@ -390,8 +400,47 @@ export function settingsToForm(v: StoreSettingsInput): StoreSettingsFormInput {
     ...v,
     minOrder: toMajor(v.minOrder, v.currency),
     deliveryFee: toMajor(v.deliveryFee, v.currency),
+    freeDeliveryFrom: v.freeDeliveryFrom == null ? null : toMajor(v.freeDeliveryFrom, v.currency),
   };
 }
+
+/**
+ * Admin promo code form. Money in major units (converted with the store currency on the server).
+ * Error messages — "adminPromos.errors.*" keys.
+ */
+export const promoFormSchema = z
+  .object({
+    code: z
+      .string()
+      .transform(normalizePromoCode)
+      .pipe(z.string().regex(PROMO_CODE_PATTERN, "codeInvalid")),
+    type: z.enum(["PERCENT", "FIXED"]),
+    value: z.number({ error: "valueInvalid" }).finite("valueInvalid").positive("valueInvalid"),
+    minSubtotal: z
+      .number({ error: "amountInvalid" })
+      .finite("amountInvalid")
+      .min(0, "amountInvalid")
+      .max(100_000_000, "amountInvalid"),
+    maxUses: z
+      .number({ error: "maxUsesInvalid" })
+      .int("maxUsesInvalid")
+      .min(1, "maxUsesInvalid")
+      .max(1_000_000, "maxUsesInvalid")
+      .nullable(),
+    /** "YYYY-MM-DD" (last day the code works, store time zone) or "" */
+    expiresOn: z.string().regex(/^(\d{4}-\d{2}-\d{2})?$/, "dateInvalid"),
+  })
+  .superRefine((v, ctx) => {
+    if (v.type === "PERCENT" && (!Number.isInteger(v.value) || v.value > 100)) {
+      ctx.addIssue({ code: "custom", path: ["value"], message: "percentInvalid" });
+    }
+    if (v.type === "FIXED" && v.value > 100_000_000) {
+      ctx.addIssue({ code: "custom", path: ["value"], message: "valueInvalid" });
+    }
+  });
+
+export type PromoFormInput = z.input<typeof promoFormSchema>;
+export type PromoFormData = z.output<typeof promoFormSchema>;
 
 /** QR page: table ordering. Error messages — "table.errors.*" keys. */
 export const tableSettingsSchema = z

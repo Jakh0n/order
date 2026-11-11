@@ -92,6 +92,8 @@ model Store {
   minOrder             Int            @default(0)
   /// Flat delivery fee (minor units). Replaced per-area fees (DeliveryZone is no longer used).
   deliveryFee          Int            @default(0)
+  /// Delivery is free when the items subtotal reaches this amount (minor units); null = off
+  freeDeliveryFrom     Int?
   acceptCash           Boolean        @default(true)
   acceptCardOnDelivery Boolean        @default(true)
   acceptTransfer       Boolean        @default(false)
@@ -105,6 +107,7 @@ model Store {
   categories           Category[]
   products             Product[]
   zones                DeliveryZone[]
+  promoCodes           PromoCode[]
   orders               Order[]
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt
@@ -207,6 +210,10 @@ model Order {
   status        OrderStatus   @default(NEW)
   subtotal      Int
   deliveryFee   Int           @default(0)
+  /// Promo code used (snapshot of the code text) and the discount it gave (minor units)
+  promoCode     String?
+  discount      Int           @default(0)
+  /// subtotal - discount + deliveryFee
   total         Int
   /// Buyurtma paytidagi do'kon valyutasi (snapshot)
   currency      String        @default("USD")
@@ -242,4 +249,32 @@ model RateLimit {
   resetAt DateTime
 
   @@index([resetAt])
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
+/// Store promo code. The customer enters `code` at checkout; the discount is applied to the items subtotal.
+model PromoCode {
+  id          String       @id @default(cuid())
+  storeId     String
+  store       Store        @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  /// Upper case, letters/digits/dash
+  code        String
+  type        DiscountType
+  /// PERCENT: 1..100; FIXED: amount in the store currency's minor unit
+  value       Int
+  /// Items subtotal needed to use the code (minor units, 0 = any)
+  minSubtotal Int          @default(0)
+  /// null = unlimited
+  maxUses     Int?
+  usedCount   Int          @default(0)
+  expiresAt   DateTime?
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([storeId, code])
 }

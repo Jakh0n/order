@@ -28,6 +28,8 @@ export const RULES = {
   receiptOrder: { name: "receipt:order", limit: 5, windowSeconds: 60 * 60 },
   geocodeIp: { name: "geocode:ip", limit: 10, windowSeconds: 60 },
   reorderIp: { name: "reorder:ip", limit: 30, windowSeconds: 10 * 60 },
+  /** Checking promo codes at checkout (stops guessing codes) */
+  promoIp: { name: "promo:ip", limit: 20, windowSeconds: 10 * 60 },
 } satisfies Record<string, RateLimitRule>;
 
 /**

@@ -53,6 +53,8 @@ export interface StorefrontStore {
   deliveryEnabled: boolean;
   /** Flat delivery fee (minor units) */
   deliveryFee: number;
+  /** Free delivery from this items subtotal (minor units); null = off */
+  freeDeliveryFrom: number | null;
   /** Table QR ordering; valid tables are 1..tableCount */
   dineInEnabled: boolean;
   tableCount: number;
@@ -72,4 +74,8 @@ export interface CheckoutSettings {
   transferDetails: string | null;
   /** Flat delivery fee (minor units) */
   deliveryFee: number;
+  /** Free delivery from this items subtotal; null = off */
+  freeDeliveryFrom: number | null;
+  /** The store has at least one active promo code (shows the code field at checkout) */
+  hasPromoCodes: boolean;
 }

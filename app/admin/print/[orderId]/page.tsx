@@ -193,6 +193,12 @@ async function OrderPrint({
             <Divider />
 
             <Line label={t("checkout.subtotal")} value={money(order.subtotal)} />
+            {order.discount > 0 && (
+              <Line
+                label={t("checkout.promo.discountRow", { code: order.promoCode ?? "" })}
+                value={`−${money(order.discount)}`}
+              />
+            )}
             {order.deliveryFee > 0 && (
               <Line label={t("checkout.deliveryFee")} value={money(order.deliveryFee)} />
             )}
