@@ -51,6 +51,7 @@ app/
   [store]/checkout/page.tsx   checkout
   o/[orderId]/page.tsx        buyurtma holati
   signup/                     ro'yxatdan o'tish ustasi (hisob + do'kon)
+  admin/layout.tsx            admin PWA: manifest (/admin.webmanifest, scope /admin/), public/sw.js — push
   admin/login/                kirish (email + parol)
   admin/(panel)/qr/           QR kodlar: do'kon havolasi + stoldan buyurtma (yoqish, stollar soni) + kartochkalar
   admin/tables/               stol kartochkalarini chop etish, A6/A5/A4 ((panel) layout'idan tashqarida)
@@ -83,6 +84,8 @@ lib/
   sentry-scrub.ts             telefon/email ni xabarlardan yashirish
   plan.ts                     planOf / isPro (PAID + paidUntil kelajakda = Pro), FREE_MONTHLY_ORDERS, upgradeLink (SUPPORT_TELEGRAM)
   plan-history.ts             freeHistoryFilter — Free: oyiga 100 tadan keyingi YAKUNLANGAN buyurtmalar tarixda yashiriladi
+  push/actions.ts             savePushSubscription / deletePushSubscription (requireOwner)
+  push/send.ts                notifyNewOrder — web-push (VAPID), do'kon tilida; createOrder'dan `after()` bilan
   rate-limit.ts               rateLimit / rateLimitAll (Postgres, qat'iy oyna), RULES, clientIp
   slug.ts                     slugify (kirill → lotin), RESERVED_SLUGS, slugError
   superadmin/data.ts          getPlatformStats, listStores
@@ -204,7 +207,8 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Build: `vercel-build` = `prisma generate && prisma migrate deploy && next build` — migratsiyalar avtomatik.
 - Env: `DATABASE_URL` (6543, `pgbouncer=true&connection_limit=3`), `DIRECT_URL` (5432), `AUTH_SECRET`,
   `APP_URL=https://flami.org`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (secret),
-  `NEXT_PUBLIC_SENTRY_DSN`, `SUPPORT_TELEGRAM` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
+  `NEXT_PUBLIC_SENTRY_DSN`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY` + `VAPID_PRIVATE_KEY` (secret) + `VAPID_SUBJECT` (push),
+  `SUPPORT_TELEGRAM` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
 - Monitoring: `GET /api/health` (200 = ilova + baza ishlayapti, 503 = baza javob bermayapti) — uptime servisga ulang.
 - Yuklama testi: `BASE_URL=<preview url> npm run loadtest` (k6, `loadtest/storefront.js`), production'ga emas.
 
@@ -252,7 +256,7 @@ P1 (navbat bo'yicha):
 5. [x] Promo-kodlar + ma'lum summadan bepul yetkazish
 6. [x] Analitika (tushum, o'rtacha chek, top taomlar, soatlar, qaytgan mijozlar) + mijozlar bazasi (telefon bo'yicha)
 7. [ ] Telegram Mini App
-8. [ ] Admin push-bildirishnoma (PWA) + onboarding checklist
+8. [x] Admin push-bildirishnoma (PWA) + onboarding checklist
 
 P2: shablon menyu, CSV/rasmdan menyu importi (AI), taom yorliqlari (achchiq, halol, hit), menyu tillari,
 bir nechta to'lov rekviziti (Click/Payme/Kaspi) + nusxa tugmasi, masofaga qarab yetkazish narxi,

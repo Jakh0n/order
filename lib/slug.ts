@@ -26,6 +26,8 @@ export const RESERVED_SLUGS = new Set([
   "settings",
   "dashboard",
   "monitoring", // Sentry tunnel (next.config.ts → tunnelRoute)
+  "pwa-icon", // admin app icons (app/pwa-icon/[size])
+  "sw", // service worker (public/sw.js)
   // SEO metadata routes (app/icon.svg, app/apple-icon.tsx, app/opengraph-image.tsx)
   "icon",
   "apple-icon",

@@ -736,6 +736,7 @@
     "products": "Kamida 3 ta taom qo'shing",
     "hours": "Ish vaqtini belgilang",
     "channel": "Buyurtmalar uchun Telegram yoki WhatsApp'ni ulang",
+    "notifications": "Buyurtma bildirishnomalarini yoqing",
     "testOrder": "Do'koningizni ochib, sinov buyurtmasini bering"
   },
   "table": {
@@ -946,5 +947,24 @@
     "upgradeMessage": "Assalomu alaykum! \"{store}\" do'konim uchun Pro olmoqchiman.",
     "renewMessage": "Assalomu alaykum! \"{store}\" do'konim uchun Pro'ni uzaytirmoqchiman.",
     "neverLimit": "Free hech qachon buyurtmani to'xtatmaydi: yangi va faol buyurtmalar doim keladi va ko'rinadi."
+  },
+  "push": {
+    "turnOn": "Xabar berish",
+    "on": "Bildirishnoma yoqilgan",
+    "installShort": "Bildirishnoma olish",
+    "turnOffHint": "Bu qurilmada bildirishnomani o'chirish uchun bosing",
+    "enabled": "Tayyor — yangi buyurtmalar bu qurilmaga bildirishnoma bo'lib keladi",
+    "disabled": "Bu qurilmada bildirishnoma o'chirildi",
+    "failed": "Bildirishnomani yoqib bo'lmadi. Qayta urinib ko'ring.",
+    "installTitle": "Flami'ni bosh ekranga qo'shing",
+    "installSteps": "iPhone'da bildirishnoma faqat bosh ekrandagi ilovadan ishlaydi:\n1. Safari'da «Ulashish» tugmasini bosing\n2. «Bosh ekranga qo'shish» ni tanlang\n3. Flami'ni bosh ekrandan oching va «Xabar berish» ni bosing",
+    "deniedTitle": "Bildirishnomalar bloklangan",
+    "deniedSteps": "Brauzer sozlamalarida (manzil yonidagi qulf belgisi) bu sayt uchun bildirishnomaga ruxsat bering va sahifani yangilang.",
+    "title": "Yangi buyurtma №{number} · {total}",
+    "PICKUP": "Olib ketish",
+    "DELIVERY": "Yetkazib berish",
+    "DINE_IN": "Stolda",
+    "table": "{number}-stol",
+    "at": "{time} ga"
   }
 }

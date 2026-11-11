@@ -736,6 +736,7 @@
     "products": "Add at least 3 dishes",
     "hours": "Set your opening hours",
     "channel": "Connect Telegram or WhatsApp for orders",
+    "notifications": "Turn on new-order notifications",
     "testOrder": "Open your store and place a test order"
   },
   "table": {
@@ -946,5 +947,24 @@
     "upgradeMessage": "Hi! I'd like Pro for my store \"{store}\".",
     "renewMessage": "Hi! I'd like to extend Pro for my store \"{store}\".",
     "neverLimit": "Free never blocks orders: new and active orders always arrive and stay visible."
+  },
+  "push": {
+    "turnOn": "Notify me",
+    "on": "Notifications on",
+    "installShort": "Get notifications",
+    "turnOffHint": "Tap to turn off notifications on this device",
+    "enabled": "Done — new orders will appear as notifications on this device",
+    "disabled": "Notifications turned off on this device",
+    "failed": "Couldn't turn on notifications. Please try again.",
+    "installTitle": "Add Flami to your home screen",
+    "installSteps": "On iPhone, notifications only work from the home-screen app:\n1. Tap the Share button in Safari\n2. Choose “Add to Home Screen”\n3. Open Flami from the home screen and tap “Notify me”",
+    "deniedTitle": "Notifications are blocked",
+    "deniedSteps": "Allow notifications for this site in your browser settings (the lock icon next to the address), then reload the page.",
+    "title": "New order #{number} · {total}",
+    "PICKUP": "Pickup",
+    "DELIVERY": "Delivery",
+    "DINE_IN": "At a table",
+    "table": "Table {number}",
+    "at": "for {time}"
   }
 }

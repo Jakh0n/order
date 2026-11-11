@@ -1,9 +1,12 @@
 "use server";
 
+import { after } from "next/server";
+
 import { prisma } from "@/lib/db";
 import { insertOrder } from "@/lib/orders/insert";
 import type { PromoProblem } from "@/lib/orders/promo";
 import { isPro } from "@/lib/plan";
+import { notifyNewOrder } from "@/lib/push/send";
 import { clientIp, rateLimitAll, RULES } from "@/lib/rate-limit";
 import { isStoreOpenNow, isValidSlot } from "@/lib/store-hours";
 import { checkoutSchema, type CheckoutInput } from "@/lib/validators";
@@ -113,6 +116,8 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
       const promoField = result.error.startsWith("promo") ? { promoCode: result.error } : undefined;
       return { ok: false, error: result.error, minOrder: store.minOrder, fieldErrors: promoField };
     }
+    // Owner's phone buzzes — after the response, so checkout never waits for push services
+    after(() => notifyNewOrder(result.orderId));
     return { ok: true, orderId: result.orderId, number: result.number };
   } catch (e) {
     reportError(e, "createOrder", { store: data.storeSlug });

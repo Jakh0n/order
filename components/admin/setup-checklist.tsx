@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
  * Hidden once everything is done.
  */
 export async function SetupChecklist({ storeId, slug }: { storeId: string; slug: string }) {
-  const [t, store, categories, products, orders] = await Promise.all([
+  const [t, store, categories, products, orders, devices] = await Promise.all([
     getTranslations("setup"),
     prisma.store.findUnique({
       where: { id: storeId },
@@ -25,6 +25,7 @@ export async function SetupChecklist({ storeId, slug }: { storeId: string; slug:
     prisma.category.count({ where: { storeId } }),
     prisma.product.count({ where: { storeId } }),
     prisma.order.count({ where: { storeId } }),
+    prisma.pushSubscription.count({ where: { storeId } }),
   ]);
   if (!store) return null;
 
@@ -37,6 +38,8 @@ export async function SetupChecklist({ storeId, slug }: { storeId: string; slug:
       done: store.channel === "TELEGRAM" ? !!store.telegramUsername : !!store.whatsappNumber,
       href: "/admin/settings",
     },
+    // Push on at least one device — the owner hears about orders with the tab closed
+    { key: "notifications", done: devices > 0, href: "/admin/orders#push" },
     { key: "testOrder", done: orders > 0, href: `/${slug}`, external: true },
   ] as const;
   const doneCount = steps.filter((s) => s.done).length;

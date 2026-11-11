@@ -6,6 +6,7 @@ import { Suspense } from "react";
 
 import { NewOrderAlert } from "@/components/admin/new-order-alert";
 import { OrderCard } from "@/components/admin/order-card";
+import { PushToggle } from "@/components/admin/push-toggle";
 import { SetupChecklist } from "@/components/admin/setup-checklist";
 import { AutoRefresh } from "@/components/order/auto-refresh";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -133,6 +134,7 @@ async function Orders({
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-2xl font-bold">{(await getTranslations("admin"))("orders")}</h1>
         <div className="flex items-center gap-1">
+          <PushToggle />
           <NewOrderAlert newIds={newOrders.map((o) => o.id)} />
           <Link href="/admin/orders/new" className={buttonVariants()}>
             <Plus />

@@ -108,6 +108,7 @@ model Store {
   products             Product[]
   zones                DeliveryZone[]
   promoCodes           PromoCode[]
+  pushSubscriptions    PushSubscription[]
   orders               Order[]
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt
@@ -277,4 +278,21 @@ model PromoCode {
   updatedAt   DateTime     @updatedAt
 
   @@unique([storeId, code])
+}
+
+/// A device (browser / installed admin app) that gets a push notification for every new order
+model PushSubscription {
+  id        String   @id @default(cuid())
+  storeId   String
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  userId    String
+  /// Push service URL — unique per browser install
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  /// "iPhone · Safari" style label for the device list (not used for logic)
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([storeId])
 }
