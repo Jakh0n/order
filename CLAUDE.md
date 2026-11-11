@@ -177,6 +177,9 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
   `productFormSchema` / `storeSettingsFormSchema`, server uchun `productSchema` / `storeSettingsSchema`.
 - Holat ranglari (Ochiq / Yopiq, to'landi) brend rangiga bog'lanmaydi — doim yashil/qizil.
 - Buyurtma o'z valyutasini saqlaydi (`Order.currency`) — summalar shu bilan ko'rsatiladi.
+- Promo-kod va choychaqa: `Order.total = subtotal - discount + deliveryFee + tip`. Choychaqa (Website → Checkout,
+  `Store.tipsEnabled`) — 0/5/10/15% chegirmadan keyingi taomlar summasidan, serverda qayta hisoblanadi (`tipAmount`).
+  Email maydoni `Store.checkoutEmail` (off/optional/required) serverda ham tekshiriladi.
 - Promo-kod: `Order.total = subtotal - discount + deliveryFee`. Chegirma taomlar summasiga; kod serverda qayta tekshiriladi
   va `usedCount` tranzaksiya ichida atomik oshiriladi (`maxUses` oshib ketmaydi). Bepul yetkazish (`Store.freeDeliveryFrom`)
   taomlar summasi bo'yicha (chegirmadan oldin). minOrder ham chegirmadan oldingi summa bo'yicha.

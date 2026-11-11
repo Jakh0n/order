@@ -239,7 +239,9 @@
       "promoInvalid": "This code doesn't work",
       "promoExpired": "This code has expired",
       "promoUsedUp": "This code has been used up",
-      "promoMinSubtotal": "This code works for orders from {amount}"
+      "promoMinSubtotal": "This code works for orders from {amount}",
+      "emailInvalid": "Enter a valid email",
+      "emailRequired": "Please enter your email"
     },
     "edit": "Edit",
     "timeAsap": "As soon as possible",
@@ -269,6 +271,14 @@
       "remove": "Remove code",
       "discountRow": "Promo {code}",
       "tooMany": "Too many attempts. Please try again in a few minutes."
+    },
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "tip": {
+      "title": "Add a tip",
+      "none": "No tip",
+      "hint": "Goes to the team. You can pay it with your order.",
+      "label": "Tip"
     }
   },
   "payment": {
@@ -420,7 +430,8 @@
       "CARD_ON_DELIVERY": "Card",
       "TRANSFER": "Bank Transfer"
     },
-    "discount": "Discount"
+    "discount": "Discount",
+    "tip": "Tip"
   },
   "store": {
     "notFound": "Store not found",
@@ -1097,6 +1108,32 @@
       "chooseImage": "Choose an image (wide, e.g. 1200×600)",
       "link": "Link",
       "linkHint": "Optional. Opens when the banner is tapped."
+    },
+    "checkout": {
+      "fields": "Customer details",
+      "fieldsHint": "What customers fill in when they order.",
+      "name": "Name",
+      "phone": "Phone",
+      "always": "Always asked",
+      "phoneNote": "Always (not at tables)",
+      "email": "Email",
+      "emailModes": {
+        "off": "Off",
+        "optional": "Optional",
+        "required": "Required"
+      },
+      "note": "Note for the store",
+      "noteHint": "e.g. “no onions, please”",
+      "discounts": "Discounts",
+      "promo": "Promo code field",
+      "promoHint": "Shown when you're on Pro and have an active code.",
+      "managePromos": "Manage promo codes →",
+      "tips": "Tips",
+      "tipsToggle": "Ask for a tip",
+      "tipsHint": "Customers can add 5%, 10% or 15% — it's added to the total and shown on the order.",
+      "deliveryPayment": "Delivery and payment",
+      "deliveryPaymentHint": "Pickup, delivery fee, minimum order and payment methods are in Settings.",
+      "openSettings": "Open Settings"
     }
   }
 }

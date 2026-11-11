@@ -22,7 +22,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { type Control, Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { SectionsEditor } from "@/components/admin/design/sections-editor";
@@ -43,6 +43,7 @@ import {
   isLowContrast,
   PAGE_BACKGROUNDS,
 } from "@/lib/design";
+import { EMAIL_MODES } from "@/lib/orders/promo";
 import { saveDesign } from "@/lib/settings/actions";
 import { cn } from "@/lib/utils";
 import { type DesignInput, designSchema } from "@/lib/validators";
@@ -85,7 +86,7 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
   useEffect(() => {
     const send = () =>
       frameRef.current?.contentWindow?.postMessage(
-        { type: PREVIEW_MESSAGE, draft: { ...draft, brandColor: color } },
+        { type: PREVIEW_MESSAGE, draft: { ...draft, brandColor: color }, tab },
         window.location.origin,
       );
     send();
@@ -96,7 +97,7 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
     };
     window.addEventListener("message", onReady);
     return () => window.removeEventListener("message", onReady);
-  }, [draft, color, frameKey]);
+  }, [draft, color, frameKey, tab]);
 
   async function onSubmit(values: DesignInput) {
     const result = await saveDesign(values);
@@ -376,6 +377,81 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
                   </OptionGrid>
                 )}
               />
+            </Card>
+          </div>
+
+          <div className={cn("flex flex-col gap-4", tab !== "checkout" && "hidden")}>
+            <Card title={t("checkout.fields")} hint={t("checkout.fieldsHint")}>
+              <FixedRow label={t("checkout.name")} note={t("checkout.always")} />
+              <FixedRow label={t("checkout.phone")} note={t("checkout.phoneNote")} />
+              <Controller
+                control={control}
+                name="checkoutEmail"
+                render={({ field }) => (
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="text-sm font-medium">{t("checkout.email")}</span>
+                    <div
+                      role="radiogroup"
+                      aria-label={t("checkout.email")}
+                      className="bg-muted flex rounded-lg p-1"
+                    >
+                      {EMAIL_MODES.map((mode) => (
+                        <button
+                          key={mode}
+                          type="button"
+                          role="radio"
+                          aria-checked={field.value === mode}
+                          onClick={() => field.onChange(mode)}
+                          className={cn(
+                            "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                            field.value === mode
+                              ? "bg-background shadow-sm"
+                              : "text-muted-foreground hover:text-foreground",
+                          )}
+                        >
+                          {t(`checkout.emailModes.${mode}`)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              />
+              <SwitchRow
+                control={control}
+                name="checkoutNote"
+                label={t("checkout.note")}
+                hint={t("checkout.noteHint")}
+              />
+            </Card>
+
+            <Card title={t("checkout.discounts")}>
+              <SwitchRow
+                control={control}
+                name="checkoutPromo"
+                label={t("checkout.promo")}
+                hint={t("checkout.promoHint")}
+              />
+              <Link href="/admin/promos" className="text-primary w-fit text-sm font-medium">
+                {t("checkout.managePromos")}
+              </Link>
+            </Card>
+
+            <Card title={t("checkout.tips")}>
+              <SwitchRow
+                control={control}
+                name="tipsEnabled"
+                label={t("checkout.tipsToggle")}
+                hint={t("checkout.tipsHint")}
+              />
+            </Card>
+
+            <Card title={t("checkout.deliveryPayment")} hint={t("checkout.deliveryPaymentHint")}>
+              <Link
+                href="/admin/settings"
+                className={buttonVariants({ variant: "outline", className: "w-fit gap-2" })}
+              >
+                {t("checkout.openSettings")}
+              </Link>
             </Card>
           </div>
 
@@ -829,5 +905,44 @@ function Field({
       {hint && !error && <p className="text-muted-foreground text-xs">{hint}</p>}
       {error && <p className="text-destructive text-sm">{error}</p>}
     </div>
+  );
+}
+
+function FixedRow({ label, note }: { label: string; note: string }) {
+  return (
+    <div className="flex min-h-9 items-center justify-between gap-3">
+      <span className="text-sm font-medium">{label}</span>
+      <span className="text-muted-foreground bg-muted rounded-full px-2.5 py-1 text-xs">
+        {note}
+      </span>
+    </div>
+  );
+}
+
+function SwitchRow({
+  control,
+  name,
+  label,
+  hint,
+}: {
+  control: Control<DesignInput>;
+  name: "checkoutNote" | "checkoutPromo" | "tipsEnabled";
+  label: string;
+  hint?: string;
+}) {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <label className="flex min-h-11 cursor-pointer items-center justify-between gap-3">
+          <span>
+            <span className="block text-sm font-medium">{label}</span>
+            {hint && <span className="text-muted-foreground text-xs">{hint}</span>}
+          </span>
+          <Switch checked={field.value} onCheckedChange={field.onChange} />
+        </label>
+      )}
+    />
   );
 }

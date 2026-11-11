@@ -44,7 +44,7 @@ import { dialPrefix } from "@/lib/phone-prefix";
 import { setTable, useTable } from "@/lib/table-session";
 import { mapsLink } from "@/lib/maps";
 import { createOrder } from "@/lib/orders/actions";
-import { deliveryFeeFor, promoDiscount } from "@/lib/orders/promo";
+import { deliveryFeeFor, promoDiscount, TIP_PERCENTS, tipAmount } from "@/lib/orders/promo";
 import { checkPromo, type CheckPromoResult } from "@/lib/orders/promo-actions";
 import { createManualOrder } from "@/lib/orders/admin-actions";
 import { cn } from "@/lib/utils";
@@ -154,6 +154,7 @@ export function CheckoutForm({
       landmark: "",
       scheduledFor: "",
       comment: "",
+      customerEmail: "",
       paymentMethod: settings.paymentMethods[0] ?? "CASH",
     },
   });
@@ -257,7 +258,12 @@ export function CheckoutForm({
     setValue("longitude", undefined);
     setLocationNote(null);
   }
-  const total = subtotal - discount + deliveryFee;
+  // Tip (Website → Checkout): percent of the items after a discount; the server recomputes it
+  const [tipPercent, setTipPercent] = useState<number>(0);
+  const tips = !isAdmin && settings.tipsEnabled;
+  const tip = tips ? tipAmount(subtotal - discount, tipPercent) : 0;
+  const askEmail = !isAdmin && settings.emailField !== "off";
+  const total = subtotal - discount + deliveryFee + tip;
 
   async function applyPromo() {
     const code = promoInput.trim();
@@ -295,6 +301,10 @@ export function CheckoutForm({
 
   async function onSubmit(values: CheckoutFormData) {
     setServerError(null);
+    if (askEmail && settings.emailField === "required" && !values.customerEmail) {
+      setError("customerEmail", { message: "emailRequired" }, { shouldFocus: true });
+      return;
+    }
     if (!isAdmin && !dineIn && timeMode === "scheduled" && !values.scheduledFor) {
       setError("scheduledFor", { message: "timeRequired" }, { shouldFocus: true });
       return;
@@ -311,7 +321,9 @@ export function CheckoutForm({
       landmark: values.landmark,
       scheduledFor: dineIn ? undefined : values.scheduledFor,
       promoCode: isAdmin || promoBelowMin ? undefined : appliedPromo?.code,
-      comment: values.comment,
+      comment: settings.showNote || isAdmin ? values.comment : undefined,
+      customerEmail: askEmail ? values.customerEmail : undefined,
+      tipPercent: tips ? tipPercent : undefined,
       paymentMethod: values.paymentMethod,
       items: lines.map((l) => ({
         productId: l.productId,
@@ -508,6 +520,27 @@ export function CheckoutForm({
               {...register("phone")}
             />
           </Field>
+          {/* Website → Checkout: email off / optional / required (hidden, not unmounted) */}
+          <div className={cn(!askEmail && "hidden")}>
+            <Field
+              label={t("email")}
+              htmlFor="customerEmail"
+              optional={settings.emailField === "optional" ? t("optional") : undefined}
+              error={errorText(errors.customerEmail?.message)}
+            >
+              <Input
+                id="customerEmail"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder={t("emailPlaceholder")}
+                maxLength={200}
+                aria-invalid={!!errors.customerEmail}
+                className="h-11"
+                {...register("customerEmail")}
+              />
+            </Field>
+          </div>
         </div>
       </Card>
 
@@ -691,15 +724,18 @@ export function CheckoutForm({
             </Field>
           </div>
         </div>
-        <Field label={t("comment")} htmlFor="comment" optional={t("optional")}>
-          <Textarea
-            id="comment"
-            rows={2}
-            maxLength={500}
-            placeholder={t("commentPlaceholder")}
-            {...register("comment")}
-          />
-        </Field>
+        {/* Hidden, not unmounted, when the store turns the note off */}
+        <div className={cn(!settings.showNote && !isAdmin && "hidden")}>
+          <Field label={t("comment")} htmlFor="comment" optional={t("optional")}>
+            <Textarea
+              id="comment"
+              rows={2}
+              maxLength={500}
+              placeholder={t("commentPlaceholder")}
+              {...register("comment")}
+            />
+          </Field>
+        </div>
       </Card>
 
       {/* Promo code (only when the store has active codes) */}
@@ -764,6 +800,35 @@ export function CheckoutForm({
               )}
             </div>
           )}
+        </Card>
+      )}
+
+      {/* Tip (Website → Checkout) */}
+      {tips && (
+        <Card title={t("tip.title")}>
+          <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-label={t("tip.title")}>
+            {TIP_PERCENTS.map((p) => (
+              <button
+                key={p}
+                type="button"
+                role="radio"
+                aria-checked={tipPercent === p}
+                onClick={() => setTipPercent(p)}
+                className={cn(
+                  "flex min-h-14 flex-col items-center justify-center rounded-xl border text-sm font-semibold transition-colors",
+                  tipPercent === p ? "border-primary bg-primary/5 text-primary" : "hover:bg-muted",
+                )}
+              >
+                {p === 0 ? t("tip.none") : `${p}%`}
+                {p > 0 && (
+                  <span className="text-muted-foreground text-xs font-normal tabular-nums">
+                    {formatMoney(tipAmount(subtotal - discount, p))}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+          <p className="text-muted-foreground text-xs">{t("tip.hint")}</p>
         </Card>
       )}
 
@@ -836,6 +901,11 @@ export function CheckoutForm({
               />
             )}
           </dl>
+          {tip > 0 && (
+            <dl className="-mt-2 flex flex-col text-sm">
+              <Row label={t("tip.label")} value={formatMoney(tip)} />
+            </dl>
+          )}
           {toFreeDelivery > 0 && (
             <p className="text-primary text-center text-sm font-medium">
               {tCart("freeDeliveryMore", { amount: formatMoney(toFreeDelivery) })}

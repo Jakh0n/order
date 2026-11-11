@@ -57,3 +57,19 @@ export function deliveryFeeFor(
   if (freeDeliveryFrom !== null && subtotal >= freeDeliveryFrom) return 0;
   return fee;
 }
+
+/** Tip choices on the checkout (percent of the items subtotal after a discount) */
+export const TIP_PERCENTS = [0, 5, 10, 15] as const;
+export type TipPercent = (typeof TIP_PERCENTS)[number];
+
+export function tipAmount(subtotalAfterDiscount: number, percent: number): number {
+  if (!(TIP_PERCENTS as readonly number[]).includes(percent) || percent === 0) return 0;
+  return Math.round((Math.max(0, subtotalAfterDiscount) * percent) / 100);
+}
+
+export const EMAIL_MODES = ["off", "optional", "required"] as const;
+export type EmailMode = (typeof EMAIL_MODES)[number];
+
+export function asEmailMode(value: unknown): EmailMode {
+  return EMAIL_MODES.includes(value as EmailMode) ? (value as EmailMode) : "off";
+}

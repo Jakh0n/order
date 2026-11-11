@@ -99,6 +99,10 @@ export interface CheckoutSettings {
   deliveryFee: number;
   /** Free delivery from this items subtotal; null = off */
   freeDeliveryFrom: number | null;
-  /** The store has at least one active promo code (shows the code field at checkout) */
+  /** Promo field shown: Pro + active codes + Website → Checkout switch */
   hasPromoCodes: boolean;
+  /** Website → Checkout */
+  emailField: "off" | "optional" | "required";
+  showNote: boolean;
+  tipsEnabled: boolean;
 }

@@ -3,6 +3,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 
 import { JOIN, prisma } from "@/lib/db";
+import { asEmailMode } from "@/lib/orders/promo";
 import { isPro } from "@/lib/plan";
 import { parseSections } from "@/lib/sections";
 import type { CheckoutSettings, PaymentMethodValue, StorefrontData } from "@/lib/menu-types";
@@ -159,6 +160,10 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
       freeDeliveryFrom: true,
       plan: true,
       paidUntil: true,
+      checkoutEmail: true,
+      checkoutNote: true,
+      checkoutPromo: true,
+      tipsEnabled: true,
       _count: { select: { promoCodes: { where: { isActive: true } } } },
     },
   });
@@ -178,6 +183,9 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
     deliveryFee: store.deliveryFee,
     // Pro-only on Free: no free-delivery threshold, no promo field
     freeDeliveryFrom: isPro(store) ? store.freeDeliveryFrom : null,
-    hasPromoCodes: isPro(store) && store._count.promoCodes > 0,
+    hasPromoCodes: isPro(store) && store.checkoutPromo && store._count.promoCodes > 0,
+    emailField: asEmailMode(store.checkoutEmail),
+    showNote: store.checkoutNote,
+    tipsEnabled: store.tipsEnabled,
   };
 }

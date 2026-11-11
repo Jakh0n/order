@@ -128,6 +128,11 @@ export async function OrderCard({
 
       <div className="flex flex-col gap-1 text-sm">
         <p className="font-medium">{order.customerName}</p>
+        {order.customerEmail && (
+          <a href={`mailto:${order.customerEmail}`} className="text-primary w-fit text-sm">
+            {order.customerEmail}
+          </a>
+        )}
         {order.customerPhone && (
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <a
@@ -201,6 +206,12 @@ export async function OrderCard({
           <li className="text-primary flex justify-between">
             <span>{t("checkout.promo.discountRow", { code: order.promoCode ?? "" })}</span>
             <span className="tabular-nums">−{formatMoney(order.discount, order.currency)}</span>
+          </li>
+        )}
+        {order.tip > 0 && (
+          <li className="text-muted-foreground flex justify-between">
+            <span>{t("checkout.tip.label")}</span>
+            <span className="tabular-nums">{formatMoney(order.tip, order.currency)}</span>
           </li>
         )}
         {order.deliveryFee > 0 && (

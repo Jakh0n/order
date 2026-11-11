@@ -43,6 +43,8 @@ export interface OrderMessageOrder {
   /** Promo discount (minor units) and the code text */
   discount?: number;
   promoCode?: string | null;
+  tip?: number;
+  customerEmail?: string | null;
   deliveryFee: number;
   total: number;
   /** Order currency snapshot (ISO 4217) */
@@ -106,10 +108,12 @@ export function buildOrderMessage(
     lines.push(`${t.discount}${code}: −${money(order.discount)}`);
   }
   if (order.deliveryFee > 0) lines.push(`${t.deliveryFee}: ${money(order.deliveryFee)}`);
+  if (order.tip) lines.push(`${t.tip}: ${money(order.tip)}`);
   lines.push(bold(`${t.total}: ${money(order.total)}`));
   lines.push("");
 
   lines.push(`${t.customer}: ${bold(order.customerName)} ${order.customerPhone}`.trimEnd());
+  if (order.customerEmail) lines.push(`└ ${order.customerEmail}`);
   lines.push("");
 
   if (order.type === "DELIVERY") {

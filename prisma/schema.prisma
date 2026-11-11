@@ -87,6 +87,14 @@ model Store {
   headerStyle          String         @default("cover")
   showSearch           Boolean        @default(true)
   showDescriptions     Boolean        @default(true)
+  /// Checkout (Website → Checkout): email field "off" | "optional" | "required"
+  checkoutEmail        String         @default("off")
+  /// "Note for the store" field on the checkout
+  checkoutNote         Boolean        @default(true)
+  /// Promo code field on the checkout (still needs Pro + an active code)
+  checkoutPromo        Boolean        @default(true)
+  /// Tip choice on the checkout (None / 5 / 10 / 15 % of the items subtotal)
+  tipsEnabled          Boolean        @default(false)
   /// Store page sections in order (lib/sections.ts): built-ins + owner text / image blocks; null = default order
   sections             Json?
   /// Social profiles (usernames, no @) shown as icons in the store header
@@ -216,6 +224,8 @@ model Order {
   customerName  String
   /// Empty for DINE_IN orders (the customer is in the shop)
   customerPhone String
+  /// When the store asks for it (Store.checkoutEmail)
+  customerEmail String?
   type          OrderType
   /// DINE_IN: table number from the QR code
   tableNumber   Int?
@@ -238,7 +248,9 @@ model Order {
   /// Promo code used (snapshot of the code text) and the discount it gave (minor units)
   promoCode     String?
   discount      Int           @default(0)
-  /// subtotal - discount + deliveryFee
+  /// Tip chosen by the customer (minor units)
+  tip           Int           @default(0)
+  /// subtotal - discount + deliveryFee + tip
   total         Int
   /// Buyurtma paytidagi do'kon valyutasi (snapshot)
   currency      String        @default("USD")

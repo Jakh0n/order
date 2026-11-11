@@ -147,6 +147,7 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
             {order.type === "DELIVERY" && (
               <Row label={t("checkout.deliveryFee")} value={money(order.deliveryFee)} />
             )}
+            {order.tip > 0 && <Row label={t("checkout.tip.label")} value={money(order.tip)} />}
             <Row label={t("checkout.total")} value={money(order.total)} strong />
           </dl>
         </Card>

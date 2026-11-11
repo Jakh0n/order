@@ -4,7 +4,13 @@ import { Prisma } from "@prisma/client";
 
 import { JOIN, prisma } from "@/lib/db";
 import { type PricingItem, priceItems } from "@/lib/orders/pricing";
-import { deliveryFeeFor, type PromoProblem, promoDiscount, promoProblem } from "@/lib/orders/promo";
+import {
+  deliveryFeeFor,
+  type PromoProblem,
+  promoDiscount,
+  promoProblem,
+  tipAmount,
+} from "@/lib/orders/promo";
 
 // Mijoz checkout'i va admin "qo'lda buyurtma" uchun umumiy qism:
 // tuman -> bazadagi narxlar -> raqam berib saqlash.
@@ -24,6 +30,9 @@ export interface InsertOrderInput {
   freeDeliveryFrom?: number | null;
   /** Customer-entered promo code (normalized); checked and counted here */
   promoCode?: string;
+  customerEmail?: string;
+  /** Tip percent (validated choice); 0 / undefined = no tip */
+  tipPercent?: number;
   latitude?: number;
   longitude?: number;
   address?: string;
@@ -103,6 +112,7 @@ export async function insertOrder(input: InsertOrderInput): Promise<InsertOrderR
     if (problem) return { ok: false, error: problem };
   }
   const discount = promo ? promoDiscount(promo, priced.subtotal) : 0;
+  const tip = tipAmount(priced.subtotal - discount, input.tipPercent ?? 0);
 
   // Raqam berish va saqlash — tranzaksiya ichida, to'qnashuvda qayta urinish
   for (let attempt = 1; ; attempt++) {
@@ -145,7 +155,9 @@ export async function insertOrder(input: InsertOrderInput): Promise<InsertOrderR
             deliveryFee,
             promoCode: promo?.code ?? null,
             discount,
-            total: priced.subtotal - discount + deliveryFee,
+            tip,
+            customerEmail: input.customerEmail ?? null,
+            total: priced.subtotal - discount + deliveryFee + tip,
             lang: input.lang,
             // Bitta INSERT bilan (har bir taom uchun alohida emas)
             items: {

@@ -94,7 +94,9 @@ export function LanguageSwitcher({
                 <span
                   className={cn(
                     "flex h-6 w-8 items-center justify-center rounded-md text-[11px] font-bold tracking-wide",
-                    active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
+                    active
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground",
                   )}
                   aria-hidden
                 >

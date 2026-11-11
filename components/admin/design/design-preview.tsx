@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 
 import { CurrencyProvider } from "@/components/currency-provider";
+import { CheckoutMock } from "@/components/admin/design/checkout-mock";
 import { StorefrontSections } from "@/components/storefront/storefront-sections";
+import { asEmailMode, type EmailMode } from "@/lib/orders/promo";
 import {
   asCornerStyle,
   asFontStyle,
@@ -84,13 +86,29 @@ function applyDraft(store: StorefrontStore, d: Record<string, unknown>): Storefr
  */
 export function DesignPreview({ data }: { data: StorefrontData }) {
   const [store, setStore] = useState(data.store);
+  // Website → Checkout tab: show the checkout instead of the menu
+  const [checkout, setCheckout] = useState<{
+    on: boolean;
+    email: EmailMode;
+    note: boolean;
+    promo: boolean;
+    tips: boolean;
+  }>({ on: false, email: "off", note: true, promo: true, tips: false });
 
   useEffect(() => {
     function onMessage(event: MessageEvent) {
       if (event.origin !== window.location.origin) return;
-      const msg = event.data as { type?: string; draft?: Record<string, unknown> };
+      const msg = event.data as { type?: string; draft?: Record<string, unknown>; tab?: unknown };
       if (msg?.type !== PREVIEW_MESSAGE || !msg.draft) return;
       setStore(applyDraft(data.store, msg.draft));
+      const d = msg.draft;
+      setCheckout({
+        on: msg.tab === "checkout",
+        email: asEmailMode(d.checkoutEmail),
+        note: d.checkoutNote !== false,
+        promo: d.checkoutPromo !== false,
+        tips: d.tipsEnabled === true,
+      });
     }
     window.addEventListener("message", onMessage);
     // Ask the Design form for its current values
@@ -103,12 +121,22 @@ export function DesignPreview({ data }: { data: StorefrontData }) {
       <style>{themeCss(store)}</style>
       <div className="min-h-dvh bg-(--store-bg)">
         <div className="mx-auto w-full max-w-2xl pb-10">
-          <StorefrontSections
-            store={store}
-            categories={data.categories}
-            sections={store.sections}
-            cartKey={`preview:${store.slug}`}
-          />
+          {checkout.on ? (
+            <CheckoutMock
+              categories={data.categories}
+              email={checkout.email}
+              note={checkout.note}
+              promo={checkout.promo}
+              tips={checkout.tips}
+            />
+          ) : (
+            <StorefrontSections
+              store={store}
+              categories={data.categories}
+              sections={store.sections}
+              cartKey={`preview:${store.slug}`}
+            />
+          )}
         </div>
       </div>
     </CurrencyProvider>

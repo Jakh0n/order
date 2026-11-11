@@ -12,6 +12,7 @@ import {
   asMenuLayout,
   asPageBackground,
 } from "@/lib/design";
+import { asEmailMode } from "@/lib/orders/promo";
 import { parseSections } from "@/lib/sections";
 
 /**
@@ -51,6 +52,10 @@ async function Design() {
       telegramChannel: true,
       tiktok: true,
       sections: true,
+      checkoutEmail: true,
+      checkoutNote: true,
+      checkoutPromo: true,
+      tipsEnabled: true,
     },
   });
   if (!design) notFound();
@@ -71,6 +76,7 @@ async function Design() {
         cornerStyle: asCornerStyle(design.cornerStyle),
         headerStyle: asHeaderStyle(design.headerStyle),
         sections: parseSections(design.sections),
+        checkoutEmail: asEmailMode(design.checkoutEmail),
       }}
     />
   );

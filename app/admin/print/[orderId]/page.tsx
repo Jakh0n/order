@@ -203,6 +203,7 @@ async function OrderPrint({
             {order.deliveryFee > 0 && (
               <Line label={t("checkout.deliveryFee")} value={money(order.deliveryFee)} />
             )}
+            {order.tip > 0 && <Line label={t("checkout.tip.label")} value={money(order.tip)} />}
             <div className="mt-1 flex justify-between gap-2 text-[16px] font-black">
               <span>{t("checkout.total")}</span>
               <span className="tabular-nums">{money(order.total)}</span>

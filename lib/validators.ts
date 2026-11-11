@@ -10,7 +10,12 @@ import {
   SOCIAL_PATTERNS,
   socialHandle,
 } from "@/lib/design";
-import { normalizePromoCode, PROMO_CODE_PATTERN } from "@/lib/orders/promo";
+import {
+  EMAIL_MODES,
+  normalizePromoCode,
+  PROMO_CODE_PATTERN,
+  TIP_PERCENTS,
+} from "@/lib/orders/promo";
 import { sectionsSchema } from "@/lib/sections";
 
 import { isValidCurrency, toMajor, toMinor } from "@/lib/money";
@@ -67,6 +72,21 @@ const orderFields = {
   scheduledFor: scheduledForSchema,
   comment: optionalText(500),
   paymentMethod: z.enum(["CASH", "CARD_ON_DELIVERY", "TRANSFER"]),
+  /** When the store asks for it (Store.checkoutEmail); "" = not given */
+  customerEmail: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .max(200)
+    .optional()
+    .transform((v) => v || undefined)
+    .pipe(z.string().email("emailInvalid").optional()),
+  /** Tip choice (percent); the server ignores it when the store has tips off */
+  tipPercent: z
+    .number()
+    .int()
+    .refine((v) => (TIP_PERCENTS as readonly number[]).includes(v), "invalid")
+    .optional(),
   /** Applied promo code (normalized; checked against the DB on the server) */
   promoCode: z
     .string()
@@ -493,6 +513,10 @@ export const designSchema = z.object({
   telegramChannel: socialField(SOCIAL_PATTERNS.telegramChannel),
   tiktok: socialField(SOCIAL_PATTERNS.tiktok),
   sections: sectionsSchema,
+  checkoutEmail: z.enum(EMAIL_MODES),
+  checkoutNote: z.boolean(),
+  checkoutPromo: z.boolean(),
+  tipsEnabled: z.boolean(),
 });
 
 export type DesignInput = z.input<typeof designSchema>;

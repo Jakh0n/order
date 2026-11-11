@@ -239,7 +239,9 @@
       "promoInvalid": "Bu kod ishlamaydi",
       "promoExpired": "Bu kodning muddati tugagan",
       "promoUsedUp": "Bu koddan endi foydalanib bo'lmaydi",
-      "promoMinSubtotal": "Bu kod {amount} dan boshlab buyurtmalar uchun ishlaydi"
+      "promoMinSubtotal": "Bu kod {amount} dan boshlab buyurtmalar uchun ishlaydi",
+      "emailInvalid": "To'g'ri email kiriting",
+      "emailRequired": "Email kiriting"
     },
     "edit": "O'zgartirish",
     "timeAsap": "Imkon qadar tezroq",
@@ -269,6 +271,14 @@
       "remove": "Kodni olib tashlash",
       "discountRow": "Promo-kod {code}",
       "tooMany": "Urinishlar juda ko'p. Bir necha daqiqadan keyin qayta urinib ko'ring."
+    },
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "tip": {
+      "title": "Choychaqa",
+      "none": "Kerak emas",
+      "hint": "Jamoa uchun. Buyurtma bilan birga to'lanadi.",
+      "label": "Choychaqa"
     }
   },
   "payment": {
@@ -420,7 +430,8 @@
       "CARD_ON_DELIVERY": "Karta",
       "TRANSFER": "Pul o'tkazmasi"
     },
-    "discount": "Chegirma"
+    "discount": "Chegirma",
+    "tip": "Choychaqa"
   },
   "store": {
     "notFound": "Do'kon topilmadi",
@@ -1097,6 +1108,32 @@
       "chooseImage": "Rasm tanlang (keng, masalan 1200×600)",
       "link": "Havola",
       "linkHint": "Ixtiyoriy. Banner bosilganda ochiladi."
+    },
+    "checkout": {
+      "fields": "Mijoz ma'lumotlari",
+      "fieldsHint": "Mijozlar buyurtma berishda nimani to'ldiradi.",
+      "name": "Ism",
+      "phone": "Telefon",
+      "always": "Doim so'raladi",
+      "phoneNote": "Doim (stoldan tashqari)",
+      "email": "Email",
+      "emailModes": {
+        "off": "O'chiq",
+        "optional": "Ixtiyoriy",
+        "required": "Majburiy"
+      },
+      "note": "Do'kon uchun izoh",
+      "noteHint": "masalan, «piyozsiz, iltimos»",
+      "discounts": "Chegirmalar",
+      "promo": "Promo-kod maydoni",
+      "promoHint": "Pro tarifida va faol kod bo'lsa ko'rinadi.",
+      "managePromos": "Promo-kodlar →",
+      "tips": "Choychaqa",
+      "tipsToggle": "Choychaqa taklif qilish",
+      "tipsHint": "Mijozlar 5%, 10% yoki 15% qo'shishi mumkin — summaga qo'shiladi va buyurtmada ko'rinadi.",
+      "deliveryPayment": "Yetkazish va to'lov",
+      "deliveryPaymentHint": "Olib ketish, yetkazish narxi, minimal buyurtma va to'lov usullari — Sozlamalarda.",
+      "openSettings": "Sozlamalarni ochish"
     }
   }
 }

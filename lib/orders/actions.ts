@@ -77,6 +77,13 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
       if (!isStoreOpenNow(store, now)) return { ok: false, error: "closed" };
       data.scheduledFor = undefined;
     }
+    // Website → Checkout settings decide which extras count
+    if (store.checkoutEmail === "required" && !data.customerEmail) {
+      return { ok: false, error: "invalid", fieldErrors: { customerEmail: "emailRequired" } };
+    }
+    if (store.checkoutEmail === "off") data.customerEmail = undefined;
+    if (!store.tipsEnabled) data.tipPercent = undefined;
+    if (!store.checkoutPromo) data.promoCode = undefined;
     if (data.promoCode && !isPro(store)) {
       return { ok: false, error: "promoInvalid", fieldErrors: { promoCode: "promoInvalid" } };
     }
