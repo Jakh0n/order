@@ -87,6 +87,8 @@ model Store {
   headerStyle          String         @default("cover")
   showSearch           Boolean        @default(true)
   showDescriptions     Boolean        @default(true)
+  /// Store page sections in order (lib/sections.ts): built-ins + owner text / image blocks; null = default order
+  sections             Json?
   /// Social profiles (usernames, no @) shown as icons in the store header
   instagram            String?
   telegramChannel      String?

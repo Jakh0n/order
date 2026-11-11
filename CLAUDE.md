@@ -86,6 +86,8 @@ lib/
                               themeCss (faqat tekshirilgan hex va qat'iy kalitlar) — do'kon sahifasida :root ga
                               Design preview: /admin/preview (faqat egasi) — saqlanmagan qiymatlardan chiziladi (postMessage)
                               (StoreTheme)
+  sections.ts                 do'kon sahifasi bo'limlari (Store.sections JSON): banner/sarlavha/menyu + matn/rasm bloklari;
+                              StorefrontSections ularni chizadi (do'kon sahifasi va preview bir xil)
   plan.ts                     planOf / isPro (PAID + paidUntil kelajakda = Pro), FREE_MONTHLY_ORDERS, upgradeLink (SUPPORT_TELEGRAM)
   plan-history.ts             freeHistoryFilter — Free: oyiga 100 tadan keyingi YAKUNLANGAN buyurtmalar tarixda yashiriladi
   push/actions.ts             savePushSubscription / deletePushSubscription (requireOwner)

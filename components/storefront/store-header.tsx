@@ -24,12 +24,6 @@ export function StoreHeader({ store }: { store: StorefrontStore }) {
 
   return (
     <header className="bg-background">
-      {store.announcement && (
-        <p className="bg-primary text-primary-foreground px-4 py-2 text-center text-sm font-medium">
-          <RichText text={store.announcement} />
-        </p>
-      )}
-
       {style !== "compact" && (
         <div
           className={cn(

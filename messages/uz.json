@@ -1016,7 +1016,9 @@
       "tooLong": "Juda uzun",
       "colorInvalid": "Noto'g'ri rang",
       "imageInvalid": "Noto'g'ri rasm",
-      "socialInvalid": "Username'ni tekshiring"
+      "socialInvalid": "Username'ni tekshiring",
+      "sectionsInvalid": "Bo'limlarni tekshiring",
+      "linkInvalid": "Havola https:// bilan boshlanishi kerak"
     },
     "tabs": {
       "storefront": "Vitrina",
@@ -1068,6 +1070,33 @@
       "showSearchHint": "Uzun menyu uchun qulay",
       "showDescriptions": "Taom tavsiflari",
       "showDescriptionsHint": "Taom nomi ostidagi qisqa matn (ro'yxat ko'rinishida)"
+    },
+    "sections": {
+      "title": "Sarlavha",
+      "lead": "Do'kon sahifasida nimalar ko'rinadi, tepadan pastga. Sudrab yoki strelkalar bilan tartiblang.",
+      "types": {
+        "announcement": "E'lon chizig'i",
+        "header": "Sarlavha",
+        "menu": "Menyu",
+        "text": "Matn bloki",
+        "image": "Rasmli banner"
+      },
+      "up": "Yuqoriga",
+      "down": "Pastga",
+      "hide": "Yashirish",
+      "show": "Ko'rsatish",
+      "delete": "O'chirish",
+      "add": {
+        "text": "Matn bloki",
+        "image": "Rasmli banner"
+      },
+      "hint": "Menyuni ko'chirish mumkin, lekin yashirib bo'lmaydi. E'lon matni «Ko'rinish» bo'limida.",
+      "titlePlaceholder": "masalan, Biz haqimizda",
+      "body": "Matn",
+      "bodyPlaceholder": "masalan, Oilaviy retseptlar, har tong yangi pishiriladi.",
+      "chooseImage": "Rasm tanlang (keng, masalan 1200×600)",
+      "link": "Havola",
+      "linkHint": "Ixtiyoriy. Banner bosilganda ochiladi."
     }
   }
 }

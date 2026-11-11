@@ -8,14 +8,12 @@ import { CurrencyProvider } from "@/components/currency-provider";
 import { JsonLd } from "@/components/json-ld";
 import { CartBar } from "@/components/storefront/cart-sheet";
 import { CartSync } from "@/components/storefront/cart-sync";
-import { MenuBrowser } from "@/components/storefront/menu-browser";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { StoreBlocked } from "@/components/storefront/store-blocked";
-import { StoreHeader } from "@/components/storefront/store-header";
+import { StorefrontSections } from "@/components/storefront/storefront-sections";
 import { siteOrigin } from "@/lib/app-url";
 import { storeJsonLd, topItemNames } from "@/lib/seo";
 import { StoreTheme } from "@/components/storefront/store-theme";
-import { asMenuLayout } from "@/lib/design";
 import { getStorefront } from "@/lib/storefront";
 
 export async function generateMetadata({ params }: PageProps<"/[store]">): Promise<Metadata> {
@@ -84,14 +82,7 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
       />
       <div className="flex-1 bg-(--store-bg)">
         <div className="mx-auto w-full max-w-2xl pb-28">
-          <StoreHeader store={store} />
-          <MenuBrowser
-            cartKey={store.slug}
-            categories={categories}
-            layout={asMenuLayout(store.menuLayout)}
-            showSearch={store.showSearch}
-            showDescriptions={store.showDescriptions}
-          />
+          <StorefrontSections store={store} categories={categories} sections={store.sections} />
           {/* Free plan: a quiet "Made with Flami" (Pro removes it) */}
           {store.showBranding && (
             <p className="text-muted-foreground py-6 text-center text-xs">

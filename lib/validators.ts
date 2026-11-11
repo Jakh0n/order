@@ -11,6 +11,7 @@ import {
   socialHandle,
 } from "@/lib/design";
 import { normalizePromoCode, PROMO_CODE_PATTERN } from "@/lib/orders/promo";
+import { sectionsSchema } from "@/lib/sections";
 
 import { isValidCurrency, toMajor, toMinor } from "@/lib/money";
 import { slugError } from "@/lib/slug";
@@ -491,6 +492,7 @@ export const designSchema = z.object({
   instagram: socialField(SOCIAL_PATTERNS.instagram),
   telegramChannel: socialField(SOCIAL_PATTERNS.telegramChannel),
   tiktok: socialField(SOCIAL_PATTERNS.tiktok),
+  sections: sectionsSchema,
 });
 
 export type DesignInput = z.input<typeof designSchema>;

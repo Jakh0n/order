@@ -1016,7 +1016,9 @@
       "tooLong": "Too long",
       "colorInvalid": "Invalid color",
       "imageInvalid": "Invalid image",
-      "socialInvalid": "Check the username"
+      "socialInvalid": "Check the username",
+      "sectionsInvalid": "Check the sections",
+      "linkInvalid": "Link must start with https://"
     },
     "tabs": {
       "storefront": "Storefront",
@@ -1068,6 +1070,33 @@
       "showSearchHint": "Useful for long menus",
       "showDescriptions": "Dish descriptions",
       "showDescriptionsHint": "Short text under each dish name (list layout)"
+    },
+    "sections": {
+      "title": "Title",
+      "lead": "What your store page shows, top to bottom. Drag or use the arrows to reorder.",
+      "types": {
+        "announcement": "Announcement bar",
+        "header": "Header",
+        "menu": "Menu",
+        "text": "Text block",
+        "image": "Image banner"
+      },
+      "up": "Move up",
+      "down": "Move down",
+      "hide": "Hide",
+      "show": "Show",
+      "delete": "Delete",
+      "add": {
+        "text": "Text block",
+        "image": "Image banner"
+      },
+      "hint": "The menu can be moved but not hidden. Announcement text is set in Appearance.",
+      "titlePlaceholder": "e.g. About us",
+      "body": "Text",
+      "bodyPlaceholder": "e.g. Family recipes, cooked fresh every morning.",
+      "chooseImage": "Choose an image (wide, e.g. 1200×600)",
+      "link": "Link",
+      "linkHint": "Optional. Opens when the banner is tapped."
     }
   }
 }

@@ -12,6 +12,7 @@ import {
   asMenuLayout,
   asPageBackground,
 } from "@/lib/design";
+import { parseSections } from "@/lib/sections";
 
 /**
  * Website editor (Storefront | Checkout | Appearance | Menu). The form lives here, in the
@@ -49,6 +50,7 @@ async function Design() {
       instagram: true,
       telegramChannel: true,
       tiktok: true,
+      sections: true,
     },
   });
   if (!design) notFound();
@@ -68,6 +70,7 @@ async function Design() {
         fontStyle: asFontStyle(design.fontStyle),
         cornerStyle: asCornerStyle(design.cornerStyle),
         headerStyle: asHeaderStyle(design.headerStyle),
+        sections: parseSections(design.sections),
       }}
     />
   );

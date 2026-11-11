@@ -1,3 +1,5 @@
+import type { Section } from "@/lib/sections";
+
 // Server → klient uzatiladigan menyu tiplari (faqat serializable maydonlar).
 
 export interface MenuOption {
@@ -51,6 +53,8 @@ export interface StorefrontStore {
   headerStyle: string;
   showSearch: boolean;
   showDescriptions: boolean;
+  /** Ordered page sections (lib/sections.ts), already validated */
+  sections: Section[];
   /** Social usernames (no @) */
   instagram: string | null;
   telegramChannel: string | null;

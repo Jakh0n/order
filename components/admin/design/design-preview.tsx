@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { CurrencyProvider } from "@/components/currency-provider";
-import { MenuBrowser } from "@/components/storefront/menu-browser";
-import { StoreHeader } from "@/components/storefront/store-header";
+import { StorefrontSections } from "@/components/storefront/storefront-sections";
 import {
   asCornerStyle,
   asFontStyle,
@@ -17,6 +16,7 @@ import {
   themeCss,
 } from "@/lib/design";
 import type { StorefrontData, StorefrontStore } from "@/lib/menu-types";
+import { type Section, sectionsSchema } from "@/lib/sections";
 
 export const PREVIEW_MESSAGE = "flami-design-preview";
 
@@ -40,6 +40,7 @@ export type DesignDraft = Partial<
     | "instagram"
     | "telegramChannel"
     | "tiktok"
+    | "sections"
   >
 >;
 
@@ -70,6 +71,10 @@ function applyDraft(store: StorefrontStore, d: Record<string, unknown>): Storefr
     instagram: social(d.instagram, "instagram"),
     telegramChannel: social(d.telegramChannel, "telegramChannel"),
     tiktok: social(d.tiktok, "tiktok"),
+    // Invalid / half-edited sections keep the last good order
+    sections: sectionsSchema.safeParse(d.sections).success
+      ? (d.sections as Section[])
+      : store.sections,
   };
 }
 
@@ -98,13 +103,11 @@ export function DesignPreview({ data }: { data: StorefrontData }) {
       <style>{themeCss(store)}</style>
       <div className="min-h-dvh bg-(--store-bg)">
         <div className="mx-auto w-full max-w-2xl pb-10">
-          <StoreHeader store={store} />
-          <MenuBrowser
-            cartKey={`preview:${store.slug}`}
+          <StorefrontSections
+            store={store}
             categories={data.categories}
-            layout={asMenuLayout(store.menuLayout)}
-            showSearch={store.showSearch}
-            showDescriptions={store.showDescriptions}
+            sections={store.sections}
+            cartKey={`preview:${store.slug}`}
           />
         </div>
       </div>

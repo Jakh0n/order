@@ -25,6 +25,7 @@ import { useEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
+import { SectionsEditor } from "@/components/admin/design/sections-editor";
 import { useImageUpload } from "@/components/admin/menu/image-upload";
 import { PREVIEW_MESSAGE } from "@/components/admin/design/design-preview";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -379,6 +380,19 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
           </div>
 
           <div className={cn("flex flex-col gap-4", tab !== "storefront" && "hidden")}>
+            <Card title={t("sections.title")} hint={t("sections.lead")}>
+              <Controller
+                control={control}
+                name="sections"
+                render={({ field }) => (
+                  <SectionsEditor value={field.value} onChange={(next) => field.onChange(next)} />
+                )}
+              />
+              {errors.sections && (
+                <p className="text-destructive text-sm">{t("errors.sectionsInvalid")}</p>
+              )}
+            </Card>
+
             <Card title={t("headerStyle")}>
               <Controller
                 control={control}
