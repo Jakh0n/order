@@ -23,7 +23,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { useImageUpload } from "@/components/admin/menu/image-upload";
-import { PREVIEW_MESSAGE } from "@/components/storefront/preview-bridge";
+import { PREVIEW_MESSAGE } from "@/components/admin/design/design-preview";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -65,50 +65,30 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
     reset,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<DesignInput>({ resolver: zodResolver(designSchema), defaultValues });
-  const [
-    brandColor,
-    pageBackground,
-    fontStyle,
-    cornerStyle,
-    name,
-    logoUrl,
-    coverUrl,
-    description,
-    announcement,
-  ] = useWatch({
-    control,
-    name: [
-      "brandColor",
-      "pageBackground",
-      "fontStyle",
-      "cornerStyle",
-      "name",
-      "logoUrl",
-      "coverUrl",
-      "description",
-      "announcement",
-    ],
-  });
+  // Every field, for the live preview (and the few the form itself shows)
+  const draft = useWatch({ control });
+  const { brandColor, name, logoUrl, coverUrl, description, announcement } = draft;
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [frameKey, setFrameKey] = useState(0);
   const color = isHexColor(brandColor) ? brandColor : DEFAULT_BRAND;
   const errorText = (key?: string) => (key ? t(`errors.${key}`) : null);
 
-  // Colors, background, font and corners show in the preview instantly (unsaved) — PreviewBridge
+  // The preview draws the store from these unsaved values — every change shows instantly
   useEffect(() => {
     const send = () =>
       frameRef.current?.contentWindow?.postMessage(
-        { type: PREVIEW_MESSAGE, brandColor: color, pageBackground, fontStyle, cornerStyle },
+        { type: PREVIEW_MESSAGE, draft: { ...draft, brandColor: color } },
         window.location.origin,
       );
     send();
     const onReady = (e: MessageEvent) => {
-      if (e.origin === window.location.origin && e.data?.type === `${PREVIEW_MESSAGE}:ready`)
+      if (e.origin === window.location.origin && e.data?.type === `${PREVIEW_MESSAGE}:ready`) {
         send();
+      }
     };
     window.addEventListener("message", onReady);
     return () => window.removeEventListener("message", onReady);
-  }, [color, pageBackground, fontStyle, cornerStyle, frameKey]);
+  }, [draft, color, frameKey]);
 
   async function onSubmit(values: DesignInput) {
     const result = await saveDesign(values);
@@ -120,7 +100,6 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
     }
     toast.success(t("saved"));
     reset(values);
-    setFrameKey((k) => k + 1); // text, images and layout show after saving
   }
 
   const saveButton = (
@@ -189,9 +168,9 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
           <div className={cn("flex flex-col gap-4", tab !== "brand" && "hidden")}>
             <Card title={t("header")} hint={t("headerHint")}>
               <HeaderEditor
-                name={name}
-                logoUrl={logoUrl}
-                coverUrl={coverUrl}
+                name={name ?? ""}
+                logoUrl={logoUrl ?? null}
+                coverUrl={coverUrl ?? null}
                 onLogo={(url) => setValue("logoUrl", url, { shouldDirty: true })}
                 onCover={(url) => setValue("coverUrl", url, { shouldDirty: true })}
               />
@@ -488,7 +467,7 @@ export function DesignForm({ slug, defaultValues }: { slug: string; defaultValue
             <iframe
               key={frameKey}
               ref={frameRef}
-              src={`/${slug}`}
+              src="/admin/preview"
               title={t("preview")}
               className="h-[740px] w-[370px] rounded-[2.4rem] bg-white"
             />

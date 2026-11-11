@@ -84,7 +84,8 @@ lib/
   sentry-scrub.ts             telefon/email ni xabarlardan yashirish
   design.ts                   brend rangi, fon, shrift, burchak, sarlavha uslubi, menyu ko'rinishi, ijtimoiy tarmoqlar;
                               themeCss (faqat tekshirilgan hex va qat'iy kalitlar) — do'kon sahifasida :root ga
-                              (StoreTheme), Design preview'da jonli (PreviewBridge, postMessage, faqat shu sayt)
+                              Design preview: /admin/preview (faqat egasi) — saqlanmagan qiymatlardan chiziladi (postMessage)
+                              (StoreTheme)
   plan.ts                     planOf / isPro (PAID + paidUntil kelajakda = Pro), FREE_MONTHLY_ORDERS, upgradeLink (SUPPORT_TELEGRAM)
   plan-history.ts             freeHistoryFilter — Free: oyiga 100 tadan keyingi YAKUNLANGAN buyurtmalar tarixda yashiriladi
   push/actions.ts             savePushSubscription / deletePushSubscription (requireOwner)

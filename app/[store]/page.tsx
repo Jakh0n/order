@@ -14,7 +14,6 @@ import { StoreBlocked } from "@/components/storefront/store-blocked";
 import { StoreHeader } from "@/components/storefront/store-header";
 import { siteOrigin } from "@/lib/app-url";
 import { storeJsonLd, topItemNames } from "@/lib/seo";
-import { PreviewBridge } from "@/components/storefront/preview-bridge";
 import { StoreTheme } from "@/components/storefront/store-theme";
 import { asMenuLayout } from "@/lib/design";
 import { getStorefront } from "@/lib/storefront";
@@ -83,7 +82,6 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
         fontStyle={store.fontStyle}
         cornerStyle={store.cornerStyle}
       />
-      <PreviewBridge />
       <div className="flex-1 bg-(--store-bg)">
         <div className="mx-auto w-full max-w-2xl pb-28">
           <StoreHeader store={store} />

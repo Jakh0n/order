@@ -964,7 +964,7 @@
   },
   "design": {
     "title": "Design",
-    "lead": "How your store looks to customers. Colors, font and corners change in the preview right away; the rest after saving.",
+    "lead": "How your store looks to customers. Every change shows in the preview right away — save when you like it.",
     "name": "Store name",
     "description": "Description",
     "descriptionPlaceholder": "e.g. Charcoal kebabs and fresh bread since 2015",
@@ -995,7 +995,7 @@
     "unsaved": "You have unsaved changes",
     "allSaved": "All changes saved",
     "preview": "Preview",
-    "previewHint": "Your real store page. Orders placed here are real orders.",
+    "previewHint": "A preview of your store with your unsaved changes.",
     "reload": "Reload",
     "openStore": "Open store",
     "errors": {

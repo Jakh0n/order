@@ -964,7 +964,7 @@
   },
   "design": {
     "title": "Dizayn",
-    "lead": "Do'koningiz mijozlarga qanday ko'rinadi. Rang, shrift va burchaklar preview'da darhol o'zgaradi, qolgani — saqlagandan keyin.",
+    "lead": "Do'koningiz mijozlarga qanday ko'rinadi. Har bir o'zgarish preview'da darhol ko'rinadi — yoqsa, saqlang.",
     "name": "Do'kon nomi",
     "description": "Tavsif",
     "descriptionPlaceholder": "masalan, 2015 yildan beri ko'mirda kabob va yangi non",
@@ -995,7 +995,7 @@
     "unsaved": "Saqlanmagan o'zgarishlar bor",
     "allSaved": "Barcha o'zgarishlar saqlangan",
     "preview": "Preview",
-    "previewHint": "Haqiqiy do'kon sahifangiz. Bu yerdagi buyurtmalar haqiqiy.",
+    "previewHint": "Saqlanmagan o'zgarishlar bilan do'koningiz preview'i.",
     "reload": "Yangilash",
     "openStore": "Do'konni ochish",
     "errors": {
