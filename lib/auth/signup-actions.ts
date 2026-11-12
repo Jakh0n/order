@@ -106,5 +106,6 @@ export async function signup(input: SignupInput): Promise<SignupResult> {
   }
 
   await createSession(userId);
-  redirect("/admin/menu");
+  // A brand-new store starts with "photo of your menu" (AI import)
+  redirect("/admin/menu/import");
 }

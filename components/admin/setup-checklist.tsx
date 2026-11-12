@@ -31,7 +31,12 @@ export async function SetupChecklist({ storeId, slug }: { storeId: string; slug:
 
   const steps = [
     { key: "category", done: categories > 0, href: "/admin/menu" },
-    { key: "products", done: products >= 3, href: "/admin/menu" },
+    // No dishes yet → the AI import is the fastest way to fill the menu
+    {
+      key: "products",
+      done: products >= 3,
+      href: products === 0 ? "/admin/menu/import" : "/admin/menu",
+    },
     { key: "hours", done: !!(store.openTime && store.closeTime), href: "/admin/settings" },
     {
       key: "channel",

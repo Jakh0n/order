@@ -112,6 +112,10 @@ lib/
   orders/reorder-actions.ts   getReorderLines — "Order again" (/o sahifasi, kirishsiz, rate limit)
   orders/receipt-actions.ts   uploadOrderReceipt — mijoz TRANSFER chekini yuklaydi (kirishsiz, orderId bo'yicha)
   geo/                        lookupAddress (server action) → reverseGeocode (Nominatim; provayderni shu faylda almashtiring)
+  ai/openai.ts                readMenu — OpenAI (Responses API + zod structured output), FAQAT serverda (OPENAI_API_KEY)
+  ai/menu-schema.ts           AI natijasi sxemasi, toDraft, importDraftSchema (narxlar asosiy birlikda)
+  menu/import-actions.ts      extractMenu (rasm/matn → qoralama, hech narsa saqlanmaydi, do'kon bo'yicha rate limit),
+                              importMenu (tasdiqlangan qoralama → kategoriya/taomlar, takrorlar o'tkazib yuboriladi)
   menu/admin-data.ts          getAdminMenu, getAdminProduct (keshsiz, nofaollar ham)
   menu/admin-actions.ts       kategoriya/taom CRUD, tartiblash, "bugun yo'q", saveProduct (variantlar id bo'yicha moslanadi), rasm
   orders/promo.ts             promoProblem, promoDiscount, deliveryFeeFor (sof funksiyalar: klient preview + server)
@@ -171,7 +175,8 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Xatolar: `catch` da foydalanuvchiga do'stona xato qaytarsangiz, `reportError(e, "joy")` ni chaqiring
   (`console.error` emas) — aks holda Sentry'ga tushmaydi. Session Replay yoqilmaydi (checkout formasi).
 - Ommaviy (kirishsiz) yoki qimmat Server Action'lar `rateLimit` bilan cheklanadi (`lib/rate-limit.ts` dagi RULES):
-  login, signup, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder, checkPromo, submitReview. Yangi shunday action qo'shsangiz — qoida qo'shing.
+  login, signup, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder, checkPromo, submitReview,
+  AI menyu importi (menuImportFree 3 / menuImportPro 30 — 30 kunda, do'kon bo'yicha; AI pul turadi). Yangi shunday action qo'shsangiz — qoida qo'shing.
 - Tezlik: bog'langan ma'lumot (include / nested select) o'qilsa — `...JOIN` qo'shing; bir-biriga bog'liq
   bo'lmagan so'rovlarni `Promise.all` bilan parallel qiling. Har bir so'rov bazaga borish = vaqt.
 - Sayt manzilini `NEXT_PUBLIC_APP_URL` dan emas, `getRequestOrigin()` dan oling. U `APP_URL` (asosiy domen,
@@ -228,7 +233,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Env: `DATABASE_URL` (6543, `pgbouncer=true&connection_limit=3`), `DIRECT_URL` (5432), `AUTH_SECRET`,
   `APP_URL=https://flami.org`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (secret),
   `NEXT_PUBLIC_SENTRY_DSN`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY` + `VAPID_PRIVATE_KEY` (secret) + `VAPID_SUBJECT` (push),
-  `SUPPORT_TELEGRAM` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
+  `SUPPORT_TELEGRAM`, `OPENAI_API_KEY` (secret, AI menyu importi), ixtiyoriy `OPENAI_MODEL` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
 - Monitoring: `GET /api/health` (200 = ilova + baza ishlayapti, 503 = baza javob bermayapti) — uptime servisga ulang.
 - Yuklama testi: `BASE_URL=<preview url> npm run loadtest` (k6, `loadtest/storefront.js`), production'ga emas.
 

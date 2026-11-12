@@ -32,6 +32,9 @@ export const RULES = {
   promoIp: { name: "promo:ip", limit: 20, windowSeconds: 10 * 60 },
   /** Reviews from the order page (one per order anyway; this stops floods) */
   reviewIp: { name: "review:ip", limit: 10, windowSeconds: 60 * 60 },
+  /** AI menu import (OpenAI costs money): per store, per 30 days, by plan */
+  menuImportFree: { name: "menu-import:free", limit: 3, windowSeconds: 30 * 24 * 60 * 60 },
+  menuImportPro: { name: "menu-import:pro", limit: 30, windowSeconds: 30 * 24 * 60 * 60 },
 } satisfies Record<string, RateLimitRule>;
 
 /**
