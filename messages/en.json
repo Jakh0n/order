@@ -1282,7 +1282,9 @@
       "empty": "No dishes found. Try a clearer photo or paste the text.",
       "server": "Couldn't read the menu. Please try again.",
       "tooLarge": "The photos are too large together — remove one or take fewer.",
-      "saveFailed": "Couldn't save the dishes. Nothing was added — please try again."
-    }
+      "saveFailed": "Couldn't save the dishes. Nothing was added — please try again.",
+      "unauthorized": "Sign in again and retry."
+    },
+    "readingCount": "Read {count, plural, one {# dish} other {# dishes}} so far…"
   }
 }

@@ -112,10 +112,11 @@ lib/
   orders/reorder-actions.ts   getReorderLines — "Order again" (/o sahifasi, kirishsiz, rate limit)
   orders/receipt-actions.ts   uploadOrderReceipt — mijoz TRANSFER chekini yuklaydi (kirishsiz, orderId bo'yicha)
   geo/                        lookupAddress (server action) → reverseGeocode (Nominatim; provayderni shu faylda almashtiring)
-  ai/openai.ts                readMenu — OpenAI (Responses API + zod structured output), FAQAT serverda (OPENAI_API_KEY)
+  ai/openai.ts                streamMenu — OpenAI (Responses API + zod structured output), FAQAT serverda (OPENAI_API_KEY)
   ai/menu-schema.ts           AI natijasi sxemasi, toDraft, importDraftSchema (narxlar asosiy birlikda)
-  menu/import-actions.ts      extractMenu (rasm/matn → qoralama, hech narsa saqlanmaydi, do'kon bo'yicha rate limit),
-                              importMenu (tasdiqlangan qoralama → kategoriya/taomlar, takrorlar o'tkazib yuboriladi)
+  api/menu-import (route)     AI o'qish — NDJSON oqim: tayyor taomlar jonli ko'rinadi (streamMenu), hech narsa saqlanmaydi,
+                              do'kon bo'yicha rate limit; menu/import-input.ts — fayl tekshiruvi
+  menu/import-actions.ts      importMenu (tasdiqlangan qoralama → 4 ta batch so'rov, takrorlar o'tkazib yuboriladi)
   menu/admin-data.ts          getAdminMenu, getAdminProduct (keshsiz, nofaollar ham)
   menu/admin-actions.ts       kategoriya/taom CRUD, tartiblash, "bugun yo'q", saveProduct (variantlar id bo'yicha moslanadi), rasm
   orders/promo.ts             promoProblem, promoDiscount, deliveryFeeFor (sof funksiyalar: klient preview + server)

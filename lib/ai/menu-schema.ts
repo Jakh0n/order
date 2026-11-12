@@ -36,6 +36,11 @@ export const extractedMenuSchema = z.object({
 
 export type ExtractedMenu = z.infer<typeof extractedMenuSchema>;
 
+/** Dishes read so far (names + prices), for the live "reading…" screen */
+export interface MenuProgress {
+  categories: { name: string; items: { name: string; price: number | null }[] }[];
+}
+
 // ---------- Review screen → import (what the owner confirms) ----------
 
 export const importItemSchema = z.object({

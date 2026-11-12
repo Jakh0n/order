@@ -1282,7 +1282,9 @@
       "empty": "Taom topilmadi. Aniqroq rasm oling yoki matnni joylang.",
       "server": "Menyuni o'qib bo'lmadi. Qayta urinib ko'ring.",
       "tooLarge": "Rasmlar birgalikda juda katta — bittasini olib tashlang.",
-      "saveFailed": "Taomlarni saqlab bo'lmadi. Hech narsa qo'shilmadi — qayta urinib ko'ring."
-    }
+      "saveFailed": "Taomlarni saqlab bo'lmadi. Hech narsa qo'shilmadi — qayta urinib ko'ring.",
+      "unauthorized": "Qayta kiring va urinib ko'ring."
+    },
+    "readingCount": "Hozircha {count, plural, other {# ta taom}} o'qildi…"
   }
 }

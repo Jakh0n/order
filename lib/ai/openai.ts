@@ -1,9 +1,10 @@
 import "server-only";
 
 import OpenAI from "openai";
+import { partialParse } from "openai/_vendor/partial-json-parser/parser.mjs";
 import { zodTextFormat } from "openai/helpers/zod";
 
-import { type ExtractedMenu, extractedMenuSchema } from "@/lib/ai/menu-schema";
+import { type ExtractedMenu, extractedMenuSchema, type MenuProgress } from "@/lib/ai/menu-schema";
 
 // AI calls run only on the server (the key never reaches the browser).
 
@@ -30,13 +31,8 @@ Rules:
 - Option group and option names are in the menu's language too (e.g. an Uzbek menu: "O'lcham", "Qo'shimcha"; Russian: "Размер", "Добавки").
 - Ignore phone numbers, addresses, opening hours and decorations.`;
 
-/** Photos (data URLs) and/or pasted text → structured menu. Throws on API errors. */
-export async function readMenu(input: {
-  images: string[];
-  text: string;
-  currency: string;
-}): Promise<ExtractedMenu> {
-  const content = [
+function contentOf(input: { images: string[]; text: string; currency: string }) {
+  return [
     {
       type: "input_text" as const,
       text: `Store currency: ${input.currency}.${input.text ? `\nMenu text from the owner:\n${input.text}` : ""}`,
@@ -47,13 +43,66 @@ export async function readMenu(input: {
       detail: "high" as const,
     })),
   ];
+}
 
-  const response = await openai().responses.parse({
+/**
+ * Only finished dishes: a dish counts once its last field (optionGroups) has started, so
+ * half-typed names never flash on screen.
+ */
+function progressOf(partial: unknown): MenuProgress {
+  const cats = (partial as { categories?: unknown })?.categories;
+  if (!Array.isArray(cats)) return { categories: [] };
+  return {
+    categories: cats
+      .map((c) => ({
+        name: typeof c?.name === "string" ? c.name.slice(0, 60) : "",
+        items: (Array.isArray(c?.items) ? c.items : [])
+          .filter((i: unknown) => i && typeof i === "object" && "optionGroups" in i)
+          .map((i: { name?: unknown; price?: unknown }) => ({
+            name: typeof i.name === "string" ? i.name.slice(0, 100) : "",
+            price: typeof i.price === "number" ? i.price : null,
+          }))
+          .filter((i: { name: string }) => i.name),
+      }))
+      .filter((c) => c.name),
+  };
+}
+
+/** Same as readMenu, but reports finished dishes while the answer streams in */
+export async function streamMenu(
+  input: { images: string[]; text: string; currency: string },
+  onProgress: (progress: MenuProgress) => void,
+): Promise<ExtractedMenu> {
+  const stream = openai().responses.stream({
     model: MODEL(),
     instructions: INSTRUCTIONS,
-    input: [{ role: "user", content }],
+    input: [{ role: "user", content: contentOf(input) }],
     text: { format: zodTextFormat(extractedMenuSchema, "menu") },
   });
-  if (!response.output_parsed) throw new Error("AI returned no menu");
-  return response.output_parsed;
+
+  let text = "";
+  let lastCount = -1;
+  let lastSent = 0;
+  for await (const event of stream) {
+    if (event.type !== "response.output_text.delta") continue;
+    text += event.delta;
+    const now = Date.now();
+    if (now - lastSent < 400) continue; // a few updates a second is plenty
+    let partial: unknown;
+    try {
+      partial = partialParse(text);
+    } catch {
+      continue; // not parseable yet
+    }
+    const progress = progressOf(partial);
+    const count = progress.categories.reduce((n, c) => n + c.items.length, 0);
+    if (count !== lastCount) {
+      lastCount = count;
+      lastSent = now;
+      onProgress(progress);
+    }
+  }
+  const final = await stream.finalResponse();
+  if (!final.output_parsed) throw new Error("AI returned no menu");
+  return final.output_parsed;
 }

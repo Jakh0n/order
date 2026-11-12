@@ -4,63 +4,13 @@ import { randomUUID } from "node:crypto";
 
 import { refresh, updateTag } from "next/cache";
 
-import { type ImportDraft, importDraftSchema, toDraft } from "@/lib/ai/menu-schema";
-import { aiConfigured, readMenu } from "@/lib/ai/openai";
+import { type ImportDraft, importDraftSchema } from "@/lib/ai/menu-schema";
 import { requireOwner } from "@/lib/auth/owner";
 import { prisma } from "@/lib/db";
 import { toMinor } from "@/lib/money";
-import { isPro } from "@/lib/plan";
-import { rateLimit, RULES } from "@/lib/rate-limit";
 import { reportError } from "@/lib/report-error";
 import { storeCacheTag } from "@/lib/storefront";
 import { productSchema } from "@/lib/validators";
-
-const MAX_IMAGES = 5;
-const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // after the browser shrinks them
-const MAX_TEXT = 8000;
-
-export type ExtractResult =
-  | { ok: true; draft: ImportDraft }
-  | { ok: false; error: "notConfigured" | "invalid" | "tooMany" | "empty" | "server" };
-
-/**
- * Step 1: read a paper menu (photos and/or pasted text) with AI. Nothing is saved —
- * the owner reviews the draft first. Rate limited per store (OpenAI costs money).
- */
-export async function extractMenu(formData: FormData): Promise<ExtractResult> {
-  const { store } = await requireOwner();
-  if (!aiConfigured()) return { ok: false, error: "notConfigured" };
-
-  const files = formData.getAll("images").filter((f): f is File => f instanceof File && f.size > 0);
-  const text = String(formData.get("text") ?? "")
-    .trim()
-    .slice(0, MAX_TEXT);
-  if ((files.length === 0 && !text) || files.length > MAX_IMAGES) {
-    return { ok: false, error: "invalid" };
-  }
-  if (files.some((f) => !f.type.startsWith("image/") || f.size > MAX_IMAGE_BYTES)) {
-    return { ok: false, error: "invalid" };
-  }
-
-  try {
-    const rule = isPro(store) ? RULES.menuImportPro : RULES.menuImportFree;
-    if (!(await rateLimit(rule, store.id))) return { ok: false, error: "tooMany" };
-
-    const images = await Promise.all(
-      files.map(
-        async (f) =>
-          `data:${f.type};base64,${Buffer.from(await f.arrayBuffer()).toString("base64")}`,
-      ),
-    );
-    const menu = await readMenu({ images, text, currency: store.currency });
-    const draft = toDraft(menu);
-    if (draft.categories.length === 0) return { ok: false, error: "empty" };
-    return { ok: true, draft };
-  } catch (e) {
-    reportError(e, "extractMenu");
-    return { ok: false, error: "server" };
-  }
-}
 
 export type ImportResult =
   | { ok: true; created: number; skipped: number; categories: number }

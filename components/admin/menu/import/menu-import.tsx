@@ -20,13 +20,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { ImportDraft } from "@/lib/ai/menu-schema";
-import { extractMenu, importMenu } from "@/lib/menu/import-actions";
+import type { ImportDraft, MenuProgress } from "@/lib/ai/menu-schema";
+import { importMenu } from "@/lib/menu/import-actions";
 import { priceStep } from "@/lib/money";
 import { shrinkImage } from "@/lib/shrink-image";
 import { cn } from "@/lib/utils";
 
 const MAX_PHOTOS = 5;
+const ERRORS = { notConfigured: 1, invalid: 1, tooMany: 1, empty: 1, server: 1, unauthorized: 1 };
 /** Server Actions accept 3 MB; leave room for the rest of the form */
 const MAX_TOTAL_BYTES = 2.6 * 1024 * 1024;
 
@@ -43,7 +44,9 @@ export function MenuImport({ configured, currency }: { configured: boolean; curr
   const [text, setText] = useState("");
   const [draft, setDraft] = useState<Category[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [reading, startReading] = useTransition();
+  const [reading, setReading] = useState(false);
+  // Dishes the AI has finished so far (live list while reading)
+  const [progress, setProgress] = useState<MenuProgress | null>(null);
   const [saving, startSaving] = useTransition();
 
   // Free the preview URLs
@@ -61,33 +64,67 @@ export function MenuImport({ configured, currency }: { configured: boolean; curr
     if (inputRef.current) inputRef.current.value = "";
   }
 
-  function read() {
+  async function read() {
     setError(null);
-    startReading(async () => {
+    setReading(true);
+    setProgress(null);
+    try {
       // Too big together → shrink harder before sending
       let files = photos.map((p) => p.file);
-      if (files.reduce((s, f) => s + f.size, 0) > MAX_TOTAL_BYTES) {
+      if (files.reduce((sum, f) => sum + f.size, 0) > MAX_TOTAL_BYTES) {
         files = await Promise.all(files.map((f) => shrinkImage(f, 1200, 0.7)));
       }
-      if (files.reduce((s, f) => s + f.size, 0) > MAX_TOTAL_BYTES) {
+      if (files.reduce((sum, f) => sum + f.size, 0) > MAX_TOTAL_BYTES) {
         setError(t("errors.tooLarge"));
         return;
       }
       const form = new FormData();
       files.forEach((f) => form.append("images", f));
       form.set("text", text);
-      const result = await extractMenu(form);
-      if (!result.ok) {
-        setError(t(`errors.${result.error}`));
-        return;
+
+      // NDJSON stream: progress events, then done / error (app/api/menu-import/route.ts)
+      const res = await fetch("/api/menu-import", { method: "POST", body: form });
+      if (!res.body) throw new Error("no body");
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let finished = false;
+      const handle = (line: string) => {
+        if (!line.trim()) return;
+        const event = JSON.parse(line) as
+          | { type: "progress"; progress: MenuProgress }
+          | { type: "done"; draft: ImportDraft }
+          | { type: "error"; error: string };
+        if (event.type === "progress") setProgress(event.progress);
+        else if (event.type === "error") {
+          setError(t(`errors.${event.error in ERRORS ? event.error : "server"}`));
+          finished = true;
+        } else {
+          finished = true;
+          setDraft(
+            event.draft.categories.map((c) => ({
+              name: c.name,
+              items: c.items.map((i) => ({ ...i, include: true })),
+            })),
+          );
+        }
+      };
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        lines.forEach(handle);
       }
-      setDraft(
-        result.draft.categories.map((c) => ({
-          name: c.name,
-          items: c.items.map((i) => ({ ...i, include: true })),
-        })),
-      );
-    });
+      // A one-shot JSON answer (e.g. "tooMany") has no trailing newline
+      handle(buffer + decoder.decode());
+      if (!finished) setError(t("errors.server"));
+    } catch {
+      setError(t("errors.server"));
+    } finally {
+      setReading(false);
+    }
   }
 
   function save() {
@@ -352,16 +389,53 @@ export function MenuImport({ configured, currency }: { configured: boolean; curr
         <Button
           type="button"
           size="lg"
-          onClick={read}
+          onClick={() => void read()}
           disabled={reading || (photos.length === 0 && !text.trim())}
           className="gap-2"
         >
           {reading ? <Loader2 className="size-5 animate-spin" /> : <Sparkles className="size-5" />}
           {reading ? t("reading") : t("read")}
         </Button>
-        {reading && <p className="text-muted-foreground text-center text-xs">{t("readingHint")}</p>}
+        {reading && <ReadingProgress progress={progress} />}
       </section>
       <p className="text-muted-foreground text-xs">{t("privacy")}</p>
+    </div>
+  );
+}
+
+/** Live list of dishes the AI has read so far */
+function ReadingProgress({ progress }: { progress: MenuProgress | null }) {
+  const t = useTranslations("menuImport");
+  const count = progress?.categories.reduce((n, c) => n + c.items.length, 0) ?? 0;
+  return (
+    <div className="flex flex-col gap-3" aria-live="polite">
+      <p className="text-muted-foreground text-center text-sm">
+        {count > 0 ? t("readingCount", { count }) : t("readingHint")}
+      </p>
+      {progress && count > 0 && (
+        <div className="bg-muted/50 flex max-h-72 flex-col gap-3 overflow-y-auto rounded-xl p-3">
+          {progress.categories
+            .filter((c) => c.items.length > 0)
+            .map((c, ci) => (
+              <div key={ci} className="flex flex-col gap-1">
+                <p className="text-xs font-semibold tracking-wide uppercase">{c.name}</p>
+                <ul className="flex flex-col gap-0.5">
+                  {c.items.map((item, ii) => (
+                    <li
+                      key={ii}
+                      className="animate-in fade-in slide-in-from-bottom-1 flex justify-between gap-3 text-sm duration-300"
+                    >
+                      <span className="truncate">{item.name}</span>
+                      <span className="text-muted-foreground shrink-0 tabular-nums">
+                        {item.price ?? "—"}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+        </div>
+      )}
     </div>
   );
 }
