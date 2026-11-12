@@ -76,8 +76,31 @@ export const importDraftSchema = z.object({
 
 export type ImportDraft = z.infer<typeof importDraftSchema>;
 
+/**
+ * Overlapping crops can repeat a category or a dish: same-named categories are merged and a
+ * dish name appears once per category.
+ */
+function dedupe(menu: ExtractedMenu): ExtractedMenu {
+  const byName = new Map<string, ExtractedMenu["categories"][number]>();
+  for (const c of menu.categories) {
+    const key = c.name.trim().toLowerCase();
+    const target = byName.get(key) ?? { name: c.name, items: [] };
+    const seen = new Set(target.items.map((i) => i.name.trim().toLowerCase()));
+    for (const item of c.items) {
+      const k = item.name.trim().toLowerCase();
+      if (!seen.has(k)) {
+        seen.add(k);
+        target.items.push(item);
+      }
+    }
+    byName.set(key, target);
+  }
+  return { categories: [...byName.values()] };
+}
+
 /** AI output → a draft the owner can edit (clamps odd values instead of failing) */
-export function toDraft(menu: ExtractedMenu): ImportDraft {
+export function toDraft(raw: ExtractedMenu): ImportDraft {
+  const menu = dedupe(raw);
   return {
     categories: menu.categories
       .map((c) => ({

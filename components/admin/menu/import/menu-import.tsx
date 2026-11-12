@@ -28,8 +28,8 @@ import { cn } from "@/lib/utils";
 
 const MAX_PHOTOS = 5;
 const ERRORS = { notConfigured: 1, invalid: 1, tooMany: 1, empty: 1, server: 1, unauthorized: 1 };
-/** Server Actions accept 3 MB; leave room for the rest of the form */
-const MAX_TOTAL_BYTES = 2.6 * 1024 * 1024;
+/** Upload goes to a route (not a Server Action); stay under Vercel's 4.5 MB request limit */
+const MAX_TOTAL_BYTES = 4 * 1024 * 1024;
 
 type Photo = { file: File; url: string };
 type Row = ImportDraft["categories"][number]["items"][number] & { include: boolean };
@@ -56,7 +56,7 @@ export function MenuImport({ configured, currency }: { configured: boolean; curr
     if (!list) return;
     const room = MAX_PHOTOS - photos.length;
     const picked = [...list].filter((f) => f.type.startsWith("image/")).slice(0, room);
-    const shrunk = await Promise.all(picked.map((f) => shrinkImage(f, 1600, 0.78)));
+    const shrunk = await Promise.all(picked.map((f) => shrinkImage(f, 2400, 0.85)));
     setPhotos((prev) => [
       ...prev,
       ...shrunk.map((file) => ({ file, url: URL.createObjectURL(file) })),
@@ -72,7 +72,7 @@ export function MenuImport({ configured, currency }: { configured: boolean; curr
       // Too big together → shrink harder before sending
       let files = photos.map((p) => p.file);
       if (files.reduce((sum, f) => sum + f.size, 0) > MAX_TOTAL_BYTES) {
-        files = await Promise.all(files.map((f) => shrinkImage(f, 1200, 0.7)));
+        files = await Promise.all(files.map((f) => shrinkImage(f, 1800, 0.8)));
       }
       if (files.reduce((sum, f) => sum + f.size, 0) > MAX_TOTAL_BYTES) {
         setError(t("errors.tooLarge"));

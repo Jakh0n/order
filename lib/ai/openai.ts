@@ -29,7 +29,9 @@ Rules:
 - Extras with their own price ("+cheese 1") go into an optional option group; maxSelect = number of extras.
 - description: the short text under the dish, or null. Do not write descriptions yourself.
 - Option group and option names are in the menu's language too (e.g. an Uzbek menu: "O'lcham", "Qo'shimcha"; Russian: "Размер", "Добавки").
-- Ignore phone numbers, addresses, opening hours and decorations.`;
+- Ignore phone numbers, addresses, opening hours and decorations.
+- Return EVERY dish you can see — menus often have 50–150 items. Never summarize, merge or skip dishes, even similar ones.
+- Images can be overlapping crops of the same page, in reading order (top to bottom, left to right). A dish visible in two crops must be listed only once, under its category.`;
 
 function contentOf(input: { images: string[]; text: string; currency: string }) {
   return [
