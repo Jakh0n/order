@@ -1281,7 +1281,8 @@
       "tooMany": "You've used all menu imports for this month. Pro gives you more.",
       "empty": "No dishes found. Try a clearer photo or paste the text.",
       "server": "Couldn't read the menu. Please try again.",
-      "tooLarge": "The photos are too large together — remove one or take fewer."
+      "tooLarge": "The photos are too large together — remove one or take fewer.",
+      "saveFailed": "Couldn't save the dishes. Nothing was added — please try again."
     }
   }
 }

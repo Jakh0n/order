@@ -8,6 +8,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { aiConfigured } from "@/lib/ai/openai";
 import { requireOwner } from "@/lib/auth/owner";
 
+// Reading a big menu with AI can take ~1 minute; Server Actions on this page get up to 2
+export const maxDuration = 120;
+
 export default function MenuImportPage() {
   return (
     <div className="flex max-w-3xl flex-col gap-4 p-4 md:p-6">

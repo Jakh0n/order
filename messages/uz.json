@@ -1281,7 +1281,8 @@
       "tooMany": "Bu oy uchun barcha importlardan foydalandingiz. Pro'da ko'proq.",
       "empty": "Taom topilmadi. Aniqroq rasm oling yoki matnni joylang.",
       "server": "Menyuni o'qib bo'lmadi. Qayta urinib ko'ring.",
-      "tooLarge": "Rasmlar birgalikda juda katta — bittasini olib tashlang."
+      "tooLarge": "Rasmlar birgalikda juda katta — bittasini olib tashlang.",
+      "saveFailed": "Taomlarni saqlab bo'lmadi. Hech narsa qo'shilmadi — qayta urinib ko'ring."
     }
   }
 }
