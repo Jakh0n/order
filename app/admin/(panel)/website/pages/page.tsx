@@ -8,7 +8,7 @@ import { listPages } from "@/lib/pages/data";
 
 export default function WebsitePagesPage() {
   return (
-    <div className="flex max-w-3xl flex-col gap-4 p-4 md:p-6">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 py-5 md:px-8 md:py-8">
       <Suspense fallback={<Skeleton className="h-64 w-full" />}>
         <Pages />
       </Suspense>
@@ -22,8 +22,8 @@ async function Pages() {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold">{t("heading")}</h1>
-        <p className="text-muted-foreground text-sm">{t("lead")}</p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
+        <p className="text-muted-foreground mt-1 max-w-prose text-sm">{t("lead")}</p>
       </div>
       <PagesManager storeSlug={store.slug} pages={pages} />
     </>

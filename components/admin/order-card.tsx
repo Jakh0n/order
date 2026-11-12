@@ -120,9 +120,13 @@ export async function OrderCard({
       </header>
 
       {stale && (
-        <p className="flex items-start gap-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
-          <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
-          {t("adminOrders.staleHint")}
+        // A slim line, not a banner: the full explanation is in the tooltip
+        <p
+          className="flex items-center gap-1.5 text-xs font-medium text-amber-800 dark:text-amber-300"
+          title={t("adminOrders.staleHint")}
+        >
+          <AlertTriangle className="size-3.5 shrink-0" aria-hidden />
+          {t("adminOrders.staleShort")}
         </p>
       )}
 

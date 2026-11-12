@@ -46,8 +46,13 @@ async function AdminQr() {
   const footer = isPro(store) ? undefined : new URL(origin).host;
 
   return (
-    <div className="flex max-w-3xl flex-col gap-4 p-4 md:p-6">
-      <h1 className="text-2xl font-bold">{tAdmin("qr")}</h1>
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 py-5 md:px-8 md:py-8">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">{tAdmin("qr")}</h1>
+        <p className="text-muted-foreground mt-1 max-w-prose text-sm">
+          {tAdmin("descriptions.dineIn")}
+        </p>
+      </div>
 
       <StoreLink slug={settings.slug} origin={origin} />
 
@@ -99,7 +104,7 @@ async function AdminQr() {
 
 function QrSkeleton() {
   return (
-    <div className="flex max-w-3xl flex-col gap-4 p-4 md:p-6">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 py-5 md:px-8 md:py-8">
       <Skeleton className="h-8 w-40" />
       <Skeleton className="h-48 w-full" />
       <Skeleton className="h-32 w-full" />

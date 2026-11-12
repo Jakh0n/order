@@ -356,7 +356,21 @@
       "menu": "Menyu",
       "pages": "Sahifalar",
       "reviews": "Sharhlar"
-    }
+    },
+    "descriptions": {
+      "orders": "Yangi va faol buyurtmalar, bugungi ko'rsatkichlar va tarix.",
+      "products": "Mijozlar do'koningizda ko'radigan kategoriya va taomlar.",
+      "dineIn": "Do'kon havolasi va stollar uchun QR kodlar.",
+      "settings": "Aloqa, ish vaqti, yetkazish, to'lov va buyurtmalar qayerga kelishi."
+    },
+    "accepting": "Buyurtma qabul qilinmoqda",
+    "paused": "Buyurtmalar to'xtatilgan",
+    "acceptingToggle": "Buyurtma qabul qilish",
+    "nowAccepting": "Do'kon buyurtma qabul qilmoqda",
+    "nowPaused": "Buyurtmalar to'xtatildi — menyu ko'rinib turadi",
+    "openToggleFailed": "O'zgartirib bo'lmadi. Qayta urinib ko'ring.",
+    "customers": "Mijozlar",
+    "marketing": "Marketing"
   },
   "superadmin": {
     "title": "Platforma admini",
@@ -395,7 +409,19 @@
     },
     "sentryTest": "Sentry'ni sinash",
     "sentryTestHint": "Sinov xatosini yuboradi — u Sentry'da paydo bo'lishi kerak.",
-    "sentrySent": "Sinov xatosi yuborildi"
+    "sentrySent": "Sinov xatosi yuborildi",
+    "filter": "Do'konlarni saralash",
+    "filters": {
+      "all": "Hammasi",
+      "pro": "Pro",
+      "free": "Bepul",
+      "blocked": "Bloklangan"
+    },
+    "store": "Do'kon",
+    "plan": "Tarif",
+    "dishes": "Taomlar",
+    "actions": "Amallar",
+    "tools": "Dasturchi vositalari"
   },
   "orderMessage": {
     "header": "Buyurtma №{number}",
@@ -517,7 +543,9 @@
     "searchButton": "Qidirish",
     "clearFilters": "Tozalash",
     "noMatches": "Hech qanday buyurtma topilmadi",
-    "historyLimit": "Bu oy {count} ta buyurtma oldingiz. Free tarixda {limit} tasini saqlaydi — undan keyingi yakunlangan buyurtmalar yashirilgan (faollari doim ko'rinadi)."
+    "historyLimit": "Bu oy {count} ta buyurtma oldingiz. Free tarixda {limit} tasini saqlaydi — undan keyingi yakunlangan buyurtmalar yashirilgan (faollari doim ko'rinadi).",
+    "staleShort": "5+ daqiqa qabul qilinmagan — mijoz xabar yubormagan bo'lishi mumkin",
+    "activeNow": "Faol"
   },
   "adminMenu": {
     "addCategory": "Kategoriya qo'shish",
@@ -660,7 +688,15 @@
     "language": "Do'kon tili",
     "languageHint": "Do'kon sahifasi shu tilda ochiladi. Mijozlar uni o'zlari almashtira oladi.",
     "freeDeliveryFrom": "Bepul yetkazish ({currency}) dan",
-    "freeDeliveryFromHint": "Yetkazish doim pullik bo'lishi uchun bo'sh qoldiring. Taomlar summasi bo'yicha hisoblanadi."
+    "freeDeliveryFromHint": "Yetkazish doim pullik bo'lishi uchun bo'sh qoldiring. Taomlar summasi bo'yicha hisoblanadi.",
+    "unsaved": "Saqlanmagan o'zgarishlar bor",
+    "sectionHints": {
+      "store": "Mijozlar siz bilan qanday bog'lanadi va sizni topadi.",
+      "region": "Do'kon valyutasi va vaqti.",
+      "hours": "Buyurtma qachon berilishi mumkin.",
+      "orders": "Olib ketish, yetkazish va minimal buyurtma.",
+      "payment": "Mijozlar qanday to'lashi mumkin."
+    }
   },
   "signup": {
     "title": "Do'koningizni oching",
@@ -755,7 +791,10 @@
     "hours": "Ish vaqtini belgilang",
     "channel": "Buyurtmalar uchun Telegram yoki WhatsApp'ni ulang",
     "notifications": "Buyurtma bildirishnomalarini yoqing",
-    "testOrder": "Do'koningizni ochib, sinov buyurtmasini bering"
+    "testOrder": "Do'koningizni ochib, sinov buyurtmasini bering",
+    "next": "Keyingi",
+    "continue": "Davom etish",
+    "showAll": "Barcha qadamlar"
   },
   "table": {
     "label": "{number}-stol",
@@ -922,7 +961,8 @@
     "limitNote": "Birinchi 200 tasi ko'rsatilgan — qidiruvdan foydalaning.",
     "lockedPeriod": "Pro'da mavjud",
     "customersLockedTitle": "Doimiy mijozlaringizni biling",
-    "customersLockedText": "Har bir mijoz buyurtmalari va sarflagan summasi bilan, bir bosishda yozish. Pro'da mavjud."
+    "customersLockedText": "Har bir mijoz buyurtmalari va sarflagan summasi bilan, bir bosishda yozish. Pro'da mavjud.",
+    "description": "Tushum, buyurtmalar va nima sotilayotgani — do'kon vaqt zonasida."
   },
   "plan": {
     "pro": "Pro",

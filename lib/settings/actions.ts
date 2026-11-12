@@ -151,3 +151,17 @@ export async function saveDesign(input: DesignInput): Promise<DesignResult> {
   refresh();
   return { ok: true };
 }
+
+/** Sidebar switch: pause / resume taking orders without opening Settings */
+export async function setStoreAccepting(isOpen: boolean): Promise<{ ok: boolean }> {
+  const { store } = await requireOwner();
+  try {
+    await prisma.store.update({ where: { id: store.id }, data: { isOpen: Boolean(isOpen) } });
+  } catch (e) {
+    reportError(e, "setStoreAccepting");
+    return { ok: false };
+  }
+  updateTag(storeCacheTag(store.slug));
+  refresh();
+  return { ok: true };
+}

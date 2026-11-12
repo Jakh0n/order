@@ -97,8 +97,8 @@ export function SettingsForm({
       : waDigits && `https://wa.me/${waDigits}`;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
-      <Card title={t("storeSection")}>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-8">
+      <Card title={t("storeSection")} hint={t("sectionHints.store")}>
         <Field label={t("phone")} htmlFor="phone" error={errorText(errors.phone?.message)}>
           <Input
             id="phone"
@@ -126,7 +126,7 @@ export function SettingsForm({
         </Field>
       </Card>
 
-      <Card title={t("regionSection")}>
+      <Card title={t("regionSection")} hint={t("sectionHints.region")}>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field
             label={t("currency")}
@@ -170,7 +170,7 @@ export function SettingsForm({
         <p className="text-muted-foreground -mt-2 text-xs">{t("languageHint")}</p>
       </Card>
 
-      <Card title={t("hoursSection")}>
+      <Card title={t("hoursSection")} hint={t("sectionHints.hours")}>
         <SwitchField control={control} name="isOpen" label={t("isOpen")} hint={t("isOpenHint")} />
         <div className="grid grid-cols-2 gap-3">
           <Field
@@ -201,7 +201,7 @@ export function SettingsForm({
         <p className="text-muted-foreground text-xs">{t("hoursHint")}</p>
       </Card>
 
-      <Card title={t("orderSection")}>
+      <Card title={t("orderSection")} hint={t("sectionHints.orders")}>
         <SwitchField control={control} name="pickupEnabled" label={t("pickup")} />
         <SwitchField control={control} name="deliveryEnabled" label={t("delivery")} />
         <ErrorLine text={errorText(errors.deliveryEnabled?.message)} />
@@ -277,7 +277,7 @@ export function SettingsForm({
         </div>
       </Card>
 
-      <Card title={t("paymentSection")}>
+      <Card title={t("paymentSection")} hint={t("sectionHints.payment")}>
         <SwitchField control={control} name="acceptCash" label={t("cash")} />
         <SwitchField control={control} name="acceptCardOnDelivery" label={t("card")} />
         <SwitchField control={control} name="acceptTransfer" label={t("transfer")} />
@@ -370,8 +370,19 @@ export function SettingsForm({
         )}
       </Card>
 
-      <div className="bg-background/95 sticky bottom-0 z-10 border-t py-3 backdrop-blur">
-        <Button type="submit" size="lg" className="h-11 w-full" disabled={isSubmitting || !isDirty}>
+      {/* Save bar appears only with unsaved changes (above the phone tab bar) */}
+      <div
+        className={cn(
+          "bg-background/95 sticky bottom-16 z-20 -mx-1 flex items-center justify-between gap-3 rounded-xl border px-4 py-3 shadow-lg backdrop-blur transition md:bottom-4",
+          !isDirty && !isSubmitting && "pointer-events-none translate-y-4 opacity-0",
+        )}
+        aria-hidden={!isDirty && !isSubmitting}
+      >
+        <p className="text-muted-foreground flex items-center gap-2 text-sm">
+          <span className="size-2 rounded-full bg-amber-500" aria-hidden />
+          {t("unsaved")}
+        </p>
+        <Button type="submit" disabled={isSubmitting || !isDirty} className="gap-2">
           {isSubmitting && <Loader2 className="animate-spin" />}
           {t("save")}
         </Button>
@@ -390,12 +401,15 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <section className="bg-card flex flex-col gap-4 rounded-xl border p-4">
-      <div>
+    // Settings pattern: what the section is about on the left, its fields on the right (desktop)
+    <section className="grid gap-3 md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] md:gap-8">
+      <div className="md:pt-1">
         <h2 className="font-semibold">{title}</h2>
-        {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
+        {hint && <p className="text-muted-foreground mt-1 text-sm">{hint}</p>}
       </div>
-      {children}
+      <div className="bg-card flex min-w-0 flex-col gap-4 rounded-xl border p-4 sm:p-5">
+        {children}
+      </div>
     </section>
   );
 }

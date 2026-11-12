@@ -23,7 +23,7 @@ import { parseSections } from "@/lib/sections";
  */
 export default function WebsiteEditorLayout({ children }: LayoutProps<"/admin/website">) {
   return (
-    <div className="flex max-w-[1240px] flex-col p-4 pt-0 md:p-6 md:pt-0">
+    <div className="mx-auto flex w-full max-w-7xl flex-col px-4 pt-0 pb-5 md:px-8 md:pb-8">
       <Suspense fallback={<Skeleton className="mt-6 h-[600px] w-full" />}>
         <Design />
       </Suspense>

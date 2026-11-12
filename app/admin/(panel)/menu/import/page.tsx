@@ -13,7 +13,7 @@ export const maxDuration = 120;
 
 export default function MenuImportPage() {
   return (
-    <div className="flex max-w-3xl flex-col gap-4 p-4 md:p-6">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 py-5 md:px-8 md:py-8">
       <Suspense fallback={<Skeleton className="h-80 w-full" />}>
         <ImportView />
       </Suspense>
@@ -35,8 +35,8 @@ async function ImportView() {
           <ArrowLeft className="size-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold">{t("title")}</h1>
-          <p className="text-muted-foreground text-sm">{t("lead")}</p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+          <p className="text-muted-foreground mt-1 max-w-prose text-sm">{t("lead")}</p>
         </div>
       </div>
       <MenuImport configured={aiConfigured()} currency={store.currency} />

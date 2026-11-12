@@ -28,7 +28,7 @@ const PRO_FEATURES = [
 
 export default function PlanPage() {
   return (
-    <div className="flex max-w-4xl flex-col gap-4 p-4 md:p-6">
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-5 px-4 py-5 md:px-8 md:py-8">
       <Suspense fallback={<Skeleton className="h-96 w-full" />}>
         <Plan />
       </Suspense>
@@ -50,8 +50,8 @@ async function Plan() {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <p className="text-muted-foreground text-sm">{t("lead")}</p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <p className="text-muted-foreground mt-1 max-w-prose text-sm">{t("lead")}</p>
       </div>
 
       {/* Current plan */}

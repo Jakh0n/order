@@ -356,7 +356,21 @@
       "menu": "Menu",
       "pages": "Pages",
       "reviews": "Reviews"
-    }
+    },
+    "descriptions": {
+      "orders": "New and active orders, today's numbers and order history.",
+      "products": "Categories and dishes customers see on your store.",
+      "dineIn": "Your store link and QR codes for tables.",
+      "settings": "Contact details, hours, delivery, payments and where orders arrive."
+    },
+    "accepting": "Accepting orders",
+    "paused": "Orders paused",
+    "acceptingToggle": "Accept orders",
+    "nowAccepting": "Your store is taking orders",
+    "nowPaused": "Orders paused — customers can still browse",
+    "openToggleFailed": "Couldn't change it. Please try again.",
+    "customers": "Customers",
+    "marketing": "Marketing"
   },
   "superadmin": {
     "title": "Platform admin",
@@ -395,7 +409,19 @@
     },
     "sentryTest": "Test Sentry",
     "sentryTestHint": "Sends a test error — it should appear in Sentry.",
-    "sentrySent": "Test error sent"
+    "sentrySent": "Test error sent",
+    "filter": "Filter stores",
+    "filters": {
+      "all": "All",
+      "pro": "Pro",
+      "free": "Free",
+      "blocked": "Blocked"
+    },
+    "store": "Store",
+    "plan": "Plan",
+    "dishes": "Dishes",
+    "actions": "Actions",
+    "tools": "Developer tools"
   },
   "orderMessage": {
     "header": "Order #{number}",
@@ -517,7 +543,9 @@
     "searchButton": "Search",
     "clearFilters": "Clear",
     "noMatches": "No orders match your search",
-    "historyLimit": "You got {count} orders this month. The Free plan keeps {limit} in history — finished orders after that are hidden (active ones always show)."
+    "historyLimit": "You got {count} orders this month. The Free plan keeps {limit} in history — finished orders after that are hidden (active ones always show).",
+    "staleShort": "Not accepted for 5+ min — customer may not have sent the message",
+    "activeNow": "Active now"
   },
   "adminMenu": {
     "addCategory": "Add category",
@@ -660,7 +688,15 @@
     "language": "Store language",
     "languageHint": "Your store page opens in this language. Customers can still switch it.",
     "freeDeliveryFrom": "Free delivery from ({currency})",
-    "freeDeliveryFromHint": "Leave empty to always charge delivery. Counted on the items total."
+    "freeDeliveryFromHint": "Leave empty to always charge delivery. Counted on the items total.",
+    "unsaved": "You have unsaved changes",
+    "sectionHints": {
+      "store": "How customers reach and find you.",
+      "region": "Money and time on your store.",
+      "hours": "When orders can be placed.",
+      "orders": "Pickup, delivery and the minimum order.",
+      "payment": "How customers can pay you."
+    }
   },
   "signup": {
     "title": "Open your store",
@@ -755,7 +791,10 @@
     "hours": "Set your opening hours",
     "channel": "Connect Telegram or WhatsApp for orders",
     "notifications": "Turn on new-order notifications",
-    "testOrder": "Open your store and place a test order"
+    "testOrder": "Open your store and place a test order",
+    "next": "Next",
+    "continue": "Continue",
+    "showAll": "Show all steps"
   },
   "table": {
     "label": "Table {number}",
@@ -922,7 +961,8 @@
     "limitNote": "Showing the first 200 — use search to find someone.",
     "lockedPeriod": "Available on Pro",
     "customersLockedTitle": "Know your regulars",
-    "customersLockedText": "See every customer with their orders and total spent, and message them in one tap. Available on Pro."
+    "customersLockedText": "See every customer with their orders and total spent, and message them in one tap. Available on Pro.",
+    "description": "Revenue, orders and what sells — in your store's time zone."
   },
   "plan": {
     "pro": "Pro",
