@@ -170,7 +170,10 @@
     "trackOrder": "Track",
     "skipToMenu": "Skip to menu",
     "madeWith": "Made with Flami",
-    "openNav": "Open menu"
+    "openNav": "Open menu",
+    "rateOrder": "How was order #{number}?",
+    "rateNow": "Rate it",
+    "dismissRate": "Don't ask again"
   },
   "cart": {
     "title": "Your cart",

@@ -170,7 +170,10 @@
     "trackOrder": "Kuzatish",
     "skipToMenu": "Menyuga o'tish",
     "madeWith": "Flami bilan yaratilgan",
-    "openNav": "Menyuni ochish"
+    "openNav": "Menyuni ochish",
+    "rateOrder": "№{number} buyurtma qanday bo'ldi?",
+    "rateNow": "Baholash",
+    "dismissRate": "Boshqa so'ramaslik"
   },
   "cart": {
     "title": "Savatingiz",

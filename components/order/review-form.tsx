@@ -27,7 +27,10 @@ export function ReviewForm({
 
   if (done) {
     return (
-      <section className="bg-background flex flex-col items-center gap-2 rounded-2xl p-4 text-center">
+      <section
+        id="review"
+        className="bg-background flex scroll-mt-4 flex-col items-center gap-2 rounded-2xl p-4 text-center"
+      >
         <span className="flex gap-0.5" aria-label={t("yourRating", { rating: done.rating })}>
           {[1, 2, 3, 4, 5].map((i) => (
             <Star
@@ -57,7 +60,7 @@ export function ReviewForm({
 
   const shown = hover || rating;
   return (
-    <section className="bg-background flex flex-col gap-3 rounded-2xl p-4">
+    <section id="review" className="bg-background flex scroll-mt-4 flex-col gap-3 rounded-2xl p-4">
       <h2 className="font-bold">{t("ask")}</h2>
       <div className="flex justify-center gap-1" role="radiogroup" aria-label={t("ask")}>
         {[1, 2, 3, 4, 5].map((i) => (

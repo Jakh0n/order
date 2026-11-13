@@ -101,6 +101,7 @@ lib/
   pages/                      StorePage: savePage / deletePage, getPublishedPage (kesh: storeCacheTag)
   reviews/                    Review: submitReview (/o sahifasida, faqat COMPLETED, buyurtmaga bitta, rate limit),
                               setReviewHidden; getReviewSummary (getStorefront ichida)
+                              shouldAskForReview — do'kon sahifasida "Baholang" eslatmasi (oxirgi buyurtma, rate limit)
   rate-limit.ts               rateLimit / rateLimitAll (Postgres, qat'iy oyna), RULES, clientIp
   slug.ts                     slugify (kirill → lotin), RESERVED_SLUGS, slugError
   superadmin/data.ts          getPlatformStats, listStores
@@ -176,7 +177,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Xatolar: `catch` da foydalanuvchiga do'stona xato qaytarsangiz, `reportError(e, "joy")` ni chaqiring
   (`console.error` emas) — aks holda Sentry'ga tushmaydi. Session Replay yoqilmaydi (checkout formasi).
 - Ommaviy (kirishsiz) yoki qimmat Server Action'lar `rateLimit` bilan cheklanadi (`lib/rate-limit.ts` dagi RULES):
-  login, signup, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder, checkPromo, submitReview,
+  login, signup, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder, checkPromo, submitReview, shouldAskForReview,
   AI menyu importi (menuImportFree 3 / menuImportPro 30 — 30 kunda, do'kon bo'yicha; AI pul turadi). Yangi shunday action qo'shsangiz — qoida qo'shing.
 - Tezlik: bog'langan ma'lumot (include / nested select) o'qilsa — `...JOIN` qo'shing; bir-biriga bog'liq
   bo'lmagan so'rovlarni `Promise.all` bilan parallel qiling. Har bir so'rov bazaga borish = vaqt.
