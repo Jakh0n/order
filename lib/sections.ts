@@ -49,12 +49,21 @@ export const DEFAULT_SECTIONS: Section[] = [
   { id: "announcement", type: "announcement", hidden: false },
   { id: "header", type: "header", hidden: false },
   { id: "menu", type: "menu", hidden: false },
+  { id: "reviews", type: "reviews", hidden: false },
 ];
 
-/** Stored JSON → valid sections (bad / missing data falls back to the default order) */
+/**
+ * Stored JSON → valid sections (bad / missing data falls back to the default order).
+ * Every store has a reviews block — added under the menu if missing; it shows only once the
+ * store has a review, and the owner can hide it (not delete it).
+ */
 export function parseSections(value: unknown): Section[] {
   const parsed = sectionsSchema.safeParse(value);
-  return parsed.success ? parsed.data : DEFAULT_SECTIONS;
+  const list = parsed.success ? parsed.data : DEFAULT_SECTIONS;
+  if (list.some((s) => s.type === "reviews")) return list;
+  const menu = list.findIndex((s) => s.type === "menu");
+  const reviews: Section = { id: "reviews", type: "reviews", hidden: false };
+  return [...list.slice(0, menu + 1), reviews, ...list.slice(menu + 1)];
 }
 
 export function isBuiltIn(section: Section): boolean {

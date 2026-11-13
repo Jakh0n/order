@@ -79,7 +79,8 @@ export function SectionsEditor({
       <ol className="flex flex-col gap-2">
         {value.map((section, i) => {
           const Icon = ICONS[section.type];
-          const custom = !isBuiltIn(section);
+          // Reviews is always there (hide it instead); text / image blocks can be deleted
+          const custom = !isBuiltIn(section) && section.type !== "reviews";
           // The reviews block has nothing to edit; text / image open for editing
           const editable = section.type === "text" || section.type === "image";
           const open = editable && openId === section.id;
@@ -212,7 +213,7 @@ export function SectionsEditor({
       </ol>
 
       <div className="flex flex-wrap gap-2">
-        {(["text", "image", "reviews"] as const).map((type) => {
+        {(["text", "image"] as const).map((type) => {
           const Icon = ICONS[type];
           return (
             <Button
@@ -220,10 +221,7 @@ export function SectionsEditor({
               type="button"
               variant="outline"
               size="sm"
-              disabled={
-                value.length >= MAX_SECTIONS ||
-                (type === "reviews" && value.some((s) => s.type === "reviews"))
-              }
+              disabled={value.length >= MAX_SECTIONS}
               onClick={() => add(type)}
               className="gap-1.5"
             >

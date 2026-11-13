@@ -170,7 +170,10 @@
     "trackOrder": "Kuzatish",
     "skipToMenu": "Menyuga o'tish",
     "madeWith": "Flami bilan yaratilgan",
-    "openNav": "Menyuni ochish"
+    "openNav": "Menyuni ochish",
+    "rateOrder": "№{number} buyurtma qanday bo'ldi?",
+    "rateNow": "Baholash",
+    "dismissRate": "Boshqa so'ramaslik"
   },
   "cart": {
     "title": "Savatingiz",
@@ -566,7 +569,11 @@
     "activeNow": "Faol",
     "openOrder": "Buyurtma №{number} ni ochish",
     "orderTitle": "Buyurtma №{number}",
-    "filterStatus": "Holat bo'yicha saralash"
+    "filterStatus": "Holat bo'yicha saralash",
+    "askReview": "Sharh so'rash",
+    "reviewCopied": "Xabar nusxalandi — uni chatga qo'ying",
+    "reviewReceived": "Mijoz 5 dan {rating} baho berdi",
+    "reviewRequest": "Assalomu alaykum, {name}! {store}dagi №{number} buyurtmangiz uchun rahmat. Qanday bo'ldi? Sharh 10 soniya oladi va bizga juda yordam beradi: {link}"
   },
   "adminMenu": {
     "addCategory": "Kategoriya qo'shish",

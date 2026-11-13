@@ -21,6 +21,7 @@ import { UpgradeBanner } from "@/components/admin/upgrade";
 import { requireOwner } from "@/lib/auth/owner";
 import { FREE_MONTHLY_ORDERS, isPro } from "@/lib/plan";
 import { freeHistoryFilter, ordersThisMonth } from "@/lib/plan-history";
+import { getRequestOrigin } from "@/lib/app-url";
 import { JOIN, prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/money";
 import { ACTIVE_STATUSES, staleNewOrderIds } from "@/lib/orders/status";
@@ -101,7 +102,7 @@ async function Orders({
       // Faol buyurtmalar: eng eskisi tepada (navbat), qolganlari: eng yangisi tepada
       orderBy: { createdAt: tab === "active" ? "asc" : "desc" },
       take: PAGE_SIZE,
-      include: { items: { orderBy: { id: "asc" } } },
+      include: { items: { orderBy: { id: "asc" } }, review: { select: { rating: true } } },
     }),
     prisma.order.aggregate({
       where: { ...today, status: { not: "CANCELLED" } },
@@ -131,7 +132,10 @@ async function Orders({
   const now = new Date();
   const stale = staleNewOrderIds(orders, now);
   // Private bucket: short-lived links, one request for the whole page
-  const receipts = await receiptUrls(orders.flatMap((o) => (o.receiptPath ? [o.receiptPath] : [])));
+  const [origin, receipts] = await Promise.all([
+    getRequestOrigin(),
+    receiptUrls(orders.flatMap((o) => (o.receiptPath ? [o.receiptPath] : []))),
+  ]);
 
   const [tAdmin, t2] = await Promise.all([getTranslations("admin"), getTranslations()]);
   return (
@@ -313,6 +317,7 @@ async function Orders({
                   channel={store.channel}
                   stale={stale.has(order.id)}
                   receiptUrl={order.receiptPath ? receipts.get(order.receiptPath) : undefined}
+                  origin={origin}
                 />
               }
             />
