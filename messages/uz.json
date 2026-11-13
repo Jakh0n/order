@@ -387,7 +387,8 @@
     "nowPaused": "Buyurtmalar to'xtatildi — menyu ko'rinib turadi",
     "openToggleFailed": "O'zgartirib bo'lmadi. Qayta urinib ko'ring.",
     "customers": "Mijozlar",
-    "marketing": "Marketing"
+    "marketing": "Marketing",
+    "toggleSidebar": "Menyuni yig'ish yoki ochish"
   },
   "superadmin": {
     "title": "Platforma admini",
