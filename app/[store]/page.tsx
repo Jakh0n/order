@@ -8,6 +8,7 @@ import { CurrencyProvider } from "@/components/currency-provider";
 import { JsonLd } from "@/components/json-ld";
 import { CartBar } from "@/components/storefront/cart-sheet";
 import { CartSync } from "@/components/storefront/cart-sync";
+import { MetaPixel } from "@/components/storefront/meta-pixel";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { StoreBlocked } from "@/components/storefront/store-blocked";
 import { PromoPopup } from "@/components/storefront/promo-popup";
@@ -15,7 +16,7 @@ import { StorefrontSections } from "@/components/storefront/storefront-sections"
 import { siteOrigin } from "@/lib/app-url";
 import { storeJsonLd, topItemNames } from "@/lib/seo";
 import { StoreTheme } from "@/components/storefront/store-theme";
-import { getStorefront } from "@/lib/storefront";
+import { getStorefront, getStorePixel } from "@/lib/storefront";
 
 export async function generateMetadata({ params }: PageProps<"/[store]">): Promise<Metadata> {
   const { store: slug } = await params;
@@ -56,7 +57,7 @@ export default function StorePage({ params }: PageProps<"/[store]">) {
 
 async function Storefront({ params }: { params: PageProps<"/[store]">["params"] }) {
   const { store: slug } = await params;
-  const data = await getStorefront(slug);
+  const [data, pixelId] = await Promise.all([getStorefront(slug), getStorePixel(slug)]);
   if (!data) notFound();
   if (data.store.isBlocked) return <StoreBlocked name={data.store.name} />;
 
@@ -101,6 +102,7 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
         </div>
         <CartSync cartKey={store.slug} products={products} />
         <CartBar store={store} products={products} />
+        {pixelId && <MetaPixel pixelId={pixelId} currency={store.currency} />}
       </div>
     </CurrencyProvider>
   );

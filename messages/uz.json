@@ -697,7 +697,8 @@
       "whatsappRequired": "WhatsApp raqamini kiriting",
       "whatsappInvalid": "Noto'g'ri raqam — mamlakat kodini qo'shing, masalan +998901234567",
       "currencyInvalid": "Noto'g'ri valyuta",
-      "timeZoneInvalid": "Noto'g'ri vaqt zonasi"
+      "timeZoneInvalid": "Noto'g'ri vaqt zonasi",
+      "pixelInvalid": "Pixel ID 8–20 ta raqamdan iborat"
     },
     "deliveryFee": "Yetkazish narxi ({currency})",
     "deliveryFeeHint": "Har bir yetkazish buyurtmasiga qo'shiladi. 0 — bepul yetkazish.",
@@ -711,8 +712,12 @@
       "region": "Do'kon valyutasi va vaqti.",
       "hours": "Buyurtma qachon berilishi mumkin.",
       "orders": "Olib ketish, yetkazish va minimal buyurtma.",
-      "payment": "Mijozlar qanday to'lashi mumkin."
-    }
+      "payment": "Mijozlar qanday to'lashi mumkin.",
+      "marketing": "Facebook va Instagram reklamangiz natijasini o'lchang."
+    },
+    "marketingSection": "Marketing",
+    "metaPixelId": "Meta Pixel ID",
+    "metaPixelHint": "Meta Events Manager → Data sources bo'limidan oling. Biz sahifa ko'rilishi, savatga qo'shish, rasmiylashtirish va xaridni buyurtma summasi bilan yuboramiz — ism va telefon hech qachon yuborilmaydi."
   },
   "signup": {
     "title": "Do'koningizni oching",

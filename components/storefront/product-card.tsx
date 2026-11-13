@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { useFormatMoney } from "@/components/currency-provider";
+import { trackAddToCart } from "@/components/storefront/meta-pixel";
 import { lineKey, useCart, useCartLines } from "@/lib/cart-store";
 import type { MenuLayout } from "@/lib/design";
 import type { MenuProduct } from "@/lib/menu-types";
@@ -51,6 +52,7 @@ export function ProductCard({
       basePrice: product.price,
       options: [],
     });
+    trackAddToCart(product.id, product.name, product.price);
   }
 
   // Add button or −/+ stepper on the photo (take.app style). No button on sold-out items.
