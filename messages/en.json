@@ -1341,5 +1341,38 @@
       "unauthorized": "Sign in again and retry."
     },
     "readingCount": "Read {count, plural, one {# dish} other {# dishes}} so far…"
+  },
+  "telegramBot": {
+    "connected": "✅ This group will now get every order from {store}. Use the buttons under each order to accept it — the customer sees the status right away.",
+    "test": "🔔 Test from Flami: orders from {store} arrive in this group.",
+    "linkExpired": "This link has expired. Open Flami → Settings → “Orders in a Telegram group” and connect again.",
+    "privateHint": "Hi! I send a store's orders to its staff group. To set it up, open Flami → Settings → “Orders in a Telegram group”.",
+    "cancelYes": "Yes, cancel",
+    "back": "Back",
+    "open": "Open in Flami",
+    "done": "Done"
+  },
+  "telegramGroup": {
+    "title": "Orders in a Telegram group",
+    "hint": "Every order goes to your staff group — kitchen, cashier and you — even if the customer doesn't send the message. Anyone in the group can accept it.",
+    "step1": "Create a Telegram group with your staff (or use an existing one).",
+    "step2": "Tap “Connect a group” and choose that group in Telegram.",
+    "step3": "Come back here — the group shows as connected.",
+    "connect": "Connect a group",
+    "open": "Open Telegram and choose the group",
+    "check": "I've added it",
+    "connected": "Connected:",
+    "untitled": "Telegram group",
+    "connectedHint": "New orders arrive there with Accept, Ready and Cancel buttons. Changes in the group and in this panel stay in sync.",
+    "test": "Send a test",
+    "testSent": "Test sent to the group",
+    "disconnect": "Disconnect",
+    "disconnected": "Group disconnected",
+    "errors": {
+      "disabled": "Telegram notifications aren't available right now.",
+      "notConnected": "No group is connected.",
+      "gone": "The bot was removed from the group. Connect it again.",
+      "server": "Something went wrong. Please try again."
+    }
   }
 }

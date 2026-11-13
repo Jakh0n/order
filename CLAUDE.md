@@ -98,6 +98,9 @@ lib/
   plan-history.ts             freeHistoryFilter — Free: oyiga 100 tadan keyingi YAKUNLANGAN buyurtmalar tarixda yashiriladi
   push/actions.ts             savePushSubscription / deletePushSubscription (requireOwner)
   push/send.ts                notifyNewOrder — web-push (VAPID), do'kon tilida; createOrder'dan `after()` bilan
+  telegram/                   Flami bot → do'konning xodimlar guruhi: sendOrderToGroup (createOrder / createManualOrder `after()`),
+                              syncOrderCard (holat o'zgarsa kartochka tahrirlanadi), guruh ulash action'lari (Sozlamalar);
+                              webhook `app/api/telegram` (tugmalar: Qabul / Tayyor / … / Bekor), `npm run telegram:webhook -- <url>`
   pages/                      StorePage: savePage / deletePage, getPublishedPage (kesh: storeCacheTag)
   reviews/                    Review: submitReview (/o sahifasida, faqat COMPLETED, buyurtmaga bitta, rate limit),
                               setReviewHidden; getReviewSummary (getStorefront ichida)
@@ -161,6 +164,7 @@ npm run db:seed      # namunaviy ma'lumot (qayta ishga tushirsa bo'ladi)
 npm run db:studio    # Prisma Studio
 npm run user:password -- owner@order.uz   # foydalanuvchi parolini o'rnatish
 npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
+npm run telegram:webhook -- https://www.flami.org   # bot webhook'ini Telegram'da ro'yxatdan o'tkazish
 ```
 
 ## QOIDALAR
@@ -211,7 +215,8 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Supabase faqat Storage uchun; ma'lumotlar faqat Prisma orqali.
 - `SUPABASE_SERVICE_ROLE_KEY` hech qachon klient kodiga tushmaydi.
 - Har o'zgarishdan keyin: `npm run check`.
-- HOZIR QILINMAYDI: onlayn to'lov, Telegram bot, mobil ilova, ko'p filial.
+- HOZIR QILINMAYDI: onlayn to'lov, Telegram orqali buyurtma beriladigan bot, mobil ilova, ko'p filial.
+  Ruxsat etilgan (2026-11-13, mijoz talabi): faqat bildirishnoma bot'i — buyurtma xodimlar Telegram guruhiga (`lib/telegram/`).
 
 ## Ish tartibi
 
@@ -234,7 +239,8 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Env: `DATABASE_URL` (6543, `pgbouncer=true&connection_limit=3`), `DIRECT_URL` (5432), `AUTH_SECRET`,
   `APP_URL=https://flami.org`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (secret),
   `NEXT_PUBLIC_SENTRY_DSN`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY` + `VAPID_PRIVATE_KEY` (secret) + `VAPID_SUBJECT` (push),
-  `SUPPORT_TELEGRAM`, `OPENAI_API_KEY` (secret, AI menyu importi), ixtiyoriy `OPENAI_MODEL` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
+  `SUPPORT_TELEGRAM`, `OPENAI_API_KEY` (secret, AI menyu importi), `TELEGRAM_BOT_TOKEN` (secret) + `TELEGRAM_BOT_USERNAME` +
+  `TELEGRAM_WEBHOOK_SECRET` (secret) — buyurtmalar Telegram guruhga (bo'lmasa funksiya o'chiq), ixtiyoriy `OPENAI_MODEL` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
 - Monitoring: `GET /api/health` (200 = ilova + baza ishlayapti, 503 = baza javob bermayapti) — uptime servisga ulang.
 - Yuklama testi: `BASE_URL=<preview url> npm run loadtest` (k6, `loadtest/storefront.js`), production'ga emas.
 

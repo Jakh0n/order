@@ -1,6 +1,7 @@
 "use server";
 
 import { refresh } from "next/cache";
+import { after } from "next/server";
 import { z } from "zod";
 
 import { requireOwner } from "@/lib/auth/owner";
@@ -10,6 +11,7 @@ import { isPro } from "@/lib/plan";
 import { canRevert, canTransition } from "@/lib/orders/status";
 import { type ManualOrderInput, manualOrderSchema } from "@/lib/validators";
 import { reportError } from "@/lib/report-error";
+import { sendOrderToGroup, syncOrderCard } from "@/lib/telegram/notify";
 
 // Har bir action: requireOwner() + har bir so'rovda storeId — boshqa do'kon buyurtmasiga tegib bo'lmaydi.
 
@@ -45,6 +47,8 @@ export async function updateOrderStatus(
   if (count === 0) return { ok: false, error: "invalidTransition" };
 
   refresh();
+  // The order's card in the staff Telegram group shows the new state
+  after(() => syncOrderCard(id.data));
   return { ok: true };
 }
 
@@ -76,6 +80,8 @@ export async function revertOrderStatus(
   if (count === 0) return { ok: false, error: "invalidTransition" };
 
   refresh();
+  // The order's card in the staff Telegram group shows the new state
+  after(() => syncOrderCard(id.data));
   return { ok: true };
 }
 
@@ -91,6 +97,8 @@ export async function setOrderPaid(orderId: string, paid: boolean): Promise<Admi
   if (count === 0) return { ok: false, error: "notFound" };
 
   refresh();
+  // The order's card in the staff Telegram group shows the new state
+  after(() => syncOrderCard(id.data));
   return { ok: true };
 }
 
@@ -139,6 +147,8 @@ export async function createManualOrder(input: ManualOrderInput): Promise<Manual
           : "server";
       return { ok: false, error };
     }
+    // The kitchen sees manual orders in the staff group too
+    after(() => sendOrderToGroup(result.orderId));
     return { ok: true, orderId: result.orderId, number: result.number };
   } catch (e) {
     reportError(e, "createManualOrder");

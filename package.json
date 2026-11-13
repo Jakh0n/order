@@ -16,6 +16,7 @@
     "postinstall": "prisma generate",
     "user:password": "tsx scripts/set-password.ts",
     "user:role": "tsx scripts/set-role.ts",
+    "telegram:webhook": "tsx scripts/telegram-webhook.ts",
     "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "loadtest": "k6 run loadtest/storefront.js"
   },
