@@ -99,18 +99,31 @@
       "text": "Kabobxonalar, novvoyxonalar, kafelar, shirinlik do'konlari, qahva nuqtalari, fudtraklar va buyurtmani messenjer orqali oladigan uy oshpazlari uchun."
     },
     "pricing": {
-      "title": "Erta kirish davrida bepul",
-      "lead": "Barcha imkoniyatlar, cheksiz buyurtmalar, karta kerak emas. Agar pullik tarif paydo bo'lsa, oldindan xabar beramiz.",
-      "price": "$0",
-      "per": "oyiga",
-      "includes": "Ichiga kiradi",
+      "title": "Oddiy narxlar. Buyurtmalar hech qachon cheklanmaydi.",
+      "lead": "Bepul boshlang va xohlaganingizcha bepul qoling. Mijozlarni qaytaradigan vositalar kerak bo'lganda Pro'ga o'ting.",
+      "founding": "Birinchi {count} ta do'konga {months} oy Pro bepul, keyin esa biz bilan qolguncha oyiga {price}.",
+      "foundingLabel": "Birinchilar uchun taklif",
+      "freeName": "Free",
+      "freePer": "doimiy",
+      "freeIntro": "Onlayn buyurtma qabul qilish uchun hammasi.",
       "i1": "Cheksiz taomlar va buyurtmalar",
       "i2": "Buyurtmalar WhatsApp yoki Telegram'ga",
-      "i3": "Mijozlar uchun buyurtmani kuzatish sahifasi",
-      "i4": "Do'koningiz uchun QR kod",
-      "i5": "Yetkazish va olib ketish",
+      "i3": "Rasmdan AI bilan menyu",
+      "i4": "Mijozlar uchun buyurtmani kuzatish sahifasi",
+      "i5": "Stoldan QR orqali buyurtma va chek chop etish",
       "i6": "Savdodan komissiya yo'q",
-      "cta": "Do'kon ochish"
+      "proName": "Pro",
+      "proPer": "oyiga",
+      "proYearly": "yoki yiliga {price} — 2 oy bepul",
+      "proIntro": "Free'dagi hammasi, va qo'shimcha:",
+      "p1": "Promo-kodlar",
+      "p2": "Ma'lum summadan bepul yetkazish",
+      "p3": "7, 30 va 90 kunlik analitika",
+      "p4": "Buyurtmalar tarixi bilan mijozlar bazasi",
+      "p5": "To'liq buyurtmalar tarixi",
+      "p6": "“Made with Flami” yozuvisiz",
+      "cta": "Do'kon ochish — bepul",
+      "proCta": "Bepul boshlang, Pro — xohlagan payt"
     },
     "faq": {
       "title": "Savollar",
@@ -1004,7 +1017,9 @@
     "contactSoon": "Tez orada ulanadi — platforma jamoasi bilan bog'laning.",
     "upgradeMessage": "Assalomu alaykum! \"{store}\" do'konim uchun Pro olmoqchiman.",
     "renewMessage": "Assalomu alaykum! \"{store}\" do'konim uchun Pro'ni uzaytirmoqchiman.",
-    "neverLimit": "Free hech qachon buyurtmani to'xtatmaydi: yangi va faol buyurtmalar doim keladi va ko'rinadi."
+    "neverLimit": "Free hech qachon buyurtmani to'xtatmaydi: yangi va faol buyurtmalar doim keladi va ko'rinadi.",
+    "perYear": "yoki yiliga {price} — 2 oy bepul",
+    "founding": "Birinchilar uchun taklif: birinchi {count} ta do'konga {months} oy Pro bepul. Bizga yozing — yoqib beramiz."
   },
   "push": {
     "turnOn": "Xabar berish",

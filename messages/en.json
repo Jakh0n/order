@@ -99,18 +99,31 @@
       "text": "Made for kebab shops, bakeries, cafés, dessert shops, coffee carts, food trucks and home cooks who take orders by message."
     },
     "pricing": {
-      "title": "Free while we are in early access",
-      "lead": "Every feature, unlimited orders, no card needed. If a paid plan ever comes, you will hear about it well in advance.",
-      "price": "$0",
-      "per": "per month",
-      "includes": "Included",
-      "i1": "Unlimited products and orders",
+      "title": "Simple pricing. Orders are never limited.",
+      "lead": "Start free and stay free as long as you like. Move to Pro when you want tools that bring customers back.",
+      "founding": "The first {count} stores get Pro free for {months} months, then keep {price} a month for as long as they stay.",
+      "foundingLabel": "Founding offer",
+      "freeName": "Free",
+      "freePer": "forever",
+      "freeIntro": "Everything to take orders online.",
+      "i1": "Unlimited dishes and orders",
       "i2": "Orders to WhatsApp or Telegram",
-      "i3": "Order tracking page for customers",
-      "i4": "QR code for your store",
-      "i5": "Delivery and pickup",
+      "i3": "Menu from a photo with AI",
+      "i4": "Order tracking page for customers",
+      "i5": "Table QR ordering and receipt printing",
       "i6": "No commission on sales",
-      "cta": "Create your store"
+      "proName": "Pro",
+      "proPer": "a month",
+      "proYearly": "or {price} a year — 2 months free",
+      "proIntro": "Everything in Free, plus:",
+      "p1": "Promo codes",
+      "p2": "Free delivery from an amount",
+      "p3": "Analytics for 7, 30 and 90 days",
+      "p4": "Customer base with order history",
+      "p5": "Full order history",
+      "p6": "No “Made with Flami”",
+      "cta": "Create your store — free",
+      "proCta": "Start free, upgrade anytime"
     },
     "faq": {
       "title": "Questions",
@@ -1004,7 +1017,9 @@
     "contactSoon": "Upgrades open soon — contact the platform team.",
     "upgradeMessage": "Hi! I'd like Pro for my store \"{store}\".",
     "renewMessage": "Hi! I'd like to extend Pro for my store \"{store}\".",
-    "neverLimit": "Free never blocks orders: new and active orders always arrive and stay visible."
+    "neverLimit": "Free never blocks orders: new and active orders always arrive and stay visible.",
+    "perYear": "or {price} a year — 2 months free",
+    "founding": "Founding offer: the first {count} stores get Pro free for {months} months. Write to us and we'll switch you on."
   },
   "push": {
     "turnOn": "Notify me",
