@@ -558,7 +558,10 @@
     "noMatches": "Hech qanday buyurtma topilmadi",
     "historyLimit": "Bu oy {count} ta buyurtma oldingiz. Free tarixda {limit} tasini saqlaydi — undan keyingi yakunlangan buyurtmalar yashirilgan (faollari doim ko'rinadi).",
     "staleShort": "5+ daqiqa qabul qilinmagan — mijoz xabar yubormagan bo'lishi mumkin",
-    "activeNow": "Faol"
+    "activeNow": "Faol",
+    "openOrder": "Buyurtma №{number} ni ochish",
+    "orderTitle": "Buyurtma №{number}",
+    "filterStatus": "Holat bo'yicha saralash"
   },
   "adminMenu": {
     "addCategory": "Kategoriya qo'shish",
@@ -694,7 +697,8 @@
       "whatsappRequired": "WhatsApp raqamini kiriting",
       "whatsappInvalid": "Noto'g'ri raqam — mamlakat kodini qo'shing, masalan +998901234567",
       "currencyInvalid": "Noto'g'ri valyuta",
-      "timeZoneInvalid": "Noto'g'ri vaqt zonasi"
+      "timeZoneInvalid": "Noto'g'ri vaqt zonasi",
+      "pixelInvalid": "Pixel ID 8–20 ta raqamdan iborat"
     },
     "deliveryFee": "Yetkazish narxi ({currency})",
     "deliveryFeeHint": "Har bir yetkazish buyurtmasiga qo'shiladi. 0 — bepul yetkazish.",
@@ -708,8 +712,12 @@
       "region": "Do'kon valyutasi va vaqti.",
       "hours": "Buyurtma qachon berilishi mumkin.",
       "orders": "Olib ketish, yetkazish va minimal buyurtma.",
-      "payment": "Mijozlar qanday to'lashi mumkin."
-    }
+      "payment": "Mijozlar qanday to'lashi mumkin.",
+      "marketing": "Facebook va Instagram reklamangiz natijasini o'lchang."
+    },
+    "marketingSection": "Marketing",
+    "metaPixelId": "Meta Pixel ID",
+    "metaPixelHint": "Meta Events Manager → Data sources bo'limidan oling. Biz sahifa ko'rilishi, savatga qo'shish, rasmiylashtirish va xaridni buyurtma summasi bilan yuboramiz — ism va telefon hech qachon yuborilmaydi."
   },
   "signup": {
     "title": "Do'koningizni oching",
@@ -1341,5 +1349,40 @@
       "unauthorized": "Qayta kiring va urinib ko'ring."
     },
     "readingCount": "Hozircha {count, plural, other {# ta taom}} o'qildi…"
+  },
+  "export": {
+    "button": "CSV eksport",
+    "orders": {
+      "number": "Buyurtma",
+      "date": "Sana",
+      "status": "Holat",
+      "type": "Turi",
+      "table": "Stol",
+      "customer": "Mijoz",
+      "phone": "Telefon",
+      "email": "Email",
+      "address": "Manzil",
+      "landmark": "Mo'ljal",
+      "time": "Vaqt",
+      "items": "Taomlar",
+      "subtotal": "Taomlar summasi",
+      "discount": "Chegirma",
+      "promoCode": "Promo-kod",
+      "deliveryFee": "Yetkazish",
+      "tip": "Choychaqa",
+      "total": "Jami",
+      "currency": "Valyuta",
+      "payment": "To'lov usuli",
+      "paid": "To'lov holati",
+      "comment": "Izoh"
+    },
+    "customers": {
+      "name": "Ism",
+      "phone": "Telefon",
+      "orders": "Buyurtmalar",
+      "spent": "Sarflagan ({currency})",
+      "first": "Birinchi buyurtma",
+      "last": "Oxirgi buyurtma"
+    }
   }
 }

@@ -106,6 +106,8 @@ model Store {
   /// Social profiles (usernames, no @) shown as icons in the store header
   instagram            String?
   telegramChannel      String?
+  /// Meta (Facebook/Instagram) Pixel ID — storefront events for ads (Pro)
+  metaPixelId          String?
   tiktok               String?
   phone                String?
   address              String?

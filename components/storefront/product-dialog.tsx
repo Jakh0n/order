@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useFormatMoney } from "@/components/currency-provider";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { trackAddToCart } from "@/components/storefront/meta-pixel";
 import { type CartOption, useCart } from "@/lib/cart-store";
 import type { MenuOptionGroup, MenuProduct } from "@/lib/menu-types";
 import { cn } from "@/lib/utils";
@@ -116,6 +117,11 @@ function ProductForm({
         options: chosen,
       },
       quantity,
+    );
+    trackAddToCart(
+      product.id,
+      product.name,
+      (product.price + chosen.reduce((sum, o) => sum + o.price, 0)) * quantity,
     );
     toast.success(t("added"), { description: product.name });
     onDone();

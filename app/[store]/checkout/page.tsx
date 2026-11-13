@@ -12,7 +12,8 @@ import { CartSync } from "@/components/storefront/cart-sync";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
 import { StoreBlocked } from "@/components/storefront/store-blocked";
 import { StoreTheme } from "@/components/storefront/store-theme";
-import { getCheckoutSettings, getStorefront } from "@/lib/storefront";
+import { MetaPixel } from "@/components/storefront/meta-pixel";
+import { getCheckoutSettings, getStorefront, getStorePixel } from "@/lib/storefront";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("checkout");
@@ -29,7 +30,11 @@ export default function CheckoutPage({ params }: PageProps<"/[store]/checkout">)
 
 async function Checkout({ params }: { params: PageProps<"/[store]/checkout">["params"] }) {
   const { store: slug } = await params;
-  const [data, settings] = await Promise.all([getStorefront(slug), getCheckoutSettings(slug)]);
+  const [data, settings, pixelId] = await Promise.all([
+    getStorefront(slug),
+    getCheckoutSettings(slug),
+    getStorePixel(slug),
+  ]);
   if (!data || !settings) notFound();
   if (data.store.isBlocked) return <StoreBlocked name={data.store.name} />;
 
@@ -63,6 +68,9 @@ async function Checkout({ params }: { params: PageProps<"/[store]/checkout">["pa
         <CurrencyProvider currency={data.store.currency}>
           <CheckoutForm store={data.store} settings={settings} />
         </CurrencyProvider>
+        {pixelId && (
+          <MetaPixel pixelId={pixelId} currency={data.store.currency} checkoutSlug={slug} />
+        )}
       </div>
     </div>
   );

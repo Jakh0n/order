@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 import { OrderActions } from "./order-actions";
 
 // Text contrast ≥ 4.5:1 for every badge (white on amber/sky/emerald-600 is too light)
-const STATUS_STYLE: Record<Order["status"], string> = {
+export const STATUS_STYLE: Record<Order["status"], string> = {
   NEW: "bg-blue-600 text-white",
   ACCEPTED: "bg-amber-400 text-amber-950",
   READY: "bg-violet-600 text-white",
@@ -55,6 +55,7 @@ export async function OrderCard({
   channel,
   stale,
   receiptUrl,
+  plain,
 }: {
   order: Order & { items: OrderItem[] };
   /** Store time zone for the order time */
@@ -65,6 +66,8 @@ export async function OrderCard({
   stale: boolean;
   /** Signed link to the customer's bank transfer receipt */
   receiptUrl?: string;
+  /** Inside the details sheet: no card frame */
+  plain?: boolean;
 }) {
   const t = await getTranslations();
   const format = await getFormatter();
@@ -87,9 +90,12 @@ export async function OrderCard({
   return (
     <article
       className={cn(
-        "bg-card flex flex-col gap-3 rounded-xl border p-4",
-        order.status === "NEW" && "border-blue-300 ring-2 ring-blue-100 dark:ring-blue-950",
-        order.status === "CANCELLED" && "opacity-70",
+        "flex flex-col gap-3",
+        !plain && "bg-card rounded-xl border p-4",
+        !plain &&
+          order.status === "NEW" &&
+          "border-blue-300 ring-2 ring-blue-100 dark:ring-blue-950",
+        !plain && order.status === "CANCELLED" && "opacity-70",
       )}
     >
       <header className="flex flex-wrap items-start justify-between gap-2">

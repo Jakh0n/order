@@ -201,3 +201,16 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
     tipsEnabled: store.tipsEnabled,
   };
 }
+
+/** Meta Pixel ID for the store pages — only on Pro and only for an open (not blocked) store */
+export async function getStorePixel(slug: string): Promise<string | null> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(storeCacheTag(slug));
+  const store = await prisma.store.findUnique({
+    where: { slug },
+    select: { metaPixelId: true, plan: true, paidUntil: true, isBlocked: true },
+  });
+  if (!store?.metaPixelId || store.isBlocked || !isPro(store)) return null;
+  return store.metaPixelId;
+}

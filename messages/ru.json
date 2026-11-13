@@ -558,7 +558,10 @@
     "noMatches": "Заказы не найдены",
     "historyLimit": "В этом месяце у вас {count} заказов. Free хранит в истории {limit} — завершённые заказы сверх этого скрыты (активные видны всегда).",
     "staleShort": "Не принят 5+ мин — клиент мог не отправить сообщение",
-    "activeNow": "Активные"
+    "activeNow": "Активные",
+    "openOrder": "Открыть заказ №{number}",
+    "orderTitle": "Заказ №{number}",
+    "filterStatus": "Фильтр по статусу"
   },
   "adminMenu": {
     "addCategory": "Добавить категорию",
@@ -694,7 +697,8 @@
       "whatsappRequired": "Укажите номер WhatsApp",
       "whatsappInvalid": "Неверный номер — укажите код страны, например +998901234567",
       "currencyInvalid": "Неверная валюта",
-      "timeZoneInvalid": "Неверный часовой пояс"
+      "timeZoneInvalid": "Неверный часовой пояс",
+      "pixelInvalid": "Pixel ID — от 8 до 20 цифр"
     },
     "deliveryFee": "Стоимость доставки ({currency})",
     "deliveryFeeHint": "Добавляется к каждому заказу с доставкой. 0 — бесплатная доставка.",
@@ -708,8 +712,12 @@
       "region": "Валюта и время магазина.",
       "hours": "Когда можно оформлять заказы.",
       "orders": "Самовывоз, доставка и минимальный заказ.",
-      "payment": "Как клиенты могут оплатить."
-    }
+      "payment": "Как клиенты могут оплатить.",
+      "marketing": "Измеряйте рекламу в Facebook и Instagram."
+    },
+    "marketingSection": "Маркетинг",
+    "metaPixelId": "Meta Pixel ID",
+    "metaPixelHint": "Из Meta Events Manager → Источники данных. Мы передаём просмотры, добавление в корзину, оформление и покупку с суммой заказа — без имён и телефонов."
   },
   "signup": {
     "title": "Откройте свой магазин",
@@ -1341,5 +1349,40 @@
       "unauthorized": "Войдите снова и повторите."
     },
     "readingCount": "Прочитано {count, plural, one {# блюдо} few {# блюда} many {# блюд} other {# блюда}}…"
+  },
+  "export": {
+    "button": "Экспорт CSV",
+    "orders": {
+      "number": "Заказ",
+      "date": "Дата",
+      "status": "Статус",
+      "type": "Тип",
+      "table": "Стол",
+      "customer": "Клиент",
+      "phone": "Телефон",
+      "email": "Email",
+      "address": "Адрес",
+      "landmark": "Ориентир",
+      "time": "Время",
+      "items": "Блюда",
+      "subtotal": "Сумма блюд",
+      "discount": "Скидка",
+      "promoCode": "Промокод",
+      "deliveryFee": "Доставка",
+      "tip": "Чаевые",
+      "total": "Итого",
+      "currency": "Валюта",
+      "payment": "Способ оплаты",
+      "paid": "Статус оплаты",
+      "comment": "Комментарий"
+    },
+    "customers": {
+      "name": "Имя",
+      "phone": "Телефон",
+      "orders": "Заказов",
+      "spent": "Потрачено ({currency})",
+      "first": "Первый заказ",
+      "last": "Последний заказ"
+    }
   }
 }

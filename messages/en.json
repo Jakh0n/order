@@ -558,7 +558,10 @@
     "noMatches": "No orders match your search",
     "historyLimit": "You got {count} orders this month. The Free plan keeps {limit} in history — finished orders after that are hidden (active ones always show).",
     "staleShort": "Not accepted for 5+ min — customer may not have sent the message",
-    "activeNow": "Active now"
+    "activeNow": "Active now",
+    "openOrder": "Open order #{number}",
+    "orderTitle": "Order #{number}",
+    "filterStatus": "Filter by status"
   },
   "adminMenu": {
     "addCategory": "Add category",
@@ -694,7 +697,8 @@
       "whatsappRequired": "Enter a WhatsApp number",
       "whatsappInvalid": "Invalid number — include the country code, e.g. +15551234567",
       "currencyInvalid": "Invalid currency",
-      "timeZoneInvalid": "Invalid time zone"
+      "timeZoneInvalid": "Invalid time zone",
+      "pixelInvalid": "Pixel ID is 8–20 digits"
     },
     "deliveryFee": "Delivery fee ({currency})",
     "deliveryFeeHint": "Added to every delivery order. 0 — free delivery.",
@@ -708,8 +712,12 @@
       "region": "Money and time on your store.",
       "hours": "When orders can be placed.",
       "orders": "Pickup, delivery and the minimum order.",
-      "payment": "How customers can pay you."
-    }
+      "payment": "How customers can pay you.",
+      "marketing": "Measure your Facebook and Instagram ads."
+    },
+    "marketingSection": "Marketing",
+    "metaPixelId": "Meta Pixel ID",
+    "metaPixelHint": "From Meta Events Manager → Data sources. We send page views, add to cart, checkout and purchase with the order total — never names or phone numbers."
   },
   "signup": {
     "title": "Open your store",
@@ -1341,5 +1349,40 @@
       "unauthorized": "Sign in again and retry."
     },
     "readingCount": "Read {count, plural, one {# dish} other {# dishes}} so far…"
+  },
+  "export": {
+    "button": "Export CSV",
+    "orders": {
+      "number": "Order",
+      "date": "Date",
+      "status": "Status",
+      "type": "Type",
+      "table": "Table",
+      "customer": "Customer",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "landmark": "Landmark",
+      "time": "Requested time",
+      "items": "Items",
+      "subtotal": "Items total",
+      "discount": "Discount",
+      "promoCode": "Promo code",
+      "deliveryFee": "Delivery",
+      "tip": "Tip",
+      "total": "Total",
+      "currency": "Currency",
+      "payment": "Payment method",
+      "paid": "Payment status",
+      "comment": "Note"
+    },
+    "customers": {
+      "name": "Name",
+      "phone": "Phone",
+      "orders": "Orders",
+      "spent": "Spent ({currency})",
+      "first": "First order",
+      "last": "Last order"
+    }
   }
 }

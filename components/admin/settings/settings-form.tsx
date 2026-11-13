@@ -370,6 +370,38 @@ export function SettingsForm({
         )}
       </Card>
 
+      <Card title={t("marketingSection")} hint={t("sectionHints.marketing")}>
+        <Field
+          label={t("metaPixelId")}
+          htmlFor="metaPixelId"
+          error={errorText(errors.metaPixelId?.message)}
+        >
+          {!pro && (
+            <Link
+              href="/admin/plan"
+              className="bg-primary/10 text-primary inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold"
+            >
+              <Lock className="size-3" aria-hidden />
+              {tPlan("pro")}
+            </Link>
+          )}
+          <Input
+            id="metaPixelId"
+            // readOnly, not disabled: a disabled field is submitted as undefined and would wipe the value
+            readOnly={!pro}
+            aria-disabled={!pro}
+            tabIndex={pro ? undefined : -1}
+            inputMode="numeric"
+            autoComplete="off"
+            placeholder="123456789012345"
+            className={cn("max-w-xs", !pro && "bg-muted text-muted-foreground cursor-not-allowed")}
+            aria-invalid={!!errors.metaPixelId}
+            {...register("metaPixelId")}
+          />
+        </Field>
+        <p className="text-muted-foreground text-xs">{t("metaPixelHint")}</p>
+      </Card>
+
       {/* Save bar appears only with unsaved changes (above the phone tab bar) */}
       <div
         className={cn(

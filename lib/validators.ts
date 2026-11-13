@@ -368,6 +368,12 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
         .string()
         .nullish()
         .transform((v) => (v ? normalizePhone(v) : null)),
+      /** Meta Pixel ID (digits only); empty = off */
+      metaPixelId: z
+        .string()
+        .nullish()
+        .transform((v) => v?.trim() || null)
+        .refine((v) => v === null || /^\d{8,20}$/.test(v), "pixelInvalid"),
     })
     .superRefine((s2, ctx) => {
       const issue = (path: string, message: string) =>

@@ -16,6 +16,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { trackAddToCart } from "@/components/storefront/meta-pixel";
 import { cartCount, cartSubtotal, unitPrice, useCart, useCartLines } from "@/lib/cart-store";
 import type { MenuProduct, StorefrontStore } from "@/lib/menu-types";
 import { useTable } from "@/lib/table-session";
@@ -206,15 +207,16 @@ function CartSheet({
                     <button
                       key={p.id}
                       type="button"
-                      onClick={() =>
+                      onClick={() => {
                         add(store.slug, {
                           productId: p.id,
                           name: p.name,
                           imageUrl: p.imageUrl,
                           basePrice: p.price,
                           options: [],
-                        })
-                      }
+                        });
+                        trackAddToCart(p.id, p.name, p.price);
+                      }}
                       className="hover:bg-muted flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3 text-sm whitespace-nowrap transition-colors"
                     >
                       <Plus className="text-primary size-4" aria-hidden />

@@ -16,6 +16,7 @@ import { StatusWatcher } from "@/components/order/status-watcher";
 import { ReviewForm } from "@/components/order/review-form";
 import { StatusSteps } from "@/components/order/status-steps";
 import { MenuSkeleton } from "@/components/storefront/menu-skeleton";
+import { MetaPixel } from "@/components/storefront/meta-pixel";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { formatMoney } from "@/lib/money";
@@ -24,6 +25,7 @@ import { mapsLink } from "@/lib/maps";
 import { orderSendLink } from "@/lib/orders/send-link";
 import { getRequestOrigin } from "@/lib/app-url";
 import { isNextDaySlot } from "@/lib/store-hours";
+import { getStorePixel } from "@/lib/storefront";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { robots: { index: false } };
@@ -43,7 +45,11 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
 
   const t = await getTranslations();
   const format = await getFormatter();
-  const send = orderSendLink(order, order.store, await getRequestOrigin());
+  const [origin, pixelId] = await Promise.all([
+    getRequestOrigin(),
+    getStorePixel(order.store.slug),
+  ]);
+  const send = orderSendLink(order, order.store, origin);
   const money = (minor: number) => formatMoney(minor, order.currency);
   const isFinal = order.status === "COMPLETED" || order.status === "CANCELLED";
   const scheduled = order.scheduledFor
@@ -67,6 +73,22 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
         fontStyle={order.store.fontStyle}
         cornerStyle={order.store.cornerStyle}
       />
+      {/* Ads measurement (Pro): one Purchase per order on this device, never for a cancelled one */}
+      {pixelId && (
+        <MetaPixel
+          pixelId={pixelId}
+          currency={order.currency}
+          purchase={
+            order.status === "CANCELLED"
+              ? undefined
+              : {
+                  orderId: order.id,
+                  total: order.total,
+                  items: order.items.reduce((sum, i) => sum + i.quantity, 0),
+                }
+          }
+        />
+      )}
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-3 px-3 pt-3 pb-8">
         <title>{t("order.title", { number: order.number })}</title>
 
