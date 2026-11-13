@@ -7,7 +7,6 @@ import { insertOrder } from "@/lib/orders/insert";
 import type { PromoProblem } from "@/lib/orders/promo";
 import { isPro } from "@/lib/plan";
 import { notifyNewOrder } from "@/lib/push/send";
-import { sendOrderToGroup } from "@/lib/telegram/notify";
 import { clientIp, rateLimitAll, RULES } from "@/lib/rate-limit";
 import { isStoreOpenNow, isValidSlot } from "@/lib/store-hours";
 import { checkoutSchema, type CheckoutInput } from "@/lib/validators";
@@ -125,8 +124,7 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
       return { ok: false, error: result.error, minOrder: store.minOrder, fieldErrors: promoField };
     }
     // Owner's phone buzzes — after the response, so checkout never waits for push services
-    // …and the staff Telegram group gets the order even if the customer never presses "Send"
-    after(() => Promise.all([notifyNewOrder(result.orderId), sendOrderToGroup(result.orderId)]));
+    after(() => notifyNewOrder(result.orderId));
     return { ok: true, orderId: result.orderId, number: result.number };
   } catch (e) {
     reportError(e, "createOrder", { store: data.storeSlug });

@@ -106,12 +106,6 @@ model Store {
   /// Social profiles (usernames, no @) shown as icons in the store header
   instagram            String?
   telegramChannel      String?
-  /// Staff Telegram group that gets every order from the Flami bot (chat id as text — it can exceed Int)
-  telegramChatId       String?
-  /// Group title, shown in Settings
-  telegramChatTitle    String?
-  /// One-time token in the "add the bot to a group" link (t.me/<bot>?startgroup=<token>)
-  telegramLinkToken    String?        @unique
   tiktok               String?
   phone                String?
   address              String?
@@ -256,8 +250,6 @@ model Order {
   /// Bank transfer receipt photo: path in the private "payment-receipts" bucket
   receiptPath   String?
   receiptAt     DateTime?
-  /// Message id of this order's card in the store's Telegram group (edited when the status changes)
-  telegramMessageId Int?
   status        OrderStatus   @default(NEW)
   subtotal      Int
   deliveryFee   Int           @default(0)

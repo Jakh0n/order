@@ -1341,38 +1341,5 @@
       "unauthorized": "Qayta kiring va urinib ko'ring."
     },
     "readingCount": "Hozircha {count, plural, other {# ta taom}} o'qildi…"
-  },
-  "telegramBot": {
-    "connected": "✅ Endi {store} buyurtmalarining hammasi shu guruhga keladi. Buyurtma ostidagi tugmalar bilan qabul qiling — mijoz holatni darhol ko'radi.",
-    "test": "🔔 Flami'dan sinov: {store} buyurtmalari shu guruhga keladi.",
-    "linkExpired": "Havola eskirgan. Flami → Sozlamalar → “Buyurtmalar Telegram guruhga” bo'limini ochib, qaytadan ulang.",
-    "privateHint": "Salom! Men do'kon buyurtmalarini xodimlar guruhiga yuboraman. Sozlash uchun Flami → Sozlamalar → “Buyurtmalar Telegram guruhga” bo'limini oching.",
-    "cancelYes": "Ha, bekor qilish",
-    "back": "Orqaga",
-    "open": "Flami'da ochish",
-    "done": "Bajarildi"
-  },
-  "telegramGroup": {
-    "title": "Buyurtmalar Telegram guruhga",
-    "hint": "Har bir buyurtma xodimlar guruhiga keladi — oshxona, kassir va sizga — mijoz xabarni yubormasa ham. Guruhdagi istalgan kishi qabul qila oladi.",
-    "step1": "Xodimlar bilan Telegram guruh oching (yoki mavjudini ishlating).",
-    "step2": "“Guruhni ulash”ni bosing va Telegram'da o'sha guruhni tanlang.",
-    "step3": "Bu yerga qayting — guruh ulangan bo'lib ko'rinadi.",
-    "connect": "Guruhni ulash",
-    "open": "Telegram'ni ochib guruhni tanlash",
-    "check": "Qo'shdim",
-    "connected": "Ulangan:",
-    "untitled": "Telegram guruh",
-    "connectedHint": "Yangi buyurtmalar u yerga “Qabul qilish”, “Tayyor” va “Bekor qilish” tugmalari bilan keladi. Guruhdagi va paneldagi o'zgarishlar bir-biriga mos turadi.",
-    "test": "Sinov yuborish",
-    "testSent": "Sinov guruhga yuborildi",
-    "disconnect": "Uzish",
-    "disconnected": "Guruh uzildi",
-    "errors": {
-      "disabled": "Telegram bildirishnomalari hozir mavjud emas.",
-      "notConnected": "Guruh ulanmagan.",
-      "gone": "Bot guruhdan chiqarilgan. Qaytadan ulang.",
-      "server": "Nimadir xato ketdi. Qayta urinib ko'ring."
-    }
   }
 }

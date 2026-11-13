@@ -3,13 +3,10 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { SettingsForm } from "@/components/admin/settings/settings-form";
-import { TelegramGroup } from "@/components/admin/settings/telegram-group";
 import { Skeleton } from "@/components/ui/skeleton";
 import { requireOwner } from "@/lib/auth/owner";
-import { prisma } from "@/lib/db";
 import { isPro } from "@/lib/plan";
 import { getStoreSettings } from "@/lib/settings/data";
-import { botEnabled } from "@/lib/telegram/api";
 import { currencyOptions, timeZoneOptions } from "@/lib/settings/options";
 import { settingsToForm } from "@/lib/validators";
 
@@ -23,14 +20,7 @@ export default function AdminSettingsPage() {
 
 async function AdminSettings() {
   const { store } = await requireOwner();
-  const [settings, t, group] = await Promise.all([
-    getStoreSettings(store.id),
-    getTranslations("admin"),
-    prisma.store.findUnique({
-      where: { id: store.id },
-      select: { telegramChatId: true, telegramChatTitle: true },
-    }),
-  ]);
+  const [settings, t] = await Promise.all([getStoreSettings(store.id), getTranslations("admin")]);
   if (!settings) notFound();
 
   return (
@@ -47,9 +37,6 @@ async function AdminSettings() {
         timeZones={timeZoneOptions(settings.timeZone)}
         pro={isPro(store)}
       />
-      {botEnabled() && (
-        <TelegramGroup connected={!!group?.telegramChatId} title={group?.telegramChatTitle ?? null} />
-      )}
     </div>
   );
 }

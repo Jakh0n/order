@@ -75,14 +75,12 @@ export function buildOrderMessage(
   store: OrderMessageStore,
   lang: Lang = "en",
   origin?: string,
-  /** PLAIN: no markup (the Flami bot's group message) */
-  channel: "TELEGRAM" | "WHATSAPP" | "PLAIN" = "WHATSAPP",
+  channel: "TELEGRAM" | "WHATSAPP" = "WHATSAPP",
 ): string {
   const t = dictionaries[lang].orderMessage;
   const money = (minor: number) => formatMoney(minor, order.currency);
-  const mark = { TELEGRAM: ["**", "__"], WHATSAPP: ["*", "_"], PLAIN: ["", ""] }[channel];
-  const bold = (text: string) => `${mark[0]}${text}${mark[0]}`;
-  const italic = (text: string) => `${mark[1]}${text}${mark[1]}`;
+  const bold = (text: string) => (channel === "TELEGRAM" ? `**${text}**` : `*${text}*`);
+  const italic = (text: string) => (channel === "TELEGRAM" ? `__${text}__` : `_${text}_`);
   const base = origin?.replace(/\/$/, "");
   const lines: string[] = [];
 
