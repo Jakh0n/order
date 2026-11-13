@@ -18,14 +18,22 @@
       "pricing": "Pricing",
       "faq": "FAQ",
       "menu": "Menu",
-      "close": "Close menu"
+      "close": "Close menu",
+      "commission": "Commission",
+      "customers": "Customers"
     },
     "hero": {
       "title": "Your menu on one link. Orders straight to your chat.",
-      "lead": "Customers open your menu, pick their food and check out. The full order lands in your WhatsApp or Telegram — items, total, address and all.",
-      "cta": "Create your store — free",
+      "lead": "Customers open your menu, pick their food and check out. You get the whole order in WhatsApp or Telegram: items, total, address and a map pin.",
+      "cta": "Create my free store",
       "demo": "See a live store",
-      "note": "No app for your customers. No commission on your sales."
+      "note": "Free plan with unlimited orders. No card needed.",
+      "chips": [
+        "0% commission",
+        "Menu from a photo",
+        "Telegram & WhatsApp",
+        "Uzbek, Russian, English"
+      ]
     },
     "demo": {
       "open": "Open now",
@@ -58,42 +66,85 @@
       "v2Copy": "Copy link"
     },
     "features": {
-      "title": "Built for the way you already sell",
-      "lead": "Your customers already message you to order. Flami turns that into a proper menu and a tidy order, without changing where you talk to them.",
-      "chatTitle": "Orders you can read at a glance",
-      "chatBody": "No more back-and-forth to work out what someone wants. Every order comes in the same clear format.",
-      "menu": {
-        "title": "A menu that sells",
-        "body": "Photos, categories, options and a sold-out switch. Search and quick add on any phone."
-      },
-      "track": {
-        "title": "Customers track their order",
-        "body": "Each order gets its own page that updates as you accept, cook and send it out."
-      },
-      "board": {
-        "title": "One board for every order",
-        "body": "Accept, mark ready, mark paid. See what is waiting and what is done."
-      },
-      "delivery": {
-        "title": "Delivery and pickup",
-        "body": "Flat delivery fee, minimum order, and the customer’s location on a map."
-      },
-      "payment": {
-        "title": "Get paid your way",
-        "body": "Cash, card on delivery or bank transfer. Customers pay you directly."
-      },
-      "hours": {
-        "title": "Opening hours that just work",
-        "body": "Set your hours and time zone. When you are closed, customers see when you open next."
-      },
-      "qr": {
-        "title": "A QR code for your tables",
-        "body": "Download it once and put it on tables, flyers and takeaway bags."
-      },
-      "currency": {
-        "title": "Any currency",
-        "body": "Dollars, euros, won, lira — pick yours when you create the store."
-      }
+      "title": "Everything from the first order to your regulars",
+      "lead": "Use the parts you need. All of it works on a phone.",
+      "pro": "Pro",
+      "groups": [
+        {
+          "title": "Get orders",
+          "items": [
+            {
+              "t": "Your menu on one link and a QR code"
+            },
+            {
+              "t": "Table QR: guests order from their seat"
+            },
+            {
+              "t": "Ratings and reviews on your page"
+            },
+            {
+              "t": "Promo codes",
+              "pro": true
+            }
+          ]
+        },
+        {
+          "title": "Run the kitchen",
+          "items": [
+            {
+              "t": "Order board with sound and phone notifications"
+            },
+            {
+              "t": "Kitchen tickets and receipts for 80 mm printers"
+            },
+            {
+              "t": "A tracking page your customer can check"
+            },
+            {
+              "t": "Opening hours and orders for later"
+            }
+          ]
+        },
+        {
+          "title": "Deliver your way",
+          "items": [
+            {
+              "t": "Pickup, delivery or table"
+            },
+            {
+              "t": "Customer location as a map pin"
+            },
+            {
+              "t": "Delivery price by distance",
+              "pro": true
+            },
+            {
+              "t": "Free delivery from an amount",
+              "pro": true
+            }
+          ]
+        },
+        {
+          "title": "Grow with your numbers",
+          "items": [
+            {
+              "t": "Order again in one tap for regulars"
+            },
+            {
+              "t": "Sales, top dishes and busy hours",
+              "pro": true
+            },
+            {
+              "t": "Customer list by phone number",
+              "pro": true
+            },
+            {
+              "t": "Meta Pixel and CSV export",
+              "pro": true
+            }
+          ]
+        }
+      ]
     },
     "audience": {
       "text": "Made for kebab shops, bakeries, cafés, dessert shops, coffee carts, food trucks and home cooks who take orders by message."
@@ -138,16 +189,229 @@
       "q5": "Can I change my menu later?",
       "a5": "Anytime. Edits show on your store right away, including marking a dish as sold out for the day.",
       "q6": "What happens when I am closed?",
-      "a6": "Customers can still browse your menu and see when you open next, but they cannot place an order."
+      "a6": "Customers can still browse your menu and see when you open next, but they cannot place an order.",
+      "q7": "Do I need to be good with technology?",
+      "a7": "No. Add your menu from a photo, share your link, and orders arrive in the chat you already use.",
+      "q8": "What if a customer doesn't send the message?",
+      "a8": "The order is saved the moment they check out. It shows on your order board, and your phone gets a notification if you turn them on."
     },
     "final": {
       "title": "Your first online order could arrive tonight",
-      "body": "Setting up takes about five minutes.",
-      "cta": "Create your store — free"
+      "body": "Start with a photo of your menu. Your store link is ready as soon as you sign up.",
+      "cta": "Create my free store"
     },
     "footer": {
       "rights": "© Flami",
       "made": "Made for small food businesses"
+    },
+    "problem": {
+      "eyebrow": "Sound familiar?",
+      "title": "Stop piecing orders together from a chat thread",
+      "body": "With Flami the customer picks from your menu, so the order arrives complete: what, how many, where to and how they'll pay. Read it once and start cooking.",
+      "dmLabel": "Ordering in DMs",
+      "flamiLabel": "Ordering with Flami",
+      "messages": [
+        "Hi! Do you have a menu?",
+        "Sending you a photo",
+        "How much is the doner wrap?",
+        "$6. Regular or large?",
+        "Large. And two ayran",
+        "Got it. What's the address?",
+        "Near the market, 3rd entrance",
+        "Cash or card?"
+      ],
+      "dmStatus": "{count, plural, one {# message} other {# messages}} and the order still isn't complete",
+      "flamiStatus": "1 message with everything in it. Start cooking"
+    },
+    "ai": {
+      "eyebrow": "Menu from a photo",
+      "title": "Photograph your paper menu. AI types it in.",
+      "body": "It reads dish names and prices, usually in 10 to 30 seconds. You check everything before it goes live. On Pro you can import a spreadsheet too.",
+      "paperTitle": "Menu",
+      "found": "Found 4 dishes",
+      "note": "Photos are used only to read your menu.",
+      "dishes": [
+        {
+          "name": "Doner wrap",
+          "price": "6.00"
+        },
+        {
+          "name": "Fries",
+          "price": "3.50"
+        },
+        {
+          "name": "Lentil soup",
+          "price": "4.00"
+        },
+        {
+          "name": "Ayran",
+          "price": "2.00"
+        }
+      ]
+    },
+    "commission": {
+      "eyebrow": "0% commission",
+      "title": "See what commission costs you",
+      "lead": "Delivery apps take a share of every order. Move the sliders to your numbers.",
+      "orders": "Orders a day",
+      "average": "Average order",
+      "rate": "Commission",
+      "perMonth": "You pay in commission each month",
+      "perYear": "In a year:",
+      "unit": "Amounts are in your own currency.",
+      "note": "Delivery apps help new customers find you. Flami is for the people who already know you: regulars, Instagram followers, guests at your tables. Those orders cost you 0%.",
+      "cta": "Start taking orders at 0%"
+    },
+    "sticky": {
+      "note": "Free plan. No card needed."
+    },
+    "loop": {
+      "eyebrow": "Your customers stay yours",
+      "title": "Every order brings you a customer, not just a sale",
+      "body": "You get each customer's name and phone in your own chat. Then Flami helps you bring them back.",
+      "steps": [
+        {
+          "title": "The order arrives with who ordered",
+          "body": "Name and phone number come with every order, straight to your WhatsApp or Telegram."
+        },
+        {
+          "title": "They follow it live",
+          "body": "A page shows when you accept, cook and send it out, so fewer \"where is my order?\" calls."
+        },
+        {
+          "title": "You ask for a review in one tap",
+          "body": "Ratings show on your store page and help new customers trust you."
+        },
+        {
+          "title": "They come back",
+          "body": "\"Order again\" repeats their last order in one tap. On Pro, give regulars a promo code."
+        },
+        {
+          "title": "You see your regulars",
+          "body": "Every customer by phone number: how often they order and how much they spend.",
+          "pro": true
+        }
+      ],
+      "demo": {
+        "orderTitle": "Order #12",
+        "orderItems": "2x Doner wrap · 1x Ayran",
+        "customerName": "Sam",
+        "customerPhone": "+1 555 ••• 0142",
+        "trackTitle": "Order #12",
+        "statuses": [
+          "Accepted",
+          "Ready",
+          "On the way"
+        ],
+        "reviewAsk": "How was your order?",
+        "reviewText": "Hot and fast. Ordering again on Friday",
+        "againTitle": "Your last order",
+        "againButton": "Order again",
+        "promoCode": "REGULAR10",
+        "promoText": "10% off",
+        "regularsTitle": "Your regulars",
+        "regulars": [
+          {
+            "name": "Sam",
+            "orders": "12 orders"
+          },
+          {
+            "name": "Maya",
+            "orders": "9 orders"
+          },
+          {
+            "name": "Daniel",
+            "orders": "7 orders"
+          }
+        ]
+      }
+    },
+    "action": {
+      "eyebrow": "See it in action",
+      "title": "Built for a busy kitchen",
+      "lead": "The parts owners use every day.",
+      "notify": {
+        "title": "No order slips by",
+        "body": "Your phone rings with every new order, and the customer sees each step.",
+        "pushTitle": "New order #{number}",
+        "pushBody": "2x Doner wrap · $14.50",
+        "statuses": [
+          "New",
+          "Accepted",
+          "Ready",
+          "On the way"
+        ]
+      },
+      "table": {
+        "title": "From the table to the kitchen",
+        "body": "Guests scan the QR on their table and order. The kitchen ticket prints with the table number.",
+        "tableLabel": "Table 5",
+        "ticket": [
+          "2x Doner wrap",
+          "1x Lentil soup",
+          "2x Tea"
+        ]
+      },
+      "brand": {
+        "title": "Your colours, their language",
+        "body": "Pick your brand colour. Customers switch between Uzbek, Russian and English. Try it.",
+        "storeName": "Your café",
+        "colorLabel": "Colour",
+        "langLabel": "Language",
+        "dishes": {
+          "uz": [
+            {
+              "name": "Lavash",
+              "price": "25 000"
+            },
+            {
+              "name": "Somsa",
+              "price": "8 000"
+            },
+            {
+              "name": "Choy",
+              "price": "5 000"
+            }
+          ],
+          "ru": [
+            {
+              "name": "Шаурма",
+              "price": "25 000"
+            },
+            {
+              "name": "Самса",
+              "price": "8 000"
+            },
+            {
+              "name": "Чай",
+              "price": "5 000"
+            }
+          ],
+          "en": [
+            {
+              "name": "Doner wrap",
+              "price": "$6.00"
+            },
+            {
+              "name": "Samsa",
+              "price": "$2.00"
+            },
+            {
+              "name": "Tea",
+              "price": "$1.50"
+            }
+          ]
+        }
+      },
+      "delivery": {
+        "title": "Delivery that pays for itself",
+        "body": "Price by distance, and a nudge to reach free delivery.",
+        "rings": [
+          "5 km · $2",
+          "10 km · $4"
+        ],
+        "freeBar": "Add $4 more for free delivery"
+      }
     }
   },
   "menu": {

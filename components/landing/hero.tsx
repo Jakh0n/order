@@ -83,6 +83,21 @@ export function Hero() {
               </Link>
             </div>
             <p className="text-forest/55 mt-5 text-sm">{t("note")}</p>
+            {/* Facts an owner checks first */}
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {(t.raw("chips") as string[]).map((chip, i) => (
+                <motion.li
+                  key={chip}
+                  className="border-forest/10 text-forest/80 flex items-center gap-1.5 rounded-full border bg-white px-3 py-1.5 text-sm font-medium"
+                  initial={reduce ? false : { opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, ease: EASE, delay: 0.8 + i * 0.08 }}
+                >
+                  <span className="bg-primary size-1.5 rounded-full" aria-hidden />
+                  {chip}
+                </motion.li>
+              ))}
+            </ul>
           </motion.div>
         </div>
 

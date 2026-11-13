@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 import { Logo } from "./logo";
 
-const LINKS = ["how", "features", "pricing", "faq"] as const;
+const LINKS = ["how", "customers", "commission", "pricing", "faq"] as const;
 
 export function SiteNav() {
   const t = useTranslations("home");

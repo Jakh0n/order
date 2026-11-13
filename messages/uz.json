@@ -18,14 +18,22 @@
       "pricing": "Narxlar",
       "faq": "Savollar",
       "menu": "Menyu",
-      "close": "Menyuni yopish"
+      "close": "Menyuni yopish",
+      "commission": "Komissiya",
+      "customers": "Mijozlar"
     },
     "hero": {
       "title": "Menyuingiz bitta havolada. Buyurtmalar to'g'ridan-to'g'ri chatga.",
-      "lead": "Mijozlar menyuni ochadi, taom tanlaydi va buyurtma beradi. Tayyor buyurtma — taomlar, summa va manzil bilan — WhatsApp yoki Telegram'ingizga keladi.",
-      "cta": "Do'kon ochish — bepul",
+      "lead": "Mijozlar menyuingizni ochadi, taom tanlaydi va buyurtma beradi. Butun buyurtma WhatsApp yoki Telegram'ingizga keladi: taomlar, summa, manzil va xaritadagi nuqta.",
+      "cta": "Bepul do'kon ochish",
       "demo": "Namunani ko'rish",
-      "note": "Mijozlarga ilova kerak emas. Savdodan komissiya yo'q."
+      "note": "Bepul tarif, buyurtmalar cheklanmagan. Karta kerak emas.",
+      "chips": [
+        "0% komissiya",
+        "Rasmdan menyu",
+        "Telegram va WhatsApp",
+        "O'zbek, rus, ingliz"
+      ]
     },
     "demo": {
       "open": "Hozir ochiq",
@@ -58,42 +66,85 @@
       "v2Copy": "Havoladan nusxa olish"
     },
     "features": {
-      "title": "Siz allaqachon qanday sotsangiz, shunga moslangan",
-      "lead": "Mijozlaringiz buyurtma berish uchun allaqachon sizga yozishadi. Flami buni chiroyli menyu va tartibli buyurtmaga aylantiradi — muloqot esa avvalgi joyda qoladi.",
-      "chatTitle": "Bir qarashda tushunarli buyurtmalar",
-      "chatBody": "Mijoz nima xohlaganini qayta-qayta so'rash shart emas. Har bir buyurtma bir xil, aniq ko'rinishda keladi.",
-      "menu": {
-        "title": "Sotadigan menyu",
-        "body": "Rasmlar, kategoriyalar, variantlar va \"bugun yo'q\" belgisi. Har qanday telefonda qidiruv va tez qo'shish."
-      },
-      "track": {
-        "title": "Mijozlar buyurtmani kuzatadi",
-        "body": "Har bir buyurtmaning o'z sahifasi bor — siz qabul qilganingizda, tayyorlaganingizda va jo'natganingizda yangilanadi."
-      },
-      "board": {
-        "title": "Barcha buyurtmalar bitta doskada",
-        "body": "Qabul qilish, tayyor, to'landi. Nima kutayotgani va nima bajarilgani ko'rinib turadi."
-      },
-      "delivery": {
-        "title": "Yetkazish va olib ketish",
-        "body": "Yagona yetkazish narxi, minimal buyurtma va mijozning xaritadagi joylashuvi."
-      },
-      "payment": {
-        "title": "To'lov o'zingizga qulay usulda",
-        "body": "Naqd, yetkazilganda karta yoki pul o'tkazmasi. Mijozlar to'g'ridan-to'g'ri sizga to'laydi."
-      },
-      "hours": {
-        "title": "Muammosiz ish vaqti",
-        "body": "Ish vaqti va vaqt zonasini belgilang. Yopiq bo'lsangiz, mijozlar qachon ochilishingizni ko'radi."
-      },
-      "qr": {
-        "title": "Stollar uchun QR kod",
-        "body": "Bir marta yuklab oling va stollar, varaqalar va olib ketish paketlariga joylang."
-      },
-      "currency": {
-        "title": "Istalgan valyuta",
-        "body": "So'm, tenge, dollar, yevro — do'kon ochishda o'zingiznikini tanlang."
-      }
+      "title": "Birinchi buyurtmadan doimiy mijozlargacha hammasi",
+      "lead": "Keraklisidan foydalaning. Hammasi telefonda ishlaydi.",
+      "pro": "Pro",
+      "groups": [
+        {
+          "title": "Buyurtma olish",
+          "items": [
+            {
+              "t": "Bitta havolada menyu va QR kod"
+            },
+            {
+              "t": "Stoldagi QR: mehmon joyidan buyurtma beradi"
+            },
+            {
+              "t": "Sahifangizda baho va sharhlar"
+            },
+            {
+              "t": "Promo-kodlar",
+              "pro": true
+            }
+          ]
+        },
+        {
+          "title": "Oshxonani boshqarish",
+          "items": [
+            {
+              "t": "Ovozli buyurtmalar paneli va telefonga bildirishnoma"
+            },
+            {
+              "t": "80 mm printer uchun oshxona varaqasi va chek"
+            },
+            {
+              "t": "Mijoz uchun buyurtmani kuzatish sahifasi"
+            },
+            {
+              "t": "Ish vaqti va keyinroqqa buyurtma"
+            }
+          ]
+        },
+        {
+          "title": "O'zingizcha yetkazish",
+          "items": [
+            {
+              "t": "Olib ketish, yetkazish yoki stol"
+            },
+            {
+              "t": "Mijoz joylashuvi xaritada"
+            },
+            {
+              "t": "Masofaga qarab yetkazish narxi",
+              "pro": true
+            },
+            {
+              "t": "Ma'lum summadan bepul yetkazish",
+              "pro": true
+            }
+          ]
+        },
+        {
+          "title": "Raqamlar bilan o'sish",
+          "items": [
+            {
+              "t": "Doimiy mijozlar uchun \"Yana buyurtma\" bir bosishda"
+            },
+            {
+              "t": "Tushum, top taomlar va gavjum soatlar",
+              "pro": true
+            },
+            {
+              "t": "Telefon raqami bo'yicha mijozlar bazasi",
+              "pro": true
+            },
+            {
+              "t": "Meta Pixel va CSV eksport",
+              "pro": true
+            }
+          ]
+        }
+      ]
     },
     "audience": {
       "text": "Kabobxonalar, novvoyxonalar, kafelar, shirinlik do'konlari, qahva nuqtalari, fudtraklar va buyurtmani messenjer orqali oladigan uy oshpazlari uchun."
@@ -138,16 +189,229 @@
       "q5": "Menyuni keyin o'zgartira olamanmi?",
       "a5": "Istalgan payt. O'zgarishlar do'koningizda darhol ko'rinadi — taomni bugunga \"yo'q\" deb belgilash ham.",
       "q6": "Yopiq bo'lsam nima bo'ladi?",
-      "a6": "Mijozlar menyuni ko'rishi va qachon ochilishingizni bilishi mumkin, lekin buyurtma bera olmaydi."
+      "a6": "Mijozlar menyuni ko'rishi va qachon ochilishingizni bilishi mumkin, lekin buyurtma bera olmaydi.",
+      "q7": "Texnikani yaxshi bilishim kerakmi?",
+      "a7": "Yo'q. Menyuni rasmdan qo'shing, havolani ulashing, buyurtmalar esa siz allaqachon ishlatadigan chatga keladi.",
+      "q8": "Mijoz xabarni yubormasa-chi?",
+      "a8": "Buyurtma rasmiylashtirilgan zahoti saqlanadi. U buyurtmalar panelida chiqadi, bildirishnomalarni yoqqan bo'lsangiz telefoningizga xabar keladi."
     },
     "final": {
       "title": "Birinchi onlayn buyurtmangiz bugun kechqurunoq kelishi mumkin",
-      "body": "Sozlash taxminan besh daqiqa oladi.",
-      "cta": "Do'kon ochish — bepul"
+      "body": "Menyuingiz rasmidan boshlang. Ro'yxatdan o'tishingiz bilan do'kon havolasi tayyor.",
+      "cta": "Bepul do'kon ochish"
     },
     "footer": {
       "rights": "© Flami",
       "made": "Kichik ovqat bizneslari uchun yaratilgan"
+    },
+    "problem": {
+      "eyebrow": "Tanish holatmi?",
+      "title": "Buyurtmani yozishmadan bo'laklab yig'ishga chek qo'ying",
+      "body": "Flami'da mijoz menyuingizdan tanlaydi, shuning uchun buyurtma to'liq keladi: nima, nechta, qayerga va qanday to'laydi. Bir marta o'qiysiz va tayyorlashni boshlaysiz.",
+      "dmLabel": "Direktda buyurtma",
+      "flamiLabel": "Flami orqali buyurtma",
+      "messages": [
+        "Assalomu alaykum! Menyu bormi?",
+        "Rasmini yuboryapman",
+        "Lavash qancha?",
+        "25 000. Kichikmi, kattami?",
+        "Kattasi. Yana ikkita ayron",
+        "Bo'ldi. Manzil qayer?",
+        "Bozor yonida, 3-podyezd",
+        "Naqdmi yoki karta?"
+      ],
+      "dmStatus": "{count, plural, other {# ta xabar}}, buyurtma esa hali to'liq emas",
+      "flamiStatus": "1 ta xabar, hammasi ichida. Tayyorlashni boshlang"
+    },
+    "ai": {
+      "eyebrow": "Rasmdan menyu",
+      "title": "Qog'oz menyuni rasmga oling. AI o'zi kiritadi.",
+      "body": "Taom nomlari va narxlarni o'qiydi, odatda 10–30 soniyada. E'lon qilishdan oldin hammasini o'zingiz tekshirasiz. Pro'da jadvaldan ham yuklash mumkin.",
+      "paperTitle": "Menyu",
+      "found": "4 ta taom topildi",
+      "note": "Rasmlar faqat menyuni o'qish uchun ishlatiladi.",
+      "dishes": [
+        {
+          "name": "Lavash",
+          "price": "25 000"
+        },
+        {
+          "name": "Somsa",
+          "price": "8 000"
+        },
+        {
+          "name": "Mastava",
+          "price": "22 000"
+        },
+        {
+          "name": "Choy",
+          "price": "5 000"
+        }
+      ]
+    },
+    "commission": {
+      "eyebrow": "0% komissiya",
+      "title": "Komissiyaga qancha ketayotganini hisoblang",
+      "lead": "Yetkazib berish ilovalari har bir buyurtmadan ulush oladi. O'z raqamlaringizni qo'ying.",
+      "orders": "Kuniga buyurtma",
+      "average": "O'rtacha chek",
+      "rate": "Komissiya",
+      "perMonth": "Har oy komissiyaga ketadi",
+      "perYear": "Bir yilda:",
+      "unit": "Summalar o'z valyutangizda.",
+      "note": "Yetkazib berish ilovalari yangi mijozlar topishga yordam beradi. Flami esa sizni allaqachon taniydiganlar uchun: doimiy mijozlar, Instagram obunachilari, stollaringizdagi mehmonlar. Bu buyurtmalardan komissiya 0%.",
+      "cta": "Komissiyasiz buyurtma qabul qilish"
+    },
+    "sticky": {
+      "note": "Bepul tarif. Karta kerak emas."
+    },
+    "loop": {
+      "eyebrow": "Mijozlaringiz sizniki bo'lib qoladi",
+      "title": "Har bir buyurtma sizga shunchaki savdo emas, mijoz olib keladi",
+      "body": "Har bir mijozning ismi va telefoni o'z chatingizga keladi. Keyin Flami uni qaytarishga yordam beradi.",
+      "steps": [
+        {
+          "title": "Buyurtma kim berganligi bilan keladi",
+          "body": "Ism va telefon raqami har bir buyurtma bilan to'g'ridan-to'g'ri WhatsApp yoki Telegram'ingizga keladi."
+        },
+        {
+          "title": "Mijoz buyurtmani kuzatadi",
+          "body": "Sahifa qachon qabul qilganingiz, tayyorlayotganingiz va jo'natganingizni ko'rsatadi. \"Buyurtmam qayerda?\" qo'ng'iroqlari kamayadi."
+        },
+        {
+          "title": "Bir bosishda sharh so'raysiz",
+          "body": "Baholar do'kon sahifangizda ko'rinadi va yangi mijozlarga ishonch beradi."
+        },
+        {
+          "title": "Mijoz qaytadi",
+          "body": "\"Yana buyurtma\" oxirgi buyurtmani bir bosishda takrorlaydi. Pro'da doimiy mijozlarga promo-kod bering."
+        },
+        {
+          "title": "Doimiy mijozlaringizni ko'rasiz",
+          "body": "Har bir mijoz telefon raqami bo'yicha: qanchalik tez-tez buyurtma beradi va qancha sarflaydi.",
+          "pro": true
+        }
+      ],
+      "demo": {
+        "orderTitle": "Buyurtma №12",
+        "orderItems": "2x Lavash · 1x Ayron",
+        "customerName": "Alisher",
+        "customerPhone": "+998 90 ••• •• 67",
+        "trackTitle": "Buyurtma №12",
+        "statuses": [
+          "Qabul qilindi",
+          "Tayyor",
+          "Yo'lda"
+        ],
+        "reviewAsk": "Buyurtma qanday bo'ldi?",
+        "reviewText": "Issiq va tez. Juma kuni yana buyurtma beraman",
+        "againTitle": "Oxirgi buyurtmangiz",
+        "againButton": "Yana buyurtma",
+        "promoCode": "DOIMIY10",
+        "promoText": "10% chegirma",
+        "regularsTitle": "Doimiy mijozlar",
+        "regulars": [
+          {
+            "name": "Alisher",
+            "orders": "12 ta buyurtma"
+          },
+          {
+            "name": "Dilnoza",
+            "orders": "9 ta buyurtma"
+          },
+          {
+            "name": "Rustam",
+            "orders": "7 ta buyurtma"
+          }
+        ]
+      }
+    },
+    "action": {
+      "eyebrow": "Amalda ko'ring",
+      "title": "Band oshxona uchun yaratilgan",
+      "lead": "Egalar har kuni foydalanadigan qismlar.",
+      "notify": {
+        "title": "Birorta buyurtma o'tib ketmaydi",
+        "body": "Har bir yangi buyurtmada telefoningiz jiringlaydi, mijoz esa har bir bosqichni ko'radi.",
+        "pushTitle": "Yangi buyurtma №{number}",
+        "pushBody": "2x Lavash · 75 000",
+        "statuses": [
+          "Yangi",
+          "Qabul",
+          "Tayyor",
+          "Yo'lda"
+        ]
+      },
+      "table": {
+        "title": "Stoldan oshxonaga",
+        "body": "Mehmonlar stoldagi QR'ni skanerlab buyurtma beradi. Oshxona varaqasi stol raqami bilan chop etiladi.",
+        "tableLabel": "Stol 5",
+        "ticket": [
+          "2x Lavash",
+          "1x Mastava",
+          "2x Choy"
+        ]
+      },
+      "brand": {
+        "title": "Sizning ranglaringiz, ularning tili",
+        "body": "Brend rangingizni tanlang. Mijozlar o'zbek, rus va ingliz tillari orasida almashadi. Sinab ko'ring.",
+        "storeName": "Sizning kafengiz",
+        "colorLabel": "Rang",
+        "langLabel": "Til",
+        "dishes": {
+          "uz": [
+            {
+              "name": "Lavash",
+              "price": "25 000"
+            },
+            {
+              "name": "Somsa",
+              "price": "8 000"
+            },
+            {
+              "name": "Choy",
+              "price": "5 000"
+            }
+          ],
+          "ru": [
+            {
+              "name": "Шаурма",
+              "price": "25 000"
+            },
+            {
+              "name": "Самса",
+              "price": "8 000"
+            },
+            {
+              "name": "Чай",
+              "price": "5 000"
+            }
+          ],
+          "en": [
+            {
+              "name": "Doner wrap",
+              "price": "$6.00"
+            },
+            {
+              "name": "Samsa",
+              "price": "$2.00"
+            },
+            {
+              "name": "Tea",
+              "price": "$1.50"
+            }
+          ]
+        }
+      },
+      "delivery": {
+        "title": "O'zini oqlaydigan yetkazish",
+        "body": "Masofaga qarab narx va bepul yetkazishgacha qancha qolganini ko'rsatish.",
+        "rings": [
+          "5 km · 10 000",
+          "10 km · 15 000"
+        ],
+        "freeBar": "Bepul yetkazish uchun yana 15 000 qo'shing"
+      }
     }
   },
   "menu": {
