@@ -1432,5 +1432,76 @@
       "first": "First order",
       "last": "Last order"
     }
+  },
+  "legal": {
+    "updated": "Last updated: {date}",
+    "contact": "Questions or a deletion request: write to us on Telegram <link></link>.",
+    "contactNoLink": "Questions or a deletion request: contact the store you ordered from, or write to us from the Flami admin panel.",
+    "footerPrivacy": "Privacy",
+    "footerTerms": "Terms",
+    "signupAgree": "By creating a store you agree to the <terms>Terms</terms> and the <privacy>Privacy Policy</privacy>.",
+    "checkoutAgree": "By placing an order you agree to Flami's <privacy>Privacy Policy</privacy>.",
+    "privacy": {
+      "title": "Privacy Policy",
+      "metaDescription": "What data Flami collects, why, who processes it and how to delete it.",
+      "intro": "Flami (flami.org) lets food businesses take orders online. Each store is an independent business. For orders, the store decides how customer data is used, and Flami processes it on the store's behalf. This page explains what we collect and why.",
+      "sections": [
+        {
+          "title": "What customers give when ordering",
+          "body": "Name, phone number, and when the store asks for it, email. For delivery: address, landmark and, if you tap \"Use my current location\", your coordinates. Also the order itself, your note, the payment method and, for bank transfers, the receipt photo you upload. If you leave a review, your rating and comment are stored, and only your first name is shown publicly."
+        },
+        {
+          "title": "What store owners give",
+          "body": "Email, password (stored only as a one-way hash), store details, menu and settings."
+        },
+        {
+          "title": "What is kept in your browser",
+          "body": "Your cart, your last order (to show \"Track your order\"), your name and phone for the next checkout, and display choices. This stays on your device. We use cookies only to keep owners signed in, remember the language and the admin menu layout. Flami itself uses no advertising cookies."
+        },
+        {
+          "title": "Why we use the data",
+          "body": "To deliver the order to the store, show its status, let the store contact you, prevent abuse (IP addresses are hashed before use in rate limits) and fix errors. We do not sell personal data and do not handle card payments."
+        },
+        {
+          "title": "Who processes it",
+          "body": "Vercel (hosting), Supabase (database and files, servers in Japan), Sentry (error reports, with phone numbers and emails removed), OpenStreetMap Nominatim (turns coordinates into an address), and OpenAI (only menu photos an owner uploads to import a menu). The order message is sent by you through your own Telegram or WhatsApp app. If a store turns on Meta Pixel, anonymous page and order events (no names or phone numbers) go to Meta for that store's ads."
+        },
+        {
+          "title": "How long and your rights",
+          "body": "Orders are kept while the store has its account. You can ask for a copy of your data, a correction or deletion. Ask the store, or ask us and we will pass it on."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "metaDescription": "The rules for using Flami as a store owner and as a customer.",
+      "intro": "These terms apply to everyone who uses Flami (flami.org): store owners who run a store on it and customers who order from those stores.",
+      "sections": [
+        {
+          "title": "What Flami is",
+          "body": "Flami gives a store an online menu, a checkout and an order board. The sale is between the store and the customer. Flami is not the seller and does not cook, deliver or take payments."
+        },
+        {
+          "title": "Store owners",
+          "body": "You are responsible for your menu, prices, food quality and safety, delivery, refunds, the payments you receive and following the laws that apply to your business, including how you use your customers' data. Keep your password safe. You may not sell illegal goods, send spam or use Flami to deceive people."
+        },
+        {
+          "title": "Plans and payment",
+          "body": "The Free plan never limits incoming orders. Pro adds tools for a monthly or yearly fee, paid to us directly. Pro ends at the end of the paid period unless it is renewed, and your data stays. Prices may change. We will tell you before a change affects you, and the founding-store price is kept as promised."
+        },
+        {
+          "title": "Customers",
+          "body": "Prices, availability and delivery times come from the store. Questions about an order, payment or refund go to the store. Please give correct contact details and don't place fake orders."
+        },
+        {
+          "title": "Our service",
+          "body": "We work to keep Flami available and correct, but it is provided as is. We may change features, and we may suspend a store that breaks these terms or the law. To the extent the law allows, Flami is not liable for losses from a store's goods or service, or from interruptions of the service."
+        },
+        {
+          "title": "Changes",
+          "body": "We may update these terms. The date at the top shows the latest version. If you keep using Flami after a change, you accept the new terms."
+        }
+      ]
+    }
   }
 }

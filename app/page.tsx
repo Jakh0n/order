@@ -125,7 +125,7 @@ function PriceCard({
 }
 
 export default async function Home() {
-  const t = await getTranslations("home");
+  const [t, tLegal] = await Promise.all([getTranslations("home"), getTranslations("legal")]);
   // Static demo QR — points at the live demo store
   const qr = await QRCode.toString("https://flami.org/flami-grill", {
     type: "svg",
@@ -387,6 +387,12 @@ export default async function Home() {
           </Link>
           <Link href="/signup" className="hover:text-forest">
             {t("signup")}
+          </Link>
+          <Link href="/privacy" className="hover:text-forest">
+            {tLegal("footerPrivacy")}
+          </Link>
+          <Link href="/terms" className="hover:text-forest">
+            {tLegal("footerTerms")}
           </Link>
           <span>{t("footer.rights")}</span>
         </div>

@@ -102,6 +102,7 @@ export function CheckoutForm({
   const tPay = useTranslations("payment");
   const tReceipt = useTranslations("receipt");
   const tTable = useTranslations("table");
+  const tLegal = useTranslations("legal");
   const router = useRouter();
 
   const hydrated = useCartHydrated();
@@ -968,6 +969,17 @@ export function CheckoutForm({
               {!isSubmitting && <ChevronRight className="size-4" />}
             </span>
           </Button>
+          {!isAdmin && (
+            <p className="text-muted-foreground text-center text-xs">
+              {tLegal.rich("checkoutAgree", {
+                privacy: (chunks) => (
+                  <a href="/privacy" target="_blank" className="underline underline-offset-2">
+                    {chunks}
+                  </a>
+                ),
+              })}
+            </p>
+          )}
         </div>
       </div>
     </form>
