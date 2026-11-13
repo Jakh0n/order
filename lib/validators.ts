@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { MAX_DELIVERY_KM, MAX_TIERS } from "@/lib/delivery-distance";
 import { defaultLocale, locales } from "@/i18n/config";
 import {
   CORNER_STYLES,
@@ -353,6 +354,21 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
       deliveryFee: fee,
       /** Free delivery from this items subtotal; null = off */
       freeDeliveryFrom: fee.nullable(),
+      /** Delivery price by distance (Pro): store location + "up to N km → fee" ranges */
+      deliveryByDistance: z.boolean(),
+      latitude: z.number().min(-90).max(90).nullable(),
+      longitude: z.number().min(-180).max(180).nullable(),
+      deliveryTiers: z
+        .array(
+          z.object({
+            upToKm: z
+              .number({ error: "kmInvalid" })
+              .positive("kmInvalid")
+              .max(MAX_DELIVERY_KM, "kmInvalid"),
+            fee,
+          }),
+        )
+        .max(MAX_TIERS),
 
       acceptCash: z.boolean(),
       acceptCardOnDelivery: z.boolean(),
@@ -379,6 +395,15 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
       const issue = (path: string, message: string) =>
         ctx.addIssue({ code: "custom", path: [path], message });
 
+      if (s2.deliveryByDistance) {
+        if (s2.latitude === null || s2.longitude === null) issue("latitude", "locationRequired");
+        if (s2.deliveryTiers.length === 0) issue("deliveryTiers", "tiersRequired");
+        s2.deliveryTiers.forEach((tier, i) => {
+          if (i > 0 && tier.upToKm <= s2.deliveryTiers[i - 1].upToKm) {
+            issue(`deliveryTiers.${i}.upToKm`, "tiersOrder");
+          }
+        });
+      }
       if (!!s2.openTime !== !!s2.closeTime) {
         issue(s2.openTime ? "closeTime" : "openTime", "bothTimes");
       }
@@ -426,6 +451,10 @@ export function settingsFormToMinor(v: StoreSettingsFormData): StoreSettingsInpu
     minOrder: toMinor(v.minOrder, v.currency),
     deliveryFee: toMinor(v.deliveryFee, v.currency),
     freeDeliveryFrom: v.freeDeliveryFrom === null ? null : toMinor(v.freeDeliveryFrom, v.currency),
+    deliveryTiers: v.deliveryTiers.map((t) => ({
+      upToKm: t.upToKm,
+      fee: toMinor(t.fee, v.currency),
+    })),
   };
 }
 
@@ -436,6 +465,10 @@ export function settingsToForm(v: StoreSettingsInput): StoreSettingsFormInput {
     minOrder: toMajor(v.minOrder, v.currency),
     deliveryFee: toMajor(v.deliveryFee, v.currency),
     freeDeliveryFrom: v.freeDeliveryFrom == null ? null : toMajor(v.freeDeliveryFrom, v.currency),
+    deliveryTiers: (v.deliveryTiers ?? []).map((t) => ({
+      upToKm: t.upToKm,
+      fee: toMajor(t.fee, v.currency),
+    })),
   };
 }
 

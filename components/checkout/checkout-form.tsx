@@ -44,6 +44,7 @@ import { dialPrefix } from "@/lib/phone-prefix";
 import { setTable, useTable } from "@/lib/table-session";
 import { mapsLink } from "@/lib/maps";
 import { createOrder } from "@/lib/orders/actions";
+import { quoteDelivery, roundKm } from "@/lib/delivery-distance";
 import { deliveryFeeFor, promoDiscount, TIP_PERCENTS, tipAmount } from "@/lib/orders/promo";
 import { checkPromo, type CheckPromoResult } from "@/lib/orders/promo-actions";
 import { createManualOrder } from "@/lib/orders/admin-actions";
@@ -195,15 +196,14 @@ export function CheckoutForm({
   });
 
   const subtotal = cartSubtotal(lines);
-  const deliveryFee = deliveryFeeFor(
-    type,
-    subtotal,
-    settings.deliveryFee,
-    settings.freeDeliveryFrom,
-  );
+  // By distance from the store (Pro) once the customer shares a location; flat fee otherwise
+  const quote = quoteDelivery(settings.deliveryFee, settings.distance, { latitude, longitude });
+  const tooFar = type === "DELIVERY" && quote.kind === "tooFar";
+  const baseDeliveryFee = quote.kind === "tooFar" ? settings.deliveryFee : quote.fee;
+  const deliveryFee = deliveryFeeFor(type, subtotal, baseDeliveryFee, settings.freeDeliveryFrom);
   // Free delivery: how much is missing (only shown for delivery)
   const toFreeDelivery =
-    type === "DELIVERY" && settings.freeDeliveryFrom !== null && settings.deliveryFee > 0
+    type === "DELIVERY" && settings.freeDeliveryFrom !== null && baseDeliveryFee > 0
       ? Math.max(0, settings.freeDeliveryFrom - subtotal)
       : 0;
   // The code may stop applying if the cart drops below its minimum
@@ -294,6 +294,7 @@ export function CheckoutForm({
     ? lines.length > 0
     : (isOpenNow || preorder) &&
       missing === 0 &&
+      !tooFar &&
       settings.paymentMethods.length > 0 &&
       (dineIn || settings.pickupEnabled || settings.deliveryEnabled);
 
@@ -349,7 +350,10 @@ export function CheckoutForm({
       const minOrder = "minOrder" in result ? result.minOrder : undefined;
       // Inline, next to the button (a toast disappears before it can be acted on)
       setServerError(
-        t(`errors.${result.error}`, { amount: formatMoney(minOrder ?? store.minOrder) }),
+        t(`errors.${result.error}`, {
+          amount: formatMoney(minOrder ?? store.minOrder),
+          km: "maxKm" in result ? (result.maxKm ?? 0) : 0,
+        }),
       );
       return;
     }
@@ -619,6 +623,22 @@ export function CheckoutForm({
                     <X className="size-4" />
                   </button>
                 </div>
+              )}
+              {/* Distance pricing: the exact fee needs the location; too far → can't deliver */}
+              {settings.distance && type === "DELIVERY" && (
+                <p
+                  className={cn(
+                    "text-sm",
+                    tooFar ? "text-destructive font-medium" : "text-muted-foreground",
+                  )}
+                  role={tooFar ? "alert" : undefined}
+                >
+                  {quote.kind === "tooFar"
+                    ? t("tooFarHint", { km: roundKm(quote.km), max: quote.maxKm })
+                    : quote.kind === "distance"
+                      ? t("distanceFee", { km: roundKm(quote.km), fee: formatMoney(quote.fee) })
+                      : t("distanceHint")}
+                </p>
               )}
               {locationNote && (
                 <p

@@ -134,6 +134,13 @@ model Store {
   deliveryFee          Int            @default(0)
   /// Delivery is free when the items subtotal reaches this amount (minor units); null = off
   freeDeliveryFrom     Int?
+  /// Delivery price by distance (Pro): on + store location + tiers; otherwise the flat deliveryFee
+  deliveryByDistance   Boolean        @default(false)
+  /// [{ upToKm, fee }] — fee in minor units (lib/delivery-distance.ts)
+  deliveryTiers        Json?
+  /// Store location: distance pricing measures from here
+  latitude             Float?
+  longitude            Float?
   acceptCash           Boolean        @default(true)
   acceptCardOnDelivery Boolean        @default(true)
   acceptTransfer       Boolean        @default(false)

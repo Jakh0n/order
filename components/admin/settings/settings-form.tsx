@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { Controller, type FieldPath, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
+import { DeliveryDistanceFields } from "@/components/admin/settings/delivery-distance-fields";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,6 +45,10 @@ export function SettingsForm({
   const t = useTranslations("adminSettings");
   const tPlan = useTranslations("plan");
 
+  const form = useForm<StoreSettingsFormInput, unknown, StoreSettingsFormData>({
+    resolver: zodResolver(storeSettingsFormSchema),
+    defaultValues,
+  });
   const {
     control,
     register,
@@ -51,10 +56,7 @@ export function SettingsForm({
     setError,
     reset,
     formState: { errors, isSubmitting, isDirty },
-  } = useForm<StoreSettingsFormInput, unknown, StoreSettingsFormData>({
-    resolver: zodResolver(storeSettingsFormSchema),
-    defaultValues,
-  });
+  } = form;
   const [deliveryEnabled, acceptTransfer, channel, telegramUsername, whatsappNumber, currency] =
     useWatch({
       control,
@@ -274,6 +276,7 @@ export function SettingsForm({
             />
           </Field>
           <p className="text-muted-foreground text-xs">{t("freeDeliveryFromHint")}</p>
+          <DeliveryDistanceFields form={form} currency={currency} pro={pro} errorText={errorText} />
         </div>
       </Card>
 

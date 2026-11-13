@@ -255,7 +255,8 @@
       "promoUsedUp": "Bu koddan endi foydalanib bo'lmaydi",
       "promoMinSubtotal": "Bu kod {amount} dan boshlab buyurtmalar uchun ishlaydi",
       "emailInvalid": "To'g'ri email kiriting",
-      "emailRequired": "Email kiriting"
+      "emailRequired": "Email kiriting",
+      "tooFar": "Yetkazish uchun juda uzoq: {km} km gacha yetkazamiz. Olib ketishni yoki boshqa manzilni tanlang."
     },
     "edit": "O'zgartirish",
     "timeAsap": "Imkon qadar tezroq",
@@ -293,7 +294,10 @@
       "none": "Kerak emas",
       "hint": "Jamoa uchun. Buyurtma bilan birga to'lanadi.",
       "label": "Choychaqa"
-    }
+    },
+    "tooFarHint": "Siz {km} km uzoqdasiz — biz {max} km gacha yetkazamiz. Olib ketishni yoki boshqa manzilni tanlang.",
+    "distanceFee": "Do'kondan {km} km · yetkazish {fee}",
+    "distanceHint": "Aniq yetkazish narxini ko'rish uchun joylashuvingizni ulashing."
   },
   "payment": {
     "CASH": "Naqd",
@@ -698,7 +702,11 @@
       "whatsappInvalid": "Noto'g'ri raqam — mamlakat kodini qo'shing, masalan +998901234567",
       "currencyInvalid": "Noto'g'ri valyuta",
       "timeZoneInvalid": "Noto'g'ri vaqt zonasi",
-      "pixelInvalid": "Pixel ID 8–20 ta raqamdan iborat"
+      "pixelInvalid": "Pixel ID 8–20 ta raqamdan iborat",
+      "locationRequired": "Do'kon joylashuvini belgilang",
+      "tiersRequired": "Kamida bitta oraliq qo'shing",
+      "tiersOrder": "Har bir oraliq oldingisidan uzoqroq bo'lishi kerak",
+      "kmInvalid": "0,1 dan 200 km gacha masofa kiriting"
     },
     "deliveryFee": "Yetkazish narxi ({currency})",
     "deliveryFeeHint": "Har bir yetkazish buyurtmasiga qo'shiladi. 0 — bepul yetkazish.",
@@ -717,7 +725,26 @@
     },
     "marketingSection": "Marketing",
     "metaPixelId": "Meta Pixel ID",
-    "metaPixelHint": "Meta Events Manager → Data sources bo'limidan oling. Biz sahifa ko'rilishi, savatga qo'shish, rasmiylashtirish va xaridni buyurtma summasi bilan yuboramiz — ism va telefon hech qachon yuborilmaydi."
+    "metaPixelHint": "Meta Events Manager → Data sources bo'limidan oling. Biz sahifa ko'rilishi, savatga qo'shish, rasmiylashtirish va xaridni buyurtma summasi bilan yuboramiz — ism va telefon hech qachon yuborilmaydi.",
+    "deliveryByDistance": "Masofaga qarab narx",
+    "deliveryByDistanceHint": "Narx mijoz do'koningizdan qancha uzoqligiga qarab hisoblanadi. Joylashuvini bermagan mijoz yuqoridagi oddiy yetkazish narxini to'laydi.",
+    "storeLocation": "Do'kon joylashuvi",
+    "storeLocationHint": "Masofa shu yerdan o'lchanadi. Tugmani do'konda turganingizda bosing.",
+    "storeLocationSet": "Joylashuv saqlandi",
+    "storeLocationUse": "Joriy joylashuvimni ishlatish",
+    "storeLocationUpdate": "Joylashuvni yangilash",
+    "storeLocationUnsupported": "Bu brauzer joylashuvni bera olmaydi.",
+    "storeLocationDenied": "Joylashuvga ruxsat berilmagan. Brauzer sozlamalarida ruxsat bering.",
+    "storeLocationUnavailable": "Joylashuvni aniqlab bo'lmadi. Tashqarida yoki deraza yonida qayta urinib ko'ring.",
+    "viewOnMap": "Xaritada ko'rish",
+    "deliveryTiers": "Masofaga qarab yetkazish narxi",
+    "upTo": "Gacha",
+    "km": "km",
+    "tierKm": "Masofa (km)",
+    "tierFee": "Yetkazish narxi ({currency})",
+    "removeTier": "Oraliqni o'chirish",
+    "addTier": "Oraliq qo'shish",
+    "deliveryTiersHint": "Masofa do'kondan to'g'ri chiziq bo'yicha. Oxirgi oraliqdan uzoq bo'lsa, yetkazish taklif qilinmaydi."
   },
   "signup": {
     "title": "Do'koningizni oching",
