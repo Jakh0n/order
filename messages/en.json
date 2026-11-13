@@ -387,7 +387,8 @@
     "nowPaused": "Orders paused — customers can still browse",
     "openToggleFailed": "Couldn't change it. Please try again.",
     "customers": "Customers",
-    "marketing": "Marketing"
+    "marketing": "Marketing",
+    "toggleSidebar": "Collapse or expand the menu"
   },
   "superadmin": {
     "title": "Platform admin",
