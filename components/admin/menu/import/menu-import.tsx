@@ -4,23 +4,28 @@ import {
   AlertTriangle,
   Camera,
   Check,
+  Download,
+  FileSpreadsheet,
   ImagePlus,
   Loader2,
+  Lock,
   RotateCcw,
   Sparkles,
   Trash2,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { ImportDraft, MenuProgress } from "@/lib/ai/menu-schema";
+import { readMenuCsv } from "@/lib/menu/csv-actions";
 import { importMenu } from "@/lib/menu/import-actions";
 import { priceStep } from "@/lib/money";
 import { shrinkImage } from "@/lib/shrink-image";
@@ -36,10 +41,23 @@ type Row = ImportDraft["categories"][number]["items"][number] & { include: boole
 type Category = { name: string; items: Row[] };
 
 /** Photo (or text) of a paper menu → AI draft → owner reviews → dishes added */
-export function MenuImport({ configured, currency }: { configured: boolean; currency: string }) {
+export function MenuImport({
+  configured,
+  currency,
+  pro,
+}: {
+  configured: boolean;
+  currency: string;
+  /** CSV import is a Pro feature */
+  pro: boolean;
+}) {
   const t = useTranslations("menuImport");
+  const tPlan = useTranslations("plan");
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+  const csvRef = useRef<HTMLInputElement>(null);
+  const [csvError, setCsvError] = useState<string | null>(null);
+  const [readingCsv, startReadingCsv] = useTransition();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [text, setText] = useState("");
   const [draft, setDraft] = useState<Category[] | null>(null);
@@ -127,6 +145,32 @@ export function MenuImport({ configured, currency }: { configured: boolean; curr
     }
   }
 
+  function readCsv(file: File | undefined) {
+    if (csvRef.current) csvRef.current.value = "";
+    if (!file) return;
+    setCsvError(null);
+    startReadingCsv(async () => {
+      let text: string;
+      try {
+        text = await file.text();
+      } catch {
+        setCsvError(t("csvErrors.unreadable"));
+        return;
+      }
+      const result = await readMenuCsv(text);
+      if (!result.ok) {
+        setCsvError(t(`csvErrors.${result.error}`));
+        return;
+      }
+      setDraft(
+        result.draft.categories.map((c) => ({
+          name: c.name,
+          items: c.items.map((i) => ({ ...i, include: true })),
+        })),
+      );
+    });
+  }
+
   function save() {
     if (!draft) return;
     const categories = draft
@@ -164,14 +208,6 @@ export function MenuImport({ configured, currency }: { configured: boolean; curr
   const included = draft?.reduce((s, c) => s + c.items.filter((i) => i.include).length, 0) ?? 0;
   const noPrice =
     draft?.reduce((s, c) => s + c.items.filter((i) => i.include && !i.price).length, 0) ?? 0;
-
-  if (!configured) {
-    return (
-      <p className="text-muted-foreground rounded-xl border border-dashed px-4 py-10 text-center">
-        {t("notConfigured")}
-      </p>
-    );
-  }
 
   // ---------- Step 2: review ----------
   if (draft) {
@@ -321,7 +357,84 @@ export function MenuImport({ configured, currency }: { configured: boolean; curr
     );
   }
 
-  // ---------- Step 1: photos / text ----------
+  const csvSection = (
+    <section className="bg-card flex flex-col gap-3 rounded-xl border p-4 sm:p-5">
+      <div className="flex items-start gap-3">
+        <FileSpreadsheet className="text-primary mt-0.5 size-5 shrink-0" aria-hidden />
+        <div className="min-w-0 flex-1">
+          <h2 className="flex items-center gap-2 font-semibold">
+            {t("csvTitle")}
+            {!pro && (
+              <Link
+                href="/admin/plan"
+                className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold"
+              >
+                <Lock className="size-3" aria-hidden />
+                {tPlan("pro")}
+              </Link>
+            )}
+          </h2>
+          <p className="text-muted-foreground mt-1 text-sm">{t("csvHint")}</p>
+        </div>
+      </div>
+      <input
+        ref={csvRef}
+        type="file"
+        accept=".csv,text/csv,text/plain"
+        className="hidden"
+        onChange={(e) => readCsv(e.target.files?.[0])}
+      />
+      {csvError && (
+        <p className="text-destructive text-sm" role="alert">
+          {csvError}
+        </p>
+      )}
+      <div className="flex flex-wrap gap-2">
+        {pro ? (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => csvRef.current?.click()}
+            disabled={readingCsv}
+            className="gap-2"
+          >
+            {readingCsv ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <FileSpreadsheet className="size-4" />
+            )}
+            {t("csvChoose")}
+          </Button>
+        ) : (
+          <Link href="/admin/plan" className={cn(buttonVariants({ variant: "outline" }), "gap-2")}>
+            <Lock className="size-4" aria-hidden />
+            {t("csvChoose")}
+          </Link>
+        )}
+        <a
+          href="/admin/export/menu?template=1"
+          download
+          className={cn(buttonVariants({ variant: "ghost" }), "gap-2")}
+        >
+          <Download className="size-4" aria-hidden />
+          {t("csvTemplate")}
+        </a>
+      </div>
+    </section>
+  );
+
+  // ---------- Step 1: photos / text, or a CSV file ----------
+  if (!configured) {
+    return (
+      <div className="flex flex-col gap-4">
+        {csvSection}
+        <p className="text-muted-foreground rounded-xl border border-dashed px-4 py-10 text-center">
+          {t("notConfigured")}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <section className="bg-card flex flex-col gap-4 rounded-xl border p-4 sm:p-5">
@@ -399,6 +512,7 @@ export function MenuImport({ configured, currency }: { configured: boolean; curr
         {reading && <ReadingProgress progress={progress} />}
       </section>
       <p className="text-muted-foreground text-xs">{t("privacy")}</p>
+      {csvSection}
     </div>
   );
 }

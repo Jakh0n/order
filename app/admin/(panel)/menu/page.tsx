@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
+import { ExportButton } from "@/components/admin/export-button";
 import { AddCategoryForm } from "@/components/admin/menu/add-category-form";
 import { CategoryCard } from "@/components/admin/menu/category-card";
 import { PageHeader, PageShell } from "@/components/admin/page-shell";
@@ -10,6 +11,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { requireOwner } from "@/lib/auth/owner";
 import { getAdminMenu } from "@/lib/menu/admin-data";
+import { isPro } from "@/lib/plan";
 
 export default function AdminMenuPage() {
   return (
@@ -35,14 +37,17 @@ async function AdminMenu() {
         title={tAdmin("products")}
         description={tAdmin("descriptions.products")}
         actions={
-          // AI: photo of a paper menu → dishes
-          <Link
-            href="/admin/menu/import"
-            className={buttonVariants({ variant: "outline", className: "gap-2" })}
-          >
-            <Sparkles className="size-4" aria-hidden />
-            {tImport("button")}
-          </Link>
+          <>
+            {/* AI photo or CSV file → dishes */}
+            <Link
+              href="/admin/menu/import"
+              className={buttonVariants({ variant: "outline", className: "gap-2" })}
+            >
+              <Sparkles className="size-4" aria-hidden />
+              {tImport("button")}
+            </Link>
+            {categories.length > 0 && <ExportButton href="/admin/export/menu" pro={isPro(store)} />}
+          </>
         }
       />
       <AddCategoryForm />

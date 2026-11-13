@@ -1308,7 +1308,7 @@
     }
   },
   "menuImport": {
-    "button": "Import from photo",
+    "button": "Import menu",
     "title": "Import your menu",
     "lead": "Take a photo of your paper menu — AI reads the dishes and prices. You check everything before it's added.",
     "back": "Back to products",
@@ -1348,7 +1348,20 @@
       "saveFailed": "Couldn't save the dishes. Nothing was added — please try again.",
       "unauthorized": "Sign in again and retry."
     },
-    "readingCount": "Read {count, plural, one {# dish} other {# dishes}} so far…"
+    "readingCount": "Read {count, plural, one {# dish} other {# dishes}} so far…",
+    "csvTitle": "From a spreadsheet (CSV)",
+    "csvHint": "One dish per row: Category, Name, Description, Price, Options. Export from Excel or Google Sheets as CSV. You check everything before it's added.",
+    "csvChoose": "Choose CSV file",
+    "csvTemplate": "Download example",
+    "csvDefaultCategory": "Menu",
+    "csvErrors": {
+      "pro": "Importing from CSV is a Pro feature.",
+      "tooLarge": "The file is too big for a menu.",
+      "empty": "No dishes found. Check that the first row has the column names.",
+      "noNameColumn": "No “Name” column found. Start from the example file.",
+      "tooMany": "Too many dishes: up to 50 categories and 200 dishes in each.",
+      "unreadable": "Couldn't read the file. Save it as CSV (UTF-8) and try again."
+    }
   },
   "export": {
     "button": "Export CSV",
