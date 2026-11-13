@@ -5,6 +5,7 @@ import { after } from "next/server";
 import { prisma } from "@/lib/db";
 import { insertOrder } from "@/lib/orders/insert";
 import type { PromoProblem } from "@/lib/orders/promo";
+import { distancePricingOf, quoteDelivery } from "@/lib/delivery-distance";
 import { isPro } from "@/lib/plan";
 import { notifyNewOrder } from "@/lib/push/send";
 import { clientIp, rateLimitAll, RULES } from "@/lib/rate-limit";
@@ -25,6 +26,7 @@ export type CreateOrderError =
   | "tooMany"
   | "timeUnavailable"
   | "tableUnavailable"
+  | "tooFar"
   | PromoProblem
   | "server";
 
@@ -36,6 +38,8 @@ export type CreateOrderResult =
       /** maydon -> "checkout.errors.*" kaliti */
       fieldErrors?: Record<string, string>;
       minOrder?: number;
+      /** tooFar: the farthest distance the store delivers to */
+      maxKm?: number;
     };
 
 /** Mijoz checkout'i */
@@ -109,11 +113,18 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
     }[data.paymentMethod];
     if (!paymentAllowed) return { ok: false, error: "paymentUnavailable" };
 
+    // Delivery price: by distance from the store (Pro) when the customer shared a location,
+    // otherwise the flat fee. Too far → no order (the checkout shows the same limit).
+    const quote = quoteDelivery(store.deliveryFee, distancePricingOf(store, isPro(store)), data);
+    if (data.type === "DELIVERY" && quote.kind === "tooFar") {
+      return { ok: false, error: "tooFar", maxKm: quote.maxKm };
+    }
+
     const result = await insertOrder({
       ...data,
       storeId: store.id,
       currency: store.currency,
-      deliveryFee: store.deliveryFee,
+      deliveryFee: quote.kind === "tooFar" ? store.deliveryFee : quote.fee,
       // Pro-only: free delivery threshold and promo codes
       freeDeliveryFrom: isPro(store) ? store.freeDeliveryFrom : null,
       // No minimum at a table (a single coffee is a fine order); applies to pickup/delivery

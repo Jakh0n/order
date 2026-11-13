@@ -3,6 +3,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 
 import { JOIN, prisma } from "@/lib/db";
+import { distancePricingOf } from "@/lib/delivery-distance";
 import { asEmailMode } from "@/lib/orders/promo";
 import { isPro } from "@/lib/plan";
 import { parseNavLinks, parsePinned } from "@/lib/nav";
@@ -170,6 +171,10 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
       transferDetails: true,
       deliveryFee: true,
       freeDeliveryFrom: true,
+      deliveryByDistance: true,
+      deliveryTiers: true,
+      latitude: true,
+      longitude: true,
       plan: true,
       paidUntil: true,
       checkoutEmail: true,
@@ -195,6 +200,7 @@ export async function getCheckoutSettings(slug: string): Promise<CheckoutSetting
     deliveryFee: store.deliveryFee,
     // Pro-only on Free: no free-delivery threshold, no promo field
     freeDeliveryFrom: isPro(store) ? store.freeDeliveryFrom : null,
+    distance: distancePricingOf(store, isPro(store)),
     hasPromoCodes: isPro(store) && store.checkoutPromo && store._count.promoCodes > 0,
     emailField: asEmailMode(store.checkoutEmail),
     showNote: store.checkoutNote,

@@ -2,6 +2,7 @@ import "server-only";
 
 import { defaultLocale, isLocale } from "@/i18n/config";
 import { prisma } from "@/lib/db";
+import { parseDeliveryTiers } from "@/lib/delivery-distance";
 import type { StoreSettingsInput } from "@/lib/validators";
 
 /** Sozlamalar formasi uchun boshlang'ich qiymatlar (faqat shu do'konniki) */
@@ -26,6 +27,10 @@ export async function getStoreSettings(storeId: string): Promise<StoreSettingsIn
     minOrder: store.minOrder,
     deliveryFee: store.deliveryFee,
     freeDeliveryFrom: store.freeDeliveryFrom,
+    deliveryByDistance: store.deliveryByDistance ?? false,
+    latitude: store.latitude,
+    longitude: store.longitude,
+    deliveryTiers: parseDeliveryTiers(store.deliveryTiers),
     acceptCash: store.acceptCash,
     acceptCardOnDelivery: store.acceptCardOnDelivery,
     acceptTransfer: store.acceptTransfer,

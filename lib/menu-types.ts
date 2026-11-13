@@ -1,3 +1,4 @@
+import type { DistancePricing } from "@/lib/delivery-distance";
 import type { NavLink } from "@/lib/nav";
 import type { Popup } from "@/lib/popup";
 import type { Section } from "@/lib/sections";
@@ -110,6 +111,8 @@ export interface CheckoutSettings {
   deliveryFee: number;
   /** Free delivery from this items subtotal; null = off */
   freeDeliveryFrom: number | null;
+  /** Delivery price by distance (Pro), null = flat fee only */
+  distance: DistancePricing | null;
   /** Promo field shown: Pro + active codes + Website → Checkout switch */
   hasPromoCodes: boolean;
   /** Website → Checkout */

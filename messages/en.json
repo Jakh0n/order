@@ -255,7 +255,8 @@
       "promoUsedUp": "This code has been used up",
       "promoMinSubtotal": "This code works for orders from {amount}",
       "emailInvalid": "Enter a valid email",
-      "emailRequired": "Please enter your email"
+      "emailRequired": "Please enter your email",
+      "tooFar": "Too far for delivery: we deliver up to {km} km. Choose pickup or another address."
     },
     "edit": "Edit",
     "timeAsap": "As soon as possible",
@@ -293,7 +294,10 @@
       "none": "No tip",
       "hint": "Goes to the team. You can pay it with your order.",
       "label": "Tip"
-    }
+    },
+    "tooFarHint": "You are {km} km away — we deliver up to {max} km. Choose pickup or another address.",
+    "distanceFee": "{km} km from the store · delivery {fee}",
+    "distanceHint": "Share your location to see the exact delivery price."
   },
   "payment": {
     "CASH": "Cash",
@@ -698,7 +702,11 @@
       "whatsappInvalid": "Invalid number — include the country code, e.g. +15551234567",
       "currencyInvalid": "Invalid currency",
       "timeZoneInvalid": "Invalid time zone",
-      "pixelInvalid": "Pixel ID is 8–20 digits"
+      "pixelInvalid": "Pixel ID is 8–20 digits",
+      "locationRequired": "Set the store location",
+      "tiersRequired": "Add at least one range",
+      "tiersOrder": "Each range must be farther than the one before",
+      "kmInvalid": "Enter a distance from 0.1 to 200 km"
     },
     "deliveryFee": "Delivery fee ({currency})",
     "deliveryFeeHint": "Added to every delivery order. 0 — free delivery.",
@@ -717,7 +725,26 @@
     },
     "marketingSection": "Marketing",
     "metaPixelId": "Meta Pixel ID",
-    "metaPixelHint": "From Meta Events Manager → Data sources. We send page views, add to cart, checkout and purchase with the order total — never names or phone numbers."
+    "metaPixelHint": "From Meta Events Manager → Data sources. We send page views, add to cart, checkout and purchase with the order total — never names or phone numbers.",
+    "deliveryByDistance": "Price by distance",
+    "deliveryByDistanceHint": "Charge by how far the customer is from your store. Customers who don't share their location pay the delivery fee above.",
+    "storeLocation": "Store location",
+    "storeLocationHint": "Distance is measured from here. Tap the button while you are at the store.",
+    "storeLocationSet": "Location saved",
+    "storeLocationUse": "Use my current location",
+    "storeLocationUpdate": "Update location",
+    "storeLocationUnsupported": "This browser can't share a location.",
+    "storeLocationDenied": "Location access is blocked. Allow it in the browser settings.",
+    "storeLocationUnavailable": "Couldn't get the location. Try again outside or near a window.",
+    "viewOnMap": "View on map",
+    "deliveryTiers": "Delivery price by distance",
+    "upTo": "Up to",
+    "km": "km",
+    "tierKm": "Distance in km",
+    "tierFee": "Delivery fee ({currency})",
+    "removeTier": "Remove range",
+    "addTier": "Add range",
+    "deliveryTiersHint": "Distance is a straight line from the store. Farther than the last range — delivery isn't offered."
   },
   "signup": {
     "title": "Open your store",
