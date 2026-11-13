@@ -566,7 +566,11 @@
     "activeNow": "Active now",
     "openOrder": "Open order #{number}",
     "orderTitle": "Order #{number}",
-    "filterStatus": "Filter by status"
+    "filterStatus": "Filter by status",
+    "askReview": "Ask for a review",
+    "reviewCopied": "Message copied — paste it in the chat",
+    "reviewReceived": "Customer rated {rating} of 5",
+    "reviewRequest": "Hi {name}! Thank you for your order #{number} at {store}. How was it? Your review takes 10 seconds and helps us a lot: {link}"
   },
   "adminMenu": {
     "addCategory": "Add category",

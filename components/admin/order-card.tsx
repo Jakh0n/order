@@ -11,6 +11,7 @@ import {
   Armchair,
   ChefHat,
   Printer,
+  Star,
 } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
@@ -20,6 +21,7 @@ import { mapsLink } from "@/lib/maps";
 import { isNextDaySlot } from "@/lib/store-hours";
 import { cn } from "@/lib/utils";
 
+import { AskReviewButton } from "./ask-review-button";
 import { OrderActions } from "./order-actions";
 
 // Text contrast ≥ 4.5:1 for every badge (white on amber/sky/emerald-600 is too light)
@@ -56,8 +58,11 @@ export async function OrderCard({
   stale,
   receiptUrl,
   plain,
+  origin,
 }: {
-  order: Order & { items: OrderItem[] };
+  order: Order & { items: OrderItem[]; review?: { rating: number } | null };
+  /** Site origin for links in messages to the customer (getRequestOrigin) */
+  origin?: string;
   /** Store time zone for the order time */
   timeZone: string;
   storeName: string;
@@ -298,6 +303,29 @@ export async function OrderCard({
           </a>
         ))}
       </div>
+
+      {/* Completed: ask the customer for a review (the form is on their order page) */}
+      {order.status === "COMPLETED" &&
+        (order.review ? (
+          <p className="flex items-center gap-1.5 text-sm">
+            <Star className="size-4 fill-amber-400 text-amber-400" aria-hidden />
+            {t("adminOrders.reviewReceived", { rating: order.review.rating })}
+          </p>
+        ) : (
+          order.customerPhone &&
+          origin && (
+            <AskReviewButton
+              channel={channel}
+              phone={order.customerPhone}
+              text={t("adminOrders.reviewRequest", {
+                name: order.customerName.trim().split(/\s+/)[0],
+                number: order.number,
+                store: storeName,
+                link: `${origin}/o/${order.id}`,
+              })}
+            />
+          )
+        ))}
 
       <OrderActions
         orderId={order.id}

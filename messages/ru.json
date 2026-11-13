@@ -566,7 +566,11 @@
     "activeNow": "Активные",
     "openOrder": "Открыть заказ №{number}",
     "orderTitle": "Заказ №{number}",
-    "filterStatus": "Фильтр по статусу"
+    "filterStatus": "Фильтр по статусу",
+    "askReview": "Попросить отзыв",
+    "reviewCopied": "Сообщение скопировано — вставьте его в чат",
+    "reviewReceived": "Клиент поставил {rating} из 5",
+    "reviewRequest": "Здравствуйте, {name}! Спасибо за заказ №{number} в {store}. Как всё прошло? Отзыв займёт 10 секунд и очень нам поможет: {link}"
   },
   "adminMenu": {
     "addCategory": "Добавить категорию",
