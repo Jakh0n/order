@@ -1432,5 +1432,76 @@
       "first": "Birinchi buyurtma",
       "last": "Oxirgi buyurtma"
     }
+  },
+  "legal": {
+    "updated": "Yangilangan: {date}",
+    "contact": "Savollar yoki ma'lumotni o'chirish so'rovi bo'lsa, bizga Telegram'da yozing: <link></link>.",
+    "contactNoLink": "Savollar yoki ma'lumotni o'chirish so'rovi bo'lsa, buyurtma bergan do'koningizga murojaat qiling yoki Flami admin panelidan bizga yozing.",
+    "footerPrivacy": "Maxfiylik",
+    "footerTerms": "Shartlar",
+    "signupAgree": "Do'kon ochish orqali <terms>Shartlar</terms> va <privacy>Maxfiylik siyosati</privacy>ga rozilik bildirasiz.",
+    "checkoutAgree": "Buyurtma berish orqali Flami <privacy>Maxfiylik siyosati</privacy>ga rozilik bildirasiz.",
+    "privacy": {
+      "title": "Maxfiylik siyosati",
+      "metaDescription": "Flami qanday ma'lumot yig'adi, nima uchun, kim ishlaydi va uni qanday o'chirish mumkin.",
+      "intro": "Flami (flami.org) ovqat bizneslariga onlayn buyurtma qabul qilishda yordam beradi. Har bir do'kon mustaqil biznes. Buyurtmalardagi mijoz ma'lumotlaridan qanday foydalanishni do'kon hal qiladi, Flami esa ularni do'kon topshirig'i bilan qayta ishlaydi. Bu sahifada nima yig'ishimiz va nima uchun ekani yozilgan.",
+      "sections": [
+        {
+          "title": "Mijoz buyurtma berishda nimalarni kiritadi",
+          "body": "Ism, telefon raqami va do'kon so'rasa email. Yetkazish uchun: manzil, mo'ljal va \"Joylashuvimni ishlatish\"ni bossangiz koordinatalaringiz. Shuningdek buyurtmaning o'zi, izohingiz, to'lov usuli va bank o'tkazmasida siz yuklagan chek rasmi. Sharh qoldirsangiz, bahoingiz va izohingiz saqlanadi, ommaga esa faqat ismingiz ko'rsatiladi."
+        },
+        {
+          "title": "Do'kon egasi nimalarni kiritadi",
+          "body": "Email, parol (faqat qaytarib bo'lmaydigan xesh ko'rinishida saqlanadi), do'kon ma'lumotlari, menyu va sozlamalar."
+        },
+        {
+          "title": "Brauzeringizda nimalar saqlanadi",
+          "body": "Savat, oxirgi buyurtmangiz (\"Buyurtmani kuzatish\" uchun), keyingi buyurtma uchun ismingiz va telefoningiz hamda ko'rinish sozlamalari. Bular sizning qurilmangizda qoladi. Cookie'lardan faqat egani tizimda saqlab turish, tilni va admin menyusi ko'rinishini eslab qolish uchun foydalanamiz. Flami'ning o'zi reklama cookie'laridan foydalanmaydi."
+        },
+        {
+          "title": "Ma'lumotdan nima uchun foydalanamiz",
+          "body": "Buyurtmani do'konga yetkazish, holatini ko'rsatish, do'konning siz bilan bog'lanishi, suiiste'moldan himoyalanish (IP manzillar cheklovlarda ishlatilishidan oldin xeshlanadi) va xatolarni tuzatish uchun. Shaxsiy ma'lumotlarni sotmaymiz va karta orqali to'lov qabul qilmaymiz."
+        },
+        {
+          "title": "Ma'lumotni kimlar qayta ishlaydi",
+          "body": "Vercel (hosting), Supabase (ma'lumotlar bazasi va fayllar, serverlar Yaponiyada), Sentry (xatolar hisoboti, telefon va email olib tashlangan holda), OpenStreetMap Nominatim (koordinatani manzilga aylantiradi) va OpenAI (faqat ega menyuni import qilish uchun yuklagan menyu rasmlari). Buyurtma xabarini siz o'zingiz Telegram yoki WhatsApp ilovangiz orqali yuborasiz. Agar do'kon Meta Pixel'ni yoqqan bo'lsa, o'sha do'kon reklamasi uchun Meta'ga anonim sahifa va buyurtma hodisalari (ism va telefonsiz) yuboriladi."
+        },
+        {
+          "title": "Saqlash muddati va huquqlaringiz",
+          "body": "Buyurtmalar do'konning hisobi mavjud ekan saqlanadi. Ma'lumotlaringiz nusxasini, tuzatishni yoki o'chirishni so'rashingiz mumkin. Do'konga yoki bizga murojaat qiling, biz so'rovni yetkazamiz."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Foydalanish shartlari",
+      "metaDescription": "Flami'dan do'kon egasi va mijoz sifatida foydalanish qoidalari.",
+      "intro": "Bu shartlar Flami'dan (flami.org) foydalanadigan hammaga tegishli: unda do'kon yuritadigan egalarga va o'sha do'konlardan buyurtma beradigan mijozlarga.",
+      "sections": [
+        {
+          "title": "Flami nima",
+          "body": "Flami do'konga onlayn menyu, buyurtma rasmiylashtirish va buyurtmalar panelini beradi. Savdo do'kon va mijoz o'rtasida bo'ladi. Flami sotuvchi emas: biz ovqat tayyorlamaymiz, yetkazmaymiz va to'lov qabul qilmaymiz."
+        },
+        {
+          "title": "Do'kon egalari",
+          "body": "Menyu, narxlar, ovqat sifati va xavfsizligi, yetkazish, pulni qaytarish, qabul qiladigan to'lovlaringiz va biznesingizga tegishli qonunlarga rioya qilish, jumladan mijozlar ma'lumotidan qanday foydalanishingiz uchun siz javobgarsiz. Parolingizni ehtiyot qiling. Taqiqlangan mahsulot sotish, spam yuborish yoki Flami orqali odamlarni aldash mumkin emas."
+        },
+        {
+          "title": "Tariflar va to'lov",
+          "body": "Free tarifi kelayotgan buyurtmalarni hech qachon cheklamaydi. Pro oylik yoki yillik to'lov evaziga qo'shimcha vositalar beradi, to'lov bizga to'g'ridan-to'g'ri qilinadi. Uzaytirilmasa, Pro to'langan muddat oxirida tugaydi, ma'lumotlaringiz esa saqlanib qoladi. Narxlar o'zgarishi mumkin. O'zgarish sizga ta'sir qilishidan oldin xabar beramiz, birinchi do'konlarga va'da qilingan narx esa saqlanadi."
+        },
+        {
+          "title": "Mijozlar",
+          "body": "Narxlar, mavjudlik va yetkazish vaqtini do'kon belgilaydi. Buyurtma, to'lov yoki pulni qaytarish bo'yicha savollar do'konga beriladi. Iltimos, to'g'ri aloqa ma'lumotlarini kiriting va soxta buyurtma bermang."
+        },
+        {
+          "title": "Bizning xizmat",
+          "body": "Flami barqaror va to'g'ri ishlashi uchun harakat qilamiz, lekin xizmat \"boricha\" taqdim etiladi. Funksiyalarni o'zgartirishimiz va bu shartlarni yoki qonunni buzgan do'konni to'xtatib qo'yishimiz mumkin. Qonun ruxsat bergan darajada Flami do'konning mahsuloti yoki xizmati, yoki xizmatdagi uzilishlar sababli yetgan zarar uchun javobgar emas."
+        },
+        {
+          "title": "O'zgarishlar",
+          "body": "Bu shartlarni yangilashimiz mumkin. Tepadagi sana amaldagi versiyani ko'rsatadi. O'zgarishdan keyin Flami'dan foydalanishda davom etsangiz, yangi shartlarni qabul qilgan bo'lasiz."
+        }
+      ]
+    }
   }
 }

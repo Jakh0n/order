@@ -23,6 +23,7 @@ type SlugStatus = { state: "idle" | "checking" } | ({ state: "done" } & SlugChec
 
 export function SignupForm({ host }: { host: string }) {
   const t = useTranslations("signup");
+  const tLegal = useTranslations("legal");
   const currentLocale = useLocale();
   const locale = isLocale(currentLocale) ? currentLocale : defaultLocale;
   const [step, setStep] = useState<1 | 2>(1);
@@ -277,6 +278,20 @@ export function SignupForm({ host }: { host: string }) {
         </div>
 
         <p className="text-muted-foreground text-xs">{t("terms")}</p>
+        <p className="text-muted-foreground text-xs">
+          {tLegal.rich("signupAgree", {
+            terms: (chunks) => (
+              <a href="/terms" target="_blank" className="underline underline-offset-2">
+                {chunks}
+              </a>
+            ),
+            privacy: (chunks) => (
+              <a href="/privacy" target="_blank" className="underline underline-offset-2">
+                {chunks}
+              </a>
+            ),
+          })}
+        </p>
 
         <div className="flex gap-2">
           <Button
