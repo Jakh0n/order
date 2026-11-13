@@ -4,6 +4,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { AnalyticsTabs } from "@/components/admin/analytics/analytics-tabs";
+import { ExportButton } from "@/components/admin/export-button";
 import { UpgradeCard } from "@/components/admin/upgrade";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,7 +78,13 @@ async function CustomersView({
         <AnalyticsTabs />
       </div>
 
-      <p className="text-muted-foreground text-sm">{t("customersLead", { count: total })}</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-muted-foreground text-sm">{t("customersLead", { count: total })}</p>
+        <ExportButton
+          pro
+          href={`/admin/export/customers?${new URLSearchParams({ ...(q && { q }), sort })}`}
+        />
+      </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* GET form: search survives reloads, no client JS */}

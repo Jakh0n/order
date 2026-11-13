@@ -9,6 +9,7 @@ import { prisma } from "@/lib/db";
 
 export const CUSTOMER_SORTS = ["recent", "orders", "spent"] as const;
 export type CustomerSort = (typeof CUSTOMER_SORTS)[number];
+/** The page shows this many; the CSV export asks for more */
 const LIMIT = 200;
 
 export interface Customer {
@@ -23,7 +24,7 @@ export interface Customer {
 
 export async function listCustomers(
   store: { id: string; currency: string },
-  { q, sort }: { q: string; sort: CustomerSort },
+  { q, sort, limit = LIMIT }: { q: string; sort: CustomerSort; limit?: number },
 ): Promise<{ customers: Customer[]; total: number }> {
   const search = q.trim().slice(0, 50);
   const like = `%${search.replace(/[%_\\]/g, "\\$&")}%`;
@@ -64,7 +65,7 @@ export async function listCustomers(
       ${base}
       ${filter}
       ORDER BY ${order}
-      LIMIT ${LIMIT}`,
+      LIMIT ${limit}`,
     prisma.$queryRaw<{ total: number }[]>`
       SELECT count(DISTINCT o."customerPhone")::int AS total
       FROM "Order" o

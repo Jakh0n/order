@@ -558,7 +558,10 @@
     "noMatches": "Заказы не найдены",
     "historyLimit": "В этом месяце у вас {count} заказов. Free хранит в истории {limit} — завершённые заказы сверх этого скрыты (активные видны всегда).",
     "staleShort": "Не принят 5+ мин — клиент мог не отправить сообщение",
-    "activeNow": "Активные"
+    "activeNow": "Активные",
+    "openOrder": "Открыть заказ №{number}",
+    "orderTitle": "Заказ №{number}",
+    "filterStatus": "Фильтр по статусу"
   },
   "adminMenu": {
     "addCategory": "Добавить категорию",
@@ -1341,5 +1344,40 @@
       "unauthorized": "Войдите снова и повторите."
     },
     "readingCount": "Прочитано {count, plural, one {# блюдо} few {# блюда} many {# блюд} other {# блюда}}…"
+  },
+  "export": {
+    "button": "Экспорт CSV",
+    "orders": {
+      "number": "Заказ",
+      "date": "Дата",
+      "status": "Статус",
+      "type": "Тип",
+      "table": "Стол",
+      "customer": "Клиент",
+      "phone": "Телефон",
+      "email": "Email",
+      "address": "Адрес",
+      "landmark": "Ориентир",
+      "time": "Время",
+      "items": "Блюда",
+      "subtotal": "Сумма блюд",
+      "discount": "Скидка",
+      "promoCode": "Промокод",
+      "deliveryFee": "Доставка",
+      "tip": "Чаевые",
+      "total": "Итого",
+      "currency": "Валюта",
+      "payment": "Способ оплаты",
+      "paid": "Статус оплаты",
+      "comment": "Комментарий"
+    },
+    "customers": {
+      "name": "Имя",
+      "phone": "Телефон",
+      "orders": "Заказов",
+      "spent": "Потрачено ({currency})",
+      "first": "Первый заказ",
+      "last": "Последний заказ"
+    }
   }
 }

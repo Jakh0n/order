@@ -40,12 +40,15 @@ export function OrderActions({
   status,
   type,
   paid,
+  compact,
 }: {
   orderId: string;
   number: number;
   status: OrderStatusValue;
   type: OrderTypeValue;
   paid: boolean;
+  /** List row: only the main "next step" button */
+  compact?: boolean;
 }) {
   const t = useTranslations("adminOrders");
   const [pending, startTransition] = useTransition();
@@ -87,6 +90,16 @@ export function OrderActions({
             },
           },
         }),
+    );
+  }
+
+  if (compact) {
+    if (!next) return null;
+    return (
+      <Button disabled={pending} onClick={() => advance(next)} className="h-10 min-w-24">
+        {busy === "next" && <Loader2 className="animate-spin" />}
+        {t(NEXT_LABEL[next] ?? "complete")}
+      </Button>
     );
   }
 

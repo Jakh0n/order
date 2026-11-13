@@ -558,7 +558,10 @@
     "noMatches": "Hech qanday buyurtma topilmadi",
     "historyLimit": "Bu oy {count} ta buyurtma oldingiz. Free tarixda {limit} tasini saqlaydi — undan keyingi yakunlangan buyurtmalar yashirilgan (faollari doim ko'rinadi).",
     "staleShort": "5+ daqiqa qabul qilinmagan — mijoz xabar yubormagan bo'lishi mumkin",
-    "activeNow": "Faol"
+    "activeNow": "Faol",
+    "openOrder": "Buyurtma №{number} ni ochish",
+    "orderTitle": "Buyurtma №{number}",
+    "filterStatus": "Holat bo'yicha saralash"
   },
   "adminMenu": {
     "addCategory": "Kategoriya qo'shish",
@@ -1341,5 +1344,40 @@
       "unauthorized": "Qayta kiring va urinib ko'ring."
     },
     "readingCount": "Hozircha {count, plural, other {# ta taom}} o'qildi…"
+  },
+  "export": {
+    "button": "CSV eksport",
+    "orders": {
+      "number": "Buyurtma",
+      "date": "Sana",
+      "status": "Holat",
+      "type": "Turi",
+      "table": "Stol",
+      "customer": "Mijoz",
+      "phone": "Telefon",
+      "email": "Email",
+      "address": "Manzil",
+      "landmark": "Mo'ljal",
+      "time": "Vaqt",
+      "items": "Taomlar",
+      "subtotal": "Taomlar summasi",
+      "discount": "Chegirma",
+      "promoCode": "Promo-kod",
+      "deliveryFee": "Yetkazish",
+      "tip": "Choychaqa",
+      "total": "Jami",
+      "currency": "Valyuta",
+      "payment": "To'lov usuli",
+      "paid": "To'lov holati",
+      "comment": "Izoh"
+    },
+    "customers": {
+      "name": "Ism",
+      "phone": "Telefon",
+      "orders": "Buyurtmalar",
+      "spent": "Sarflagan ({currency})",
+      "first": "Birinchi buyurtma",
+      "last": "Oxirgi buyurtma"
+    }
   }
 }

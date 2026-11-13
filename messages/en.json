@@ -558,7 +558,10 @@
     "noMatches": "No orders match your search",
     "historyLimit": "You got {count} orders this month. The Free plan keeps {limit} in history — finished orders after that are hidden (active ones always show).",
     "staleShort": "Not accepted for 5+ min — customer may not have sent the message",
-    "activeNow": "Active now"
+    "activeNow": "Active now",
+    "openOrder": "Open order #{number}",
+    "orderTitle": "Order #{number}",
+    "filterStatus": "Filter by status"
   },
   "adminMenu": {
     "addCategory": "Add category",
@@ -1341,5 +1344,40 @@
       "unauthorized": "Sign in again and retry."
     },
     "readingCount": "Read {count, plural, one {# dish} other {# dishes}} so far…"
+  },
+  "export": {
+    "button": "Export CSV",
+    "orders": {
+      "number": "Order",
+      "date": "Date",
+      "status": "Status",
+      "type": "Type",
+      "table": "Table",
+      "customer": "Customer",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "landmark": "Landmark",
+      "time": "Requested time",
+      "items": "Items",
+      "subtotal": "Items total",
+      "discount": "Discount",
+      "promoCode": "Promo code",
+      "deliveryFee": "Delivery",
+      "tip": "Tip",
+      "total": "Total",
+      "currency": "Currency",
+      "payment": "Payment method",
+      "paid": "Payment status",
+      "comment": "Note"
+    },
+    "customers": {
+      "name": "Name",
+      "phone": "Phone",
+      "orders": "Orders",
+      "spent": "Spent ({currency})",
+      "first": "First order",
+      "last": "Last order"
+    }
   }
 }
