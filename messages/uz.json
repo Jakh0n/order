@@ -1308,7 +1308,7 @@
     }
   },
   "menuImport": {
-    "button": "Rasmdan import",
+    "button": "Menyuni import qilish",
     "title": "Menyuni import qilish",
     "lead": "Qog'oz menyuingizni rasmga oling — sun'iy intellekt taom va narxlarni o'qiydi. Qo'shishdan oldin hammasini tekshirasiz.",
     "back": "Mahsulotlarga qaytish",
@@ -1348,7 +1348,20 @@
       "saveFailed": "Taomlarni saqlab bo'lmadi. Hech narsa qo'shilmadi — qayta urinib ko'ring.",
       "unauthorized": "Qayta kiring va urinib ko'ring."
     },
-    "readingCount": "Hozircha {count, plural, other {# ta taom}} o'qildi…"
+    "readingCount": "Hozircha {count, plural, other {# ta taom}} o'qildi…",
+    "csvTitle": "Jadvaldan (CSV)",
+    "csvHint": "Har bir qatorda bitta taom: Category, Name, Description, Price, Options. Excel yoki Google Sheets'dan CSV qilib saqlang. Qo'shishdan oldin hammasini tekshirasiz.",
+    "csvChoose": "CSV faylni tanlash",
+    "csvTemplate": "Namunani yuklab olish",
+    "csvDefaultCategory": "Menyu",
+    "csvErrors": {
+      "pro": "CSV'dan import Pro tarifida mavjud.",
+      "tooLarge": "Fayl menyu uchun juda katta.",
+      "empty": "Taomlar topilmadi. Birinchi qatorda ustun nomlari borligini tekshiring.",
+      "noNameColumn": "“Name” ustuni topilmadi. Namuna fayldan boshlang.",
+      "tooMany": "Taomlar juda ko'p: ko'pi bilan 50 ta kategoriya va har birida 200 ta taom.",
+      "unreadable": "Faylni o'qib bo'lmadi. Uni CSV (UTF-8) qilib saqlang va qayta urinib ko'ring."
+    }
   },
   "export": {
     "button": "CSV eksport",

@@ -7,6 +7,7 @@ import { MenuImport } from "@/components/admin/menu/import/menu-import";
 import { Skeleton } from "@/components/ui/skeleton";
 import { aiConfigured } from "@/lib/ai/openai";
 import { requireOwner } from "@/lib/auth/owner";
+import { isPro } from "@/lib/plan";
 
 // Reading a big menu with AI can take ~1 minute; Server Actions on this page get up to 2
 export const maxDuration = 120;
@@ -39,7 +40,7 @@ async function ImportView() {
           <p className="text-muted-foreground mt-1 max-w-prose text-sm">{t("lead")}</p>
         </div>
       </div>
-      <MenuImport configured={aiConfigured()} currency={store.currency} />
+      <MenuImport configured={aiConfigured()} currency={store.currency} pro={isPro(store)} />
     </>
   );
 }
