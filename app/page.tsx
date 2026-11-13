@@ -26,6 +26,12 @@ import { OrderMessage } from "@/components/landing/order-message";
 import { SiteNav } from "@/components/landing/site-nav";
 import { buttonVariants } from "@/components/ui/button";
 import { siteOrigin } from "@/lib/app-url";
+import {
+  FOUNDING_PRO_MONTHS,
+  FOUNDING_STORES,
+  PRO_PRICE_USD,
+  PRO_PRICE_YEARLY_USD,
+} from "@/lib/plan";
 import { cn } from "@/lib/utils";
 
 const display = Bricolage_Grotesque({
@@ -55,7 +61,68 @@ const FEATURES = [
 ] as const;
 
 const FAQ_KEYS = [1, 2, 3, 4, 5, 6] as const;
-const PRICING_KEYS = ["i1", "i2", "i3", "i4", "i5", "i6"] as const;
+const FREE_KEYS = ["i1", "i2", "i3", "i4", "i5", "i6"] as const;
+const PRO_KEYS = ["p1", "p2", "p3", "p4", "p5", "p6"] as const;
+
+function PriceCard({
+  name,
+  price,
+  per,
+  note,
+  intro,
+  items,
+  cta,
+  highlight,
+}: {
+  name: string;
+  price: string;
+  per: string;
+  note?: string;
+  intro: string;
+  items: string[];
+  cta: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex h-full flex-col rounded-[2.5rem] border-2 p-7 sm:p-10",
+        highlight ? "border-primary bg-primary/[0.03]" : "border-forest/10",
+      )}
+    >
+      <h3 className="font-display text-2xl font-bold tracking-[-0.02em]">{name}</h3>
+      <p className="mt-4 flex items-baseline gap-2">
+        <span className="font-display text-6xl font-bold tracking-[-0.04em] sm:text-7xl">
+          {price}
+        </span>
+        <span className="text-forest/60">{per}</span>
+      </p>
+      {note && <p className="text-forest/60 mt-2 text-sm">{note}</p>}
+      <p className="text-forest/80 mt-6 font-medium">{intro}</p>
+      <ul className="mt-4 grid gap-3">
+        {items.map((item) => (
+          <li key={item} className="flex items-start gap-2.5">
+            <span className="bg-primary mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-white">
+              <Check className="size-3" strokeWidth={3} />
+            </span>
+            <span className="text-forest/85">{item}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-auto pt-9">
+        <Link
+          href="/signup"
+          className={cn(
+            buttonVariants({ size: "lg", variant: highlight ? "default" : "outline" }),
+            "h-13 w-full rounded-full text-base",
+          )}
+        >
+          {cta}
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 export default async function Home() {
   const t = await getTranslations("home");
@@ -216,44 +283,55 @@ export default async function Home() {
 
         {/* Pricing */}
         <section id="pricing" className="scroll-mt-20 py-20 sm:py-28">
-          <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <Reveal>
-              <h2 className="font-display text-4xl font-bold tracking-[-0.03em] sm:text-5xl">
+              <h2 className="font-display max-w-3xl text-4xl font-bold tracking-[-0.03em] sm:text-5xl">
                 {t("pricing.title")}
               </h2>
-              <p className="text-forest/70 mt-5 max-w-md text-lg leading-relaxed">
+              <p className="text-forest/70 mt-5 max-w-2xl text-lg leading-relaxed">
                 {t("pricing.lead")}
               </p>
             </Reveal>
-            <Reveal delay={0.1}>
-              <div className="border-forest/10 rounded-[2.5rem] border-2 p-7 sm:p-10">
-                <p className="flex items-baseline gap-2">
-                  <span className="font-display text-7xl font-bold tracking-[-0.04em]">
-                    {t("pricing.price")}
-                  </span>
-                  <span className="text-forest/60">{t("pricing.per")}</span>
-                </p>
-                <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-                  {PRICING_KEYS.map((key) => (
-                    <li key={key} className="flex items-start gap-2.5">
-                      <span className="bg-primary mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-white">
-                        <Check className="size-3" strokeWidth={3} />
-                      </span>
-                      <span className="text-forest/85">{t(`pricing.${key}`)}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/signup"
-                  className={cn(
-                    buttonVariants({ size: "lg" }),
-                    "mt-9 h-13 w-full rounded-full text-base",
-                  )}
-                >
-                  {t("pricing.cta")}
-                </Link>
-              </div>
+
+            <Reveal delay={0.05}>
+              <p className="bg-primary/10 text-forest mt-10 flex flex-col gap-1 rounded-3xl px-5 py-4 sm:flex-row sm:items-center sm:gap-3 sm:rounded-full sm:px-6">
+                <span className="bg-primary w-fit shrink-0 rounded-full px-3 py-1 text-xs font-bold tracking-wide text-white uppercase">
+                  {t("pricing.foundingLabel")}
+                </span>
+                <span className="text-forest/85 text-sm sm:text-base">
+                  {t("pricing.founding", {
+                    count: FOUNDING_STORES,
+                    months: FOUNDING_PRO_MONTHS,
+                    price: `$${PRO_PRICE_USD}`,
+                  })}
+                </span>
+              </p>
             </Reveal>
+
+            <div className="mt-6 grid gap-5 lg:grid-cols-2">
+              <Reveal delay={0.1}>
+                <PriceCard
+                  name={t("pricing.freeName")}
+                  price="$0"
+                  per={t("pricing.freePer")}
+                  intro={t("pricing.freeIntro")}
+                  items={FREE_KEYS.map((key) => t(`pricing.${key}`))}
+                  cta={t("pricing.cta")}
+                />
+              </Reveal>
+              <Reveal delay={0.15}>
+                <PriceCard
+                  highlight
+                  name={t("pricing.proName")}
+                  price={`$${PRO_PRICE_USD}`}
+                  per={t("pricing.proPer")}
+                  note={t("pricing.proYearly", { price: `$${PRO_PRICE_YEARLY_USD}` })}
+                  intro={t("pricing.proIntro")}
+                  items={PRO_KEYS.map((key) => t(`pricing.${key}`))}
+                  cta={t("pricing.proCta")}
+                />
+              </Reveal>
+            </div>
           </div>
         </section>
 
@@ -337,6 +415,29 @@ function homeJsonLd(description: string) {
         url: origin,
         description,
         publisher: { "@id": `${origin}/#organization` },
+      },
+      {
+        "@type": "SoftwareApplication",
+        name: "Flami",
+        applicationCategory: "BusinessApplication",
+        operatingSystem: "Web",
+        url: origin,
+        description,
+        offers: [
+          { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
+          {
+            "@type": "Offer",
+            name: "Pro",
+            price: String(PRO_PRICE_USD),
+            priceCurrency: "USD",
+            priceSpecification: {
+              "@type": "UnitPriceSpecification",
+              price: String(PRO_PRICE_USD),
+              priceCurrency: "USD",
+              unitCode: "MON",
+            },
+          },
+        ],
       },
     ],
   };

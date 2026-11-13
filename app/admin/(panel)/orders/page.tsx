@@ -1,11 +1,12 @@
 import type { OrderStatus, Prisma } from "@prisma/client";
-import { Plus, Search, X } from "lucide-react";
+import { CircleCheck, Flame, Plus, Receipt, Search, Wallet, X } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { NewOrderAlert } from "@/components/admin/new-order-alert";
 import { OrderCard } from "@/components/admin/order-card";
+import { PageHeader, PageShell, StatTile } from "@/components/admin/page-shell";
 import { PushToggle } from "@/components/admin/push-toggle";
 import { SetupChecklist } from "@/components/admin/setup-checklist";
 import { AutoRefresh } from "@/components/order/auto-refresh";
@@ -129,19 +130,23 @@ async function Orders({
   // Private bucket: short-lived links, one request for the whole page
   const receipts = await receiptUrls(orders.flatMap((o) => (o.receiptPath ? [o.receiptPath] : [])));
 
+  const tAdmin = await getTranslations("admin");
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-6">
-      <div className="flex items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold">{(await getTranslations("admin"))("orders")}</h1>
-        <div className="flex items-center gap-1">
-          <PushToggle />
-          <NewOrderAlert newIds={newOrders.map((o) => o.id)} />
-          <Link href="/admin/orders/new" className={buttonVariants()}>
-            <Plus />
-            {t("newOrder")}
-          </Link>
-        </div>
-      </div>
+    <PageShell width="wide">
+      <PageHeader
+        title={tAdmin("orders")}
+        description={tAdmin("descriptions.orders")}
+        actions={
+          <>
+            <PushToggle />
+            <NewOrderAlert newIds={newOrders.map((o) => o.id)} />
+            <Link href="/admin/orders/new" className={buttonVariants()}>
+              <Plus />
+              {t("newOrder")}
+            </Link>
+          </>
+        }
+      />
 
       <SetupChecklist storeId={store.id} slug={store.slug} />
 
@@ -151,17 +156,19 @@ async function Orders({
         />
       )}
 
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
-        <Stat
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <StatTile
+          icon={Wallet}
           label={t("todayRevenue")}
           value={formatMoney(todayStats._sum.total ?? 0, store.currency)}
         />
-        <Stat label={t("todayOrders")} value={String(todayStats._count)} />
-        <Stat
+        <StatTile icon={Receipt} label={t("todayOrders")} value={String(todayStats._count)} />
+        <StatTile
+          icon={CircleCheck}
           label={t("todayPaid")}
           value={formatMoney(todayPaid._sum.total ?? 0, store.currency)}
-          className="col-span-2 md:col-span-1"
         />
+        <StatTile icon={Flame} label={t("activeNow")} value={String(activeCount)} />
       </div>
 
       <nav className="flex gap-1 overflow-x-auto border-b">
@@ -246,22 +253,13 @@ async function Orders({
         {t("autoRefresh")}
       </p>
       <AutoRefresh intervalMs={20_000} />
-    </div>
-  );
-}
-
-function Stat({ label, value, className }: { label: string; value: string; className?: string }) {
-  return (
-    <div className={cn("bg-card rounded-xl border p-3", className)}>
-      <p className="text-muted-foreground text-xs">{label}</p>
-      <p className="mt-1 text-lg font-semibold tabular-nums">{value}</p>
-    </div>
+    </PageShell>
   );
 }
 
 function OrdersSkeleton() {
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-6">
+    <PageShell width="wide">
       <Skeleton className="h-8 w-40" />
       <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
         <Skeleton className="h-16" />
@@ -270,6 +268,6 @@ function OrdersSkeleton() {
       </div>
       <Skeleton className="h-48 w-full" />
       <Skeleton className="h-48 w-full" />
-    </div>
+    </PageShell>
   );
 }

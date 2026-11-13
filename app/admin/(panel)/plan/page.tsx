@@ -5,7 +5,15 @@ import { Suspense } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { requireOwner } from "@/lib/auth/owner";
-import { FREE_MONTHLY_ORDERS, planOf, PRO_PRICE_USD, upgradeLink } from "@/lib/plan";
+import {
+  FOUNDING_PRO_MONTHS,
+  FOUNDING_STORES,
+  FREE_MONTHLY_ORDERS,
+  planOf,
+  PRO_PRICE_USD,
+  PRO_PRICE_YEARLY_USD,
+  upgradeLink,
+} from "@/lib/plan";
 import { cn } from "@/lib/utils";
 
 const FREE_FEATURES = [
@@ -28,7 +36,7 @@ const PRO_FEATURES = [
 
 export default function PlanPage() {
   return (
-    <div className="flex max-w-4xl flex-col gap-4 p-4 md:p-6">
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-5 px-4 py-5 md:px-8 md:py-8">
       <Suspense fallback={<Skeleton className="h-96 w-full" />}>
         <Plan />
       </Suspense>
@@ -50,8 +58,8 @@ async function Plan() {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <p className="text-muted-foreground text-sm">{t("lead")}</p>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <p className="text-muted-foreground mt-1 max-w-prose text-sm">{t("lead")}</p>
       </div>
 
       {/* Current plan */}
@@ -99,11 +107,17 @@ async function Plan() {
           name={t("proName")}
           price={`$${PRO_PRICE_USD}`}
           per={t("perMonth")}
+          note={t("perYear", { price: `$${PRO_PRICE_YEARLY_USD}` })}
           intro={t("proIntro")}
           features={PRO_FEATURES.map((k) => t(k))}
           current={pro}
           currentLabel={t("yourPlan")}
         >
+          {!pro && (
+            <p className="bg-primary/10 rounded-lg px-3 py-2 text-sm">
+              {t("founding", { count: FOUNDING_STORES, months: FOUNDING_PRO_MONTHS })}
+            </p>
+          )}
           {contact ? (
             <a
               href={contact}
@@ -130,6 +144,7 @@ function PlanColumn({
   name,
   price,
   per,
+  note,
   intro,
   features,
   current,
@@ -140,6 +155,7 @@ function PlanColumn({
   name: string;
   price: string;
   per: string;
+  note?: string;
   intro: string;
   features: string[];
   current: boolean;
@@ -165,6 +181,7 @@ function PlanColumn({
       <p>
         <span className="text-3xl font-black tracking-tight">{price}</span>
         <span className="text-muted-foreground text-sm"> {per}</span>
+        {note && <span className="text-muted-foreground block text-xs">{note}</span>}
       </p>
       <p className="text-muted-foreground text-sm">{intro}</p>
       <ul className="flex flex-col gap-2 text-sm">

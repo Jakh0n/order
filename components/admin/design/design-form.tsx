@@ -139,9 +139,9 @@ export function DesignForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
       {/* Title + actions; stays visible on desktop */}
-      <div className="bg-muted/80 -mx-4 flex flex-wrap items-center justify-between gap-3 px-4 py-3 backdrop-blur md:sticky md:top-0 md:z-20 md:-mx-6 md:px-6">
+      <div className="bg-muted/80 -mx-4 flex flex-wrap items-center justify-between gap-3 px-4 py-3 backdrop-blur md:sticky md:top-0 md:z-20 md:-mx-8 md:px-8">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold">{t("title")}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
           <p className="text-muted-foreground text-sm">{t("lead")}</p>
         </div>
         <div className="flex items-center gap-2">

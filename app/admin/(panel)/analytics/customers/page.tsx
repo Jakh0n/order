@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 export default function CustomersPage({ searchParams }: PageProps<"/admin/analytics/customers">) {
   return (
-    <div className="flex max-w-5xl flex-col gap-4 p-4 md:p-6">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-4 py-5 md:px-8 md:py-8">
       <Suspense fallback={<CustomersSkeleton />}>
         <CustomersView searchParams={searchParams} />
       </Suspense>
@@ -33,7 +33,10 @@ async function CustomersView({
     return (
       <>
         <div className="flex flex-col gap-3">
-          <h1 className="text-2xl font-bold">{t("title")}</h1>
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+            <p className="text-muted-foreground mt-1 max-w-prose text-sm">{t("description")}</p>
+          </div>
           <AnalyticsTabs />
         </div>
         <UpgradeCard title={t("customersLockedTitle")} text={t("customersLockedText")} />
@@ -67,7 +70,10 @@ async function CustomersView({
   return (
     <>
       <div className="flex flex-col gap-3">
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+          <p className="text-muted-foreground mt-1 max-w-prose text-sm">{t("description")}</p>
+        </div>
         <AnalyticsTabs />
       </div>
 

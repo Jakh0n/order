@@ -33,7 +33,7 @@ export function ProductRow({
   const href = `/admin/menu/products/${product.id}`;
 
   return (
-    <li className="flex items-center gap-3 px-3 py-2">
+    <li className="hover:bg-muted/40 flex items-center gap-3 px-3 py-2.5 transition-colors">
       <Link href={href} className="flex min-w-0 flex-1 items-center gap-3">
         <ProductImage
           src={product.imageUrl}
@@ -67,9 +67,9 @@ export function ProductRow({
         </span>
       </label>
 
-      <div className="hidden flex-col sm:flex">
+      <div className="hidden items-center gap-0.5 sm:flex">
         <Button
-          size="icon-xs"
+          size="icon-sm"
           variant="ghost"
           aria-label={t("moveUp")}
           disabled={reordering || !canMoveUp}
@@ -78,7 +78,7 @@ export function ProductRow({
           <ArrowUp />
         </Button>
         <Button
-          size="icon-xs"
+          size="icon-sm"
           variant="ghost"
           aria-label={t("moveDown")}
           disabled={reordering || !canMoveDown}

@@ -99,18 +99,31 @@
       "text": "Kabobxonalar, novvoyxonalar, kafelar, shirinlik do'konlari, qahva nuqtalari, fudtraklar va buyurtmani messenjer orqali oladigan uy oshpazlari uchun."
     },
     "pricing": {
-      "title": "Erta kirish davrida bepul",
-      "lead": "Barcha imkoniyatlar, cheksiz buyurtmalar, karta kerak emas. Agar pullik tarif paydo bo'lsa, oldindan xabar beramiz.",
-      "price": "$0",
-      "per": "oyiga",
-      "includes": "Ichiga kiradi",
+      "title": "Oddiy narxlar. Buyurtmalar hech qachon cheklanmaydi.",
+      "lead": "Bepul boshlang va xohlaganingizcha bepul qoling. Mijozlarni qaytaradigan vositalar kerak bo'lganda Pro'ga o'ting.",
+      "founding": "Birinchi {count} ta do'konga {months} oy Pro bepul, keyin esa biz bilan qolguncha oyiga {price}.",
+      "foundingLabel": "Birinchilar uchun taklif",
+      "freeName": "Free",
+      "freePer": "doimiy",
+      "freeIntro": "Onlayn buyurtma qabul qilish uchun hammasi.",
       "i1": "Cheksiz taomlar va buyurtmalar",
       "i2": "Buyurtmalar WhatsApp yoki Telegram'ga",
-      "i3": "Mijozlar uchun buyurtmani kuzatish sahifasi",
-      "i4": "Do'koningiz uchun QR kod",
-      "i5": "Yetkazish va olib ketish",
+      "i3": "Rasmdan AI bilan menyu",
+      "i4": "Mijozlar uchun buyurtmani kuzatish sahifasi",
+      "i5": "Stoldan QR orqali buyurtma va chek chop etish",
       "i6": "Savdodan komissiya yo'q",
-      "cta": "Do'kon ochish"
+      "proName": "Pro",
+      "proPer": "oyiga",
+      "proYearly": "yoki yiliga {price} — 2 oy bepul",
+      "proIntro": "Free'dagi hammasi, va qo'shimcha:",
+      "p1": "Promo-kodlar",
+      "p2": "Ma'lum summadan bepul yetkazish",
+      "p3": "7, 30 va 90 kunlik analitika",
+      "p4": "Buyurtmalar tarixi bilan mijozlar bazasi",
+      "p5": "To'liq buyurtmalar tarixi",
+      "p6": "“Made with Flami” yozuvisiz",
+      "cta": "Do'kon ochish — bepul",
+      "proCta": "Bepul boshlang, Pro — xohlagan payt"
     },
     "faq": {
       "title": "Savollar",
@@ -356,7 +369,21 @@
       "menu": "Menyu",
       "pages": "Sahifalar",
       "reviews": "Sharhlar"
-    }
+    },
+    "descriptions": {
+      "orders": "Yangi va faol buyurtmalar, bugungi ko'rsatkichlar va tarix.",
+      "products": "Mijozlar do'koningizda ko'radigan kategoriya va taomlar.",
+      "dineIn": "Do'kon havolasi va stollar uchun QR kodlar.",
+      "settings": "Aloqa, ish vaqti, yetkazish, to'lov va buyurtmalar qayerga kelishi."
+    },
+    "accepting": "Buyurtma qabul qilinmoqda",
+    "paused": "Buyurtmalar to'xtatilgan",
+    "acceptingToggle": "Buyurtma qabul qilish",
+    "nowAccepting": "Do'kon buyurtma qabul qilmoqda",
+    "nowPaused": "Buyurtmalar to'xtatildi — menyu ko'rinib turadi",
+    "openToggleFailed": "O'zgartirib bo'lmadi. Qayta urinib ko'ring.",
+    "customers": "Mijozlar",
+    "marketing": "Marketing"
   },
   "superadmin": {
     "title": "Platforma admini",
@@ -395,7 +422,19 @@
     },
     "sentryTest": "Sentry'ni sinash",
     "sentryTestHint": "Sinov xatosini yuboradi — u Sentry'da paydo bo'lishi kerak.",
-    "sentrySent": "Sinov xatosi yuborildi"
+    "sentrySent": "Sinov xatosi yuborildi",
+    "filter": "Do'konlarni saralash",
+    "filters": {
+      "all": "Hammasi",
+      "pro": "Pro",
+      "free": "Bepul",
+      "blocked": "Bloklangan"
+    },
+    "store": "Do'kon",
+    "plan": "Tarif",
+    "dishes": "Taomlar",
+    "actions": "Amallar",
+    "tools": "Dasturchi vositalari"
   },
   "orderMessage": {
     "header": "Buyurtma №{number}",
@@ -517,7 +556,9 @@
     "searchButton": "Qidirish",
     "clearFilters": "Tozalash",
     "noMatches": "Hech qanday buyurtma topilmadi",
-    "historyLimit": "Bu oy {count} ta buyurtma oldingiz. Free tarixda {limit} tasini saqlaydi — undan keyingi yakunlangan buyurtmalar yashirilgan (faollari doim ko'rinadi)."
+    "historyLimit": "Bu oy {count} ta buyurtma oldingiz. Free tarixda {limit} tasini saqlaydi — undan keyingi yakunlangan buyurtmalar yashirilgan (faollari doim ko'rinadi).",
+    "staleShort": "5+ daqiqa qabul qilinmagan — mijoz xabar yubormagan bo'lishi mumkin",
+    "activeNow": "Faol"
   },
   "adminMenu": {
     "addCategory": "Kategoriya qo'shish",
@@ -660,7 +701,15 @@
     "language": "Do'kon tili",
     "languageHint": "Do'kon sahifasi shu tilda ochiladi. Mijozlar uni o'zlari almashtira oladi.",
     "freeDeliveryFrom": "Bepul yetkazish ({currency}) dan",
-    "freeDeliveryFromHint": "Yetkazish doim pullik bo'lishi uchun bo'sh qoldiring. Taomlar summasi bo'yicha hisoblanadi."
+    "freeDeliveryFromHint": "Yetkazish doim pullik bo'lishi uchun bo'sh qoldiring. Taomlar summasi bo'yicha hisoblanadi.",
+    "unsaved": "Saqlanmagan o'zgarishlar bor",
+    "sectionHints": {
+      "store": "Mijozlar siz bilan qanday bog'lanadi va sizni topadi.",
+      "region": "Do'kon valyutasi va vaqti.",
+      "hours": "Buyurtma qachon berilishi mumkin.",
+      "orders": "Olib ketish, yetkazish va minimal buyurtma.",
+      "payment": "Mijozlar qanday to'lashi mumkin."
+    }
   },
   "signup": {
     "title": "Do'koningizni oching",
@@ -755,7 +804,10 @@
     "hours": "Ish vaqtini belgilang",
     "channel": "Buyurtmalar uchun Telegram yoki WhatsApp'ni ulang",
     "notifications": "Buyurtma bildirishnomalarini yoqing",
-    "testOrder": "Do'koningizni ochib, sinov buyurtmasini bering"
+    "testOrder": "Do'koningizni ochib, sinov buyurtmasini bering",
+    "next": "Keyingi",
+    "continue": "Davom etish",
+    "showAll": "Barcha qadamlar"
   },
   "table": {
     "label": "{number}-stol",
@@ -922,7 +974,8 @@
     "limitNote": "Birinchi 200 tasi ko'rsatilgan — qidiruvdan foydalaning.",
     "lockedPeriod": "Pro'da mavjud",
     "customersLockedTitle": "Doimiy mijozlaringizni biling",
-    "customersLockedText": "Har bir mijoz buyurtmalari va sarflagan summasi bilan, bir bosishda yozish. Pro'da mavjud."
+    "customersLockedText": "Har bir mijoz buyurtmalari va sarflagan summasi bilan, bir bosishda yozish. Pro'da mavjud.",
+    "description": "Tushum, buyurtmalar va nima sotilayotgani — do'kon vaqt zonasida."
   },
   "plan": {
     "pro": "Pro",
@@ -964,7 +1017,9 @@
     "contactSoon": "Tez orada ulanadi — platforma jamoasi bilan bog'laning.",
     "upgradeMessage": "Assalomu alaykum! \"{store}\" do'konim uchun Pro olmoqchiman.",
     "renewMessage": "Assalomu alaykum! \"{store}\" do'konim uchun Pro'ni uzaytirmoqchiman.",
-    "neverLimit": "Free hech qachon buyurtmani to'xtatmaydi: yangi va faol buyurtmalar doim keladi va ko'rinadi."
+    "neverLimit": "Free hech qachon buyurtmani to'xtatmaydi: yangi va faol buyurtmalar doim keladi va ko'rinadi.",
+    "perYear": "yoki yiliga {price} — 2 oy bepul",
+    "founding": "Birinchilar uchun taklif: birinchi {count} ta do'konga {months} oy Pro bepul. Bizga yozing — yoqib beramiz."
   },
   "push": {
     "turnOn": "Xabar berish",

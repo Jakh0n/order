@@ -36,9 +36,12 @@ export async function getPlatformStats(now: Date) {
 const PAGE_SIZE = 100;
 
 /** Do'konlar ro'yxati: nom, slug yoki ega emaili bo'yicha qidiruv */
-export async function listStores(query: string, now: Date) {
+export const STORE_FILTERS = ["all", "pro", "free", "blocked"] as const;
+export type StoreFilter = (typeof STORE_FILTERS)[number];
+
+export async function listStores(query: string, now: Date, filter: StoreFilter = "all") {
   const q = query.trim().slice(0, 100);
-  const where: Prisma.StoreWhereInput = q
+  const search: Prisma.StoreWhereInput = q
     ? {
         OR: [
           { name: { contains: q, mode: "insensitive" } },
@@ -47,6 +50,14 @@ export async function listStores(query: string, now: Date) {
         ],
       }
     : {};
+  // "pro" = paid and not expired (same rule as lib/plan.ts)
+  const byFilter: Record<StoreFilter, Prisma.StoreWhereInput> = {
+    all: {},
+    pro: { plan: "PAID", OR: [{ paidUntil: null }, { paidUntil: { gt: now } }] },
+    free: { OR: [{ plan: "FREE" }, { plan: "PAID", paidUntil: { lte: now } }] },
+    blocked: { isBlocked: true },
+  };
+  const where: Prisma.StoreWhereInput = { AND: [search, byFilter[filter]] };
 
   const stores = await prisma.store.findMany({
     ...JOIN,

@@ -24,8 +24,13 @@ async function AdminSettings() {
   if (!settings) notFound();
 
   return (
-    <div className="flex max-w-2xl flex-col gap-4 p-4 md:p-6">
-      <h1 className="text-2xl font-bold">{t("settings")}</h1>
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-4 py-5 md:px-8 md:py-8">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">{t("settings")}</h1>
+        <p className="text-muted-foreground mt-1 max-w-prose text-sm">
+          {t("descriptions.settings")}
+        </p>
+      </div>
       <SettingsForm
         defaultValues={settingsToForm(settings)}
         currencies={currencyOptions(settings.currency)}
@@ -38,7 +43,7 @@ async function AdminSettings() {
 
 function SettingsSkeleton() {
   return (
-    <div className="flex max-w-2xl flex-col gap-4 p-4 md:p-6">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-4 py-5 md:px-8 md:py-8">
       <Skeleton className="h-8 w-40" />
       <Skeleton className="h-40 w-full" />
       <Skeleton className="h-64 w-full" />
