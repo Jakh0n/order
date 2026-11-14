@@ -706,7 +706,9 @@
     "plan": "Tarif",
     "dishes": "Taomlar",
     "actions": "Amallar",
-    "tools": "Dasturchi vositalari"
+    "tools": "Dasturchi vositalari",
+    "extendYear": "+12 oy (yillik)",
+    "founding": "Birinchi do'konlar: +{months} oy"
   },
   "orderMessage": {
     "header": "Buyurtma №{number}",

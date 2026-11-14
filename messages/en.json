@@ -706,7 +706,9 @@
     "plan": "Plan",
     "dishes": "Dishes",
     "actions": "Actions",
-    "tools": "Developer tools"
+    "tools": "Developer tools",
+    "extendYear": "+12 months (yearly)",
+    "founding": "Founding: +{months} months"
   },
   "orderMessage": {
     "header": "Order #{number}",
