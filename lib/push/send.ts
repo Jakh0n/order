@@ -63,7 +63,7 @@ export async function notifyNewOrder(orderId: string): Promise<void> {
       body: `${how}${when} — ${items}`.slice(0, 200),
       // One notification per order; a re-send replaces instead of stacking
       tag: `order-${orderId}`,
-      url: "/admin/orders",
+      url: `/admin/order/${orderId}`,
     });
 
     const results = await Promise.allSettled(

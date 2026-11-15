@@ -52,13 +52,17 @@ export const getCurrentOwner = cache(async () => {
 
 export type CurrentOwner = NonNullable<Awaited<ReturnType<typeof getCurrentOwner>>>;
 
-/** Admin sahifalari va Server Action'lar uchun: kirmagan bo'lsa /admin/login ga. */
-export async function requireOwner(): Promise<CurrentOwner> {
+/**
+ * Admin sahifalari va Server Action'lar uchun: kirmagan bo'lsa /admin/login ga.
+ * `next` — kirgandan keyin qaytiladigan admin sahifa (masalan, xabardagi buyurtma havolasi).
+ */
+export async function requireOwner(next?: string): Promise<CurrentOwner> {
   const owner = await getCurrentOwner();
   if (!owner) {
     // Do'konsiz superadmin admin paneliga emas, o'z paneliga
     const current = await getCurrentUser();
-    redirect(current?.user.role === "SUPERADMIN" ? "/superadmin" : "/admin/login");
+    if (current?.user.role === "SUPERADMIN") redirect("/superadmin");
+    redirect(next ? `/admin/login?next=${encodeURIComponent(next)}` : "/admin/login");
   }
   return owner;
 }

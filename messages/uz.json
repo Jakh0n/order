@@ -735,7 +735,7 @@
       "UNPAID": "To'lanmagan",
       "PAID": "To'langan"
     },
-    "seeOrder": "Buyurtmani ko'rish",
+    "seeOrder": "Do'kon uchun:",
     "receipt": "To'lov cheki",
     "sentFrom": "{store} orqali yuborildi",
     "DINE_IN": "Joyida",
@@ -840,7 +840,11 @@
     "askReview": "Sharh so'rash",
     "reviewCopied": "Xabar nusxalandi — uni chatga qo'ying",
     "reviewReceived": "Mijoz 5 dan {rating} baho berdi",
-    "reviewRequest": "Assalomu alaykum, {name}! {store}dagi №{number} buyurtmangiz uchun rahmat. Qanday bo'ldi? Sharh 10 soniya oladi va bizga juda yordam beradi: {link}"
+    "reviewRequest": "Assalomu alaykum, {name}! {store}dagi №{number} buyurtmangiz uchun rahmat. Qanday bo'ldi? Sharh 10 soniya oladi va bizga juda yordam beradi: {link}",
+    "orderPage": {
+      "back": "Barcha buyurtmalar",
+      "title": "Buyurtma №{number}"
+    }
   },
   "adminMenu": {
     "addCategory": "Kategoriya qo'shish",
@@ -1770,5 +1774,27 @@
         }
       ]
     }
+  },
+  "invoice": {
+    "button": "Hisob-faktura",
+    "title": "Hisob-faktura №{number}",
+    "date": "Sana",
+    "billTo": "Mijoz",
+    "from": "Kimdan",
+    "service": "Olish usuli",
+    "item": "Nomi",
+    "qty": "Soni",
+    "price": "Narxi",
+    "amount": "Summa",
+    "subtotal": "Taomlar summasi",
+    "discount": "Chegirma",
+    "delivery": "Yetkazish",
+    "tip": "Choychaqa",
+    "total": "Jami",
+    "payment": "To'lov",
+    "status": "Holat",
+    "print": "Chop etish / PDF saqlash",
+    "back": "Buyurtmaga qaytish",
+    "footer": "Flami orqali tayyorlandi"
   }
 }

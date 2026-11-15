@@ -735,7 +735,7 @@
       "UNPAID": "Unpaid",
       "PAID": "Paid"
     },
-    "seeOrder": "See order",
+    "seeOrder": "For the store:",
     "receipt": "Payment receipt",
     "sentFrom": "Sent from {store}",
     "DINE_IN": "Dine-in",
@@ -840,7 +840,11 @@
     "askReview": "Ask for a review",
     "reviewCopied": "Message copied — paste it in the chat",
     "reviewReceived": "Customer rated {rating} of 5",
-    "reviewRequest": "Hi {name}! Thank you for your order #{number} at {store}. How was it? Your review takes 10 seconds and helps us a lot: {link}"
+    "reviewRequest": "Hi {name}! Thank you for your order #{number} at {store}. How was it? Your review takes 10 seconds and helps us a lot: {link}",
+    "orderPage": {
+      "back": "All orders",
+      "title": "Order #{number}"
+    }
   },
   "adminMenu": {
     "addCategory": "Add category",
@@ -1770,5 +1774,27 @@
         }
       ]
     }
+  },
+  "invoice": {
+    "button": "Invoice",
+    "title": "Invoice #{number}",
+    "date": "Date",
+    "billTo": "Customer",
+    "from": "From",
+    "service": "Service",
+    "item": "Item",
+    "qty": "Qty",
+    "price": "Price",
+    "amount": "Amount",
+    "subtotal": "Items total",
+    "discount": "Discount",
+    "delivery": "Delivery",
+    "tip": "Tip",
+    "total": "Total",
+    "payment": "Payment",
+    "status": "Status",
+    "print": "Print / Save as PDF",
+    "back": "Back to order",
+    "footer": "Made with Flami"
   }
 }

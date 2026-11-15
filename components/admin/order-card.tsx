@@ -10,6 +10,7 @@ import {
   Receipt,
   Armchair,
   ChefHat,
+  FileText,
   Printer,
   Star,
 } from "lucide-react";
@@ -302,6 +303,16 @@ export async function OrderCard({
             {t(`print.${type}`)}
           </a>
         ))}
+        {/* A4 invoice with the customer's details (print / save as PDF) */}
+        <a
+          href={`/admin/invoice/${order.id}`}
+          target="_blank"
+          rel="noopener"
+          className="hover:bg-muted text-muted-foreground hover:text-foreground flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-medium transition-colors"
+        >
+          <FileText className="size-3.5" aria-hidden />
+          {t("invoice.button")}
+        </a>
       </div>
 
       {/* Completed: ask the customer for a review (the form is on their order page) */}

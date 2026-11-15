@@ -143,7 +143,8 @@ export function buildOrderMessage(
 
   if (base) {
     lines.push("");
-    lines.push(`${t.seeOrder} ${base}/o/${order.id}`);
+    // For the store: the owner's order page (customer details, actions, invoice)
+    lines.push(`${t.seeOrder} ${base}/admin/order/${order.id}`);
   }
 
   lines.push("");
