@@ -88,18 +88,19 @@ export function buildOrderMessage(
     order.type === "DINE_IN" && order.tableNumber
       ? t.table.replace("{number}", String(order.tableNumber))
       : null;
-  // The table goes in the first line — the first thing the kitchen reads
-  const header = t.header.replace("{number}", String(order.number));
+  // "#bahorkafeorder12" (Take App style): a hashtag, so the owner finds the order by searching
+  // the chat. The table goes in the first line — the first thing the kitchen reads.
+  const header = orderHashtag(store, order.number);
   lines.push(bold(tableLabel ? `${header} · ${tableLabel}` : header));
   lines.push("");
 
-  // *1x* Chicken Doner Wrap (Large, Cheese) $10.99
+  // *1x* Chicken Doner Wrap (Large, Cheese) $10.99 — a blank line between items
   for (const item of order.items) {
     const opts = optionNames(item.options);
     const suffix = opts.length ? ` (${opts.join(", ")})` : "";
     lines.push(`${bold(`${item.quantity}x`)} ${item.name}${suffix} ${money(item.lineTotal)}`);
+    lines.push("");
   }
-  lines.push("");
 
   const qty = order.items.reduce((sum, i) => sum + i.quantity, 0);
   lines.push(`${t.itemTotal}: ${money(order.subtotal)} (${t.qty}: ${qty})`);
@@ -147,10 +148,17 @@ export function buildOrderMessage(
   }
 
   lines.push("");
-  lines.push(italic(t.sentFrom.replace("{store}", store.name)));
-  if (base && store.slug) lines.push(`${base}/${store.slug}`);
+  // "_Sent from Flami_ https://…/store" — the link outside the italics so it stays tappable
+  const sentFrom = italic(t.sentFrom.replace("{store}", "Flami"));
+  lines.push(base && store.slug ? `${sentFrom} ${base}/${store.slug}` : sentFrom);
 
   return lines.join("\n");
+}
+
+/** "#bahorkafeorder12": letters and digits only, so Telegram and WhatsApp keep it one hashtag */
+export function orderHashtag(store: OrderMessageStore, number: number): string {
+  const tag = (store.slug ?? store.name).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+  return `#${tag || "flami"}order${number}`;
 }
 
 export function telegramLink(username: string, text: string): string {
