@@ -1310,6 +1310,13 @@
       "deliveryFees": "Yetkazish",
       "discounts": "Berilgan chegirmalar",
       "tips": "Choychaqa"
+    },
+    "topItemsHint": "Davr ichida sotilgani va oldingi davrga nisbatan o'zgarish",
+    "showAllDishes": "Barcha {count} ta taomni ko'rsatish",
+    "newDish": "yangi",
+    "notSelling": {
+      "title": "Sotilmayapti ({count})",
+      "hint": "Menyuda bor, lekin bu davrda hech kim buyurtma qilmadi. Yangi rasm, narx yoki promo-kod sinab ko'ring — yoki yashiring."
     }
   },
   "plan": {

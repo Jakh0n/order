@@ -1310,6 +1310,13 @@
       "deliveryFees": "Delivery fees",
       "discounts": "Discounts given",
       "tips": "Tips"
+    },
+    "topItemsHint": "Sold this period, with the change vs the previous one",
+    "showAllDishes": "Show all {count} dishes",
+    "newDish": "new",
+    "notSelling": {
+      "title": "Not selling ({count})",
+      "hint": "On the menu, but nobody ordered them this period. Try a better photo, a new price or a promo — or hide them."
     }
   },
   "plan": {

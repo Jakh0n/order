@@ -18,7 +18,7 @@ import { BarChart } from "@/components/admin/analytics/bar-chart";
 import { Heatmap } from "@/components/admin/analytics/heatmap";
 import { Sparkline } from "@/components/admin/analytics/sparkline";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getAnalytics, parsePeriod, PERIODS } from "@/lib/analytics/data";
+import { type Analytics, getAnalytics, parsePeriod, PERIODS } from "@/lib/analytics/data";
 import { buildInsights, type Insight } from "@/lib/analytics/insights";
 import { requireOwner } from "@/lib/auth/owner";
 import { LAPSED_DAYS } from "@/lib/customers/data";
@@ -67,6 +67,28 @@ async function AnalyticsView({
       : format.dateTime(day(d), { day: "numeric", month: "short", timeZone: "UTC" });
   const maxType = Math.max(...data.byType.map((r) => r.orders), 1);
   const maxItem = Math.max(...data.topItems.map((r) => r.quantity), 1);
+  // Change vs the previous period per dish (only when there is one to compare with)
+  const prevQty =
+    data.days >= 7 && previous.orders > 0
+      ? new Map(data.itemMoves.map((m) => [m.name, m.prev]))
+      : null;
+  const dishRow = (item: Analytics["topItems"][number], rank: number) => {
+    const prev = prevQty?.get(item.name);
+    const delta =
+      prevQty === null ? null : !prev ? "new" : Math.round(((item.quantity - prev) / prev) * 100);
+    return (
+      <MeterRow
+        key={item.name}
+        rank={rank}
+        label={item.name}
+        value={t("sold", { count: item.quantity })}
+        sub={money(item.revenue)}
+        pct={(item.quantity / maxItem) * 100}
+        delta={delta}
+        t={t}
+      />
+    );
+  };
   const maxMethod = Math.max(...data.money.byMethod.map((r) => r.revenue), 1);
   const empty = current.orders === 0;
   // Per-day series for the KPI sparklines (shown from 7 days)
@@ -273,20 +295,42 @@ async function AnalyticsView({
               </div>
             </Panel>
 
-            <Panel title={t("topItems")} className="lg:col-span-2">
+            <Panel title={t("topItems")} hint={t("topItemsHint")} className="lg:col-span-2">
               <ol className="flex flex-col gap-3">
-                {data.topItems.map((r, i) => (
-                  <MeterRow
-                    key={r.name}
-                    rank={i + 1}
-                    label={r.name}
-                    value={t("sold", { count: r.quantity })}
-                    sub={money(r.revenue)}
-                    pct={(r.quantity / maxItem) * 100}
-                  />
-                ))}
+                {data.topItems.slice(0, TOP).map((r, i) => dishRow(r, i + 1))}
               </ol>
+              {data.topItems.length > TOP && (
+                <details className="group">
+                  <summary className="text-primary w-fit cursor-pointer text-sm font-medium hover:underline">
+                    {t("showAllDishes", { count: data.topItems.length })}
+                  </summary>
+                  <ol className="mt-3 flex flex-col gap-3">
+                    {data.topItems.slice(TOP).map((r, i) => dishRow(r, TOP + i + 1))}
+                  </ol>
+                </details>
+              )}
             </Panel>
+
+            {data.notSelling.length > 0 && (
+              <Panel
+                title={t("notSelling.title", { count: data.notSelling.length })}
+                hint={t("notSelling.hint")}
+                className="lg:col-span-2"
+              >
+                <ul className="flex flex-wrap gap-2">
+                  {data.notSelling.map((p) => (
+                    <li key={p.id}>
+                      <Link
+                        href={`/admin/menu/products/${p.id}`}
+                        className="hover:bg-muted inline-flex min-h-9 items-center rounded-full border px-3 text-sm"
+                      >
+                        {p.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </Panel>
+            )}
 
             {data.days >= 7 && (
               <Panel title={t("heatmap")} hint={t("heatmapHint")} className="lg:col-span-2">
@@ -449,18 +493,25 @@ function Panel({
 }
 
 /** Label + thin single-hue meter (magnitude), value text in ink colors */
+const TOP = 8;
+
 function MeterRow({
   rank,
   label,
   value,
   sub,
   pct,
+  delta,
+  t,
 }: {
   rank?: number;
   label: string;
   value: string;
   sub: string;
   pct: number;
+  /** % change vs the previous period, "new" when it didn't sell before */
+  delta?: number | "new" | null;
+  t?: T;
 }) {
   return (
     <li className="flex flex-col gap-1.5">
@@ -470,6 +521,22 @@ function MeterRow({
             <span className="text-muted-foreground mr-2 tabular-nums">{rank}.</span>
           )}
           <span className="font-medium">{label}</span>
+          {delta != null && t && (
+            <span
+              className={cn(
+                "ml-2 text-xs font-medium tabular-nums",
+                delta === "new" || delta > 0
+                  ? "text-emerald-700 dark:text-emerald-400"
+                  : delta < 0
+                    ? "text-red-700 dark:text-red-400"
+                    : "text-muted-foreground",
+              )}
+            >
+              {delta === "new"
+                ? t("newDish")
+                : `${delta > 0 ? "▲ " : delta < 0 ? "▼ " : ""}${Math.abs(delta)}%`}
+            </span>
+          )}
         </span>
         <span className="shrink-0 tabular-nums">
           <span className="font-semibold">{value}</span>

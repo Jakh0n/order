@@ -36,7 +36,10 @@ export interface Analytics {
   byHour: { hour: number; orders: number }[];
   /** [weekday 0=Mon..6=Sun][hour 0..23] → orders (local time) */
   byWeekdayHour: number[][];
+  /** Every dish sold in the period, best sellers first */
   topItems: { name: string; quantity: number; revenue: number }[];
+  /** Available dishes (in visible categories, older than the period) with no sales in it */
+  notSelling: { id: string; name: string }[];
   byType: { type: "PICKUP" | "DELIVERY" | "DINE_IN"; orders: number; revenue: number }[];
   /** Customers (by phone) who ordered in the period, and how many had ordered before it */
   customers: { total: number; returning: number };
@@ -93,6 +96,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
     lapsed,
     byMethod,
     extras,
+    notSelling,
   ] = await Promise.all([
     prisma.$queryRaw<
       { cur_orders: number; cur_rev: bigint; prev_orders: number; prev_rev: bigint }[]
@@ -124,7 +128,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
       WHERE ${where(from, now)}
       GROUP BY i."name"
       ORDER BY quantity DESC, revenue DESC
-      LIMIT 8`,
+      LIMIT 200`,
     prisma.$queryRaw<
       { type: Analytics["byType"][number]["type"]; orders: number; revenue: bigint }[]
     >`
@@ -193,6 +197,19 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
         coalesce(sum(o."tip"), 0)::bigint AS tip
       FROM "Order" o
       WHERE ${where(from, now)} AND ${inCurrency}`,
+    prisma.$queryRaw<{ id: string; name: string }[]>`
+      SELECT p."id", p."name"
+      FROM "Product" p
+      JOIN "Category" c ON c."id" = p."categoryId"
+      WHERE p."storeId" = ${store.id} AND p."isAvailable" AND c."isActive"
+        AND p."createdAt" < ${from}
+        AND NOT EXISTS (
+          SELECT 1 FROM "OrderItem" i
+          JOIN "Order" o ON o."id" = i."orderId"
+          WHERE i."productId" = p."id" AND ${where(from, now)}
+        )
+      ORDER BY c."sort", p."sort"
+      LIMIT 50`,
   ]);
 
   // Every day of the period, zeros included (a gap in a bar chart reads as "no data")
@@ -222,6 +239,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
       Array.from({ length: 7 }, () => Array<number>(24).fill(0)),
     ),
     topItems: topItems.map((r) => ({ ...r, revenue: Number(r.revenue) })),
+    notSelling,
     byType: byType.map((r) => ({ ...r, revenue: Number(r.revenue) })),
     customers: customers[0] ?? { total: 0, returning: 0 },
     itemMoves,
