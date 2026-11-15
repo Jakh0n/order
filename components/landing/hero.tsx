@@ -73,7 +73,7 @@ export function Hero() {
                 </Link>
               </motion.span>
               <Link
-                href="/flami-grill"
+                href="/bahor-kafe"
                 className={cn(
                   buttonVariants({ variant: "ghost", size: "lg" }),
                   "text-forest h-13 rounded-full px-5 text-base",

@@ -708,7 +708,8 @@
     "actions": "Amallar",
     "tools": "Dasturchi vositalari",
     "extendYear": "+12 oy (yillik)",
-    "founding": "Birinchi do'konlar: +{months} oy"
+    "founding": "Birinchi do'konlar: +{months} oy",
+    "demoBadge": "Demo · statistikada yo'q"
   },
   "orderMessage": {
     "header": "Buyurtma №{number}",

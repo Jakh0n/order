@@ -61,10 +61,7 @@ async function Superadmin({
 
   // requireSuperadmin cookies() ni o'qigan — endi joriy vaqtni ishlatish mumkin
   const now = new Date();
-  const [stats, stores] = await Promise.all([
-    getPlatformStats(now),
-    listStores(q, now, filter),
-  ]);
+  const [stats, stores] = await Promise.all([getPlatformStats(now), listStores(q, now, filter)]);
   const filterHref = (f: StoreFilter) =>
     `/superadmin?${new URLSearchParams({ ...(q && { q }), ...(f !== "all" && { status: f }) })}`;
 
@@ -247,6 +244,7 @@ async function StoreRow({ store }: { store: SuperadminStore }) {
         <div className="flex items-center gap-2">
           <span className="font-medium">{store.name}</span>
           {store.isBlocked && <Badge variant="destructive">{t("blockedBadge")}</Badge>}
+          {store.isDemo && <Badge variant="secondary">{t("demoBadge")}</Badge>}
         </div>
         <Link
           href={`/${store.slug}`}
@@ -299,6 +297,7 @@ async function StoreCard({ store }: { store: SuperadminStore }) {
         </div>
         <div className="flex flex-wrap gap-1.5">
           {store.isBlocked && <Badge variant="destructive">{t("blockedBadge")}</Badge>}
+          {store.isDemo && <Badge variant="secondary">{t("demoBadge")}</Badge>}
           {planBadge(store, t, format)}
         </div>
       </div>
