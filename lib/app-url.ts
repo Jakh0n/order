@@ -28,7 +28,17 @@ function configuredOrigin(): string | null {
  * Must be the host that serves pages without redirecting (APP_URL).
  */
 export function siteOrigin(): string {
-  return configuredOrigin() ?? "http://localhost:3000";
+  return configuredOrigin() ?? vercelProductionOrigin() ?? "http://localhost:3000";
+}
+
+/**
+ * Fallback when APP_URL is missing on Vercel: the production domain Vercel exposes
+ * (VERCEL_PROJECT_PRODUCTION_URL, e.g. "www.flami.org"), so link previews and canonicals never
+ * point at localhost. APP_URL still wins — set it to the host that doesn't redirect.
+ */
+function vercelProductionOrigin(): string | null {
+  const host = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  return host ? `https://${host.replace(/^https?:\/\//, "")}` : null;
 }
 
 export async function getRequestOrigin(): Promise<string> {
