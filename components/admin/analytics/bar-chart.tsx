@@ -13,6 +13,8 @@ export interface BarDatum {
   /** Tooltip value, already formatted ("₩19,384 · 3 orders") */
   detail: string;
   value: number;
+  /** Same slot in the previous period, drawn as a dashed marker */
+  compare?: number;
 }
 
 /**
@@ -27,6 +29,7 @@ export function BarChart({
   maxLabel,
   tickEvery = 1,
   height = 160,
+  legend,
 }: {
   data: BarDatum[];
   /** Accessible name of the chart */
@@ -36,9 +39,12 @@ export function BarChart({
   /** Show every n-th axis label */
   tickEvery?: number;
   height?: number;
+  /** Shown when the data has `compare` values: [this period, previous period] */
+  legend?: [string, string];
 }) {
   const [active, setActive] = useState<number | null>(null);
-  const max = Math.max(...data.map((d) => d.value), 0);
+  const max = Math.max(...data.map((d) => Math.max(d.value, d.compare ?? 0)), 0);
+  const hasCompare = data.some((d) => (d.compare ?? 0) > 0);
   const current = active !== null ? data[active] : null;
 
   return (
@@ -77,8 +83,15 @@ export function BarChart({
                 onFocus={() => setActive(i)}
                 onBlur={() => setActive(null)}
                 // The whole column is the hit target, not just the (maybe tiny) bar
-                className="group flex h-full min-w-0 flex-1 items-end outline-none"
+                className="group relative flex h-full min-w-0 flex-1 items-end outline-none"
               >
+                {hasCompare && (d.compare ?? 0) > 0 && (
+                  <span
+                    aria-hidden
+                    className="border-foreground/45 pointer-events-none absolute inset-x-0 z-[1] border-t-2 border-dashed"
+                    style={{ bottom: `${((d.compare ?? 0) / max) * 100}%` }}
+                  />
+                )}
                 <span
                   className={cn(
                     "bg-primary w-full rounded-t-[4px] transition-opacity",
@@ -119,6 +132,19 @@ export function BarChart({
           </span>
         ))}
       </div>
+
+      {hasCompare && legend && (
+        <div aria-hidden className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
+          <span className="flex items-center gap-1.5">
+            <span className="bg-primary size-2.5 rounded-sm" />
+            {legend[0]}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="border-foreground/45 w-3.5 border-t-2 border-dashed" />
+            {legend[1]}
+          </span>
+        </div>
+      )}
 
       {/* Table view for screen readers */}
       <table className="sr-only">

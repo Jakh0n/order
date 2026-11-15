@@ -1323,7 +1323,10 @@
       "hint": "Orders with each code this period, the discount it cost and the revenue it brought",
       "code": "Code",
       "discount": "Discount"
-    }
+    },
+    "thisPeriod": "This period",
+    "previousPeriod": "Previous period",
+    "previousShort": "before: {amount}"
   },
   "plan": {
     "pro": "Pro",

@@ -32,6 +32,8 @@ export interface Analytics {
   previous: Totals;
   /** Local dates "YYYY-MM-DD", every day of the period (zeros filled) */
   byDay: { date: string; orders: number; revenue: number }[];
+  /** Revenue of the matching day in the previous period (same index as byDay) */
+  prevByDay: number[];
   /** 0..23, orders placed in that local hour */
   byHour: { hour: number; orders: number }[];
   /** [weekday 0=Mon..6=Sun][hour 0..23] → orders (local time) */
@@ -116,7 +118,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
         count(*)::int AS orders,
         coalesce(sum(o."total") FILTER (WHERE ${inCurrency}), 0)::bigint AS revenue
       FROM "Order" o
-      WHERE ${where(from, now)}
+      WHERE ${where(prevFrom, now)}
       GROUP BY 1`,
     prisma.$queryRaw<{ h: number; orders: number }[]>`
       SELECT extract(hour FROM ${local})::int AS h, count(*)::int AS orders
@@ -229,6 +231,9 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
   const dayKeys = Array.from({ length: days }, (_, i) =>
     localDate(new Date(from.getTime() + i * DAY_MS + 12 * 60 * 60_000), tz),
   );
+  const prevDayKeys = Array.from({ length: days }, (_, i) =>
+    localDate(new Date(prevFrom.getTime() + i * DAY_MS + 12 * 60 * 60_000), tz),
+  );
   const hourMap = new Map(byHour.map((r) => [r.h, r.orders]));
   const t = totals[0];
 
@@ -242,6 +247,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
       orders: dayMap.get(date)?.orders ?? 0,
       revenue: Number(dayMap.get(date)?.revenue ?? 0),
     })),
+    prevByDay: prevDayKeys.map((date) => Number(dayMap.get(date)?.revenue ?? 0)),
     byHour: Array.from({ length: 24 }, (_, hour) => ({ hour, orders: hourMap.get(hour) ?? 0 })),
     byWeekdayHour: byWeekdayHour.reduce(
       (grid, r) => {

@@ -1323,7 +1323,10 @@
       "hint": "Davr ichida har bir kod bilan berilgan buyurtmalar, chegirma va tushum",
       "code": "Kod",
       "discount": "Chegirma"
-    }
+    },
+    "thisPeriod": "Shu davr",
+    "previousPeriod": "Oldingi davr",
+    "previousShort": "oldin: {amount}"
   },
   "plan": {
     "pro": "Pro",

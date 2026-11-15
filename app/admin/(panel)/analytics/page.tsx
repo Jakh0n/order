@@ -204,9 +204,10 @@ async function AnalyticsView({
               <Panel title={t("revenueByDay")} className="lg:col-span-2">
                 <BarChart
                   label={t("revenueByDay")}
-                  maxLabel={money(Math.max(...data.byDay.map((d) => d.revenue)))}
+                  maxLabel={money(Math.max(...data.byDay.map((d) => d.revenue), ...data.prevByDay))}
                   tickEvery={dayTick}
-                  data={data.byDay.map((d) => ({
+                  legend={[t("thisPeriod"), t("previousPeriod")]}
+                  data={data.byDay.map((d, i) => ({
                     key: d.date,
                     axis: dayAxis(d.date),
                     title: format.dateTime(day(d.date), {
@@ -215,8 +216,13 @@ async function AnalyticsView({
                       month: "short",
                       timeZone: "UTC",
                     }),
-                    detail: `${money(d.revenue)} · ${t("ordersCount", { count: d.orders })}`,
+                    detail: `${money(d.revenue)} · ${t("ordersCount", { count: d.orders })}${
+                      data.prevByDay[i] > 0
+                        ? ` · ${t("previousShort", { amount: money(data.prevByDay[i]) })}`
+                        : ""
+                    }`,
                     value: d.revenue,
+                    compare: data.prevByDay[i],
                   }))}
                 />
               </Panel>
