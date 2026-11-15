@@ -237,6 +237,129 @@ const MENU: { category: string; items: Item[] }[] = [
   },
 ];
 
+/**
+ * Sample reviews for the demo. They are labelled on the store page (announcement) and the
+ * demo store is excluded from platform stats (lib/demo.ts). Each review needs a completed order.
+ */
+const SAMPLE_REVIEWS: {
+  name: string;
+  lang: "uz" | "ru";
+  rating: number;
+  comment: string;
+  daysAgo: number;
+  type: "DELIVERY" | "PICKUP";
+  items: [dish: string, qty: number][];
+}[] = [
+  {
+    name: "Dilnoza",
+    lang: "uz",
+    rating: 5,
+    comment: "Osh juda mazali, issiq holda keldi. Rahmat!",
+    daysAgo: 2,
+    type: "DELIVERY",
+    items: [
+      ["Toshkent oshi", 2],
+      ["Ko'k choy (choynak)", 1],
+    ],
+  },
+  {
+    name: "Алишер",
+    lang: "ru",
+    rating: 5,
+    comment: "Лагман как дома, порция большая. Буду заказывать ещё.",
+    daysAgo: 3,
+    type: "DELIVERY",
+    items: [
+      ["Qo'lda cho'zilgan lag'mon", 2],
+      ["Patir non", 1],
+    ],
+  },
+  {
+    name: "Jasur",
+    lang: "uz",
+    rating: 4,
+    comment: "Somsa zo'r, faqat yetkazish biroz kechikdi.",
+    daysAgo: 5,
+    type: "DELIVERY",
+    items: [
+      ["Tandir somsa", 4],
+      ["Uy kompoti (1 l)", 1],
+    ],
+  },
+  {
+    name: "Мадина",
+    lang: "ru",
+    rating: 5,
+    comment: "Манты очень нежные, сметана свежая. Спасибо!",
+    daysAgo: 6,
+    type: "PICKUP",
+    items: [["Manti (5 dona)", 2]],
+  },
+  {
+    name: "Sardor",
+    lang: "uz",
+    rating: 5,
+    comment: "Qozon kabob eng zo'ri. Do'stlarimga ham tavsiya qildim.",
+    daysAgo: 8,
+    type: "DELIVERY",
+    items: [
+      ["Qozon kabob", 2],
+      ["Sabzavotli salat", 1],
+      ["Patir non", 2],
+    ],
+  },
+  {
+    name: "Нигора",
+    lang: "ru",
+    rating: 4,
+    comment: "Бургер вкусный, картошка могла быть похрустящее.",
+    daysAgo: 10,
+    type: "PICKUP",
+    items: [
+      ["Klassik burger", 1],
+      ["Kartoshka fri", 1],
+      ["Yalpizli limonad", 1],
+    ],
+  },
+  {
+    name: "Aziza",
+    lang: "uz",
+    rating: 5,
+    comment: "Paxlava va choy ideal juftlik. Tez yetkazishdi.",
+    daysAgo: 12,
+    type: "DELIVERY",
+    items: [
+      ["Paxlava (2 dona)", 2],
+      ["Ko'k choy (choynak)", 1],
+      ["Shokoladli tort", 1],
+    ],
+  },
+  {
+    name: "Тимур",
+    lang: "ru",
+    rating: 5,
+    comment: "Шашлык сочный, хлеб горячий. Отличный сервис.",
+    daysAgo: 15,
+    type: "DELIVERY",
+    items: [
+      ["Shashlik (mol go'shti)", 6],
+      ["Patir non", 2],
+    ],
+  },
+  {
+    name: "Bekzod",
+    lang: "uz",
+    rating: 3,
+    comment: "Ovqat yaxshi, lekin lavashda sous kam edi.",
+    daysAgo: 18,
+    type: "PICKUP",
+    items: [
+      ["Tovuqli lavash", 2],
+      ["Kartoshka fri", 1],
+    ],
+  },
+];
+
 async function main() {
   const dir = process.argv[2];
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -267,7 +390,8 @@ async function main() {
     const details = {
       name: "Bahor Kafe",
       description: "Milliy taomlar va tandir somsa. Har kuni yangi.",
-      announcement: "150 000 so'mdan buyurtmaga yetkazish bepul",
+      // Said openly: the orders and reviews here are samples
+      announcement: "Namunaviy do'kon · Demo store: buyurtmalar va sharhlar namuna uchun",
       brandColor: "#e8590c",
       pageBackground: "cream",
       menuLayout: "grid",
@@ -325,12 +449,14 @@ async function main() {
     await prisma.product.deleteMany({ where: { storeId: store.id } });
     await prisma.category.deleteMany({ where: { storeId: store.id } });
     let dishes = 0;
+    const productByName = new Map<string, { id: string; price: number }>();
     for (const [cSort, cat] of MENU.entries()) {
       const category = await prisma.category.create({
         data: { storeId: store.id, name: cat.category, sort: cSort },
       });
       for (const [pSort, item] of cat.items.entries()) {
-        await prisma.product.create({
+        const product = await prisma.product.create({
+          select: { id: true, price: true },
           data: {
             storeId: store.id,
             categoryId: category.id,
@@ -356,9 +482,60 @@ async function main() {
             },
           },
         });
+        productByName.set(item.name, product);
         dishes++;
       }
     }
+    // Sample completed orders with reviews (replaces the ones from an earlier run)
+    await prisma.order.deleteMany({ where: { storeId: store.id } }); // items and reviews cascade
+    const DAY = 24 * 60 * 60 * 1000;
+    for (const [i, r] of SAMPLE_REVIEWS.entries()) {
+      const lines = r.items.map(([dish, quantity]) => {
+        const product = productByName.get(dish);
+        if (!product) throw new Error(`Sample review: no dish "${dish}"`);
+        return {
+          productId: product.id,
+          name: dish,
+          unitPrice: product.price,
+          quantity,
+          lineTotal: product.price * quantity,
+        };
+      });
+      const subtotal = lines.reduce((sum, l) => sum + l.lineTotal, 0);
+      const deliveryFee =
+        r.type === "DELIVERY" && subtotal < details.freeDeliveryFrom ? details.deliveryFee : 0;
+      const at = new Date(Date.now() - r.daysAgo * DAY);
+      await prisma.order.create({
+        data: {
+          storeId: store.id,
+          number: i + 1,
+          customerName: r.name,
+          customerPhone: `+99890000000${i + 1}`,
+          type: r.type,
+          address: r.type === "DELIVERY" ? "Namuna manzil" : null,
+          paymentMethod: "CASH",
+          paymentStatus: "PAID",
+          status: "COMPLETED",
+          subtotal,
+          deliveryFee,
+          total: subtotal + deliveryFee,
+          currency: "UZS",
+          lang: r.lang,
+          createdAt: at,
+          items: { create: lines },
+          review: {
+            create: {
+              storeId: store.id,
+              rating: r.rating,
+              comment: r.comment,
+              customerName: r.name,
+              createdAt: new Date(at.getTime() + 2 * 60 * 60 * 1000),
+            },
+          },
+        },
+      });
+    }
+
     // Remove demo photos from earlier runs that nothing uses any more
     const { data: files } = await supabase.storage
       .from(BUCKET)
@@ -369,7 +546,9 @@ async function main() {
       .map((n) => `stores/${store.id}/${n}`);
     if (stale.length) await supabase.storage.from(BUCKET).remove(stale);
 
-    console.log(`Demo store ready: /${SLUG} — ${MENU.length} categories, ${dishes} dishes`);
+    console.log(
+      `Demo store ready: /${SLUG} — ${MENU.length} categories, ${dishes} dishes, ${SAMPLE_REVIEWS.length} sample reviews`,
+    );
   } finally {
     await prisma.$disconnect();
   }

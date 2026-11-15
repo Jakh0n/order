@@ -708,7 +708,8 @@
     "actions": "Действия",
     "tools": "Инструменты разработчика",
     "extendYear": "+12 месяцев (год)",
-    "founding": "Первые магазины: +{months} мес."
+    "founding": "Первые магазины: +{months} мес.",
+    "demoBadge": "Демо · не в статистике"
   },
   "orderMessage": {
     "header": "Заказ №{number}",

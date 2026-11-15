@@ -708,7 +708,8 @@
     "actions": "Actions",
     "tools": "Developer tools",
     "extendYear": "+12 months (yearly)",
-    "founding": "Founding: +{months} months"
+    "founding": "Founding: +{months} months",
+    "demoBadge": "Demo · not in stats"
   },
   "orderMessage": {
     "header": "Order #{number}",

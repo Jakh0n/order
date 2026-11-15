@@ -3,6 +3,7 @@ import "server-only";
 import type { Prisma } from "@prisma/client";
 
 import { JOIN, prisma } from "@/lib/db";
+import { isDemoStore, realStores } from "@/lib/demo";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -10,15 +11,20 @@ const DAY = 24 * 60 * 60 * 1000;
 export async function getPlatformStats(now: Date) {
   const since = new Date(now.getTime() - 30 * DAY);
   const [stores, blocked, paid, orders30] = await Promise.all([
-    prisma.store.count(),
-    prisma.store.count({ where: { isBlocked: true } }),
+    // Demo stores (sample orders and reviews) never count as platform numbers
+    prisma.store.count({ where: realStores }),
+    prisma.store.count({ where: { ...realStores, isBlocked: true } }),
     prisma.store.count({
-      where: { plan: "PAID", OR: [{ paidUntil: null }, { paidUntil: { gte: now } }] },
+      where: {
+        ...realStores,
+        plan: "PAID",
+        OR: [{ paidUntil: null }, { paidUntil: { gte: now } }],
+      },
     }),
     // Different stores use different currencies — sum per currency, never across them
     prisma.order.groupBy({
       by: ["currency"],
-      where: { createdAt: { gte: since }, status: { not: "CANCELLED" } },
+      where: { createdAt: { gte: since }, status: { not: "CANCELLED" }, store: realStores },
       _count: true,
       _sum: { total: true },
       orderBy: { currency: "asc" },
@@ -92,6 +98,7 @@ export async function listStores(query: string, now: Date, filter: StoreFilter =
     orders30: recentByStore.get(s.id) ?? 0,
     /** PAID, lekin muddati o'tgan */
     paidExpired: s.plan === "PAID" && !!s.paidUntil && s.paidUntil < now,
+    isDemo: isDemoStore(s.slug),
   }));
 }
 
