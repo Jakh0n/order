@@ -251,7 +251,7 @@ async function AnalyticsView({
         </p>
       ) : (
         <>
-          <div className="grid gap-3 lg:grid-cols-2">
+          <Section title={t("sections.sales")}>
             {data.days > 1 && (
               <Panel title={t("revenueByDay")} className="lg:col-span-2">
                 <BarChart
@@ -279,37 +279,6 @@ async function AnalyticsView({
                 />
               </Panel>
             )}
-
-            <Panel title={t("byHour")} hint={t("byHourHint")}>
-              <BarChart
-                label={t("byHour")}
-                maxLabel={t("ordersCount", {
-                  count: Math.max(...data.byHour.map((h) => h.orders)),
-                })}
-                tickEvery={3}
-                data={data.byHour.map((h) => ({
-                  key: String(h.hour),
-                  axis: String(h.hour).padStart(2, "0"),
-                  title: `${String(h.hour).padStart(2, "0")}:00–${String(h.hour).padStart(2, "0")}:59`,
-                  detail: t("ordersCount", { count: h.orders }),
-                  value: h.orders,
-                }))}
-              />
-            </Panel>
-
-            <Panel title={t("byType")}>
-              <ul className="flex flex-col gap-3">
-                {data.byType.map((r) => (
-                  <MeterRow
-                    key={r.type}
-                    label={t(`types.${r.type}`)}
-                    value={t("ordersCount", { count: r.orders })}
-                    sub={money(r.revenue)}
-                    pct={(r.orders / maxType) * 100}
-                  />
-                ))}
-              </ul>
-            </Panel>
 
             <Panel title={t("money.title")} hint={t("money.hint")} className="lg:col-span-2">
               <div className="grid gap-6 sm:grid-cols-2">
@@ -373,7 +342,9 @@ async function AnalyticsView({
                 </dl>
               </div>
             </Panel>
+          </Section>
 
+          <Section title={t("sections.menu")}>
             <Panel title={t("topItems")} hint={t("topItemsHint")} className="lg:col-span-2">
               <ol className="flex flex-col gap-3">
                 {data.topItems.slice(0, TOP).map((r, i) => dishRow(r, i + 1))}
@@ -453,7 +424,9 @@ async function AnalyticsView({
                 </div>
               </Panel>
             )}
+          </Section>
 
+          <Section title={t("sections.timing")}>
             {data.days >= 7 && (
               <Panel title={t("heatmap")} hint={t("heatmapHint")} className="lg:col-span-2">
                 <Heatmap
@@ -471,7 +444,38 @@ async function AnalyticsView({
                 />
               </Panel>
             )}
-          </div>
+
+            <Panel title={t("byHour")} hint={t("byHourHint")}>
+              <BarChart
+                label={t("byHour")}
+                maxLabel={t("ordersCount", {
+                  count: Math.max(...data.byHour.map((h) => h.orders)),
+                })}
+                tickEvery={3}
+                data={data.byHour.map((h) => ({
+                  key: String(h.hour),
+                  axis: String(h.hour).padStart(2, "0"),
+                  title: `${String(h.hour).padStart(2, "0")}:00–${String(h.hour).padStart(2, "0")}:59`,
+                  detail: t("ordersCount", { count: h.orders }),
+                  value: h.orders,
+                }))}
+              />
+            </Panel>
+
+            <Panel title={t("byType")}>
+              <ul className="flex flex-col gap-3">
+                {data.byType.map((r) => (
+                  <MeterRow
+                    key={r.type}
+                    label={t(`types.${r.type}`)}
+                    value={t("ordersCount", { count: r.orders })}
+                    sub={money(r.revenue)}
+                    pct={(r.orders / maxType) * 100}
+                  />
+                ))}
+              </ul>
+            </Panel>
+          </Section>
           <p className="text-muted-foreground text-xs">{t("note", { currency: store.currency })}</p>
         </>
       )}
@@ -587,6 +591,18 @@ function InsightRow({
   );
 }
 
+/** A titled group of panels (Sales, Menu, Timing) so the page reads top-down by question */
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="mt-2 flex flex-col gap-3">
+      <h2 className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+        {title}
+      </h2>
+      <div className="grid gap-3 lg:grid-cols-2">{children}</div>
+    </section>
+  );
+}
+
 function Panel({
   title,
   hint,
@@ -603,10 +619,10 @@ function Panel({
   return (
     <section className={cn("bg-card flex flex-col gap-4 rounded-xl border p-4", className)}>
       <div>
-        <h2 className="flex items-center gap-2 font-semibold">
+        <h3 className="flex items-center gap-2 font-semibold">
           {Icon && <Icon className="text-primary size-4" aria-hidden />}
           {title}
-        </h2>
+        </h3>
         {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
       </div>
       {children}

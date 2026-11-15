@@ -1339,7 +1339,12 @@
     "rangeFrom": "Dan",
     "rangeTo": "Gacha",
     "rangeApply": "Ko'rsatish",
-    "rangeInvalid": "Boshlanish sanasi tugash sanasidan keyin bo'lmasin ({max} kungacha)."
+    "rangeInvalid": "Boshlanish sanasi tugash sanasidan keyin bo'lmasin ({max} kungacha).",
+    "sections": {
+      "sales": "Savdo va pul",
+      "menu": "Menyu",
+      "timing": "Qachon va qanday buyurtma berishadi"
+    }
   },
   "plan": {
     "pro": "Pro",

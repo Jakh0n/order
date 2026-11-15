@@ -1339,7 +1339,12 @@
     "rangeFrom": "From",
     "rangeTo": "To",
     "rangeApply": "Apply",
-    "rangeInvalid": "Pick a start date on or before the end date (up to {max} days)."
+    "rangeInvalid": "Pick a start date on or before the end date (up to {max} days).",
+    "sections": {
+      "sales": "Sales and money",
+      "menu": "Menu",
+      "timing": "When and how customers order"
+    }
   },
   "plan": {
     "pro": "Pro",
