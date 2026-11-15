@@ -1326,7 +1326,14 @@
     },
     "thisPeriod": "Этот период",
     "previousPeriod": "Прошлый период",
-    "previousShort": "раньше: {amount}"
+    "previousShort": "раньше: {amount}",
+    "cancelled": {
+      "title": "Отменено",
+      "value": "{count, plural, one {# заказ} few {# заказа} many {# заказов} other {# заказа}} ({pct}%)",
+      "lost": "{amount} не получено",
+      "before": "раньше {pct}%",
+      "none": "Нет"
+    }
   },
   "plan": {
     "pro": "Pro",

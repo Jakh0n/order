@@ -89,6 +89,14 @@ async function AnalyticsView({
       />
     );
   };
+  // Cancel rate = cancelled / all placed (current totals exclude cancelled ones)
+  const rate = (cancelled: number, kept: number) =>
+    cancelled + kept > 0 ? Math.round((cancelled / (cancelled + kept)) * 100) : 0;
+  const cancelRate = rate(data.cancelled.orders, current.orders);
+  const prevCancelRate =
+    data.cancelled.prevAll > 0
+      ? rate(data.cancelled.prevOrders, data.cancelled.prevAll - data.cancelled.prevOrders)
+      : null;
   const maxMethod = Math.max(...data.money.byMethod.map((r) => r.revenue), 1);
   const empty = current.orders === 0;
   // Per-day series for the KPI sparklines (shown from 7 days)
@@ -297,6 +305,27 @@ async function AnalyticsView({
                   </dd>
                   <dt className="text-muted-foreground">{t("money.tips")}</dt>
                   <dd className="text-right tabular-nums">{money(data.money.tips)}</dd>
+                  <div aria-hidden className="col-span-2 border-t" />
+                  <dt className="text-muted-foreground">{t("cancelled.title")}</dt>
+                  <dd className="text-right tabular-nums">
+                    {data.cancelled.orders > 0 ? (
+                      <>
+                        <span className="font-semibold">
+                          {t("cancelled.value", {
+                            count: data.cancelled.orders,
+                            pct: cancelRate,
+                          })}
+                        </span>
+                        <span className="text-muted-foreground block text-xs">
+                          {t("cancelled.lost", { amount: money(data.cancelled.amount) })}
+                          {prevCancelRate !== null &&
+                            ` · ${t("cancelled.before", { pct: prevCancelRate })}`}
+                        </span>
+                      </>
+                    ) : (
+                      t("cancelled.none")
+                    )}
+                  </dd>
                 </dl>
               </div>
             </Panel>

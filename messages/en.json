@@ -1326,7 +1326,14 @@
     },
     "thisPeriod": "This period",
     "previousPeriod": "Previous period",
-    "previousShort": "before: {amount}"
+    "previousShort": "before: {amount}",
+    "cancelled": {
+      "title": "Cancelled",
+      "value": "{count, plural, one {# order} other {# orders}} ({pct}%)",
+      "lost": "{amount} not earned",
+      "before": "{pct}% before",
+      "none": "None"
+    }
   },
   "plan": {
     "pro": "Pro",

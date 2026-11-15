@@ -1326,7 +1326,14 @@
     },
     "thisPeriod": "Shu davr",
     "previousPeriod": "Oldingi davr",
-    "previousShort": "oldin: {amount}"
+    "previousShort": "oldin: {amount}",
+    "cancelled": {
+      "title": "Bekor qilingan",
+      "value": "{count} ta buyurtma ({pct}%)",
+      "lost": "{amount} tushmadi",
+      "before": "oldin {pct}%",
+      "none": "Yo'q"
+    }
   },
   "plan": {
     "pro": "Pro",

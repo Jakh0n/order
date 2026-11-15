@@ -63,6 +63,8 @@ export interface Analytics {
     discounts: number;
     tips: number;
   };
+  /** Cancelled orders: count and lost money, this period and the previous one */
+  cancelled: { orders: number; amount: number; prevOrders: number; prevAll: number };
 }
 
 interface Totals {
@@ -102,6 +104,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
     extras,
     notSelling,
     promos,
+    cancelled,
   ] = await Promise.all([
     prisma.$queryRaw<
       { cur_orders: number; cur_rev: bigint; prev_orders: number; prev_rev: bigint }[]
@@ -224,6 +227,16 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
       GROUP BY 1
       ORDER BY orders DESC, revenue DESC
       LIMIT 20`,
+    prisma.$queryRaw<{ cur: number; amount: bigint; prev: number; prev_all: number }[]>`
+      SELECT
+        count(*) FILTER (WHERE o."createdAt" >= ${from} AND o."status" = 'CANCELLED')::int AS cur,
+        coalesce(sum(o."total") FILTER (
+          WHERE o."createdAt" >= ${from} AND o."status" = 'CANCELLED' AND ${inCurrency}
+        ), 0)::bigint AS amount,
+        count(*) FILTER (WHERE o."createdAt" < ${from} AND o."status" = 'CANCELLED')::int AS prev,
+        count(*) FILTER (WHERE o."createdAt" < ${from})::int AS prev_all
+      FROM "Order" o
+      WHERE o."storeId" = ${store.id} AND o."createdAt" >= ${prevFrom} AND o."createdAt" < ${now}`,
   ]);
 
   // Every day of the period, zeros included (a gap in a bar chart reads as "no data")
@@ -263,6 +276,12 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
       discount: Number(r.discount),
       revenue: Number(r.revenue),
     })),
+    cancelled: {
+      orders: cancelled[0].cur,
+      amount: Number(cancelled[0].amount),
+      prevOrders: cancelled[0].prev,
+      prevAll: cancelled[0].prev_all,
+    },
     byType: byType.map((r) => ({ ...r, revenue: Number(r.revenue) })),
     customers: customers[0] ?? { total: 0, returning: 0 },
     itemMoves,
