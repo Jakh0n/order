@@ -144,7 +144,8 @@ export function buildOrderMessage(
 
   if (base) {
     lines.push("");
-    lines.push(`${t.seeOrder} ${base}/o/${order.id}`);
+    // The invoice page (Take App's "See invoice"): items, totals, customer, address + map
+    lines.push(`${t.seeOrder} ${base}/o/${order.id}/invoice`);
   }
 
   lines.push("");

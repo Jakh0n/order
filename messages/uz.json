@@ -735,7 +735,7 @@
       "UNPAID": "To'lanmagan",
       "PAID": "To'langan"
     },
-    "seeOrder": "Buyurtmani ko'rish",
+    "seeOrder": "Hisob-fakturani ko'rish",
     "receipt": "To'lov cheki",
     "sentFrom": "{store} orqali yuborildi",
     "DINE_IN": "Joyida",
@@ -1770,5 +1770,20 @@
         }
       ]
     }
+  },
+  "orderInvoice": {
+    "number": "Hisob-faktura №",
+    "date": "Buyurtma sanasi",
+    "items": "Taomlar",
+    "itemsTotal": "Taomlar summasi",
+    "discount": "Chegirma",
+    "delivery": "Yetkazish",
+    "tip": "Choychaqa",
+    "total": "Jami",
+    "details": "Buyurtma tafsilotlari",
+    "customer": "Mijoz",
+    "map": "Xarita",
+    "payment": "To'lov",
+    "note": "Izoh"
   }
 }
