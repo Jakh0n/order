@@ -1276,7 +1276,8 @@
     "sort": {
       "recent": "Yaqinda",
       "orders": "Ko'p buyurtma",
-      "spent": "Ko'p sarflagan"
+      "spent": "Ko'p sarflagan",
+      "lapsed": "Ko'pdan beri yo'q"
     },
     "noCustomers": "Mijozlar birinchi buyurtmadan keyin shu yerda ko'rinadi.",
     "noMatches": "Hech qanday mijoz topilmadi.",
@@ -1298,7 +1299,9 @@
       "fallingAction": "Promo-kod yaratish",
       "lapsed": "{count} ta doimiy mijoz {days}+ kundan beri buyurtma bermadi. O'zingizni eslating.",
       "lapsedAction": "Mijozlarni ko'rish"
-    }
+    },
+    "lapsedHint": "{days}+ kundan beri buyurtma bermagan doimiy mijozlar — ularga promo-kod yuboring.",
+    "noLapsed": "Barcha doimiy mijozlar yaqinda buyurtma bergan."
   },
   "plan": {
     "pro": "Pro",

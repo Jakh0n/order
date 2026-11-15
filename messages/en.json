@@ -1276,7 +1276,8 @@
     "sort": {
       "recent": "Recent",
       "orders": "Most orders",
-      "spent": "Top spenders"
+      "spent": "Top spenders",
+      "lapsed": "Not ordering lately"
     },
     "noCustomers": "Customers appear here after their first order.",
     "noMatches": "No customers match your search.",
@@ -1298,7 +1299,9 @@
       "fallingAction": "Create a promo code",
       "lapsed": "{count, plural, one {# regular hasn't} other {# regulars haven't}} ordered in {days}+ days. Remind them about you.",
       "lapsedAction": "See customers"
-    }
+    },
+    "lapsedHint": "Regulars with no order in {days}+ days — message them a promo code.",
+    "noLapsed": "Nobody has dropped off — every regular ordered recently."
   },
   "plan": {
     "pro": "Pro",

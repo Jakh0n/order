@@ -2,6 +2,7 @@ import "server-only";
 
 import { Prisma } from "@prisma/client";
 
+import { LAPSED_DAYS } from "@/lib/customers/data";
 import { prisma } from "@/lib/db";
 import { startOfDayInZone } from "@/lib/store-hours";
 
@@ -13,8 +14,6 @@ export const PERIODS = ["today", "7d", "30d", "90d"] as const;
 export type Period = (typeof PERIODS)[number];
 const DAYS: Record<Period, number> = { today: 1, "7d": 7, "30d": 30, "90d": 90 };
 const DAY_MS = 24 * 60 * 60_000;
-/** A regular is "lapsed" after this many days without an order */
-export const LAPSED_DAYS = 30;
 
 export function parsePeriod(value: unknown): Period {
   return PERIODS.includes(value as Period) ? (value as Period) : "7d";

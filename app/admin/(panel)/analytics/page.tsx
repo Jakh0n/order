@@ -18,9 +18,10 @@ import { BarChart } from "@/components/admin/analytics/bar-chart";
 import { Heatmap } from "@/components/admin/analytics/heatmap";
 import { Sparkline } from "@/components/admin/analytics/sparkline";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getAnalytics, LAPSED_DAYS, parsePeriod, PERIODS } from "@/lib/analytics/data";
+import { getAnalytics, parsePeriod, PERIODS } from "@/lib/analytics/data";
 import { buildInsights, type Insight } from "@/lib/analytics/insights";
 import { requireOwner } from "@/lib/auth/owner";
+import { LAPSED_DAYS } from "@/lib/customers/data";
 import { formatMoney } from "@/lib/money";
 import { isPro } from "@/lib/plan";
 import { cn } from "@/lib/utils";
@@ -354,7 +355,7 @@ function InsightRow({
           });
   const action =
     insight.kind === "lapsed"
-      ? { href: "/admin/analytics/customers", label: t("insights.lapsedAction") }
+      ? { href: "/admin/analytics/customers?sort=lapsed", label: t("insights.lapsedAction") }
       : insight.kind === "falling"
         ? { href: "/admin/promos", label: t("insights.fallingAction") }
         : null;
