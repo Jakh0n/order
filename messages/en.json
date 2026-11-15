@@ -840,7 +840,8 @@
     "askReview": "Ask for a review",
     "reviewCopied": "Message copied — paste it in the chat",
     "reviewReceived": "Customer rated {rating} of 5",
-    "reviewRequest": "Hi {name}! Thank you for your order #{number} at {store}. How was it? Your review takes 10 seconds and helps us a lot: {link}"
+    "reviewRequest": "Hi {name}! Thank you for your order #{number} at {store}. How was it? Your review takes 10 seconds and helps us a lot: {link}",
+    "sentTo": "Sent to {contact}"
   },
   "adminMenu": {
     "addCategory": "Add category",
@@ -981,7 +982,8 @@
       "locationRequired": "Set the store location",
       "tiersRequired": "Add at least one range",
       "tiersOrder": "Each range must be farther than the one before",
-      "kmInvalid": "Enter a distance from 0.1 to 200 km"
+      "kmInvalid": "Enter a distance from 0.1 to 200 km",
+      "contactDuplicate": "This contact is already in the list."
     },
     "deliveryFee": "Delivery fee ({currency})",
     "deliveryFeeHint": "Added to every delivery order. 0 — free delivery.",
@@ -1019,7 +1021,16 @@
     "tierFee": "Delivery fee ({currency})",
     "removeTier": "Remove range",
     "addTier": "Add range",
-    "deliveryTiersHint": "Distance is a straight line from the store. Farther than the last range — delivery isn't offered."
+    "deliveryTiersHint": "Distance is a straight line from the store. Farther than the last range — delivery isn't offered.",
+    "rolling": {
+      "titleWhatsapp": "More numbers (order rolling)",
+      "titleTelegram": "More usernames (order rolling)",
+      "hint": "Orders take turns: the 1st goes to the main contact, the 2nd to the next one, and so on — so your staff share them evenly. Up to 5.",
+      "rowLabel": "Contact {n}",
+      "remove": "Remove contact {n}",
+      "addWhatsapp": "Add a number",
+      "addTelegram": "Add a username"
+    }
   },
   "signup": {
     "title": "Open your store",

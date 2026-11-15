@@ -840,7 +840,8 @@
     "askReview": "Sharh so'rash",
     "reviewCopied": "Xabar nusxalandi — uni chatga qo'ying",
     "reviewReceived": "Mijoz 5 dan {rating} baho berdi",
-    "reviewRequest": "Assalomu alaykum, {name}! {store}dagi №{number} buyurtmangiz uchun rahmat. Qanday bo'ldi? Sharh 10 soniya oladi va bizga juda yordam beradi: {link}"
+    "reviewRequest": "Assalomu alaykum, {name}! {store}dagi №{number} buyurtmangiz uchun rahmat. Qanday bo'ldi? Sharh 10 soniya oladi va bizga juda yordam beradi: {link}",
+    "sentTo": "Yuborildi: {contact}"
   },
   "adminMenu": {
     "addCategory": "Kategoriya qo'shish",
@@ -981,7 +982,8 @@
       "locationRequired": "Do'kon joylashuvini belgilang",
       "tiersRequired": "Kamida bitta oraliq qo'shing",
       "tiersOrder": "Har bir oraliq oldingisidan uzoqroq bo'lishi kerak",
-      "kmInvalid": "0,1 dan 200 km gacha masofa kiriting"
+      "kmInvalid": "0,1 dan 200 km gacha masofa kiriting",
+      "contactDuplicate": "Bu kontakt ro'yxatda allaqachon bor."
     },
     "deliveryFee": "Yetkazish narxi ({currency})",
     "deliveryFeeHint": "Har bir yetkazish buyurtmasiga qo'shiladi. 0 — bepul yetkazish.",
@@ -1019,7 +1021,16 @@
     "tierFee": "Yetkazish narxi ({currency})",
     "removeTier": "Oraliqni o'chirish",
     "addTier": "Oraliq qo'shish",
-    "deliveryTiersHint": "Masofa do'kondan to'g'ri chiziq bo'yicha. Oxirgi oraliqdan uzoq bo'lsa, yetkazish taklif qilinmaydi."
+    "deliveryTiersHint": "Masofa do'kondan to'g'ri chiziq bo'yicha. Oxirgi oraliqdan uzoq bo'lsa, yetkazish taklif qilinmaydi.",
+    "rolling": {
+      "titleWhatsapp": "Qo'shimcha raqamlar (navbat bilan)",
+      "titleTelegram": "Qo'shimcha username'lar (navbat bilan)",
+      "hint": "Buyurtmalar navbat bilan boradi: 1-si asosiy kontaktga, 2-si keyingisiga va hokazo — xodimlar teng bo'lishadi. 5 tagacha.",
+      "rowLabel": "Kontakt {n}",
+      "remove": "{n}-kontaktni o'chirish",
+      "addWhatsapp": "Raqam qo'shish",
+      "addTelegram": "Username qo'shish"
+    }
   },
   "signup": {
     "title": "Do'koningizni oching",

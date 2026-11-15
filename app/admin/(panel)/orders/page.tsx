@@ -318,6 +318,12 @@ async function Orders({
                   stale={stale.has(order.id)}
                   receiptUrl={order.receiptPath ? receipts.get(order.receiptPath) : undefined}
                   origin={origin}
+                  showSentTo={
+                    (store.channel === "WHATSAPP"
+                      ? store.extraWhatsappNumbers
+                      : store.extraTelegramUsernames
+                    ).length > 0
+                  }
                 />
               }
             />

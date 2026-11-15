@@ -63,104 +63,107 @@ model User {
 }
 
 model Store {
-  id                   String         @id @default(cuid())
-  slug                 String         @unique
-  name                 String
-  logoUrl              String?
+  id                     String             @id @default(cuid())
+  slug                   String             @unique
+  name                   String
+  logoUrl                String?
   /// Wide header photo on the store page (same bucket/folder as the logo)
-  coverUrl             String?
+  coverUrl               String?
   /// Short text under the store name (**bold**, _italic_, ~~strike~~)
-  description          String?
+  description            String?
   /// Banner at the top of the store page ("Free delivery this weekend")
-  announcement         String?
+  announcement           String?
   /// Brand color "#16a05d" for buttons and highlights; null = platform green
-  brandColor           String?
+  brandColor             String?
   /// Store page background: "gray" | "white" | "cream"
-  pageBackground       String         @default("gray")
+  pageBackground         String             @default("gray")
   /// Menu layout: "list" (rows) | "grid" (2 photo cards per row)
-  menuLayout           String         @default("list")
+  menuLayout             String             @default("list")
   /// Font: "modern" | "friendly" | "elegant" | "classic" | "bold" (lib/design.ts)
-  fontStyle            String         @default("modern")
+  fontStyle              String             @default("modern")
   /// Corner rounding: "sharp" | "soft" | "round"
-  cornerStyle          String         @default("soft")
+  cornerStyle            String             @default("soft")
   /// Store page header: "cover" | "centered" | "compact"
-  headerStyle          String         @default("cover")
-  showSearch           Boolean        @default(true)
-  showDescriptions     Boolean        @default(true)
+  headerStyle            String             @default("cover")
+  showSearch             Boolean            @default(true)
+  showDescriptions       Boolean            @default(true)
   /// Checkout (Website → Checkout): email field "off" | "optional" | "required"
-  checkoutEmail        String         @default("off")
+  checkoutEmail          String             @default("off")
   /// "Note for the store" field on the checkout
-  checkoutNote         Boolean        @default(true)
+  checkoutNote           Boolean            @default(true)
   /// Promo code field on the checkout (still needs Pro + an active code)
-  checkoutPromo        Boolean        @default(true)
+  checkoutPromo          Boolean            @default(true)
   /// Tip choice on the checkout (None / 5 / 10 / 15 % of the items subtotal)
-  tipsEnabled          Boolean        @default(false)
+  tipsEnabled            Boolean            @default(false)
   /// One-time popup on the store page (lib/popup.ts): title, text, image, button, countdown
-  popup                Json?
+  popup                  Json?
   /// Website → Menu: links in the store's ☰ menu [{ id, label, url }] (lib/nav.ts)
-  navLinks             Json?
+  navLinks               Json?
   /// Website → Menu: category ids shown first, in this order
-  pinnedCategoryIds    Json?
+  pinnedCategoryIds      Json?
   /// Store page sections in order (lib/sections.ts): built-ins + owner text / image blocks; null = default order
-  sections             Json?
+  sections               Json?
   /// Social profiles (usernames, no @) shown as icons in the store header
-  instagram            String?
-  telegramChannel      String?
+  instagram              String?
+  telegramChannel        String?
   /// Meta (Facebook/Instagram) Pixel ID — storefront events for ads (Pro)
-  metaPixelId          String?
-  tiktok               String?
-  phone                String?
-  address              String?
-  landmark             String?
-  openTime             String? // "09:00"
-  closeTime            String? // "22:00"
-  isOpen               Boolean        @default(true)
-  channel              Channel        @default(TELEGRAM)
-  telegramUsername     String?
-  whatsappNumber       String?
-  pickupEnabled        Boolean        @default(true)
-  deliveryEnabled      Boolean        @default(true)
+  metaPixelId            String?
+  tiktok                 String?
+  phone                  String?
+  address                String?
+  landmark               String?
+  openTime               String? // "09:00"
+  closeTime              String? // "22:00"
+  isOpen                 Boolean            @default(true)
+  channel                Channel            @default(TELEGRAM)
+  telegramUsername       String?
+  whatsappNumber         String?
+  /// Order rolling (Pro): extra contacts that take turns with the main one, by order number
+  extraWhatsappNumbers   String[]           @default([])
+  extraTelegramUsernames String[]           @default([])
+  pickupEnabled          Boolean            @default(true)
+  deliveryEnabled        Boolean            @default(true)
   /// Table QR ordering (OrderType.DINE_IN); tables are numbered 1..tableCount
-  dineInEnabled        Boolean        @default(false)
-  tableCount           Int            @default(0)
+  dineInEnabled          Boolean            @default(false)
+  tableCount             Int                @default(0)
   /// Pul summalari (narx, tuman, minOrder) shu valyutaning eng kichik birligida: USD → sent
-  currency             String         @default("USD")
+  currency               String             @default("USD")
   /// IANA vaqt zonasi (ish vaqti va "bugun" hisobi uchun), masalan "Europe/London"
-  timeZone             String         @default("UTC")
+  timeZone               String             @default("UTC")
   /// Default language of the store page (i18n/config locales) — used when the customer hasn't picked one
-  locale               String         @default("en")
-  minOrder             Int            @default(0)
+  locale                 String             @default("en")
+  minOrder               Int                @default(0)
   /// Flat delivery fee (minor units). Replaced per-area fees (DeliveryZone is no longer used).
-  deliveryFee          Int            @default(0)
+  deliveryFee            Int                @default(0)
   /// Delivery is free when the items subtotal reaches this amount (minor units); null = off
-  freeDeliveryFrom     Int?
+  freeDeliveryFrom       Int?
   /// Delivery price by distance (Pro): on + store location + tiers; otherwise the flat deliveryFee
-  deliveryByDistance   Boolean        @default(false)
+  deliveryByDistance     Boolean            @default(false)
   /// [{ upToKm, fee }] — fee in minor units (lib/delivery-distance.ts)
-  deliveryTiers        Json?
+  deliveryTiers          Json?
   /// Store location: distance pricing measures from here
-  latitude             Float?
-  longitude            Float?
-  acceptCash           Boolean        @default(true)
-  acceptCardOnDelivery Boolean        @default(true)
-  acceptTransfer       Boolean        @default(false)
-  transferDetails      String?
-  plan                 Plan           @default(FREE)
-  paidUntil            DateTime?
+  latitude               Float?
+  longitude              Float?
+  acceptCash             Boolean            @default(true)
+  acceptCardOnDelivery   Boolean            @default(true)
+  acceptTransfer         Boolean            @default(false)
+  transferDetails        String?
+  plan                   Plan               @default(FREE)
+  paidUntil              DateTime?
   /// Superadmin bloklagan: mijoz menyusi yopiq, buyurtma qabul qilinmaydi
-  isBlocked            Boolean        @default(false)
-  ownerId              String
-  owner                User           @relation(fields: [ownerId], references: [id])
-  categories           Category[]
-  products             Product[]
-  zones                DeliveryZone[]
-  promoCodes           PromoCode[]
-  pushSubscriptions    PushSubscription[]
-  pages                StorePage[]
-  reviews              Review[]
-  orders               Order[]
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
+  isBlocked              Boolean            @default(false)
+  ownerId                String
+  owner                  User               @relation(fields: [ownerId], references: [id])
+  categories             Category[]
+  products               Product[]
+  zones                  DeliveryZone[]
+  promoCodes             PromoCode[]
+  pushSubscriptions      PushSubscription[]
+  pages                  StorePage[]
+  reviews                Review[]
+  orders                 Order[]
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
 
   @@index([ownerId])
 }
@@ -262,6 +265,8 @@ model Order {
   status        OrderStatus   @default(NEW)
   subtotal      Int
   deliveryFee   Int           @default(0)
+  /// WhatsApp number / Telegram username this order's message goes to (order rolling snapshot)
+  sentTo        String?
   /// Promo code used (snapshot of the code text) and the discount it gave (minor units)
   promoCode     String?
   discount      Int           @default(0)

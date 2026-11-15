@@ -28,6 +28,9 @@ export const getCurrentUser = cache(async () => {
           slug: true,
           name: true,
           isBlocked: true,
+          // Order rolling: the orders page shows who got each order
+          extraWhatsappNumbers: true,
+          extraTelegramUsernames: true,
           currency: true,
           timeZone: true,
           channel: true,

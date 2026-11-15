@@ -11,6 +11,7 @@ import {
   promoProblem,
   tipAmount,
 } from "@/lib/orders/promo";
+import { pickContact } from "@/lib/orders/send-link";
 
 // Mijoz checkout'i va admin "qo'lda buyurtma" uchun umumiy qism:
 // tuman -> bazadagi narxlar -> raqam berib saqlash.
@@ -45,6 +46,8 @@ export interface InsertOrderInput {
   items: PricingItem[];
   /** null — tekshirilmaydi (admin) */
   minOrder: number | null;
+  /** Order rolling: contacts that take turns by order number (see orderContacts); none = admin order */
+  contacts?: string[];
 }
 
 export type InsertOrderResult =
@@ -134,11 +137,13 @@ export async function insertOrder(input: InsertOrderInput): Promise<InsertOrderR
           where: { storeId: input.storeId },
           _max: { number: true },
         });
+        const number = (last._max.number ?? 0) + 1;
         return tx.order.create({
           data: {
             storeId: input.storeId,
             currency: input.currency,
-            number: (last._max.number ?? 0) + 1,
+            number,
+            sentTo: pickContact(input.contacts ?? [], number),
             customerName: input.customerName,
             customerPhone: input.customerPhone,
             type: input.type,

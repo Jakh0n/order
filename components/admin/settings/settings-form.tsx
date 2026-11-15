@@ -8,6 +8,7 @@ import { Controller, type FieldPath, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { DeliveryDistanceFields } from "@/components/admin/settings/delivery-distance-fields";
+import { ExtraContacts } from "@/components/admin/settings/extra-contacts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -329,7 +330,7 @@ export function SettingsForm({
           )}
         />
         {/* Ikkalasi ham doim DOM da: unmount bo'lsa input qayta paydo bo'lganda bo'sh ko'rinadi */}
-        <div className={cn(channel !== "TELEGRAM" && "hidden")}>
+        <div className={cn("flex flex-col gap-4", channel !== "TELEGRAM" && "hidden")}>
           <Field
             label={t("telegramUsername")}
             htmlFor="telegramUsername"
@@ -344,8 +345,16 @@ export function SettingsForm({
               {...register("telegramUsername")}
             />
           </Field>
+          <ExtraContacts
+            control={control}
+            errors={errors}
+            name="extraTelegramUsernames"
+            pro={pro}
+            placeholder={t("telegramPlaceholder")}
+            errorText={errorText}
+          />
         </div>
-        <div className={cn(channel !== "WHATSAPP" && "hidden")}>
+        <div className={cn("flex flex-col gap-4", channel !== "WHATSAPP" && "hidden")}>
           <Field
             label={t("whatsappNumber")}
             htmlFor="whatsappNumber"
@@ -359,6 +368,14 @@ export function SettingsForm({
               {...register("whatsappNumber")}
             />
           </Field>
+          <ExtraContacts
+            control={control}
+            errors={errors}
+            name="extraWhatsappNumbers"
+            pro={pro}
+            placeholder={t("whatsappPlaceholder")}
+            errorText={errorText}
+          />
         </div>
         {testHref && (
           <a
