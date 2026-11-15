@@ -16,6 +16,9 @@ export async function getOrderForCustomer(id: string) {
         select: {
           slug: true,
           name: true,
+          logoUrl: true,
+          description: true,
+          address: true,
           phone: true,
           channel: true,
           telegramUsername: true,

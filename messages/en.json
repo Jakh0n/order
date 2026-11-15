@@ -735,7 +735,7 @@
       "UNPAID": "Unpaid",
       "PAID": "Paid"
     },
-    "seeOrder": "See order",
+    "seeOrder": "See invoice",
     "receipt": "Payment receipt",
     "sentFrom": "Sent from {store}",
     "DINE_IN": "Dine-in",
@@ -1770,5 +1770,20 @@
         }
       ]
     }
+  },
+  "orderInvoice": {
+    "number": "Invoice No",
+    "date": "Order date",
+    "items": "Items",
+    "itemsTotal": "Items total",
+    "discount": "Discount",
+    "delivery": "Delivery",
+    "tip": "Tip",
+    "total": "Total",
+    "details": "Order details",
+    "customer": "Customer",
+    "map": "Map",
+    "payment": "Payment",
+    "note": "Note"
   }
 }
