@@ -1289,7 +1289,16 @@
     "lockedPeriod": "Available on Pro",
     "customersLockedTitle": "Know your regulars",
     "customersLockedText": "See every customer with their orders and total spent, and message them in one tap. Available on Pro.",
-    "description": "Revenue, orders and what sells — in your store's time zone."
+    "description": "Revenue, orders and what sells — in your store's time zone.",
+    "insights": {
+      "title": "Tips from your numbers",
+      "busiest": "Your busiest time is {day}, {time} ({count, plural, one {# order} other {# orders}}). Have the kitchen ready.",
+      "rising": "{name} is selling more: {cur} vs {prev} in the previous period.",
+      "falling": "{name} is selling less: {cur} vs {prev} in the previous period. A better photo or a promo can help.",
+      "fallingAction": "Create a promo code",
+      "lapsed": "{count, plural, one {# regular hasn't} other {# regulars haven't}} ordered in {days}+ days. Remind them about you.",
+      "lapsedAction": "See customers"
+    }
   },
   "plan": {
     "pro": "Pro",

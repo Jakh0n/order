@@ -1289,7 +1289,16 @@
     "lockedPeriod": "Pro'da mavjud",
     "customersLockedTitle": "Doimiy mijozlaringizni biling",
     "customersLockedText": "Har bir mijoz buyurtmalari va sarflagan summasi bilan, bir bosishda yozish. Pro'da mavjud.",
-    "description": "Tushum, buyurtmalar va nima sotilayotgani — do'kon vaqt zonasida."
+    "description": "Tushum, buyurtmalar va nima sotilayotgani — do'kon vaqt zonasida.",
+    "insights": {
+      "title": "Raqamlaringizdan maslahatlar",
+      "busiest": "Eng band vaqt — {day}, {time} ({count} ta buyurtma). Oshxonani tayyorlab qo'ying.",
+      "rising": "{name} ko'proq sotilyapti: oldingi davrda {prev}, hozir {cur}.",
+      "falling": "{name} kamroq sotilyapti: oldingi davrda {prev}, hozir {cur}. Yangi rasm yoki promo-kod yordam beradi.",
+      "fallingAction": "Promo-kod yaratish",
+      "lapsed": "{count} ta doimiy mijoz {days}+ kundan beri buyurtma bermadi. O'zingizni eslating.",
+      "lapsedAction": "Mijozlarni ko'rish"
+    }
   },
   "plan": {
     "pro": "Pro",

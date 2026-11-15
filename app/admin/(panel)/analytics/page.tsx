@@ -1,4 +1,14 @@
-import { ArrowDownRight, ArrowUpRight, Lock, Minus } from "lucide-react";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Clock,
+  Lightbulb,
+  Lock,
+  Minus,
+  TrendingDown,
+  TrendingUp,
+  UserRoundX,
+} from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
@@ -8,7 +18,8 @@ import { BarChart } from "@/components/admin/analytics/bar-chart";
 import { Heatmap } from "@/components/admin/analytics/heatmap";
 import { Sparkline } from "@/components/admin/analytics/sparkline";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getAnalytics, parsePeriod, PERIODS } from "@/lib/analytics/data";
+import { getAnalytics, LAPSED_DAYS, parsePeriod, PERIODS } from "@/lib/analytics/data";
+import { buildInsights, type Insight } from "@/lib/analytics/insights";
 import { requireOwner } from "@/lib/auth/owner";
 import { formatMoney } from "@/lib/money";
 import { isPro } from "@/lib/plan";
@@ -58,6 +69,10 @@ async function AnalyticsView({
   // Per-day series for the KPI sparklines (shown from 7 days)
   const trend = data.days > 1 ? data.byDay : [];
   const avgTrend = trend.map((d) => (d.orders > 0 ? d.revenue / d.orders : 0));
+  // Tips need a week of data to mean anything (Free sees "today" only)
+  const insights = data.days >= 7 ? buildInsights(data).slice(0, 4) : [];
+  const weekdayName = (i: number) =>
+    format.dateTime(new Date(Date.UTC(2024, 0, 1 + i, 12)), { weekday: "long", timeZone: "UTC" });
 
   return (
     <>
@@ -142,6 +157,16 @@ async function AnalyticsView({
           t={t}
         />
       </div>
+
+      {insights.length > 0 && (
+        <Panel title={t("insights.title")} icon={Lightbulb}>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {insights.map((insight) => (
+              <InsightRow key={insight.kind} insight={insight} t={t} weekdayName={weekdayName} />
+            ))}
+          </ul>
+        </Panel>
+      )}
 
       {empty ? (
         <p className="text-muted-foreground rounded-xl border border-dashed px-4 py-12 text-center">
@@ -295,21 +320,82 @@ function Kpi({
   );
 }
 
+const INSIGHT_ICON = {
+  busiest: Clock,
+  rising: TrendingUp,
+  falling: TrendingDown,
+  lapsed: UserRoundX,
+} as const;
+
+function InsightRow({
+  insight,
+  t,
+  weekdayName,
+}: {
+  insight: Insight;
+  t: T;
+  weekdayName: (i: number) => string;
+}) {
+  const Icon = INSIGHT_ICON[insight.kind];
+  const hh = (h: number) => `${String(h).padStart(2, "0")}:00`;
+  const text =
+    insight.kind === "busiest"
+      ? t("insights.busiest", {
+          day: weekdayName(insight.weekday),
+          time: `${hh(insight.hour)}–${hh((insight.hour + 2) % 24)}`,
+          count: insight.orders,
+        })
+      : insight.kind === "lapsed"
+        ? t("insights.lapsed", { count: insight.count, days: LAPSED_DAYS })
+        : t(`insights.${insight.kind}`, {
+            name: insight.name,
+            cur: insight.cur,
+            prev: insight.prev,
+          });
+  const action =
+    insight.kind === "lapsed"
+      ? { href: "/admin/analytics/customers", label: t("insights.lapsedAction") }
+      : insight.kind === "falling"
+        ? { href: "/admin/promos", label: t("insights.fallingAction") }
+        : null;
+  return (
+    <li className="bg-muted/50 flex gap-3 rounded-lg p-3 text-sm">
+      <Icon className="text-primary mt-0.5 size-4 shrink-0" aria-hidden />
+      <div className="flex min-w-0 flex-col gap-1">
+        <p>{text}</p>
+        {action && (
+          <Link
+            href={action.href}
+            className="text-primary w-fit text-sm font-medium hover:underline"
+          >
+            {action.label}
+          </Link>
+        )}
+      </div>
+    </li>
+  );
+}
+
 function Panel({
   title,
   hint,
+  icon: Icon,
   className,
   children,
 }: {
   title: string;
   hint?: string;
+  icon?: React.ComponentType<{ className?: string }>;
   className?: string;
   children: React.ReactNode;
 }) {
   return (
     <section className={cn("bg-card flex flex-col gap-4 rounded-xl border p-4", className)}>
       <div>
-        <h2 className="font-semibold">{title}</h2>
+        <h2 className="flex items-center gap-2 font-semibold">
+          {Icon && <Icon className="text-primary size-4" aria-hidden />}
+          {title}
+        </h2>
         {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
       </div>
       {children}
