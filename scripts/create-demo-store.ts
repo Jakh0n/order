@@ -1,8 +1,9 @@
 // Usage: npm run demo:store -- <folder with photos>
 // Creates (or refreshes) the public demo store "Bahor Kafe" at /bahor-kafe — the one the landing
 // page links to. Touches only this store and its own demo owner; safe to run again.
-// Photos: <folder>/{cover,osh,lagmon,manti,shashlik,somsa,non,lavash,salat,choy,kompot,tort}.jpg
+// Photos: <folder>/logo.png, cover.jpg and one <photo>.jpg per dish below
 // (Unsplash License — free for commercial use). Uploaded to the "menu-images" bucket.
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { loadEnvFile } from "node:process";
@@ -52,6 +53,12 @@ const MENU: { category: string; items: Item[] }[] = [
         ],
       },
       {
+        name: "Qozon kabob",
+        description: "Qozonda qovurilgan mol go'shti va kartoshka, ko'kat bilan.",
+        price: 42000,
+        photo: "dimlama",
+      },
+      {
         name: "Qo'lda cho'zilgan lag'mon",
         description: "Go'sht va sabzavotli qayla, qo'lda cho'zilgan xamir.",
         price: 38000,
@@ -73,6 +80,12 @@ const MENU: { category: string; items: Item[] }[] = [
             ],
           },
         ],
+      },
+      {
+        name: "Chuchvara sho'rva",
+        description: "Mayda chuchvara, tiniq sho'rva, ko'kat va qatiq bilan.",
+        price: 30000,
+        photo: "chuchvara",
       },
       {
         name: "Shashlik (mol go'shti)",
@@ -123,6 +136,40 @@ const MENU: { category: string; items: Item[] }[] = [
           },
         ],
       },
+      {
+        name: "Klassik burger",
+        description: "Mol go'shti kotleti, cheddar, pomidor, salat bargi va maxsus sous.",
+        price: 39000,
+        photo: "burger",
+        groups: [
+          {
+            name: "Qo'shimcha",
+            required: false,
+            maxSelect: 2,
+            options: [
+              ["Ikkinchi kotlet", 15000],
+              ["Pishloq", 5000],
+            ],
+          },
+        ],
+      },
+      {
+        name: "Kartoshka fri",
+        description: "Tilla rangda qovurilgan, ketchup bilan.",
+        price: 15000,
+        photo: "fri",
+        groups: [
+          {
+            name: "O'lcham",
+            required: true,
+            maxSelect: 1,
+            options: [
+              ["O'rta", 0],
+              ["Katta", 6000],
+            ],
+          },
+        ],
+      },
     ],
   },
   {
@@ -137,7 +184,7 @@ const MENU: { category: string; items: Item[] }[] = [
     ],
   },
   {
-    category: "Ichimliklar va shirinliklar",
+    category: "Ichimliklar",
     items: [
       {
         name: "Ko'k choy (choynak)",
@@ -152,10 +199,39 @@ const MENU: { category: string; items: Item[] }[] = [
         photo: "kompot",
       },
       {
+        name: "Yalpizli limonad",
+        description: "Limon, laym va yalpiz, muz bilan.",
+        price: 18000,
+        photo: "limonad",
+      },
+      {
+        name: "Kapuchino",
+        description: "Yangi tortilgan kofe va ko'pikli sut.",
+        price: 20000,
+        photo: "kofe",
+      },
+    ],
+  },
+  {
+    category: "Shirinliklar",
+    items: [
+      {
         name: "Shokoladli tort",
         description: "Qatlamli, karamel krem bilan. Bir bo'lak.",
         price: 22000,
         photo: "tort",
+      },
+      {
+        name: "Paxlava (2 dona)",
+        description: "Pistali, asalli sharbat bilan.",
+        price: 18000,
+        photo: "paxlava",
+      },
+      {
+        name: "Muzqaymoq (3 shar)",
+        description: "Vanil, shokolad va qulupnay.",
+        price: 20000,
+        photo: "muzqaymoq",
       },
     ],
   },
@@ -226,18 +302,24 @@ async function main() {
     });
 
     // Photos → public bucket, under this store's folder (same layout as owner uploads)
-    const photoUrl = async (name: string) => {
-      const file = await readFile(path.join(dir, `${name}.jpg`));
-      const objectPath = `stores/${store.id}/demo-${name}.jpg`;
-      const { error } = await supabase.storage
-        .from(BUCKET)
-        .upload(objectPath, file, { contentType: "image/jpeg", upsert: true });
+    const uploaded = new Set<string>();
+    const photoUrl = async (name: string, ext: "jpg" | "png" = "jpg") => {
+      const file = await readFile(path.join(dir, `${name}.${ext}`));
+      // Content hash in the name: a changed photo gets a new URL (no stale CDN / browser cache)
+      const hash = createHash("sha1").update(file).digest("hex").slice(0, 8);
+      const objectPath = `stores/${store.id}/demo-${name}-${hash}.${ext}`;
+      uploaded.add(objectPath.split("/").pop()!);
+      const { error } = await supabase.storage.from(BUCKET).upload(objectPath, file, {
+        contentType: ext === "png" ? "image/png" : "image/jpeg",
+        upsert: true,
+      });
       if (error) throw new Error(`Upload ${name}: ${error.message}`);
       return supabase.storage.from(BUCKET).getPublicUrl(objectPath).data.publicUrl;
     };
 
     const coverUrl = await photoUrl("cover");
-    await prisma.store.update({ where: { id: store.id }, data: { coverUrl } });
+    const logoUrl = await photoUrl("logo", "png");
+    await prisma.store.update({ where: { id: store.id }, data: { coverUrl, logoUrl } });
 
     // Rebuild only this store's menu (option groups cascade with products)
     await prisma.product.deleteMany({ where: { storeId: store.id } });
@@ -277,6 +359,16 @@ async function main() {
         dishes++;
       }
     }
+    // Remove demo photos from earlier runs that nothing uses any more
+    const { data: files } = await supabase.storage
+      .from(BUCKET)
+      .list(`stores/${store.id}`, { limit: 1000 });
+    const stale = (files ?? [])
+      .map((f) => f.name)
+      .filter((n) => n.startsWith("demo-") && !uploaded.has(n))
+      .map((n) => `stores/${store.id}/${n}`);
+    if (stale.length) await supabase.storage.from(BUCKET).remove(stale);
+
     console.log(`Demo store ready: /${SLUG} — ${MENU.length} categories, ${dishes} dishes`);
   } finally {
     await prisma.$disconnect();
