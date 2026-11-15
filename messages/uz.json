@@ -1254,6 +1254,10 @@
     "revenueByDay": "Kunlik tushum",
     "byHour": "Gavjum soatlar",
     "byHourHint": "Buyurtmalar berilgan soat bo'yicha (do'kon vaqt zonasi)",
+    "heatmap": "Band vaqtlar",
+    "heatmapHint": "Hafta kuni va soat bo'yicha buyurtmalar (do'kon vaqt zonasida)",
+    "legendLess": "Kam",
+    "legendMore": "Ko'p",
     "byType": "Qanday buyurtma berishadi",
     "topItems": "Eng ko'p sotilgan taomlar",
     "types": {

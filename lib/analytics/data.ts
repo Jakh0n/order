@@ -33,6 +33,8 @@ export interface Analytics {
   byDay: { date: string; orders: number; revenue: number }[];
   /** 0..23, orders placed in that local hour */
   byHour: { hour: number; orders: number }[];
+  /** [weekday 0=Mon..6=Sun][hour 0..23] → orders (local time) */
+  byWeekdayHour: number[][];
   topItems: { name: string; quantity: number; revenue: number }[];
   byType: { type: "PICKUP" | "DELIVERY" | "DINE_IN"; orders: number; revenue: number }[];
   /** Customers (by phone) who ordered in the period, and how many had ordered before it */
@@ -60,7 +62,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
   const local = Prisma.sql`((o."createdAt" AT TIME ZONE 'UTC') AT TIME ZONE ${tz})`;
   const inCurrency = Prisma.sql`o."currency" = ${store.currency}`;
 
-  const [totals, byDay, byHour, topItems, byType, customers] = await Promise.all([
+  const [totals, byDay, byHour, topItems, byType, customers, byWeekdayHour] = await Promise.all([
     prisma.$queryRaw<
       { cur_orders: number; cur_rev: bigint; prev_orders: number; prev_rev: bigint }[]
     >`
@@ -114,6 +116,12 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
             AND p."status" <> 'CANCELLED' AND p."createdAt" < ${from}
         ))::int AS returning
       FROM cur`,
+    prisma.$queryRaw<{ dow: number; h: number; orders: number }[]>`
+      SELECT extract(isodow FROM ${local})::int AS dow, extract(hour FROM ${local})::int AS h,
+        count(*)::int AS orders
+      FROM "Order" o
+      WHERE ${where(from, now)}
+      GROUP BY 1, 2`,
   ]);
 
   // Every day of the period, zeros included (a gap in a bar chart reads as "no data")
@@ -135,6 +143,13 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
       revenue: Number(dayMap.get(date)?.revenue ?? 0),
     })),
     byHour: Array.from({ length: 24 }, (_, hour) => ({ hour, orders: hourMap.get(hour) ?? 0 })),
+    byWeekdayHour: byWeekdayHour.reduce(
+      (grid, r) => {
+        grid[r.dow - 1][r.h] += r.orders; // isodow: 1 = Monday
+        return grid;
+      },
+      Array.from({ length: 7 }, () => Array<number>(24).fill(0)),
+    ),
     topItems: topItems.map((r) => ({ ...r, revenue: Number(r.revenue) })),
     byType: byType.map((r) => ({ ...r, revenue: Number(r.revenue) })),
     customers: customers[0] ?? { total: 0, returning: 0 },

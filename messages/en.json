@@ -1254,6 +1254,10 @@
     "revenueByDay": "Revenue by day",
     "byHour": "Busiest hours",
     "byHourHint": "Orders by the hour they were placed (your time zone)",
+    "heatmap": "Busy times",
+    "heatmapHint": "Orders by day of the week and time of day (your time zone)",
+    "legendLess": "Less",
+    "legendMore": "More",
     "byType": "How customers order",
     "topItems": "Top dishes",
     "types": {

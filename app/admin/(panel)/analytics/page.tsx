@@ -5,6 +5,7 @@ import { Suspense } from "react";
 
 import { AnalyticsTabs } from "@/components/admin/analytics/analytics-tabs";
 import { BarChart } from "@/components/admin/analytics/bar-chart";
+import { Heatmap } from "@/components/admin/analytics/heatmap";
 import { Sparkline } from "@/components/admin/analytics/sparkline";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getAnalytics, parsePeriod, PERIODS } from "@/lib/analytics/data";
@@ -216,6 +217,24 @@ async function AnalyticsView({
                 ))}
               </ol>
             </Panel>
+
+            {data.days >= 7 && (
+              <Panel title={t("heatmap")} hint={t("heatmapHint")} className="lg:col-span-2">
+                <Heatmap
+                  grid={data.byWeekdayHour}
+                  // 2024-01-01 was a Monday
+                  weekdays={Array.from({ length: 7 }, (_, i) =>
+                    format.dateTime(new Date(Date.UTC(2024, 0, 1 + i, 12)), {
+                      weekday: "short",
+                      timeZone: "UTC",
+                    }),
+                  )}
+                  caption={t("heatmap")}
+                  legendLess={t("legendLess")}
+                  legendMore={t("legendMore")}
+                />
+              </Panel>
+            )}
           </div>
           <p className="text-muted-foreground text-xs">{t("note", { currency: store.currency })}</p>
         </>
