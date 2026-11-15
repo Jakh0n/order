@@ -1301,7 +1301,16 @@
       "lapsedAction": "Mijozlarni ko'rish"
     },
     "lapsedHint": "{days}+ kundan beri buyurtma bermagan doimiy mijozlar — ularga promo-kod yuboring.",
-    "noLapsed": "Barcha doimiy mijozlar yaqinda buyurtma bergan."
+    "noLapsed": "Barcha doimiy mijozlar yaqinda buyurtma bergan.",
+    "money": {
+      "title": "Pul",
+      "hint": "To'lov usullari, hali to'lanmagan summa, yetkazish, chegirmalar va choychaqa",
+      "byMethod": "To'lov usuli bo'yicha",
+      "unpaid": "To'landi deb belgilanmagan",
+      "deliveryFees": "Yetkazish",
+      "discounts": "Berilgan chegirmalar",
+      "tips": "Choychaqa"
+    }
   },
   "plan": {
     "pro": "Pro",

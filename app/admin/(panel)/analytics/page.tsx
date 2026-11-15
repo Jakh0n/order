@@ -43,9 +43,10 @@ async function AnalyticsView({
   // Free plan: today only (the other periods are shown locked)
   const pro = isPro(store);
   const period = pro ? parsePeriod(params.period) : "today";
-  const [data, t, format] = await Promise.all([
+  const [data, t, tp, format] = await Promise.all([
     getAnalytics(store, period),
     getTranslations("analytics"),
+    getTranslations("payment"),
     getFormatter(),
   ]);
   const money = (minor: number) => formatMoney(minor, store.currency);
@@ -66,6 +67,7 @@ async function AnalyticsView({
       : format.dateTime(day(d), { day: "numeric", month: "short", timeZone: "UTC" });
   const maxType = Math.max(...data.byType.map((r) => r.orders), 1);
   const maxItem = Math.max(...data.topItems.map((r) => r.quantity), 1);
+  const maxMethod = Math.max(...data.money.byMethod.map((r) => r.revenue), 1);
   const empty = current.orders === 0;
   // Per-day series for the KPI sparklines (shown from 7 days)
   const trend = data.days > 1 ? data.byDay : [];
@@ -227,6 +229,48 @@ async function AnalyticsView({
                   />
                 ))}
               </ul>
+            </Panel>
+
+            <Panel title={t("money.title")} hint={t("money.hint")} className="lg:col-span-2">
+              <div className="grid gap-6 sm:grid-cols-2">
+                <ul className="flex flex-col gap-3" aria-label={t("money.byMethod")}>
+                  {data.money.byMethod.map((r) => (
+                    <MeterRow
+                      key={r.method}
+                      label={tp(r.method)}
+                      value={money(r.revenue)}
+                      sub={t("ordersCount", { count: r.orders })}
+                      pct={(r.revenue / maxMethod) * 100}
+                    />
+                  ))}
+                </ul>
+                <dl className="grid grid-cols-[1fr_auto] content-start gap-x-4 gap-y-2 text-sm">
+                  <dt className="text-muted-foreground">{t("money.unpaid")}</dt>
+                  <dd
+                    className={cn(
+                      "text-right font-semibold tabular-nums",
+                      data.money.unpaid.orders > 0 && "text-red-700 dark:text-red-400",
+                    )}
+                  >
+                    {data.money.unpaid.orders > 0 ? (
+                      <Link href="/admin/orders" className="hover:underline">
+                        {money(data.money.unpaid.amount)} ·{" "}
+                        {t("ordersCount", { count: data.money.unpaid.orders })}
+                      </Link>
+                    ) : (
+                      money(0)
+                    )}
+                  </dd>
+                  <dt className="text-muted-foreground">{t("money.deliveryFees")}</dt>
+                  <dd className="text-right tabular-nums">{money(data.money.deliveryFees)}</dd>
+                  <dt className="text-muted-foreground">{t("money.discounts")}</dt>
+                  <dd className="text-right tabular-nums">
+                    {data.money.discounts > 0 ? `−${money(data.money.discounts)}` : money(0)}
+                  </dd>
+                  <dt className="text-muted-foreground">{t("money.tips")}</dt>
+                  <dd className="text-right tabular-nums">{money(data.money.tips)}</dd>
+                </dl>
+              </div>
             </Panel>
 
             <Panel title={t("topItems")} className="lg:col-span-2">

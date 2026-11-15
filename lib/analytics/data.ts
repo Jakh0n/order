@@ -44,6 +44,18 @@ export interface Analytics {
   itemMoves: { name: string; cur: number; prev: number }[];
   /** Regulars (2+ orders) whose last order was 30+ days ago */
   lapsedRegulars: number;
+  /** Where the money is: by payment method, still unpaid, and what went to fees / discounts / tips */
+  money: {
+    byMethod: {
+      method: "CASH" | "CARD_ON_DELIVERY" | "TRANSFER";
+      orders: number;
+      revenue: number;
+    }[];
+    unpaid: { orders: number; amount: number };
+    deliveryFees: number;
+    discounts: number;
+    tips: number;
+  };
 }
 
 interface Totals {
@@ -69,11 +81,22 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
 
   const lapsedBefore = new Date(now.getTime() - LAPSED_DAYS * DAY_MS);
 
-  const [totals, byDay, byHour, topItems, byType, customers, byWeekdayHour, itemMoves, lapsed] =
-    await Promise.all([
-      prisma.$queryRaw<
-        { cur_orders: number; cur_rev: bigint; prev_orders: number; prev_rev: bigint }[]
-      >`
+  const [
+    totals,
+    byDay,
+    byHour,
+    topItems,
+    byType,
+    customers,
+    byWeekdayHour,
+    itemMoves,
+    lapsed,
+    byMethod,
+    extras,
+  ] = await Promise.all([
+    prisma.$queryRaw<
+      { cur_orders: number; cur_rev: bigint; prev_orders: number; prev_rev: bigint }[]
+    >`
       SELECT
         count(*) FILTER (WHERE o."createdAt" >= ${from})::int AS cur_orders,
         coalesce(sum(o."total") FILTER (WHERE o."createdAt" >= ${from} AND ${inCurrency}), 0)::bigint AS cur_rev,
@@ -81,19 +104,19 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
         coalesce(sum(o."total") FILTER (WHERE o."createdAt" < ${from} AND ${inCurrency}), 0)::bigint AS prev_rev
       FROM "Order" o
       WHERE ${where(prevFrom, now)}`,
-      prisma.$queryRaw<{ d: string; orders: number; revenue: bigint }[]>`
+    prisma.$queryRaw<{ d: string; orders: number; revenue: bigint }[]>`
       SELECT to_char(date_trunc('day', ${local}), 'YYYY-MM-DD') AS d,
         count(*)::int AS orders,
         coalesce(sum(o."total") FILTER (WHERE ${inCurrency}), 0)::bigint AS revenue
       FROM "Order" o
       WHERE ${where(from, now)}
       GROUP BY 1`,
-      prisma.$queryRaw<{ h: number; orders: number }[]>`
+    prisma.$queryRaw<{ h: number; orders: number }[]>`
       SELECT extract(hour FROM ${local})::int AS h, count(*)::int AS orders
       FROM "Order" o
       WHERE ${where(from, now)}
       GROUP BY 1`,
-      prisma.$queryRaw<{ name: string; quantity: number; revenue: bigint }[]>`
+    prisma.$queryRaw<{ name: string; quantity: number; revenue: bigint }[]>`
       SELECT i."name", sum(i."quantity")::int AS quantity,
         coalesce(sum(i."lineTotal") FILTER (WHERE ${inCurrency}), 0)::bigint AS revenue
       FROM "OrderItem" i
@@ -102,16 +125,16 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
       GROUP BY i."name"
       ORDER BY quantity DESC, revenue DESC
       LIMIT 8`,
-      prisma.$queryRaw<
-        { type: Analytics["byType"][number]["type"]; orders: number; revenue: bigint }[]
-      >`
+    prisma.$queryRaw<
+      { type: Analytics["byType"][number]["type"]; orders: number; revenue: bigint }[]
+    >`
       SELECT o."type"::text AS type, count(*)::int AS orders,
         coalesce(sum(o."total") FILTER (WHERE ${inCurrency}), 0)::bigint AS revenue
       FROM "Order" o
       WHERE ${where(from, now)}
       GROUP BY 1
       ORDER BY orders DESC`,
-      prisma.$queryRaw<{ total: number; returning: number }[]>`
+    prisma.$queryRaw<{ total: number; returning: number }[]>`
       WITH cur AS (
         SELECT DISTINCT o."customerPhone" AS phone
         FROM "Order" o
@@ -124,13 +147,13 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
             AND p."status" <> 'CANCELLED' AND p."createdAt" < ${from}
         ))::int AS returning
       FROM cur`,
-      prisma.$queryRaw<{ dow: number; h: number; orders: number }[]>`
+    prisma.$queryRaw<{ dow: number; h: number; orders: number }[]>`
       SELECT extract(isodow FROM ${local})::int AS dow, extract(hour FROM ${local})::int AS h,
         count(*)::int AS orders
       FROM "Order" o
       WHERE ${where(from, now)}
       GROUP BY 1, 2`,
-      prisma.$queryRaw<{ name: string; cur: number; prev: number }[]>`
+    prisma.$queryRaw<{ name: string; cur: number; prev: number }[]>`
       SELECT i."name",
         coalesce(sum(i."quantity") FILTER (WHERE o."createdAt" >= ${from}), 0)::int AS cur,
         coalesce(sum(i."quantity") FILTER (WHERE o."createdAt" < ${from}), 0)::int AS prev
@@ -138,7 +161,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
       JOIN "Order" o ON o."id" = i."orderId"
       WHERE ${where(prevFrom, now)}
       GROUP BY i."name"`,
-      prisma.$queryRaw<{ n: number }[]>`
+    prisma.$queryRaw<{ n: number }[]>`
       SELECT count(*)::int AS n FROM (
         SELECT o."customerPhone"
         FROM "Order" o
@@ -146,7 +169,31 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
         GROUP BY o."customerPhone"
         HAVING count(*) >= 2 AND max(o."createdAt") < ${lapsedBefore}
       ) r`,
-    ]);
+    prisma.$queryRaw<
+      {
+        method: Analytics["money"]["byMethod"][number]["method"];
+        orders: number;
+        revenue: bigint;
+      }[]
+    >`
+      SELECT o."paymentMethod"::text AS method, count(*)::int AS orders,
+        coalesce(sum(o."total") FILTER (WHERE ${inCurrency}), 0)::bigint AS revenue
+      FROM "Order" o
+      WHERE ${where(from, now)}
+      GROUP BY 1
+      ORDER BY revenue DESC`,
+    prisma.$queryRaw<
+      { unpaid_orders: number; unpaid: bigint; delivery: bigint; discount: bigint; tip: bigint }[]
+    >`
+      SELECT
+        count(*) FILTER (WHERE o."paymentStatus" = 'UNPAID')::int AS unpaid_orders,
+        coalesce(sum(o."total") FILTER (WHERE o."paymentStatus" = 'UNPAID'), 0)::bigint AS unpaid,
+        coalesce(sum(o."deliveryFee"), 0)::bigint AS delivery,
+        coalesce(sum(o."discount"), 0)::bigint AS discount,
+        coalesce(sum(o."tip"), 0)::bigint AS tip
+      FROM "Order" o
+      WHERE ${where(from, now)} AND ${inCurrency}`,
+  ]);
 
   // Every day of the period, zeros included (a gap in a bar chart reads as "no data")
   const dayMap = new Map(byDay.map((r) => [r.d, r]));
@@ -179,6 +226,13 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
     customers: customers[0] ?? { total: 0, returning: 0 },
     itemMoves,
     lapsedRegulars: lapsed[0]?.n ?? 0,
+    money: {
+      byMethod: byMethod.map((r) => ({ ...r, revenue: Number(r.revenue) })),
+      unpaid: { orders: extras[0].unpaid_orders, amount: Number(extras[0].unpaid) },
+      deliveryFees: Number(extras[0].delivery),
+      discounts: Number(extras[0].discount),
+      tips: Number(extras[0].tip),
+    },
   };
 }
 

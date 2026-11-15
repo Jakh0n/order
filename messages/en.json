@@ -1301,7 +1301,16 @@
       "lapsedAction": "See customers"
     },
     "lapsedHint": "Regulars with no order in {days}+ days — message them a promo code.",
-    "noLapsed": "Nobody has dropped off — every regular ordered recently."
+    "noLapsed": "Nobody has dropped off — every regular ordered recently.",
+    "money": {
+      "title": "Money",
+      "hint": "Payment methods, what's still unpaid, and fees, discounts and tips",
+      "byMethod": "By payment method",
+      "unpaid": "Not marked paid",
+      "deliveryFees": "Delivery fees",
+      "discounts": "Discounts given",
+      "tips": "Tips"
+    }
   },
   "plan": {
     "pro": "Pro",
