@@ -121,7 +121,7 @@ export default async function Home() {
     items: { t: string; pro?: boolean }[];
   }[];
   // Static demo QR — points at the live demo store
-  const qr = await QRCode.toString("https://flami.org/flami-grill", {
+  const qr = await QRCode.toString("https://flami.org/bahor-kafe", {
     type: "svg",
     margin: 0,
     color: { dark: "#12372a", light: "#00000000" },
@@ -203,7 +203,7 @@ export default async function Home() {
                             dangerouslySetInnerHTML={{ __html: qr }}
                           />
                           <div className="min-w-0 flex-1 text-left">
-                            <p className="truncate text-sm font-semibold">flami.org/flami-grill</p>
+                            <p className="truncate text-sm font-semibold">flami.org/bahor-kafe</p>
                             <p className="text-primary mt-1 flex items-center gap-1 text-xs font-medium">
                               <Copy className="size-3" />
                               {t("steps.v2Copy")}

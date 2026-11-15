@@ -55,15 +55,22 @@ export function isValidCurrency(code: string): boolean {
   }
 }
 
-/** 899, "USD" → "$8.99"; 1500, "JPY" → "¥1,500". Signed amounts keep their sign. */
+/**
+ * Currencies whose minor unit exists on paper but not on price lists (tiyin, tiyn, kopeck):
+ * whole amounts are shown without ".00" — "UZS 45,000", not "UZS 45,000.00".
+ */
+const WHOLE_UNIT_CURRENCIES = new Set(["UZS", "KZT", "KGS", "TJS", "RUB", "AMD", "AZN"]);
+
+/** 899, "USD" → "$8.99"; 1500, "JPY" → "¥1,500"; 4500000, "UZS" → "UZS 45,000". Signed amounts keep their sign. */
 export function formatMoney(minor: number, currency: string = DEFAULT_CURRENCY): string {
   const code = currency.toUpperCase();
   const digits = currencyDigits(code);
+  const shown = WHOLE_UNIT_CURRENCIES.has(code) && minor % 10 ** digits === 0 ? 0 : digits;
   return new Intl.NumberFormat("en", {
     style: "currency",
     currency: code,
-    minimumFractionDigits: digits,
-    maximumFractionDigits: digits,
+    minimumFractionDigits: shown,
+    maximumFractionDigits: shown,
   }).format(minor / 10 ** digits);
 }
 
