@@ -7,7 +7,9 @@ import { prisma } from "@/lib/db";
 // Customer base: grouped by phone number (table orders without a phone are not customers here).
 // Money only from orders in the store's current currency.
 
-export const CUSTOMER_SORTS = ["recent", "orders", "spent"] as const;
+export const CUSTOMER_SORTS = ["recent", "orders", "spent", "lapsed"] as const;
+/** "lapsed": regulars (2+ orders) with no order in this many days */
+export const LAPSED_DAYS = 30;
 export type CustomerSort = (typeof CUSTOMER_SORTS)[number];
 /** The page shows this many; the CSV export asks for more */
 const LIMIT = 200;
@@ -29,9 +31,16 @@ export async function listCustomers(
   const search = q.trim().slice(0, 50);
   const like = `%${search.replace(/[%_\\]/g, "\\$&")}%`;
   const digits = search.replace(/\D/g, "");
-  const filter = search
-    ? Prisma.sql`HAVING (array_agg(o."customerName" ORDER BY o."createdAt" DESC))[1] ILIKE ${like}
-        ${digits ? Prisma.sql`OR o."customerPhone" LIKE ${`%${digits}%`}` : Prisma.empty}`
+  const conditions: Prisma.Sql[] = [];
+  if (search)
+    conditions.push(Prisma.sql`((array_agg(o."customerName" ORDER BY o."createdAt" DESC))[1] ILIKE ${like}
+        ${digits ? Prisma.sql`OR o."customerPhone" LIKE ${`%${digits}%`}` : Prisma.empty})`);
+  if (sort === "lapsed")
+    conditions.push(
+      Prisma.sql`count(*) >= 2 AND max(o."createdAt") < ${new Date(Date.now() - LAPSED_DAYS * 86_400_000)}`,
+    );
+  const filter = conditions.length
+    ? Prisma.sql`HAVING ${Prisma.join(conditions, " AND ")}`
     : Prisma.empty;
   const order =
     sort === "orders"

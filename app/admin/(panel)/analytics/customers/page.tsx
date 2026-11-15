@@ -10,7 +10,12 @@ import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { requireOwner } from "@/lib/auth/owner";
-import { CUSTOMER_SORTS, type CustomerSort, listCustomers } from "@/lib/customers/data";
+import {
+  CUSTOMER_SORTS,
+  type CustomerSort,
+  LAPSED_DAYS,
+  listCustomers,
+} from "@/lib/customers/data";
 import { formatMoney } from "@/lib/money";
 import { isPro } from "@/lib/plan";
 import { cn } from "@/lib/utils";
@@ -79,7 +84,11 @@ async function CustomersView({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-muted-foreground text-sm">{t("customersLead", { count: total })}</p>
+        <p className="text-muted-foreground text-sm">
+          {sort === "lapsed"
+            ? t("lapsedHint", { days: LAPSED_DAYS })
+            : t("customersLead", { count: total })}
+        </p>
         <ExportButton
           pro
           href={`/admin/export/customers?${new URLSearchParams({ ...(q && { q }), sort })}`}
@@ -126,7 +135,7 @@ async function CustomersView({
 
       {customers.length === 0 ? (
         <p className="text-muted-foreground rounded-xl border border-dashed px-4 py-12 text-center">
-          {q ? t("noMatches") : t("noCustomers")}
+          {q ? t("noMatches") : sort === "lapsed" ? t("noLapsed") : t("noCustomers")}
         </p>
       ) : (
         <ul className="bg-card divide-y rounded-xl border">

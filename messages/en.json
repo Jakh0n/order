@@ -1254,6 +1254,10 @@
     "revenueByDay": "Revenue by day",
     "byHour": "Busiest hours",
     "byHourHint": "Orders by the hour they were placed (your time zone)",
+    "heatmap": "Busy times",
+    "heatmapHint": "Orders by day of the week and time of day (your time zone)",
+    "legendLess": "Less",
+    "legendMore": "More",
     "byType": "How customers order",
     "topItems": "Top dishes",
     "types": {
@@ -1272,7 +1276,8 @@
     "sort": {
       "recent": "Recent",
       "orders": "Most orders",
-      "spent": "Top spenders"
+      "spent": "Top spenders",
+      "lapsed": "Not ordering lately"
     },
     "noCustomers": "Customers appear here after their first order.",
     "noMatches": "No customers match your search.",
@@ -1285,7 +1290,50 @@
     "lockedPeriod": "Available on Pro",
     "customersLockedTitle": "Know your regulars",
     "customersLockedText": "See every customer with their orders and total spent, and message them in one tap. Available on Pro.",
-    "description": "Revenue, orders and what sells — in your store's time zone."
+    "description": "Revenue, orders and what sells — in your store's time zone.",
+    "insights": {
+      "title": "Tips from your numbers",
+      "busiest": "Your busiest time is {day}, {time} ({count, plural, one {# order} other {# orders}}). Have the kitchen ready.",
+      "rising": "{name} is selling more: {cur} vs {prev} in the previous period.",
+      "falling": "{name} is selling less: {cur} vs {prev} in the previous period. A better photo or a promo can help.",
+      "fallingAction": "Create a promo code",
+      "lapsed": "{count, plural, one {# regular hasn't} other {# regulars haven't}} ordered in {days}+ days. Remind them about you.",
+      "lapsedAction": "See customers"
+    },
+    "lapsedHint": "Regulars with no order in {days}+ days — message them a promo code.",
+    "noLapsed": "Nobody has dropped off — every regular ordered recently.",
+    "money": {
+      "title": "Money",
+      "hint": "Payment methods, what's still unpaid, and fees, discounts and tips",
+      "byMethod": "By payment method",
+      "unpaid": "Not marked paid",
+      "deliveryFees": "Delivery fees",
+      "discounts": "Discounts given",
+      "tips": "Tips"
+    },
+    "topItemsHint": "Sold this period, with the change vs the previous one",
+    "showAllDishes": "Show all {count} dishes",
+    "newDish": "new",
+    "notSelling": {
+      "title": "Not selling ({count})",
+      "hint": "On the menu, but nobody ordered them this period. Try a better photo, a new price or a promo — or hide them."
+    },
+    "promos": {
+      "title": "Promo codes",
+      "hint": "Orders with each code this period, the discount it cost and the revenue it brought",
+      "code": "Code",
+      "discount": "Discount"
+    },
+    "thisPeriod": "This period",
+    "previousPeriod": "Previous period",
+    "previousShort": "before: {amount}",
+    "cancelled": {
+      "title": "Cancelled",
+      "value": "{count, plural, one {# order} other {# orders}} ({pct}%)",
+      "lost": "{amount} not earned",
+      "before": "{pct}% before",
+      "none": "None"
+    }
   },
   "plan": {
     "pro": "Pro",

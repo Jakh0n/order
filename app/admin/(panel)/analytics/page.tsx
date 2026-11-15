@@ -1,13 +1,27 @@
-import { ArrowDownRight, ArrowUpRight, Lock, Minus } from "lucide-react";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Clock,
+  Lightbulb,
+  Lock,
+  Minus,
+  TrendingDown,
+  TrendingUp,
+  UserRoundX,
+} from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { AnalyticsTabs } from "@/components/admin/analytics/analytics-tabs";
 import { BarChart } from "@/components/admin/analytics/bar-chart";
+import { Heatmap } from "@/components/admin/analytics/heatmap";
+import { Sparkline } from "@/components/admin/analytics/sparkline";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getAnalytics, parsePeriod, PERIODS } from "@/lib/analytics/data";
+import { type Analytics, getAnalytics, parsePeriod, PERIODS } from "@/lib/analytics/data";
+import { buildInsights, type Insight } from "@/lib/analytics/insights";
 import { requireOwner } from "@/lib/auth/owner";
+import { LAPSED_DAYS } from "@/lib/customers/data";
 import { formatMoney } from "@/lib/money";
 import { isPro } from "@/lib/plan";
 import { cn } from "@/lib/utils";
@@ -29,9 +43,10 @@ async function AnalyticsView({
   // Free plan: today only (the other periods are shown locked)
   const pro = isPro(store);
   const period = pro ? parsePeriod(params.period) : "today";
-  const [data, t, format] = await Promise.all([
+  const [data, t, tp, format] = await Promise.all([
     getAnalytics(store, period),
     getTranslations("analytics"),
+    getTranslations("payment"),
     getFormatter(),
   ]);
   const money = (minor: number) => formatMoney(minor, store.currency);
@@ -52,7 +67,45 @@ async function AnalyticsView({
       : format.dateTime(day(d), { day: "numeric", month: "short", timeZone: "UTC" });
   const maxType = Math.max(...data.byType.map((r) => r.orders), 1);
   const maxItem = Math.max(...data.topItems.map((r) => r.quantity), 1);
+  // Change vs the previous period per dish (only when there is one to compare with)
+  const prevQty =
+    data.days >= 7 && previous.orders > 0
+      ? new Map(data.itemMoves.map((m) => [m.name, m.prev]))
+      : null;
+  const dishRow = (item: Analytics["topItems"][number], rank: number) => {
+    const prev = prevQty?.get(item.name);
+    const delta =
+      prevQty === null ? null : !prev ? "new" : Math.round(((item.quantity - prev) / prev) * 100);
+    return (
+      <MeterRow
+        key={item.name}
+        rank={rank}
+        label={item.name}
+        value={t("sold", { count: item.quantity })}
+        sub={money(item.revenue)}
+        pct={(item.quantity / maxItem) * 100}
+        delta={delta}
+        t={t}
+      />
+    );
+  };
+  // Cancel rate = cancelled / all placed (current totals exclude cancelled ones)
+  const rate = (cancelled: number, kept: number) =>
+    cancelled + kept > 0 ? Math.round((cancelled / (cancelled + kept)) * 100) : 0;
+  const cancelRate = rate(data.cancelled.orders, current.orders);
+  const prevCancelRate =
+    data.cancelled.prevAll > 0
+      ? rate(data.cancelled.prevOrders, data.cancelled.prevAll - data.cancelled.prevOrders)
+      : null;
+  const maxMethod = Math.max(...data.money.byMethod.map((r) => r.revenue), 1);
   const empty = current.orders === 0;
+  // Per-day series for the KPI sparklines (shown from 7 days)
+  const trend = data.days > 1 ? data.byDay : [];
+  const avgTrend = trend.map((d) => (d.orders > 0 ? d.revenue / d.orders : 0));
+  // Tips need a week of data to mean anything (Free sees "today" only)
+  const insights = data.days >= 7 ? buildInsights(data).slice(0, 4) : [];
+  const weekdayName = (i: number) =>
+    format.dateTime(new Date(Date.UTC(2024, 0, 1 + i, 12)), { weekday: "long", timeZone: "UTC" });
 
   return (
     <>
@@ -108,6 +161,7 @@ async function AnalyticsView({
           value={money(current.revenue)}
           delta={change(current.revenue, previous.revenue)}
           compare={t(`vs.${period}`)}
+          trend={trend.map((d) => d.revenue)}
           t={t}
         />
         <Kpi
@@ -115,6 +169,7 @@ async function AnalyticsView({
           value={format.number(current.orders)}
           delta={change(current.orders, previous.orders)}
           compare={t(`vs.${period}`)}
+          trend={trend.map((d) => d.orders)}
           t={t}
         />
         <Kpi
@@ -122,6 +177,7 @@ async function AnalyticsView({
           value={money(avg(current))}
           delta={change(avg(current), avg(previous))}
           compare={t(`vs.${period}`)}
+          trend={avgTrend}
           t={t}
         />
         <Kpi
@@ -135,6 +191,16 @@ async function AnalyticsView({
         />
       </div>
 
+      {insights.length > 0 && (
+        <Panel title={t("insights.title")} icon={Lightbulb}>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {insights.map((insight) => (
+              <InsightRow key={insight.kind} insight={insight} t={t} weekdayName={weekdayName} />
+            ))}
+          </ul>
+        </Panel>
+      )}
+
       {empty ? (
         <p className="text-muted-foreground rounded-xl border border-dashed px-4 py-12 text-center">
           {t("empty")}
@@ -146,9 +212,10 @@ async function AnalyticsView({
               <Panel title={t("revenueByDay")} className="lg:col-span-2">
                 <BarChart
                   label={t("revenueByDay")}
-                  maxLabel={money(Math.max(...data.byDay.map((d) => d.revenue)))}
+                  maxLabel={money(Math.max(...data.byDay.map((d) => d.revenue), ...data.prevByDay))}
                   tickEvery={dayTick}
-                  data={data.byDay.map((d) => ({
+                  legend={[t("thisPeriod"), t("previousPeriod")]}
+                  data={data.byDay.map((d, i) => ({
                     key: d.date,
                     axis: dayAxis(d.date),
                     title: format.dateTime(day(d.date), {
@@ -157,8 +224,13 @@ async function AnalyticsView({
                       month: "short",
                       timeZone: "UTC",
                     }),
-                    detail: `${money(d.revenue)} · ${t("ordersCount", { count: d.orders })}`,
+                    detail: `${money(d.revenue)} · ${t("ordersCount", { count: d.orders })}${
+                      data.prevByDay[i] > 0
+                        ? ` · ${t("previousShort", { amount: money(data.prevByDay[i]) })}`
+                        : ""
+                    }`,
                     value: d.revenue,
+                    compare: data.prevByDay[i],
                   }))}
                 />
               </Panel>
@@ -195,20 +267,166 @@ async function AnalyticsView({
               </ul>
             </Panel>
 
-            <Panel title={t("topItems")} className="lg:col-span-2">
-              <ol className="flex flex-col gap-3">
-                {data.topItems.map((r, i) => (
-                  <MeterRow
-                    key={r.name}
-                    rank={i + 1}
-                    label={r.name}
-                    value={t("sold", { count: r.quantity })}
-                    sub={money(r.revenue)}
-                    pct={(r.quantity / maxItem) * 100}
-                  />
-                ))}
-              </ol>
+            <Panel title={t("money.title")} hint={t("money.hint")} className="lg:col-span-2">
+              <div className="grid gap-6 sm:grid-cols-2">
+                <ul className="flex flex-col gap-3" aria-label={t("money.byMethod")}>
+                  {data.money.byMethod.map((r) => (
+                    <MeterRow
+                      key={r.method}
+                      label={tp(r.method)}
+                      value={money(r.revenue)}
+                      sub={t("ordersCount", { count: r.orders })}
+                      pct={(r.revenue / maxMethod) * 100}
+                    />
+                  ))}
+                </ul>
+                <dl className="grid grid-cols-[1fr_auto] content-start gap-x-4 gap-y-2 text-sm">
+                  <dt className="text-muted-foreground">{t("money.unpaid")}</dt>
+                  <dd
+                    className={cn(
+                      "text-right font-semibold tabular-nums",
+                      data.money.unpaid.orders > 0 && "text-red-700 dark:text-red-400",
+                    )}
+                  >
+                    {data.money.unpaid.orders > 0 ? (
+                      <Link href="/admin/orders" className="hover:underline">
+                        {money(data.money.unpaid.amount)} ·{" "}
+                        {t("ordersCount", { count: data.money.unpaid.orders })}
+                      </Link>
+                    ) : (
+                      money(0)
+                    )}
+                  </dd>
+                  <dt className="text-muted-foreground">{t("money.deliveryFees")}</dt>
+                  <dd className="text-right tabular-nums">{money(data.money.deliveryFees)}</dd>
+                  <dt className="text-muted-foreground">{t("money.discounts")}</dt>
+                  <dd className="text-right tabular-nums">
+                    {data.money.discounts > 0 ? `−${money(data.money.discounts)}` : money(0)}
+                  </dd>
+                  <dt className="text-muted-foreground">{t("money.tips")}</dt>
+                  <dd className="text-right tabular-nums">{money(data.money.tips)}</dd>
+                  <div aria-hidden className="col-span-2 border-t" />
+                  <dt className="text-muted-foreground">{t("cancelled.title")}</dt>
+                  <dd className="text-right tabular-nums">
+                    {data.cancelled.orders > 0 ? (
+                      <>
+                        <span className="font-semibold">
+                          {t("cancelled.value", {
+                            count: data.cancelled.orders,
+                            pct: cancelRate,
+                          })}
+                        </span>
+                        <span className="text-muted-foreground block text-xs">
+                          {t("cancelled.lost", { amount: money(data.cancelled.amount) })}
+                          {prevCancelRate !== null &&
+                            ` · ${t("cancelled.before", { pct: prevCancelRate })}`}
+                        </span>
+                      </>
+                    ) : (
+                      t("cancelled.none")
+                    )}
+                  </dd>
+                </dl>
+              </div>
             </Panel>
+
+            <Panel title={t("topItems")} hint={t("topItemsHint")} className="lg:col-span-2">
+              <ol className="flex flex-col gap-3">
+                {data.topItems.slice(0, TOP).map((r, i) => dishRow(r, i + 1))}
+              </ol>
+              {data.topItems.length > TOP && (
+                <details className="group">
+                  <summary className="text-primary w-fit cursor-pointer text-sm font-medium hover:underline">
+                    {t("showAllDishes", { count: data.topItems.length })}
+                  </summary>
+                  <ol className="mt-3 flex flex-col gap-3">
+                    {data.topItems.slice(TOP).map((r, i) => dishRow(r, TOP + i + 1))}
+                  </ol>
+                </details>
+              )}
+            </Panel>
+
+            {data.notSelling.length > 0 && (
+              <Panel
+                title={t("notSelling.title", { count: data.notSelling.length })}
+                hint={t("notSelling.hint")}
+                className="lg:col-span-2"
+              >
+                <ul className="flex flex-wrap gap-2">
+                  {data.notSelling.map((p) => (
+                    <li key={p.id}>
+                      <Link
+                        href={`/admin/menu/products/${p.id}`}
+                        className="hover:bg-muted inline-flex min-h-9 items-center rounded-full border px-3 text-sm"
+                      >
+                        {p.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </Panel>
+            )}
+
+            {data.promos.length > 0 && (
+              <Panel title={t("promos.title")} hint={t("promos.hint")} className="lg:col-span-2">
+                <div className="-mx-4 overflow-x-auto px-4">
+                  <table className="w-full min-w-[420px] text-sm">
+                    <thead className="text-muted-foreground text-xs">
+                      <tr className="border-b">
+                        <th scope="col" className="py-2 pr-3 text-left font-medium">
+                          {t("promos.code")}
+                        </th>
+                        <th scope="col" className="px-3 py-2 text-right font-medium">
+                          {t("orders")}
+                        </th>
+                        <th scope="col" className="px-3 py-2 text-right font-medium">
+                          {t("promos.discount")}
+                        </th>
+                        <th scope="col" className="py-2 pl-3 text-right font-medium">
+                          {t("revenue")}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.promos.map((r) => (
+                        <tr key={r.code} className="border-b last:border-0">
+                          <th scope="row" className="py-2.5 pr-3 text-left font-mono font-semibold">
+                            {r.code}
+                          </th>
+                          <td className="px-3 py-2.5 text-right tabular-nums">
+                            {format.number(r.orders)}
+                          </td>
+                          <td className="text-muted-foreground px-3 py-2.5 text-right tabular-nums">
+                            −{money(r.discount)}
+                          </td>
+                          <td className="py-2.5 pl-3 text-right font-semibold tabular-nums">
+                            {money(r.revenue)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Panel>
+            )}
+
+            {data.days >= 7 && (
+              <Panel title={t("heatmap")} hint={t("heatmapHint")} className="lg:col-span-2">
+                <Heatmap
+                  grid={data.byWeekdayHour}
+                  // 2024-01-01 was a Monday
+                  weekdays={Array.from({ length: 7 }, (_, i) =>
+                    format.dateTime(new Date(Date.UTC(2024, 0, 1 + i, 12)), {
+                      weekday: "short",
+                      timeZone: "UTC",
+                    }),
+                  )}
+                  caption={t("heatmap")}
+                  legendLess={t("legendLess")}
+                  legendMore={t("legendMore")}
+                />
+              </Panel>
+            )}
           </div>
           <p className="text-muted-foreground text-xs">{t("note", { currency: store.currency })}</p>
         </>
@@ -231,6 +449,7 @@ function Kpi({
   delta,
   compare,
   sub,
+  trend,
   t,
 }: {
   label: string;
@@ -238,6 +457,8 @@ function Kpi({
   delta?: number | null;
   compare?: string;
   sub?: string;
+  /** One value per day of the period (sparkline) */
+  trend?: number[];
   t: T;
 }) {
   const Icon = delta == null || delta === 0 ? Minus : delta > 0 ? ArrowUpRight : ArrowDownRight;
@@ -261,25 +482,87 @@ function Kpi({
           {delta == null ? t("noCompare") : `${delta > 0 ? "+" : ""}${delta}% ${compare}`}
         </p>
       )}
+      {trend && <Sparkline values={trend} className="mt-auto h-7 w-full pt-1" />}
     </section>
+  );
+}
+
+const INSIGHT_ICON = {
+  busiest: Clock,
+  rising: TrendingUp,
+  falling: TrendingDown,
+  lapsed: UserRoundX,
+} as const;
+
+function InsightRow({
+  insight,
+  t,
+  weekdayName,
+}: {
+  insight: Insight;
+  t: T;
+  weekdayName: (i: number) => string;
+}) {
+  const Icon = INSIGHT_ICON[insight.kind];
+  const hh = (h: number) => `${String(h).padStart(2, "0")}:00`;
+  const text =
+    insight.kind === "busiest"
+      ? t("insights.busiest", {
+          day: weekdayName(insight.weekday),
+          time: `${hh(insight.hour)}–${hh((insight.hour + 2) % 24)}`,
+          count: insight.orders,
+        })
+      : insight.kind === "lapsed"
+        ? t("insights.lapsed", { count: insight.count, days: LAPSED_DAYS })
+        : t(`insights.${insight.kind}`, {
+            name: insight.name,
+            cur: insight.cur,
+            prev: insight.prev,
+          });
+  const action =
+    insight.kind === "lapsed"
+      ? { href: "/admin/analytics/customers?sort=lapsed", label: t("insights.lapsedAction") }
+      : insight.kind === "falling"
+        ? { href: "/admin/promos", label: t("insights.fallingAction") }
+        : null;
+  return (
+    <li className="bg-muted/50 flex gap-3 rounded-lg p-3 text-sm">
+      <Icon className="text-primary mt-0.5 size-4 shrink-0" aria-hidden />
+      <div className="flex min-w-0 flex-col gap-1">
+        <p>{text}</p>
+        {action && (
+          <Link
+            href={action.href}
+            className="text-primary w-fit text-sm font-medium hover:underline"
+          >
+            {action.label}
+          </Link>
+        )}
+      </div>
+    </li>
   );
 }
 
 function Panel({
   title,
   hint,
+  icon: Icon,
   className,
   children,
 }: {
   title: string;
   hint?: string;
+  icon?: React.ComponentType<{ className?: string }>;
   className?: string;
   children: React.ReactNode;
 }) {
   return (
     <section className={cn("bg-card flex flex-col gap-4 rounded-xl border p-4", className)}>
       <div>
-        <h2 className="font-semibold">{title}</h2>
+        <h2 className="flex items-center gap-2 font-semibold">
+          {Icon && <Icon className="text-primary size-4" aria-hidden />}
+          {title}
+        </h2>
         {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
       </div>
       {children}
@@ -288,18 +571,25 @@ function Panel({
 }
 
 /** Label + thin single-hue meter (magnitude), value text in ink colors */
+const TOP = 8;
+
 function MeterRow({
   rank,
   label,
   value,
   sub,
   pct,
+  delta,
+  t,
 }: {
   rank?: number;
   label: string;
   value: string;
   sub: string;
   pct: number;
+  /** % change vs the previous period, "new" when it didn't sell before */
+  delta?: number | "new" | null;
+  t?: T;
 }) {
   return (
     <li className="flex flex-col gap-1.5">
@@ -309,6 +599,22 @@ function MeterRow({
             <span className="text-muted-foreground mr-2 tabular-nums">{rank}.</span>
           )}
           <span className="font-medium">{label}</span>
+          {delta != null && t && (
+            <span
+              className={cn(
+                "ml-2 text-xs font-medium tabular-nums",
+                delta === "new" || delta > 0
+                  ? "text-emerald-700 dark:text-emerald-400"
+                  : delta < 0
+                    ? "text-red-700 dark:text-red-400"
+                    : "text-muted-foreground",
+              )}
+            >
+              {delta === "new"
+                ? t("newDish")
+                : `${delta > 0 ? "▲ " : delta < 0 ? "▼ " : ""}${Math.abs(delta)}%`}
+            </span>
+          )}
         </span>
         <span className="shrink-0 tabular-nums">
           <span className="font-semibold">{value}</span>

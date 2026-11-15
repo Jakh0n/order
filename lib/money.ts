@@ -57,7 +57,7 @@ export function isValidCurrency(code: string): boolean {
 
 /**
  * Currencies whose minor unit exists on paper but not on price lists (tiyin, tiyn, kopeck):
- * whole amounts are shown without ".00" — "UZS 45,000", not "UZS 45,000.00".
+ * always shown in whole units — "UZS 45,000", and an average of 105 733.33 → "UZS 105,733".
  */
 const WHOLE_UNIT_CURRENCIES = new Set(["UZS", "KZT", "KGS", "TJS", "RUB", "AMD", "AZN"]);
 
@@ -65,7 +65,7 @@ const WHOLE_UNIT_CURRENCIES = new Set(["UZS", "KZT", "KGS", "TJS", "RUB", "AMD",
 export function formatMoney(minor: number, currency: string = DEFAULT_CURRENCY): string {
   const code = currency.toUpperCase();
   const digits = currencyDigits(code);
-  const shown = WHOLE_UNIT_CURRENCIES.has(code) && minor % 10 ** digits === 0 ? 0 : digits;
+  const shown = WHOLE_UNIT_CURRENCIES.has(code) ? 0 : digits;
   return new Intl.NumberFormat("en", {
     style: "currency",
     currency: code,

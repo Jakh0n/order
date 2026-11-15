@@ -1254,6 +1254,10 @@
     "revenueByDay": "Kunlik tushum",
     "byHour": "Gavjum soatlar",
     "byHourHint": "Buyurtmalar berilgan soat bo'yicha (do'kon vaqt zonasi)",
+    "heatmap": "Band vaqtlar",
+    "heatmapHint": "Hafta kuni va soat bo'yicha buyurtmalar (do'kon vaqt zonasida)",
+    "legendLess": "Kam",
+    "legendMore": "Ko'p",
     "byType": "Qanday buyurtma berishadi",
     "topItems": "Eng ko'p sotilgan taomlar",
     "types": {
@@ -1272,7 +1276,8 @@
     "sort": {
       "recent": "Yaqinda",
       "orders": "Ko'p buyurtma",
-      "spent": "Ko'p sarflagan"
+      "spent": "Ko'p sarflagan",
+      "lapsed": "Ko'pdan beri yo'q"
     },
     "noCustomers": "Mijozlar birinchi buyurtmadan keyin shu yerda ko'rinadi.",
     "noMatches": "Hech qanday mijoz topilmadi.",
@@ -1285,7 +1290,50 @@
     "lockedPeriod": "Pro'da mavjud",
     "customersLockedTitle": "Doimiy mijozlaringizni biling",
     "customersLockedText": "Har bir mijoz buyurtmalari va sarflagan summasi bilan, bir bosishda yozish. Pro'da mavjud.",
-    "description": "Tushum, buyurtmalar va nima sotilayotgani — do'kon vaqt zonasida."
+    "description": "Tushum, buyurtmalar va nima sotilayotgani — do'kon vaqt zonasida.",
+    "insights": {
+      "title": "Raqamlaringizdan maslahatlar",
+      "busiest": "Eng band vaqt — {day}, {time} ({count} ta buyurtma). Oshxonani tayyorlab qo'ying.",
+      "rising": "{name} ko'proq sotilyapti: oldingi davrda {prev}, hozir {cur}.",
+      "falling": "{name} kamroq sotilyapti: oldingi davrda {prev}, hozir {cur}. Yangi rasm yoki promo-kod yordam beradi.",
+      "fallingAction": "Promo-kod yaratish",
+      "lapsed": "{count} ta doimiy mijoz {days}+ kundan beri buyurtma bermadi. O'zingizni eslating.",
+      "lapsedAction": "Mijozlarni ko'rish"
+    },
+    "lapsedHint": "{days}+ kundan beri buyurtma bermagan doimiy mijozlar — ularga promo-kod yuboring.",
+    "noLapsed": "Barcha doimiy mijozlar yaqinda buyurtma bergan.",
+    "money": {
+      "title": "Pul",
+      "hint": "To'lov usullari, hali to'lanmagan summa, yetkazish, chegirmalar va choychaqa",
+      "byMethod": "To'lov usuli bo'yicha",
+      "unpaid": "To'landi deb belgilanmagan",
+      "deliveryFees": "Yetkazish",
+      "discounts": "Berilgan chegirmalar",
+      "tips": "Choychaqa"
+    },
+    "topItemsHint": "Davr ichida sotilgani va oldingi davrga nisbatan o'zgarish",
+    "showAllDishes": "Barcha {count} ta taomni ko'rsatish",
+    "newDish": "yangi",
+    "notSelling": {
+      "title": "Sotilmayapti ({count})",
+      "hint": "Menyuda bor, lekin bu davrda hech kim buyurtma qilmadi. Yangi rasm, narx yoki promo-kod sinab ko'ring — yoki yashiring."
+    },
+    "promos": {
+      "title": "Promo-kodlar",
+      "hint": "Davr ichida har bir kod bilan berilgan buyurtmalar, chegirma va tushum",
+      "code": "Kod",
+      "discount": "Chegirma"
+    },
+    "thisPeriod": "Shu davr",
+    "previousPeriod": "Oldingi davr",
+    "previousShort": "oldin: {amount}",
+    "cancelled": {
+      "title": "Bekor qilingan",
+      "value": "{count} ta buyurtma ({pct}%)",
+      "lost": "{amount} tushmadi",
+      "before": "oldin {pct}%",
+      "none": "Yo'q"
+    }
   },
   "plan": {
     "pro": "Pro",
