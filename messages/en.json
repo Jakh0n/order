@@ -1317,6 +1317,12 @@
     "notSelling": {
       "title": "Not selling ({count})",
       "hint": "On the menu, but nobody ordered them this period. Try a better photo, a new price or a promo — or hide them."
+    },
+    "promos": {
+      "title": "Promo codes",
+      "hint": "Orders with each code this period, the discount it cost and the revenue it brought",
+      "code": "Code",
+      "discount": "Discount"
     }
   },
   "plan": {

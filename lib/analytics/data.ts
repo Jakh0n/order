@@ -40,6 +40,8 @@ export interface Analytics {
   topItems: { name: string; quantity: number; revenue: number }[];
   /** Available dishes (in visible categories, older than the period) with no sales in it */
   notSelling: { id: string; name: string }[];
+  /** Promo codes used in the period: orders, discount given, revenue they brought */
+  promos: { code: string; orders: number; discount: number; revenue: number }[];
   byType: { type: "PICKUP" | "DELIVERY" | "DINE_IN"; orders: number; revenue: number }[];
   /** Customers (by phone) who ordered in the period, and how many had ordered before it */
   customers: { total: number; returning: number };
@@ -97,6 +99,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
     byMethod,
     extras,
     notSelling,
+    promos,
   ] = await Promise.all([
     prisma.$queryRaw<
       { cur_orders: number; cur_rev: bigint; prev_orders: number; prev_rev: bigint }[]
@@ -210,6 +213,15 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
         )
       ORDER BY c."sort", p."sort"
       LIMIT 50`,
+    prisma.$queryRaw<{ code: string; orders: number; discount: bigint; revenue: bigint }[]>`
+      SELECT o."promoCode" AS code, count(*)::int AS orders,
+        coalesce(sum(o."discount") FILTER (WHERE ${inCurrency}), 0)::bigint AS discount,
+        coalesce(sum(o."total") FILTER (WHERE ${inCurrency}), 0)::bigint AS revenue
+      FROM "Order" o
+      WHERE ${where(from, now)} AND o."promoCode" IS NOT NULL
+      GROUP BY 1
+      ORDER BY orders DESC, revenue DESC
+      LIMIT 20`,
   ]);
 
   // Every day of the period, zeros included (a gap in a bar chart reads as "no data")
@@ -240,6 +252,11 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
     ),
     topItems: topItems.map((r) => ({ ...r, revenue: Number(r.revenue) })),
     notSelling,
+    promos: promos.map((r) => ({
+      ...r,
+      discount: Number(r.discount),
+      revenue: Number(r.revenue),
+    })),
     byType: byType.map((r) => ({ ...r, revenue: Number(r.revenue) })),
     customers: customers[0] ?? { total: 0, returning: 0 },
     itemMoves,

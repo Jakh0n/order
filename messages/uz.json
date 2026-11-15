@@ -1317,6 +1317,12 @@
     "notSelling": {
       "title": "Sotilmayapti ({count})",
       "hint": "Menyuda bor, lekin bu davrda hech kim buyurtma qilmadi. Yangi rasm, narx yoki promo-kod sinab ko'ring — yoki yashiring."
+    },
+    "promos": {
+      "title": "Promo-kodlar",
+      "hint": "Davr ichida har bir kod bilan berilgan buyurtmalar, chegirma va tushum",
+      "code": "Kod",
+      "discount": "Chegirma"
     }
   },
   "plan": {

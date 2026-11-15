@@ -332,6 +332,49 @@ async function AnalyticsView({
               </Panel>
             )}
 
+            {data.promos.length > 0 && (
+              <Panel title={t("promos.title")} hint={t("promos.hint")} className="lg:col-span-2">
+                <div className="-mx-4 overflow-x-auto px-4">
+                  <table className="w-full min-w-[420px] text-sm">
+                    <thead className="text-muted-foreground text-xs">
+                      <tr className="border-b">
+                        <th scope="col" className="py-2 pr-3 text-left font-medium">
+                          {t("promos.code")}
+                        </th>
+                        <th scope="col" className="px-3 py-2 text-right font-medium">
+                          {t("orders")}
+                        </th>
+                        <th scope="col" className="px-3 py-2 text-right font-medium">
+                          {t("promos.discount")}
+                        </th>
+                        <th scope="col" className="py-2 pl-3 text-right font-medium">
+                          {t("revenue")}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.promos.map((r) => (
+                        <tr key={r.code} className="border-b last:border-0">
+                          <th scope="row" className="py-2.5 pr-3 text-left font-mono font-semibold">
+                            {r.code}
+                          </th>
+                          <td className="px-3 py-2.5 text-right tabular-nums">
+                            {format.number(r.orders)}
+                          </td>
+                          <td className="text-muted-foreground px-3 py-2.5 text-right tabular-nums">
+                            −{money(r.discount)}
+                          </td>
+                          <td className="py-2.5 pl-3 text-right font-semibold tabular-nums">
+                            {money(r.revenue)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Panel>
+            )}
+
             {data.days >= 7 && (
               <Panel title={t("heatmap")} hint={t("heatmapHint")} className="lg:col-span-2">
                 <Heatmap
