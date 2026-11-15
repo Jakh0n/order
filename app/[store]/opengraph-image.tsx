@@ -2,11 +2,12 @@ import { ImageResponse } from "next/og";
 import { getTranslations } from "next-intl/server";
 import sharp from "sharp";
 
-import { defaultLocale } from "@/i18n/config";
+import { defaultLocale, isLocale } from "@/i18n/config";
 import { siteOrigin } from "@/lib/app-url";
 import { reportError } from "@/lib/report-error";
 import { firstProductImage, topItemNames } from "@/lib/seo";
-import { getStorefront } from "@/lib/storefront";
+import { isHexColor } from "@/lib/design";
+import { getStoreLocale, getStorefront } from "@/lib/storefront";
 
 export const size = { width: 1200, height: 630 };
 // JPEG: a photo as PNG is ~750 KB, too big for chat link previews
@@ -18,17 +19,24 @@ const GREEN = "#16a05d";
 /** The link preview shown when a store link is shared in WhatsApp, Telegram, Instagram or search. */
 export default async function Image({ params }: { params: Promise<{ store: string }> }) {
   const { store: slug } = await params;
-  const [data, t] = await Promise.all([
-    getStorefront(slug),
-    getTranslations({ locale: defaultLocale, namespace: "seo" }),
-  ]);
+  const [data, storeLocale] = await Promise.all([getStorefront(slug), getStoreLocale(slug)]);
+  // The preview speaks the store's own language (same as its page by default)
+  const t = await getTranslations({
+    locale: storeLocale && isLocale(storeLocale) ? storeLocale : defaultLocale,
+    namespace: "seo",
+  });
 
   if (!data || data.store.isBlocked) {
     return toJpeg(new ImageResponse(<Fallback />, size));
   }
 
   const { store } = data;
-  const photo = await loadPhoto(firstProductImage(data) ?? store.logoUrl);
+  const [photo, logo] = await Promise.all([
+    loadPhoto(firstProductImage(data) ?? store.coverUrl, 480, 630),
+    loadPhoto(store.logoUrl, 192, 192),
+  ]);
+  // The store's brand colour, like its page; platform green otherwise
+  const accent = isHexColor(store.brandColor) ? store.brandColor : GREEN;
   const items = topItemNames(data, 3).join(" · ");
   const host = new URL(siteOrigin()).host.replace(/^www\./, "");
 
@@ -44,22 +52,32 @@ export default async function Image({ params }: { params: Promise<{ store: strin
             padding: "0 72px",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 96,
-              height: 96,
-              borderRadius: 28,
-              background: GREEN,
-              color: "#fff",
-              fontSize: 52,
-              fontWeight: 700,
-            }}
-          >
-            {store.name.trim().charAt(0).toUpperCase()}
-          </div>
+          {logo ? (
+            <img
+              src={logo}
+              alt=""
+              width={96}
+              height={96}
+              style={{ width: 96, height: 96, borderRadius: 28, objectFit: "cover" }}
+            />
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 96,
+                height: 96,
+                borderRadius: 28,
+                background: accent,
+                color: "#fff",
+                fontSize: 52,
+                fontWeight: 700,
+              }}
+            >
+              {store.name.trim().charAt(0).toUpperCase()}
+            </div>
+          )}
           <div
             style={{
               marginTop: 36,
@@ -77,21 +95,25 @@ export default async function Image({ params }: { params: Promise<{ store: strin
               {items}
             </div>
           )}
-          <div style={{ display: "flex", alignItems: "center", marginTop: 44, gap: 20 }}>
+          <div style={{ display: "flex", flexDirection: "column", marginTop: 40, gap: 18 }}>
             <div
               style={{
                 display: "flex",
-                padding: "16px 32px",
+                alignSelf: "flex-start",
+                padding: "16px 34px",
                 borderRadius: 999,
-                background: GREEN,
+                background: accent,
                 color: "#fff",
                 fontSize: 28,
                 fontWeight: 700,
+                whiteSpace: "nowrap",
               }}
             >
               {t("ogStoreCta")}
             </div>
-            <div style={{ fontSize: 26, color: "#4b6359" }}>{`${host}/${store.slug}`}</div>
+            <div style={{ fontSize: 26, color: "#4b6359", whiteSpace: "nowrap" }}>
+              {`${host}/${store.slug}`}
+            </div>
           </div>
         </div>
         {photo && (
@@ -126,13 +148,17 @@ async function toJpeg(image: ImageResponse): Promise<Response> {
  * The image renderer reads only PNG and JPEG, while menu uploads are WebP — so the photo
  * is resized and re-encoded as JPEG. A failed download means no photo, not a broken preview.
  */
-async function loadPhoto(url: string | null): Promise<string | null> {
+async function loadPhoto(
+  url: string | null,
+  width: number,
+  height: number,
+): Promise<string | null> {
   if (!url) return null;
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
     if (!res.ok || !res.headers.get("content-type")?.startsWith("image/")) return null;
     const jpeg = await sharp(Buffer.from(await res.arrayBuffer()))
-      .resize(480, 630, { fit: "cover" })
+      .resize(width, height, { fit: "cover" })
       .jpeg({ quality: 82 })
       .toBuffer();
     return `data:image/jpeg;base64,${jpeg.toString("base64")}`;

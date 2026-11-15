@@ -21,7 +21,15 @@ function fromAcceptLanguage(header: string | null): Locale | null {
   return ranked.find((r) => isLocale(r.lang))?.lang as Locale | undefined ?? null;
 }
 
-export default getRequestConfig(async () => {
+export default getRequestConfig(async ({ locale: explicit }) => {
+  // getTranslations({ locale }) — e.g. a store's link preview in the store's own language
+  if (isLocale(explicit)) {
+    return {
+      locale: explicit,
+      timeZone: "UTC",
+      messages: (await import(`../messages/${explicit}.json`)).default,
+    };
+  }
   const [cookieStore, headerStore] = await Promise.all([cookies(), headers()]);
   const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value;
   // 1) the customer's own choice (cookie) 2) on a store page — the store's language
