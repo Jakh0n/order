@@ -5,6 +5,7 @@ import { Suspense } from "react";
 
 import { AnalyticsTabs } from "@/components/admin/analytics/analytics-tabs";
 import { BarChart } from "@/components/admin/analytics/bar-chart";
+import { Sparkline } from "@/components/admin/analytics/sparkline";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getAnalytics, parsePeriod, PERIODS } from "@/lib/analytics/data";
 import { requireOwner } from "@/lib/auth/owner";
@@ -53,6 +54,9 @@ async function AnalyticsView({
   const maxType = Math.max(...data.byType.map((r) => r.orders), 1);
   const maxItem = Math.max(...data.topItems.map((r) => r.quantity), 1);
   const empty = current.orders === 0;
+  // Per-day series for the KPI sparklines (shown from 7 days)
+  const trend = data.days > 1 ? data.byDay : [];
+  const avgTrend = trend.map((d) => (d.orders > 0 ? d.revenue / d.orders : 0));
 
   return (
     <>
@@ -108,6 +112,7 @@ async function AnalyticsView({
           value={money(current.revenue)}
           delta={change(current.revenue, previous.revenue)}
           compare={t(`vs.${period}`)}
+          trend={trend.map((d) => d.revenue)}
           t={t}
         />
         <Kpi
@@ -115,6 +120,7 @@ async function AnalyticsView({
           value={format.number(current.orders)}
           delta={change(current.orders, previous.orders)}
           compare={t(`vs.${period}`)}
+          trend={trend.map((d) => d.orders)}
           t={t}
         />
         <Kpi
@@ -122,6 +128,7 @@ async function AnalyticsView({
           value={money(avg(current))}
           delta={change(avg(current), avg(previous))}
           compare={t(`vs.${period}`)}
+          trend={avgTrend}
           t={t}
         />
         <Kpi
@@ -231,6 +238,7 @@ function Kpi({
   delta,
   compare,
   sub,
+  trend,
   t,
 }: {
   label: string;
@@ -238,6 +246,8 @@ function Kpi({
   delta?: number | null;
   compare?: string;
   sub?: string;
+  /** One value per day of the period (sparkline) */
+  trend?: number[];
   t: T;
 }) {
   const Icon = delta == null || delta === 0 ? Minus : delta > 0 ? ArrowUpRight : ArrowDownRight;
@@ -261,6 +271,7 @@ function Kpi({
           {delta == null ? t("noCompare") : `${delta > 0 ? "+" : ""}${delta}% ${compare}`}
         </p>
       )}
+      {trend && <Sparkline values={trend} className="mt-auto h-7 w-full pt-1" />}
     </section>
   );
 }
