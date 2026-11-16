@@ -47,13 +47,13 @@ export function pickContact(contacts: string[], orderNumber: number): string | n
 
 const PHONE_RE = /^\+[1-9]\d{6,14}$/;
 
-/** Ready-made message link for the store's channel; null when the contact isn't set up. */
+/** Ready-made message link (+ its text, for "copy" when the app ignores ?text) for the store's channel; null when the contact isn't set up. */
 /** origin — getRequestOrigin() (xabardagi buyurtma havolasi localhost bo'lib qolmasligi uchun) */
 export function orderSendLink(
   order: OrderMessageOrder & { lang: string; sentTo?: string | null },
   store: SendStore,
   origin: string,
-): { channel: Channel; href: string } | null {
+): { channel: Channel; href: string; text: string } | null {
   const lang = isLocale(order.lang) ? order.lang : "en";
 
   // The contact picked when the order was placed (order rolling), if it fits the current channel
@@ -63,12 +63,12 @@ export function orderSendLink(
   if (store.channel === "WHATSAPP" && store.whatsappNumber) {
     const text = buildOrderMessage(order, store, lang, origin, "WHATSAPP");
     const to = isPhone ? sentTo! : store.whatsappNumber;
-    return { channel: "WHATSAPP", href: whatsappLink(to, text) };
+    return { channel: "WHATSAPP", href: whatsappLink(to, text), text };
   }
   if (store.channel === "TELEGRAM" && store.telegramUsername) {
     const text = buildOrderMessage(order, store, lang, origin, "TELEGRAM");
     const to = sentTo && !isPhone ? sentTo : store.telegramUsername;
-    return { channel: "TELEGRAM", href: telegramLink(to, text) };
+    return { channel: "TELEGRAM", href: telegramLink(to, text), text };
   }
   return null;
 }

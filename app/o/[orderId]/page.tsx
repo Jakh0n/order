@@ -1,4 +1,4 @@
-import { CalendarClock, CheckCircle2, Phone, Send } from "lucide-react";
+import { CalendarClock, Phone, Send } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -104,21 +104,15 @@ async function Order({ params }: { params: PageProps<"/o/[orderId]">["params"] }
 
         {/* Yangi buyurtma: muvaffaqiyat + asosiy harakat — xabarni yuborish */}
         {order.status === "NEW" && send ? (
-          <section className="bg-background flex flex-col items-center gap-3 rounded-2xl p-5 text-center">
-            <span className="bg-primary/10 text-primary flex size-14 items-center justify-center rounded-full">
-              <CheckCircle2 className="size-8" />
-            </span>
-            <h1 className="text-xl font-bold">{t("order.savedTitle", { number: order.number })}</h1>
+          <SendMessage
+            orderId={order.id}
+            number={order.number}
+            href={send.href}
+            text={send.text}
+            channel={send.channel}
+          >
             {scheduledBanner}
-            <SendMessage orderId={order.id} href={send.href} channel={send.channel} />
-            <p className="text-muted-foreground text-xs">
-              {format.dateTime(order.createdAt, {
-                dateStyle: "medium",
-                timeStyle: "short",
-                timeZone: order.store.timeZone,
-              })}
-            </p>
-          </section>
+          </SendMessage>
         ) : (
           <section className="bg-background rounded-2xl p-5">
             <h1 className="text-xl font-bold">
