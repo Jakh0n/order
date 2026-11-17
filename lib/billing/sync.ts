@@ -2,6 +2,7 @@ import "server-only";
 
 import { revalidateTag } from "next/cache";
 
+import { polarClient } from "@/lib/billing/polar";
 import { prisma } from "@/lib/db";
 import { storeCacheTag } from "@/lib/storefront";
 
@@ -29,10 +30,12 @@ function storeIdOf(sub: PolarSubscription): string | null {
 }
 
 /**
- * Store.plan / paidUntil follow the Polar subscription (idempotent: same event twice → same result).
- * planOf() then decides Pro by paidUntil, so a canceled subscription stays Pro until its period ends.
+ * Store.plan / paidUntil follow the Polar subscription. The webhook is only a trigger: we read the
+ * subscription's CURRENT state from Polar, so late, repeated or out-of-order events can't re-grant
+ * Pro after it ended. planOf() decides Pro by paidUntil — a canceled one stays Pro until period end.
  */
-export async function syncSubscription(sub: PolarSubscription): Promise<void> {
+export async function syncSubscription(subscriptionId: string): Promise<void> {
+  const sub: PolarSubscription = await polarClient().subscriptions.get(subscriptionId);
   const storeId = storeIdOf(sub);
   if (!storeId) return;
   const store = await prisma.store.findUnique({
