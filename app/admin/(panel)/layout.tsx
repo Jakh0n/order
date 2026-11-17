@@ -67,7 +67,7 @@ async function Panel({ children }: { children: React.ReactNode }) {
           storeSlug={store.slug}
           openToggle={<StoreOpenToggle isOpen={status?.isOpen ?? true} />}
           plan={{ label: pro ? tPlan("proName") : tPlan("freeName"), hint: planHint, pro }}
-          language={<LanguageSwitcher />}
+          language={<LanguageSwitcher className="pl-2" />}
         />
 
         <SidebarInset className="bg-muted/50 min-w-0 pb-16 md:pb-0">

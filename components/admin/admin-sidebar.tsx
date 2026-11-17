@@ -106,40 +106,47 @@ export function AdminSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Pinned bottom: configuration + plan + account, away from daily work */}
-      <SidebarFooter className="border-t">
+      {/* Pinned bottom: configuration + plan, then the account row (language · log out) */}
+      <SidebarFooter className="gap-1 border-t">
         <SidebarMenu>
           <NavEntry item={SETTINGS} isActive={isActive} />
           <SidebarMenuItem>
             <SidebarMenuButton
-              size="lg"
-              tooltip={plan.label}
+              tooltip={`${t("plan")}: ${plan.label} · ${plan.hint}`}
               isActive={isActive("/admin/plan")}
-              // Two lines when open (lg); collapsed it must line up with the other icons
-              className={cn(ACTIVE, "group-data-[collapsible=icon]:p-2!")}
+              className={ACTIVE}
               render={<Link href="/admin/plan" />}
             >
               <Gem className={cn(plan.pro ? "text-primary" : "text-muted-foreground")} />
-              <span className="flex min-w-0 flex-col leading-tight group-data-[collapsible=icon]:hidden">
-                <span className="font-medium">{plan.label}</span>
-                <span className="text-muted-foreground truncate text-xs">{plan.hint}</span>
+              <span>{t("plan")}</span>
+              {/* Same height as every row: the plan is a badge, not a second line */}
+              <span
+                className={cn(
+                  "ml-auto rounded-full px-2 py-0.5 text-[11px] leading-none font-semibold",
+                  plan.pro
+                    ? "bg-primary/10 text-primary"
+                    : "bg-primary text-primary-foreground",
+                )}
+              >
+                {plan.pro ? plan.label : plan.hint}
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem>
-            <form action={logout}>
-              <SidebarMenuButton
-                type="submit"
-                tooltip={t("logout")}
-                className="text-muted-foreground"
-              >
-                <LogOut />
-                <span>{t("logout")}</span>
-              </SidebarMenuButton>
-            </form>
-          </SidebarMenuItem>
         </SidebarMenu>
-        <div className="px-1 group-data-[collapsible=icon]:hidden">{language}</div>
+
+        <div className="flex items-center justify-between gap-1 border-t pt-2 group-data-[collapsible=icon]:justify-center">
+          <div className="group-data-[collapsible=icon]:hidden">{language}</div>
+          <form action={logout}>
+            <button
+              type="submit"
+              aria-label={t("logout")}
+              title={t("logout")}
+              className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive focus-visible:ring-ring/50 flex size-9 items-center justify-center rounded-full transition-colors outline-none focus-visible:ring-3"
+            >
+              <LogOut className="size-4" aria-hidden />
+            </button>
+          </form>
+        </div>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
