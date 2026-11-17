@@ -1401,7 +1401,17 @@
     "renewMessage": "Assalomu alaykum! \"{store}\" do'konim uchun Pro'ni uzaytirmoqchiman.",
     "neverLimit": "Free hech qachon buyurtmani to'xtatmaydi: yangi va faol buyurtmalar doim keladi va ko'rinadi.",
     "perYear": "yoki yiliga {price} — 2 oy bepul",
-    "founding": "Birinchilar uchun taklif: birinchi {count} ta do'konga {months} oy Pro bepul. Bizga yozing — yoqib beramiz."
+    "founding": "Birinchilar uchun taklif: birinchi {count} ta do'konga {months} oy Pro bepul. Bizga yozing — yoqib beramiz.",
+    "billing": {
+      "payMonthly": "Oylik to'lash · {price}",
+      "payYearly": "Yillik to'lash · {price}",
+      "secure": "Polar orqali xavfsiz karta to'lovi. Istalgan vaqtda bekor qilsa bo'ladi — Pro to'langan davr oxirigacha ishlaydi.",
+      "manage": "Obunani boshqarish",
+      "renewsAuto": "Obuna avtomatik yangilanadi. Kartani almashtirish yoki bekor qilish — «Obunani boshqarish» da.",
+      "success": "To'lov qabul qilindi. Pro bir daqiqa ichida yoqiladi — hali ko'rinmasa, sahifani yangilang.",
+      "error": "To'lov sahifasini ochib bo'lmadi. Bir daqiqadan keyin qayta urinib ko'ring.",
+      "limited": "Juda ko'p urinish. Keyinroq qayta urinib ko'ring."
+    }
   },
   "push": {
     "turnOn": "Xabar berish",

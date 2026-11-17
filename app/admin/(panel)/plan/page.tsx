@@ -1,10 +1,12 @@
-import { Check, Gem, Send } from "lucide-react";
+import { Check, CreditCard, Gem, Send } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { requireOwner } from "@/lib/auth/owner";
+import { openBillingPortal, startCheckout } from "@/lib/billing/actions";
+import { billingEnabled } from "@/lib/billing/polar";
 import {
   FOUNDING_PRO_MONTHS,
   FOUNDING_STORES,
@@ -34,21 +36,37 @@ const PRO_FEATURES = [
   "p.branding",
 ] as const;
 
-export default function PlanPage() {
+type BillingNotice = "success" | "error" | "limited";
+const NOTICES = new Set<string>(["success", "error", "limited"]);
+
+export default function PlanPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ billing?: string | string[] }>;
+}) {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-5 px-4 py-5 md:px-8 md:py-8">
       <Suspense fallback={<Skeleton className="h-96 w-full" />}>
-        <Plan />
+        <Plan searchParams={searchParams} />
       </Suspense>
     </div>
   );
 }
 
-async function Plan() {
+async function Plan({ searchParams }: { searchParams: Promise<{ billing?: string | string[] }> }) {
   const { store } = await requireOwner();
-  const [t, format] = await Promise.all([getTranslations("plan"), getFormatter()]);
+  const [t, format, { billing }] = await Promise.all([
+    getTranslations("plan"),
+    getFormatter(),
+    searchParams,
+  ]);
+  const notice =
+    typeof billing === "string" && NOTICES.has(billing) ? (billing as BillingNotice) : null;
+  const online = billingEnabled();
+  // Paying through Polar: renewals are automatic, the portal handles card / cancel
   const tier = planOf(store);
   const pro = tier === "PRO";
+  const subscribed = pro && Boolean(store.polarSubscriptionId);
   const until = store.paidUntil
     ? format.dateTime(store.paidUntil, { dateStyle: "medium", timeZone: store.timeZone })
     : null;
@@ -61,6 +79,20 @@ async function Plan() {
         <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
         <p className="text-muted-foreground mt-1 max-w-prose text-sm">{t("lead")}</p>
       </div>
+
+      {notice && (
+        <p
+          role="status"
+          className={cn(
+            "rounded-lg border px-3 py-2 text-sm",
+            notice === "success"
+              ? "border-green-600/30 bg-green-600/10 text-green-800 dark:text-green-300"
+              : "border-red-600/30 bg-red-600/10 text-red-800 dark:text-red-300",
+          )}
+        >
+          {t(`billing.${notice}`)}
+        </p>
+      )}
 
       {/* Current plan */}
       <section className="bg-card flex flex-wrap items-center gap-3 rounded-xl border p-4">
@@ -89,6 +121,17 @@ async function Plan() {
             </p>
           )}
         </div>
+        {subscribed && (
+          <form action={openBillingPortal}>
+            <button
+              type="submit"
+              className={buttonVariants({ variant: "outline", className: "gap-2" })}
+            >
+              <CreditCard className="size-4" aria-hidden />
+              {t("billing.manage")}
+            </button>
+          </form>
+        )}
       </section>
 
       {/* Free vs Pro */}
@@ -118,7 +161,38 @@ async function Plan() {
               {t("founding", { count: FOUNDING_STORES, months: FOUNDING_PRO_MONTHS })}
             </p>
           )}
-          {contact ? (
+          {online ? (
+            subscribed ? (
+              <p className="text-muted-foreground text-center text-sm">{t("billing.renewsAuto")}</p>
+            ) : (
+              <>
+                <form action={startCheckout} className="flex flex-col gap-2">
+                  <button
+                    type="submit"
+                    name="interval"
+                    value="month"
+                    className={buttonVariants({ size: "lg", className: "w-full gap-2" })}
+                  >
+                    <CreditCard className="size-4" aria-hidden />
+                    {t("billing.payMonthly", { price: `$${PRO_PRICE_USD}` })}
+                  </button>
+                  <button
+                    type="submit"
+                    name="interval"
+                    value="year"
+                    className={buttonVariants({
+                      size: "lg",
+                      variant: "outline",
+                      className: "w-full",
+                    })}
+                  >
+                    {t("billing.payYearly", { price: `$${PRO_PRICE_YEARLY_USD}` })}
+                  </button>
+                </form>
+                <p className="text-muted-foreground text-center text-xs">{t("billing.secure")}</p>
+              </>
+            )
+          ) : contact ? (
             <a
               href={contact}
               target="_blank"
@@ -131,7 +205,7 @@ async function Plan() {
           ) : (
             <p className="text-muted-foreground text-sm">{t("contactSoon")}</p>
           )}
-          <p className="text-muted-foreground text-center text-xs">{t("howToPay")}</p>
+          {!online && <p className="text-muted-foreground text-center text-xs">{t("howToPay")}</p>}
         </PlanColumn>
       </div>
 

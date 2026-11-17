@@ -36,6 +36,7 @@ export const getCurrentUser = cache(async () => {
           channel: true,
           plan: true,
           paidUntil: true,
+          polarSubscriptionId: true,
         },
       },
     },
