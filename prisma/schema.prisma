@@ -150,6 +150,8 @@ model Store {
   transferDetails        String?
   plan                   Plan               @default(FREE)
   paidUntil              DateTime?
+  /// Polar subscription that drives plan/paidUntil (webhook: app/api/webhooks/polar)
+  polarSubscriptionId    String?
   /// Superadmin bloklagan: mijoz menyusi yopiq, buyurtma qabul qilinmaydi
   isBlocked              Boolean            @default(false)
   ownerId                String

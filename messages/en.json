@@ -1401,7 +1401,19 @@
     "renewMessage": "Hi! I'd like to extend Pro for my store \"{store}\".",
     "neverLimit": "Free never blocks orders: new and active orders always arrive and stay visible.",
     "perYear": "or {price} a year — 2 months free",
-    "founding": "Founding offer: the first {count} stores get Pro free for {months} months. Write to us and we'll switch you on."
+    "founding": "Founding offer: the first {count} stores get Pro free for {months} months. Write to us and we'll switch you on.",
+    "billing": {
+      "payMonthly": "Pay monthly · {price}",
+      "payYearly": "Pay yearly · {price}",
+      "secure": "Secure card payment via Polar. Cancel anytime — Pro stays until the end of the paid period.",
+      "manage": "Manage subscription",
+      "renewsAuto": "Your subscription renews automatically. Change the card or cancel in “Manage subscription”.",
+      "success": "Payment received. Pro turns on within a minute — refresh the page if you don't see it yet.",
+      "error": "Couldn't open the payment page. Please try again in a minute.",
+      "limited": "Too many attempts. Please try again later.",
+      "paidThrough": "paid through {date}",
+      "founding": "Founding offer: the first {count} stores get Pro free for {months} months — choose monthly and enter code {code} at checkout."
+    }
   },
   "push": {
     "turnOn": "Notify me",

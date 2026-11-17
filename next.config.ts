@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
   },
   cacheComponents: true,
   partialPrefetching: true,
+  // Polar SDK's ESM build statically imports optional peers (OpenTelemetry, ioredis) we don't use:
+  // load it with Node's require (CJS build) instead of bundling
+  serverExternalPackages: ["@polar-sh/sdk"],
   experimental: {
     // Taom rasmlari (brauzerda kichraytiriladi, lekin zaxira uchun; uploadMenuImage 2 MB dan kattasini rad etadi)
     serverActions: { bodySizeLimit: "3mb" },
