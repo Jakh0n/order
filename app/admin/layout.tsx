@@ -4,10 +4,10 @@ import type { Metadata, Viewport } from "next";
 // The manifest is linked only here, so customers on store pages never get an install prompt.
 export const metadata: Metadata = {
   manifest: "/admin.webmanifest",
-  appleWebApp: { capable: true, title: "Flami", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "Tezda", statusBarStyle: "default" },
 };
 
-export const viewport: Viewport = { themeColor: "#16a05d" };
+export const viewport: Viewport = { themeColor: "#F5333F" };
 
 export default function AdminRootLayout({ children }: LayoutProps<"/admin">) {
   return children;

@@ -1,0 +1,31 @@
+{
+  "brand": "Tezda",
+  "tagline": "Menyu bitta havolada. Buyurtma bir zumda.",
+  "brief": "Kichik ovqat bizneslari uchun onlayn menyu: buyurtma tayyor holda Telegram yoki WhatsApp'ga keladi. Oddiy, tez, iliq, Apple uslubida.",
+  "adjectives": ["tez", "oddiy", "toza", "iliq"],
+  "criteria": "Bitta oddiy shakl, 16px da o'qiladi, bir rangda ishlaydi, raqobatchilardan ajralib turadi.",
+  "mockups": ["app-icon", "website", "favicon-tab", "social", "sticker", "bag"],
+  "nav": ["Menyu", "Narxlar", "Kirish"],
+  "brand_color": "#F5333F",
+  "tile_color": "#F5333F",
+  "greyscale": false,
+  "designer": "Tezda",
+  "round": 2,
+  "concepts": [
+    {
+      "name": "Tire-nuqta",
+      "symbol": "svg/tezda-symbol.svg",
+      "lockup": "svg/tezda-lockup.svg",
+      "symbol_on_tile": "svg/tezda-symbol-white.svg",
+      "lockup_on_dark": "svg/tezda-lockup-reverse.svg",
+      "idea": "Morze alifbosida 'TE' = — • . Nuqta bir zumda yetib keladi, ortida iz qoladi.",
+      "rationale": [
+        "Bosh harflar yashirin: — • = T E",
+        "Ikki oddiy shakl — Apple uslubidagi soddalik, animatsiyaga tayyor",
+        "Ovqat yetkazish klishelaridan (paket, skuter, pin) uzoq"
+      ]
+    }
+  ],
+  "recommendation": "Tire-nuqta — tanlangan va pardozlangan yo'nalish.",
+  "next_steps": ["Tovar belgisini IMA'da tekshirish va ro'yxatdan o'tkazish", "Logoni saytga va admin PWA'ga qo'yish", "Yozuvni Figma'da konturga o'tkazish"]
+}

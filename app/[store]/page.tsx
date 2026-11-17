@@ -15,6 +15,7 @@ import { PromoPopup } from "@/components/storefront/promo-popup";
 import { StorefrontSections } from "@/components/storefront/storefront-sections";
 import { siteOrigin } from "@/lib/app-url";
 import { storeJsonLd, topItemNames } from "@/lib/seo";
+import { BRAND, MARK } from "@/lib/brand";
 import { StoreTheme } from "@/components/storefront/store-theme";
 import { getStorefront, getStorePixel } from "@/lib/storefront";
 
@@ -91,10 +92,14 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
             reviews={data.reviews}
           />
           <PromoPopup slug={store.slug} popup={store.popup} />
-          {/* Free plan: a quiet "Made with Flami" (Pro removes it) */}
+          {/* Free plan: a quiet "Made with Tezda" (Pro removes it) */}
           {store.showBranding && (
             <p className="text-muted-foreground py-6 text-center text-xs">
-              <Link href="/" className="hover:text-foreground">
+              <Link href="/" className="hover:text-foreground inline-flex items-center gap-1.5">
+                <svg viewBox="24 92 212 72" className="h-2 w-auto" aria-hidden>
+                  <path d={MARK.dash} fill="currentColor" />
+                  <circle cx={MARK.dot.cx} cy={MARK.dot.cy} r={MARK.dot.r} fill={BRAND.red} />
+                </svg>
                 {t("madeWith")}
               </Link>
             </p>

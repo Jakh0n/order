@@ -35,7 +35,7 @@ export const asHeaderStyle = (v: unknown) => pick(HEADER_STYLES, v, "cover");
 
 /** Ready-made brand colors (all ≥ 3:1 against white, so white text on buttons stays readable) */
 export const BRAND_PRESETS = [
-  "#16a05d", // Flami green
+  "#16a05d", // green (the old platform default)
   "#e11d48", // red
   "#ea580c", // orange
   "#b45309", // amber/brown

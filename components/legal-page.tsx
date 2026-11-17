@@ -23,7 +23,7 @@ export async function LegalPage({ doc }: { doc: "privacy" | "terms" }) {
         className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm"
       >
         <ArrowLeft className="size-4" aria-hidden />
-        Flami
+        Tezda
       </Link>
       <h1 className="mt-6 text-3xl font-bold tracking-tight">{t(`${doc}.title`)}</h1>
       <p className="text-muted-foreground mt-2 text-sm">

@@ -56,7 +56,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.6 0.16 152); /* yashil — take.app uslubida */
+  --primary: oklch(0.63 0.225 23); /* Tezda qizil #F5333F (lib/brand.ts) */
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -67,7 +67,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.6 0.16 152);
+  --ring: oklch(0.63 0.225 23);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -132,8 +132,8 @@
 
 /* Landing page palette */
 @theme {
-  --color-forest: #12372a;
-  --color-mint: #e6f4ec;
+  --color-forest: #14141a; /* Tezda siyoh (nomi tarixiy) */
+  --color-mint: #fdeeee;
   --color-saffron: #f4b740;
   --color-chat: #efe7dd;
   --color-bubble: #d9fdd3;

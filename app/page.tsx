@@ -121,7 +121,7 @@ export default async function Home() {
     items: { t: string; pro?: boolean }[];
   }[];
   // Static demo QR — points at the live demo store
-  const qr = await QRCode.toString("https://flami.org/bahor-kafe", {
+  const qr = await QRCode.toString("https://tezda.app/bahor-kafe", {
     type: "svg",
     margin: 0,
     color: { dark: "#12372a", light: "#00000000" },
@@ -203,7 +203,7 @@ export default async function Home() {
                             dangerouslySetInnerHTML={{ __html: qr }}
                           />
                           <div className="min-w-0 flex-1 text-left">
-                            <p className="truncate text-sm font-semibold">flami.org/bahor-kafe</p>
+                            <p className="truncate text-sm font-semibold">tezda.app/bahor-kafe</p>
                             <p className="text-primary mt-1 flex items-center gap-1 text-xs font-medium">
                               <Copy className="size-3" />
                               {t("steps.v2Copy")}
@@ -240,7 +240,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Customer relationship: why owners keep their customers with Flami */}
+        {/* Customer relationship: why owners keep their customers with Tezda */}
         <section id="customers" className="bg-mint/40 scroll-mt-20 py-20 sm:py-28">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <Reveal className="max-w-2xl">
@@ -526,7 +526,7 @@ export default async function Home() {
   );
 }
 
-/** Organization + WebSite — tells search engines what Flami is and links the brand to its logo. */
+/** Organization + WebSite — tells search engines what Tezda is and links the brand to its logo. */
 function homeJsonLd(description: string) {
   const origin = siteOrigin();
   return {
@@ -535,21 +535,21 @@ function homeJsonLd(description: string) {
       {
         "@type": "Organization",
         "@id": `${origin}/#organization`,
-        name: "Flami",
+        name: "Tezda",
         url: origin,
         logo: `${origin}/icon.svg`,
       },
       {
         "@type": "WebSite",
         "@id": `${origin}/#website`,
-        name: "Flami",
+        name: "Tezda",
         url: origin,
         description,
         publisher: { "@id": `${origin}/#organization` },
       },
       {
         "@type": "SoftwareApplication",
-        name: "Flami",
+        name: "Tezda",
         applicationCategory: "BusinessApplication",
         operatingSystem: "Web",
         url: origin,
