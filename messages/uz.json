@@ -1243,7 +1243,8 @@
       "today": "kechagiga nisbatan",
       "7d": "oldingi 7 kunga nisbatan",
       "30d": "oldingi 30 kunga nisbatan",
-      "90d": "oldingi 90 kunga nisbatan"
+      "90d": "oldingi 90 kunga nisbatan",
+      "custom": "oldingi {days} kunga nisbatan"
     },
     "noCompare": "Hozircha solishtirish uchun ma'lumot yo'q",
     "revenue": "Tushum",
@@ -1333,6 +1334,16 @@
       "lost": "{amount} tushmadi",
       "before": "oldin {pct}%",
       "none": "Yo'q"
+    },
+    "customRange": "Sana tanlash",
+    "rangeFrom": "Dan",
+    "rangeTo": "Gacha",
+    "rangeApply": "Ko'rsatish",
+    "rangeInvalid": "Boshlanish sanasi tugash sanasidan keyin bo'lmasin ({max} kungacha).",
+    "sections": {
+      "sales": "Savdo va pul",
+      "menu": "Menyu",
+      "timing": "Qachon va qanday buyurtma berishadi"
     }
   },
   "plan": {

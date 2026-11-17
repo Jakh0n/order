@@ -15,10 +15,17 @@ import { Suspense } from "react";
 
 import { AnalyticsTabs } from "@/components/admin/analytics/analytics-tabs";
 import { BarChart } from "@/components/admin/analytics/bar-chart";
+import { DateRangePicker } from "@/components/admin/analytics/date-range";
 import { Heatmap } from "@/components/admin/analytics/heatmap";
 import { Sparkline } from "@/components/admin/analytics/sparkline";
 import { Skeleton } from "@/components/ui/skeleton";
-import { type Analytics, getAnalytics, parsePeriod, PERIODS } from "@/lib/analytics/data";
+import {
+  type Analytics,
+  getAnalytics,
+  MAX_RANGE_DAYS,
+  PERIODS,
+  resolveRange,
+} from "@/lib/analytics/data";
 import { buildInsights, type Insight } from "@/lib/analytics/insights";
 import { requireOwner } from "@/lib/auth/owner";
 import { LAPSED_DAYS } from "@/lib/customers/data";
@@ -42,14 +49,21 @@ async function AnalyticsView({
   const [{ store }, params] = await Promise.all([requireOwner(), searchParams]);
   // Free plan: today only (the other periods are shown locked)
   const pro = isPro(store);
-  const period = pro ? parsePeriod(params.period) : "today";
+  const range = resolveRange(params, store.timeZone, { allowCustom: pro, fallback: "today" });
+  const { period } = range;
   const [data, t, tp, format] = await Promise.all([
-    getAnalytics(store, period),
+    getAnalytics(store, range),
     getTranslations("analytics"),
     getTranslations("payment"),
     getFormatter(),
   ]);
   const money = (minor: number) => formatMoney(minor, store.currency);
+  const vsLabel = period === "custom" ? t("vs.custom", { days: range.days }) : t(`vs.${period}`);
+  const rangeText = format.dateTimeRange(
+    new Date(`${range.fromDate}T12:00:00Z`),
+    new Date(`${range.toDate}T12:00:00Z`),
+    { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" },
+  );
   const { current, previous } = data;
   const avg = (x: { orders: number; revenue: number }) =>
     x.orders > 0 ? Math.round(x.revenue / x.orders) : 0;
@@ -117,42 +131,72 @@ async function AnalyticsView({
         <AnalyticsTabs />
       </div>
 
-      {/* Period — links, so it survives reloads and can be shared */}
-      <div
-        role="radiogroup"
-        aria-label={t("period")}
-        className="bg-muted flex w-fit rounded-xl p-1"
-      >
-        {PERIODS.map((p) =>
-          !pro && p !== "today" ? (
-            <Link
-              key={p}
-              href="/admin/plan"
-              title={t("lockedPeriod")}
-              className="text-muted-foreground/70 hover:text-foreground flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium"
-            >
-              <Lock className="size-3" aria-hidden />
-              {t(`periods.${p}`)}
-            </Link>
-          ) : (
-            <Link
-              key={p}
-              href={`/admin/analytics?period=${p}`}
-              replace
-              role="radio"
-              aria-checked={p === period}
-              className={cn(
-                "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
-                p === period
-                  ? "bg-background shadow-sm"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t(`periods.${p}`)}
-            </Link>
-          ),
+      {/* Period — links, so it survives reloads and can be shared; or a custom date range */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div
+          role="radiogroup"
+          aria-label={t("period")}
+          className="bg-muted flex w-fit rounded-xl p-1"
+        >
+          {PERIODS.map((p) =>
+            !pro && p !== "today" ? (
+              <Link
+                key={p}
+                href="/admin/plan"
+                title={t("lockedPeriod")}
+                className="text-muted-foreground/70 hover:text-foreground flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium"
+              >
+                <Lock className="size-3" aria-hidden />
+                {t(`periods.${p}`)}
+              </Link>
+            ) : (
+              <Link
+                key={p}
+                href={`/admin/analytics?period=${p}`}
+                replace
+                role="radio"
+                aria-checked={p === period}
+                className={cn(
+                  "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                  p === period
+                    ? "bg-background shadow-sm"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {t(`periods.${p}`)}
+              </Link>
+            ),
+          )}
+        </div>
+        {pro ? (
+          <DateRangePicker
+            key={`${range.fromDate}:${range.toDate}`}
+            active={period === "custom"}
+            summary={period === "custom" ? rangeText : t("customRange")}
+            from={range.fromDate}
+            to={range.toDate}
+            today={range.today}
+            labels={{
+              from: t("rangeFrom"),
+              to: t("rangeTo"),
+              apply: t("rangeApply"),
+              invalid: t("rangeInvalid", { max: MAX_RANGE_DAYS }),
+            }}
+          />
+        ) : (
+          <Link
+            href="/admin/plan"
+            title={t("lockedPeriod")}
+            className="text-muted-foreground/70 hover:text-foreground flex min-h-9 items-center gap-1.5 rounded-xl border px-3 text-sm font-medium"
+          >
+            <Lock className="size-3" aria-hidden />
+            {t("customRange")}
+          </Link>
         )}
       </div>
+      {period !== "custom" && pro && (
+        <p className="text-muted-foreground -mt-3 text-xs tabular-nums">{rangeText}</p>
+      )}
 
       {/* KPI tiles — the headline numbers, each compared with the previous period */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -160,7 +204,7 @@ async function AnalyticsView({
           label={t("revenue")}
           value={money(current.revenue)}
           delta={change(current.revenue, previous.revenue)}
-          compare={t(`vs.${period}`)}
+          compare={vsLabel}
           trend={trend.map((d) => d.revenue)}
           t={t}
         />
@@ -168,7 +212,7 @@ async function AnalyticsView({
           label={t("orders")}
           value={format.number(current.orders)}
           delta={change(current.orders, previous.orders)}
-          compare={t(`vs.${period}`)}
+          compare={vsLabel}
           trend={trend.map((d) => d.orders)}
           t={t}
         />
@@ -176,7 +220,7 @@ async function AnalyticsView({
           label={t("avgOrder")}
           value={money(avg(current))}
           delta={change(avg(current), avg(previous))}
-          compare={t(`vs.${period}`)}
+          compare={vsLabel}
           trend={avgTrend}
           t={t}
         />
@@ -207,7 +251,7 @@ async function AnalyticsView({
         </p>
       ) : (
         <>
-          <div className="grid gap-3 lg:grid-cols-2">
+          <Section title={t("sections.sales")}>
             {data.days > 1 && (
               <Panel title={t("revenueByDay")} className="lg:col-span-2">
                 <BarChart
@@ -235,37 +279,6 @@ async function AnalyticsView({
                 />
               </Panel>
             )}
-
-            <Panel title={t("byHour")} hint={t("byHourHint")}>
-              <BarChart
-                label={t("byHour")}
-                maxLabel={t("ordersCount", {
-                  count: Math.max(...data.byHour.map((h) => h.orders)),
-                })}
-                tickEvery={3}
-                data={data.byHour.map((h) => ({
-                  key: String(h.hour),
-                  axis: String(h.hour).padStart(2, "0"),
-                  title: `${String(h.hour).padStart(2, "0")}:00–${String(h.hour).padStart(2, "0")}:59`,
-                  detail: t("ordersCount", { count: h.orders }),
-                  value: h.orders,
-                }))}
-              />
-            </Panel>
-
-            <Panel title={t("byType")}>
-              <ul className="flex flex-col gap-3">
-                {data.byType.map((r) => (
-                  <MeterRow
-                    key={r.type}
-                    label={t(`types.${r.type}`)}
-                    value={t("ordersCount", { count: r.orders })}
-                    sub={money(r.revenue)}
-                    pct={(r.orders / maxType) * 100}
-                  />
-                ))}
-              </ul>
-            </Panel>
 
             <Panel title={t("money.title")} hint={t("money.hint")} className="lg:col-span-2">
               <div className="grid gap-6 sm:grid-cols-2">
@@ -329,7 +342,9 @@ async function AnalyticsView({
                 </dl>
               </div>
             </Panel>
+          </Section>
 
+          <Section title={t("sections.menu")}>
             <Panel title={t("topItems")} hint={t("topItemsHint")} className="lg:col-span-2">
               <ol className="flex flex-col gap-3">
                 {data.topItems.slice(0, TOP).map((r, i) => dishRow(r, i + 1))}
@@ -409,7 +424,9 @@ async function AnalyticsView({
                 </div>
               </Panel>
             )}
+          </Section>
 
+          <Section title={t("sections.timing")}>
             {data.days >= 7 && (
               <Panel title={t("heatmap")} hint={t("heatmapHint")} className="lg:col-span-2">
                 <Heatmap
@@ -427,7 +444,38 @@ async function AnalyticsView({
                 />
               </Panel>
             )}
-          </div>
+
+            <Panel title={t("byHour")} hint={t("byHourHint")}>
+              <BarChart
+                label={t("byHour")}
+                maxLabel={t("ordersCount", {
+                  count: Math.max(...data.byHour.map((h) => h.orders)),
+                })}
+                tickEvery={3}
+                data={data.byHour.map((h) => ({
+                  key: String(h.hour),
+                  axis: String(h.hour).padStart(2, "0"),
+                  title: `${String(h.hour).padStart(2, "0")}:00–${String(h.hour).padStart(2, "0")}:59`,
+                  detail: t("ordersCount", { count: h.orders }),
+                  value: h.orders,
+                }))}
+              />
+            </Panel>
+
+            <Panel title={t("byType")}>
+              <ul className="flex flex-col gap-3">
+                {data.byType.map((r) => (
+                  <MeterRow
+                    key={r.type}
+                    label={t(`types.${r.type}`)}
+                    value={t("ordersCount", { count: r.orders })}
+                    sub={money(r.revenue)}
+                    pct={(r.orders / maxType) * 100}
+                  />
+                ))}
+              </ul>
+            </Panel>
+          </Section>
           <p className="text-muted-foreground text-xs">{t("note", { currency: store.currency })}</p>
         </>
       )}
@@ -543,6 +591,18 @@ function InsightRow({
   );
 }
 
+/** A titled group of panels (Sales, Menu, Timing) so the page reads top-down by question */
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="mt-2 flex flex-col gap-3">
+      <h2 className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+        {title}
+      </h2>
+      <div className="grid gap-3 lg:grid-cols-2">{children}</div>
+    </section>
+  );
+}
+
 function Panel({
   title,
   hint,
@@ -559,10 +619,10 @@ function Panel({
   return (
     <section className={cn("bg-card flex flex-col gap-4 rounded-xl border p-4", className)}>
       <div>
-        <h2 className="flex items-center gap-2 font-semibold">
+        <h3 className="flex items-center gap-2 font-semibold">
           {Icon && <Icon className="text-primary size-4" aria-hidden />}
           {title}
-        </h2>
+        </h3>
         {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
       </div>
       {children}

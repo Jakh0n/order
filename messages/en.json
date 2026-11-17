@@ -1243,7 +1243,8 @@
       "today": "vs yesterday",
       "7d": "vs previous 7 days",
       "30d": "vs previous 30 days",
-      "90d": "vs previous 90 days"
+      "90d": "vs previous 90 days",
+      "custom": "{days, plural, one {vs the previous day} other {vs the previous # days}}"
     },
     "noCompare": "Nothing to compare yet",
     "revenue": "Revenue",
@@ -1333,6 +1334,16 @@
       "lost": "{amount} not earned",
       "before": "{pct}% before",
       "none": "None"
+    },
+    "customRange": "Custom dates",
+    "rangeFrom": "From",
+    "rangeTo": "To",
+    "rangeApply": "Apply",
+    "rangeInvalid": "Pick a start date on or before the end date (up to {max} days).",
+    "sections": {
+      "sales": "Sales and money",
+      "menu": "Menu",
+      "timing": "When and how customers order"
     }
   },
   "plan": {

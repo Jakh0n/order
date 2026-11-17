@@ -19,6 +19,91 @@ export function parsePeriod(value: unknown): Period {
   return PERIODS.includes(value as Period) ? (value as Period) : "7d";
 }
 
+/** Longest custom range, in days */
+export const MAX_RANGE_DAYS = 366;
+
+/** The period the page shows: a preset, or a custom from–to range (local dates, both inclusive) */
+export interface Range {
+  period: Period | "custom";
+  /** First instant of the range */
+  from: Date;
+  /** End of the range (exclusive): now, or the start of the day after `toDate` */
+  end: Date;
+  days: number;
+  /** Local "YYYY-MM-DD" of the first and last day */
+  fromDate: string;
+  toDate: string;
+  /** Local "YYYY-MM-DD" today (for the date inputs' max) */
+  today: string;
+}
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Reads ?period= or ?from=&to= (custom needs `allowCustom`, i.e. Pro). An invalid custom range
+ * (bad dates, from after to, in the future, longer than MAX_RANGE_DAYS) falls back to the preset.
+ */
+export function resolveRange(
+  params: { period?: unknown; from?: unknown; to?: unknown },
+  timeZone: string,
+  { allowCustom, fallback }: { allowCustom: boolean; fallback: Period },
+): Range {
+  const now = new Date();
+  const today = localDate(now, timeZone);
+  const { from: f, to: t } = params;
+  if (
+    allowCustom &&
+    typeof f === "string" &&
+    typeof t === "string" &&
+    DATE_RE.test(f) &&
+    DATE_RE.test(t)
+  ) {
+    const from = dayStart(f, timeZone);
+    const after = dayStart(addDays(t, 1), timeZone);
+    const days = Math.round((after.getTime() - from.getTime()) / DAY_MS);
+    if (f <= t && t <= today && days >= 1 && days <= MAX_RANGE_DAYS) {
+      return {
+        period: "custom",
+        from,
+        end: after < now ? after : now,
+        days,
+        fromDate: f,
+        toDate: t,
+        today,
+      };
+    }
+  }
+  const period = allowCustom ? parsePeriod(params.period) : fallback;
+  const days = DAYS[period];
+  const from = new Date(startOfDayInZone(timeZone, now).getTime() - (days - 1) * DAY_MS);
+  return {
+    period,
+    from,
+    end: now,
+    days,
+    fromDate: localDate(from, timeZone),
+    toDate: today,
+    today,
+  };
+}
+
+/** "YYYY-MM-DD" + n days (calendar arithmetic, no time zone) */
+function addDays(date: string, n: number): string {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
+}
+
+/** First instant of a local calendar day in a time zone */
+function dayStart(date: string, timeZone: string): Date {
+  const noon = Date.parse(`${date}T12:00:00Z`);
+  // Noon UTC is the same local day for zones within ±12h; try the neighbours for the rest
+  for (const shift of [0, -12, 12]) {
+    const probe = new Date(noon + shift * 60 * 60_000);
+    if (localDate(probe, timeZone) === date) return startOfDayInZone(timeZone, probe);
+  }
+  return startOfDayInZone(timeZone, new Date(noon));
+}
+
 interface StoreRef {
   id: string;
   currency: string;
@@ -26,7 +111,7 @@ interface StoreRef {
 }
 
 export interface Analytics {
-  period: Period;
+  period: Range["period"];
   days: number;
   current: Totals;
   previous: Totals;
@@ -72,10 +157,9 @@ interface Totals {
   revenue: number;
 }
 
-export async function getAnalytics(store: StoreRef, period: Period): Promise<Analytics> {
-  const days = DAYS[period];
+export async function getAnalytics(store: StoreRef, range: Range): Promise<Analytics> {
+  const { period, days, from, end } = range;
   const now = new Date();
-  const from = new Date(startOfDayInZone(store.timeZone, now).getTime() - (days - 1) * DAY_MS);
   const prevFrom = new Date(from.getTime() - days * DAY_MS);
   const tz = store.timeZone;
 
@@ -115,25 +199,25 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
         count(*) FILTER (WHERE o."createdAt" < ${from})::int AS prev_orders,
         coalesce(sum(o."total") FILTER (WHERE o."createdAt" < ${from} AND ${inCurrency}), 0)::bigint AS prev_rev
       FROM "Order" o
-      WHERE ${where(prevFrom, now)}`,
+      WHERE ${where(prevFrom, end)}`,
     prisma.$queryRaw<{ d: string; orders: number; revenue: bigint }[]>`
       SELECT to_char(date_trunc('day', ${local}), 'YYYY-MM-DD') AS d,
         count(*)::int AS orders,
         coalesce(sum(o."total") FILTER (WHERE ${inCurrency}), 0)::bigint AS revenue
       FROM "Order" o
-      WHERE ${where(prevFrom, now)}
+      WHERE ${where(prevFrom, end)}
       GROUP BY 1`,
     prisma.$queryRaw<{ h: number; orders: number }[]>`
       SELECT extract(hour FROM ${local})::int AS h, count(*)::int AS orders
       FROM "Order" o
-      WHERE ${where(from, now)}
+      WHERE ${where(from, end)}
       GROUP BY 1`,
     prisma.$queryRaw<{ name: string; quantity: number; revenue: bigint }[]>`
       SELECT i."name", sum(i."quantity")::int AS quantity,
         coalesce(sum(i."lineTotal") FILTER (WHERE ${inCurrency}), 0)::bigint AS revenue
       FROM "OrderItem" i
       JOIN "Order" o ON o."id" = i."orderId"
-      WHERE ${where(from, now)}
+      WHERE ${where(from, end)}
       GROUP BY i."name"
       ORDER BY quantity DESC, revenue DESC
       LIMIT 200`,
@@ -143,14 +227,14 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
       SELECT o."type"::text AS type, count(*)::int AS orders,
         coalesce(sum(o."total") FILTER (WHERE ${inCurrency}), 0)::bigint AS revenue
       FROM "Order" o
-      WHERE ${where(from, now)}
+      WHERE ${where(from, end)}
       GROUP BY 1
       ORDER BY orders DESC`,
     prisma.$queryRaw<{ total: number; returning: number }[]>`
       WITH cur AS (
         SELECT DISTINCT o."customerPhone" AS phone
         FROM "Order" o
-        WHERE ${where(from, now)} AND o."customerPhone" <> ''
+        WHERE ${where(from, end)} AND o."customerPhone" <> ''
       )
       SELECT count(*)::int AS total,
         count(*) FILTER (WHERE EXISTS (
@@ -163,7 +247,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
       SELECT extract(isodow FROM ${local})::int AS dow, extract(hour FROM ${local})::int AS h,
         count(*)::int AS orders
       FROM "Order" o
-      WHERE ${where(from, now)}
+      WHERE ${where(from, end)}
       GROUP BY 1, 2`,
     prisma.$queryRaw<{ name: string; cur: number; prev: number }[]>`
       SELECT i."name",
@@ -171,7 +255,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
         coalesce(sum(i."quantity") FILTER (WHERE o."createdAt" < ${from}), 0)::int AS prev
       FROM "OrderItem" i
       JOIN "Order" o ON o."id" = i."orderId"
-      WHERE ${where(prevFrom, now)}
+      WHERE ${where(prevFrom, end)}
       GROUP BY i."name"`,
     prisma.$queryRaw<{ n: number }[]>`
       SELECT count(*)::int AS n FROM (
@@ -191,7 +275,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
       SELECT o."paymentMethod"::text AS method, count(*)::int AS orders,
         coalesce(sum(o."total") FILTER (WHERE ${inCurrency}), 0)::bigint AS revenue
       FROM "Order" o
-      WHERE ${where(from, now)}
+      WHERE ${where(from, end)}
       GROUP BY 1
       ORDER BY revenue DESC`,
     prisma.$queryRaw<
@@ -204,7 +288,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
         coalesce(sum(o."discount"), 0)::bigint AS discount,
         coalesce(sum(o."tip"), 0)::bigint AS tip
       FROM "Order" o
-      WHERE ${where(from, now)} AND ${inCurrency}`,
+      WHERE ${where(from, end)} AND ${inCurrency}`,
     prisma.$queryRaw<{ id: string; name: string }[]>`
       SELECT p."id", p."name"
       FROM "Product" p
@@ -214,7 +298,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
         AND NOT EXISTS (
           SELECT 1 FROM "OrderItem" i
           JOIN "Order" o ON o."id" = i."orderId"
-          WHERE i."productId" = p."id" AND ${where(from, now)}
+          WHERE i."productId" = p."id" AND ${where(from, end)}
         )
       ORDER BY c."sort", p."sort"
       LIMIT 50`,
@@ -223,7 +307,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
         coalesce(sum(o."discount") FILTER (WHERE ${inCurrency}), 0)::bigint AS discount,
         coalesce(sum(o."total") FILTER (WHERE ${inCurrency}), 0)::bigint AS revenue
       FROM "Order" o
-      WHERE ${where(from, now)} AND o."promoCode" IS NOT NULL
+      WHERE ${where(from, end)} AND o."promoCode" IS NOT NULL
       GROUP BY 1
       ORDER BY orders DESC, revenue DESC
       LIMIT 20`,
@@ -236,7 +320,7 @@ export async function getAnalytics(store: StoreRef, period: Period): Promise<Ana
         count(*) FILTER (WHERE o."createdAt" < ${from} AND o."status" = 'CANCELLED')::int AS prev,
         count(*) FILTER (WHERE o."createdAt" < ${from})::int AS prev_all
       FROM "Order" o
-      WHERE o."storeId" = ${store.id} AND o."createdAt" >= ${prevFrom} AND o."createdAt" < ${now}`,
+      WHERE o."storeId" = ${store.id} AND o."createdAt" >= ${prevFrom} AND o."createdAt" < ${end}`,
   ]);
 
   // Every day of the period, zeros included (a gap in a bar chart reads as "no data")
