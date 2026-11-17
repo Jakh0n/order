@@ -5,6 +5,7 @@ import {
   MapPin,
   MessageCircle,
   MessageSquare,
+  Send,
   Navigation,
   Phone,
   Receipt,
@@ -59,6 +60,7 @@ export async function OrderCard({
   receiptUrl,
   plain,
   origin,
+  showSentTo,
 }: {
   order: Order & { items: OrderItem[]; review?: { rating: number } | null };
   /** Site origin for links in messages to the customer (getRequestOrigin) */
@@ -73,6 +75,8 @@ export async function OrderCard({
   receiptUrl?: string;
   /** Inside the details sheet: no card frame */
   plain?: boolean;
+  /** Order rolling is on: show which staff contact the order went to */
+  showSentTo?: boolean;
 }) {
   const t = await getTranslations();
   const format = await getFormatter();
@@ -193,6 +197,14 @@ export async function OrderCard({
           <p className="text-muted-foreground flex items-center gap-1.5">
             <Clock className="size-3.5 shrink-0" />
             {scheduled ?? t("checkout.asap")}
+          </p>
+        )}
+        {showSentTo && order.sentTo && (
+          <p className="text-muted-foreground flex items-center gap-1.5">
+            <Send className="size-3.5 shrink-0" aria-hidden />
+            {t("adminOrders.sentTo", {
+              contact: order.sentTo.startsWith("+") ? order.sentTo : `@${order.sentTo}`,
+            })}
           </p>
         )}
         {order.comment && (

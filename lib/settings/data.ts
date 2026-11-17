@@ -38,6 +38,8 @@ export async function getStoreSettings(storeId: string): Promise<StoreSettingsIn
     channel: store.channel,
     telegramUsername: store.telegramUsername ?? "",
     whatsappNumber: store.whatsappNumber ?? "",
+    extraWhatsappNumbers: store.extraWhatsappNumbers,
+    extraTelegramUsernames: store.extraTelegramUsernames,
     metaPixelId: store.metaPixelId ?? "",
   };
 }

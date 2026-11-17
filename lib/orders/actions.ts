@@ -4,6 +4,7 @@ import { after } from "next/server";
 
 import { prisma } from "@/lib/db";
 import { insertOrder } from "@/lib/orders/insert";
+import { orderContacts } from "@/lib/orders/send-link";
 import type { PromoProblem } from "@/lib/orders/promo";
 import { distancePricingOf, quoteDelivery } from "@/lib/delivery-distance";
 import { isPro } from "@/lib/plan";
@@ -123,6 +124,7 @@ export async function createOrder(input: CheckoutInput): Promise<CreateOrderResu
     const result = await insertOrder({
       ...data,
       storeId: store.id,
+      contacts: orderContacts(store, isPro(store)),
       currency: store.currency,
       deliveryFee: quote.kind === "tooFar" ? store.deliveryFee : quote.fee,
       // Pro-only: free delivery threshold and promo codes

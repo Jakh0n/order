@@ -332,6 +332,9 @@ const timeZoneSchema = z.string().trim().refine(isValidTimeZone, "timeZoneInvali
 /** Store page default language */
 const storeLocaleSchema = z.enum(locales).catch(defaultLocale);
 
+/** Order rolling: extra WhatsApp numbers / Telegram usernames per store (Pro) */
+export const MAX_EXTRA_CONTACTS = 5;
+
 function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
   return z
     .object({
@@ -384,6 +387,19 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
         .string()
         .nullish()
         .transform((v) => (v ? normalizePhone(v) : null)),
+      /** Order rolling (Pro): extra contacts that take turns with the main one. Empty rows dropped. */
+      extraWhatsappNumbers: z
+        .array(z.string())
+        .max(MAX_EXTRA_CONTACTS)
+        .default([])
+        .transform((list) => list.map((v) => (v.trim() ? normalizePhone(v) : "")).filter(Boolean)),
+      extraTelegramUsernames: z
+        .array(z.string())
+        .max(MAX_EXTRA_CONTACTS)
+        .default([])
+        .transform((list) =>
+          list.map((v) => (v.trim() ? normalizeTelegramUsername(v) : "")).filter(Boolean),
+        ),
       /** Meta Pixel ID (digits only); empty = off */
       metaPixelId: z
         .string()
@@ -426,6 +442,35 @@ function buildSettingsSchema(fee: z.ZodNumber, minOrder: z.ZodNumber) {
       } else if (s2.channel === "WHATSAPP" && !s2.whatsappNumber) {
         issue("whatsappNumber", "whatsappRequired");
       }
+      // Extra contacts: valid, and not repeating the main one or each other
+      const checkExtras = (
+        path: "extraWhatsappNumbers" | "extraTelegramUsernames",
+        list: string[],
+        main: string | null,
+        valid: RegExp,
+        invalid: string,
+      ) => {
+        const seen = new Set(main ? [main.toLowerCase()] : []);
+        list.forEach((v, i) => {
+          if (!valid.test(v)) issue(`${path}.${i}`, invalid);
+          else if (seen.has(v.toLowerCase())) issue(`${path}.${i}`, "contactDuplicate");
+          seen.add(v.toLowerCase());
+        });
+      };
+      checkExtras(
+        "extraWhatsappNumbers",
+        s2.extraWhatsappNumbers,
+        s2.whatsappNumber,
+        /^\+[1-9]\d{6,14}$/,
+        "whatsappInvalid",
+      );
+      checkExtras(
+        "extraTelegramUsernames",
+        s2.extraTelegramUsernames,
+        s2.telegramUsername,
+        /^[A-Za-z][A-Za-z0-9_]{3,31}$/,
+        "telegramInvalid",
+      );
     });
 }
 

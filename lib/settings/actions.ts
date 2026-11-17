@@ -4,6 +4,7 @@ import { refresh, updateTag } from "next/cache";
 
 import { requireOwner } from "@/lib/auth/owner";
 import { prisma } from "@/lib/db";
+import { isPro } from "@/lib/plan";
 import { deleteMenuImage, menuImagePrefix } from "@/lib/storage";
 import { storeCacheTag } from "@/lib/storefront";
 import {
@@ -30,7 +31,9 @@ export async function saveStoreSettings(input: StoreSettingsInput): Promise<Sett
     }
     return { ok: false, error: "invalid", fieldErrors };
   }
-  const data = parsed.data;
+  const { extraWhatsappNumbers, extraTelegramUsernames, ...rest } = parsed.data;
+  // Order rolling is Pro: on Free the extra contacts are not changed (kept for when they upgrade)
+  const data = isPro(store) ? { ...rest, extraWhatsappNumbers, extraTelegramUsernames } : rest;
 
   const current = await prisma.store.findUnique({
     where: { id: store.id },

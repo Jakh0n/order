@@ -586,10 +586,8 @@
     "status": "Status",
     "notFound": "Order not found",
     "thanks": "Thank you! Your order is saved",
-    "sendTitle": "Last step: send your order to the store",
+    "sendTitle": "One last step: send your order",
     "sendHint": "Tap the button — a ready-made message opens, just send it.",
-    "sendTelegram": "Send via Telegram",
-    "sendWhatsapp": "Send via WhatsApp",
     "callStore": "Call the store",
     "items": "Items",
     "details": "Details",
@@ -598,11 +596,8 @@
     "autoRefresh": "Status updates automatically",
     "backToMenu": "Back to menu",
     "savedTitle": "Order #{number} saved",
-    "savedHint": "Send the message so the store can accept your order.",
     "statusTitle": "Order #{number}",
     "sendAgain": "Send the message again",
-    "sentHint": "Message sent — the store will accept your order soon.",
-    "notSent": "Didn't send it? Open the chat again",
     "location": "Location",
     "openMap": "Open in Maps",
     "scheduledFor": "Scheduled for {time}",
@@ -614,7 +609,14 @@
       "notFound": "Order not found",
       "tooMany": "Too many attempts. Please try again in a few minutes.",
       "server": "Something went wrong. Please try again."
-    }
+    },
+    "sendWhy": "The store sees your order only after this message arrives.",
+    "sendStep2": "In the chat, just press Send ➤",
+    "openApp": "Open {app} and send",
+    "sentCheckTitle": "Did you press Send in the chat?",
+    "sentCheckHint": "If not, open the chat again and press Send ➤. Once the store accepts your order, this page updates by itself.",
+    "openAgain": "Open {app} again",
+    "copyFallback": "Message not in the chat? Copy it and paste it there."
   },
   "admin": {
     "title": "Dashboard",
@@ -840,7 +842,8 @@
     "askReview": "Ask for a review",
     "reviewCopied": "Message copied — paste it in the chat",
     "reviewReceived": "Customer rated {rating} of 5",
-    "reviewRequest": "Hi {name}! Thank you for your order #{number} at {store}. How was it? Your review takes 10 seconds and helps us a lot: {link}"
+    "reviewRequest": "Hi {name}! Thank you for your order #{number} at {store}. How was it? Your review takes 10 seconds and helps us a lot: {link}",
+    "sentTo": "Sent to {contact}"
   },
   "adminMenu": {
     "addCategory": "Add category",
@@ -981,7 +984,8 @@
       "locationRequired": "Set the store location",
       "tiersRequired": "Add at least one range",
       "tiersOrder": "Each range must be farther than the one before",
-      "kmInvalid": "Enter a distance from 0.1 to 200 km"
+      "kmInvalid": "Enter a distance from 0.1 to 200 km",
+      "contactDuplicate": "This contact is already in the list."
     },
     "deliveryFee": "Delivery fee ({currency})",
     "deliveryFeeHint": "Added to every delivery order. 0 — free delivery.",
@@ -1019,7 +1023,16 @@
     "tierFee": "Delivery fee ({currency})",
     "removeTier": "Remove range",
     "addTier": "Add range",
-    "deliveryTiersHint": "Distance is a straight line from the store. Farther than the last range — delivery isn't offered."
+    "deliveryTiersHint": "Distance is a straight line from the store. Farther than the last range — delivery isn't offered.",
+    "rolling": {
+      "titleWhatsapp": "More numbers (order rolling)",
+      "titleTelegram": "More usernames (order rolling)",
+      "hint": "Orders take turns: the 1st goes to the main contact, the 2nd to the next one, and so on — so your staff share them evenly. Up to 5.",
+      "rowLabel": "Contact {n}",
+      "remove": "Remove contact {n}",
+      "addWhatsapp": "Add a number",
+      "addTelegram": "Add a username"
+    }
   },
   "signup": {
     "title": "Open your store",
