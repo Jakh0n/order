@@ -8,6 +8,7 @@ import { requireOwner } from "@/lib/auth/owner";
 import { openBillingPortal, startCheckout } from "@/lib/billing/actions";
 import { billingEnabled } from "@/lib/billing/polar";
 import {
+  BILLING_GRACE_MS,
   FOUNDING_PRO_MONTHS,
   FOUNDING_STORES,
   FREE_MONTHLY_ORDERS,
@@ -67,9 +68,13 @@ async function Plan({ searchParams }: { searchParams: Promise<{ billing?: string
   const tier = planOf(store);
   const pro = tier === "PRO";
   const subscribed = pro && Boolean(store.polarSubscriptionId);
-  const until = store.paidUntil
-    ? format.dateTime(store.paidUntil, { dateStyle: "medium", timeZone: store.timeZone })
-    : null;
+  const date = (d: Date) => format.dateTime(d, { dateStyle: "medium", timeZone: store.timeZone });
+  const until = store.paidUntil ? date(store.paidUntil) : null;
+  // Polar: paidUntil includes a grace period — show the real end of the paid billing period
+  const paidThrough =
+    subscribed && store.paidUntil
+      ? date(new Date(store.paidUntil.getTime() - BILLING_GRACE_MS))
+      : null;
   const expired = store.plan === "PAID" && !pro;
   const contact = upgradeLink(t(pro ? "renewMessage" : "upgradeMessage", { store: store.name }));
 
@@ -111,7 +116,12 @@ async function Plan({ searchParams }: { searchParams: Promise<{ billing?: string
             {pro && (
               <span className="text-muted-foreground font-normal">
                 {" "}
-                · {until ? t("until", { date: until }) : t("noEnd")}
+                ·{" "}
+                {paidThrough
+                  ? t("billing.paidThrough", { date: paidThrough })
+                  : until
+                    ? t("until", { date: until })
+                    : t("noEnd")}
               </span>
             )}
           </p>
@@ -158,7 +168,11 @@ async function Plan({ searchParams }: { searchParams: Promise<{ billing?: string
         >
           {!pro && (
             <p className="bg-primary/10 rounded-lg px-3 py-2 text-sm">
-              {t("founding", { count: FOUNDING_STORES, months: FOUNDING_PRO_MONTHS })}
+              {t(online ? "billing.founding" : "founding", {
+                count: FOUNDING_STORES,
+                months: FOUNDING_PRO_MONTHS,
+                code: "FOUNDING",
+              })}
             </p>
           )}
           {online ? (

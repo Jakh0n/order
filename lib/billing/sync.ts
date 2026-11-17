@@ -4,6 +4,7 @@ import { revalidateTag } from "next/cache";
 
 import { polarClient } from "@/lib/billing/polar";
 import { prisma } from "@/lib/db";
+import { BILLING_GRACE_MS } from "@/lib/plan";
 import { storeCacheTag } from "@/lib/storefront";
 
 /** The subscription fields we read from Polar webhooks (snake_case, as in the payload) */
@@ -15,9 +16,6 @@ export type PolarSubscription = {
   metadata: Record<string, unknown>;
   customer: { external_id?: string | null };
 };
-
-/** Renewal webhooks can arrive a little after the period ends — Pro must not flicker off */
-const GRACE_MS = 2 * 24 * 60 * 60 * 1000;
 
 /** Still paid for: active (also when canceled at period end) or in trial */
 const LIVE = new Set(["active", "trialing"]);
@@ -45,7 +43,7 @@ export async function syncSubscription(subscriptionId: string): Promise<void> {
   if (!store || WAITING.has(sub.status)) return;
 
   if (LIVE.has(sub.status)) {
-    const paidUntil = new Date(new Date(sub.current_period_end).getTime() + GRACE_MS);
+    const paidUntil = new Date(new Date(sub.current_period_end).getTime() + BILLING_GRACE_MS);
     await prisma.store.update({
       where: { id: storeId },
       data: { plan: "PAID", paidUntil, polarSubscriptionId: sub.id },

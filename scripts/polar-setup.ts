@@ -3,7 +3,8 @@
 //        npm run polar:setup -- production https://tezda.app
 // Creates: "Tezda Pro" monthly ($15) + yearly ($150) products, FOUNDING discount
 // (100% off for 6 months, 100 uses), webhook → <url>/api/webhooks/polar.
-// Writes POLAR_* values into .env.local (the webhook secret is never printed).
+// Writes POLAR_* values into .env.local (sandbox) or .env.polar-production.local (production,
+// for Vercel env — never used by local dev). The webhook secret is never printed.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
 import { createPolar } from "@polar-sh/sdk/2026-10";
@@ -15,7 +16,6 @@ import {
   PRO_PRICE_YEARLY_USD,
 } from "../lib/plan";
 
-const ENV_FILE = ".env.local";
 
 function readEnv(file: string): Record<string, string> {
   if (!existsSync(file)) return {};
@@ -27,14 +27,14 @@ function readEnv(file: string): Record<string, string> {
   return out;
 }
 
-function writeEnv(values: Record<string, string>) {
-  let text = existsSync(ENV_FILE) ? readFileSync(ENV_FILE, "utf8") : "";
+function writeEnv(file: string, values: Record<string, string>) {
+  let text = existsSync(file) ? readFileSync(file, "utf8") : "";
   for (const [k, v] of Object.entries(values)) {
     const line = `${k}=${v}`;
     const re = new RegExp(`^${k}=.*$`, "m");
     text = re.test(text) ? text.replace(re, line) : `${text.replace(/\n?$/, "\n")}${line}\n`;
   }
-  writeFileSync(ENV_FILE, text);
+  writeFileSync(file, text);
 }
 
 async function main() {
@@ -44,7 +44,8 @@ async function main() {
     console.error("Usage: npm run polar:setup -- <sandbox|production> https://<public-url>");
     process.exit(1);
   }
-  const vars = { ...readEnv(".env"), ...readEnv(ENV_FILE), ...process.env };
+  const envFile = env === "sandbox" ? ".env.local" : ".env.polar-production.local";
+  const vars = { ...readEnv(".env"), ...readEnv(".env.local"), ...process.env };
   const token = env === "sandbox" ? vars.POLAR_SANDBOX_ACCESS_TOKEN : vars.POLAR_ACCESS_TOKEN;
   if (!token) {
     console.error(
@@ -110,13 +111,13 @@ async function main() {
       events: [...events],
     }));
 
-  writeEnv({
+  writeEnv(envFile, {
     POLAR_SERVER: env,
     POLAR_PRODUCT_MONTHLY_ID: monthly,
     POLAR_PRODUCT_YEARLY_ID: yearly,
     POLAR_WEBHOOK_SECRET: hook.secret,
   });
-  console.log(`Polar ${env} ready → ${ENV_FILE}`);
+  console.log(`Polar ${env} ready → ${envFile}`);
   console.log(`  monthly product: ${monthly}`);
   console.log(`  yearly product:  ${yearly}`);
   console.log(`  discount code:   FOUNDING`);

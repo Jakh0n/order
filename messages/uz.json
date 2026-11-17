@@ -1410,7 +1410,9 @@
       "renewsAuto": "Obuna avtomatik yangilanadi. Kartani almashtirish yoki bekor qilish — «Obunani boshqarish» da.",
       "success": "To'lov qabul qilindi. Pro bir daqiqa ichida yoqiladi — hali ko'rinmasa, sahifani yangilang.",
       "error": "To'lov sahifasini ochib bo'lmadi. Bir daqiqadan keyin qayta urinib ko'ring.",
-      "limited": "Juda ko'p urinish. Keyinroq qayta urinib ko'ring."
+      "limited": "Juda ko'p urinish. Keyinroq qayta urinib ko'ring.",
+      "paidThrough": "{date} gacha to'langan",
+      "founding": "Birinchilar uchun taklif: dastlabki {count} ta do'kon Pro'ni {months} oy bepul oladi — oylik to'lovni tanlang va {code} kodini kiriting."
     }
   },
   "push": {

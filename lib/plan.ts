@@ -10,6 +10,8 @@ export type ProFeature =
 /** Free keeps this many orders per month in history (active orders are always shown) */
 export const FREE_MONTHLY_ORDERS = 100;
 export const PRO_PRICE_USD = 15;
+/** Polar subscriptions: paidUntil = billing period end + this grace (late renewal webhooks) */
+export const BILLING_GRACE_MS = 2 * 24 * 60 * 60 * 1000;
 /** Yearly Pro = 10 months (2 months free) */
 export const PRO_PRICE_YEARLY_USD = 150;
 

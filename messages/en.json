@@ -1410,7 +1410,9 @@
       "renewsAuto": "Your subscription renews automatically. Change the card or cancel in “Manage subscription”.",
       "success": "Payment received. Pro turns on within a minute — refresh the page if you don't see it yet.",
       "error": "Couldn't open the payment page. Please try again in a minute.",
-      "limited": "Too many attempts. Please try again later."
+      "limited": "Too many attempts. Please try again later.",
+      "paidThrough": "paid through {date}",
+      "founding": "Founding offer: the first {count} stores get Pro free for {months} months — choose monthly and enter code {code} at checkout."
     }
   },
   "push": {
