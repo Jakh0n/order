@@ -56,13 +56,13 @@ const fontMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Flami",
-    template: "%s · Flami",
+    default: "Tezda",
+    template: "%s · Tezda",
   },
   description: "Online menu and ordering for cafés and restaurants",
   // Absolute URLs for canonical links, og:image and the sitemap (APP_URL)
   metadataBase: new URL(siteOrigin()),
-  openGraph: { siteName: "Flami", type: "website", locale: "en_US" },
+  openGraph: { siteName: "Tezda", type: "website", locale: "en_US" },
   twitter: { card: "summary_large_image" },
 };
 

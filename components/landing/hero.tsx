@@ -66,7 +66,7 @@ export function Hero() {
                   href="/signup"
                   className={cn(
                     buttonVariants({ size: "lg" }),
-                    "h-13 w-full rounded-full px-7 text-base shadow-[0_12px_30px_-12px] shadow-emerald-700/60 sm:w-auto",
+                    "h-13 w-full rounded-full px-7 text-base shadow-[0_12px_30px_-12px] shadow-red-700/50 sm:w-auto",
                   )}
                 >
                   {t("cta")}

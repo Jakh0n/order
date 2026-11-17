@@ -1,12 +1,12 @@
 {
-  "name": "Flami Admin",
-  "short_name": "Flami",
-  "description": "Orders, menu and settings for your Flami store",
+  "name": "Tezda Admin",
+  "short_name": "Tezda",
+  "description": "Orders, menu and settings for your Tezda store",
   "start_url": "/admin/orders",
   "scope": "/admin/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#16a05d",
+  "theme_color": "#F5333F",
   "icons": [
     { "src": "/pwa-icon/192", "sizes": "192x192", "type": "image/png" },
     { "src": "/pwa-icon/512", "sizes": "512x512", "type": "image/png" },

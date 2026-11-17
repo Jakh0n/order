@@ -1,27 +1,33 @@
 import { cn } from "@/lib/utils";
+import { BRAND, BRAND_NAME, MARK } from "@/lib/brand";
 
-/** Flami wordmark: a flame-shaped speech bubble — orders that arrive as messages. */
+const WORDMARK =
+  "M30 64V176A24 24 0 0 0 54 200H60M8 118H60 M106 159H188A41 41 0 1 0 180.6 182.5 M234 118H298L234 200H298 " +
+  "M426 52V200M426 159A41 41 0 1 1 344 159A41 41 0 1 1 426 159 M554 118V200M554 159A41 41 0 1 1 472 159A41 41 0 1 1 554 159";
+
+/** Tezda lockup: "— •" (Morse for "TE": the dot arrives in an instant) + the "tezda" wordmark. */
 export function Logo({ className, inverted }: { className?: string; inverted?: boolean }) {
+  const ink = inverted ? "#fff" : BRAND.ink;
   return (
-    <span className={cn("flex items-center gap-2", className)}>
-      <svg viewBox="0 0 32 32" className="size-8" aria-hidden>
-        <path
-          d="M16 2.5c1.6 3.6 6.9 6.8 8.9 11.4 2.6 6-1.4 13.6-8.9 13.6-1.9 0-3.6-.4-5.1-1.2L5.5 28l1.3-5.1C5.6 21 5 18.9 5.3 16.6 6 11.4 10.8 9.7 12.4 5.3c.9 2.3 1 4 .6 5.9 1.9-1.6 3-4.8 3-8.7Z"
-          className={inverted ? "fill-white" : "fill-primary"}
-        />
-        <path
-          d="M16.3 15.2c.9 1.8 3.3 3 3.3 5.4a3.6 3.6 0 0 1-7.2.2c0-1.6 1-2.4 1.7-3.3.4.8.5 1.4.4 2 1-.8 1.8-2.3 1.8-4.3Z"
-          className={inverted ? "fill-forest" : "fill-white"}
-        />
-      </svg>
-      <span
-        className={cn(
-          "font-display text-xl font-bold tracking-tight",
-          inverted ? "text-white" : "text-forest",
-        )}
-      >
-        Flami
-      </span>
-    </span>
+    <svg
+      viewBox="0 36 965 180"
+      className={cn("h-7 w-auto", className)}
+      role="img"
+      aria-label={BRAND_NAME}
+    >
+      <g transform="translate(-35.8 -41) scale(1.5625)">
+        <path fill={ink} d={MARK.dash} />
+        <circle fill={BRAND.red} cx={MARK.dot.cx} cy={MARK.dot.cy} r={MARK.dot.r} />
+      </g>
+      <path
+        transform="translate(373.5 0)"
+        fill="none"
+        stroke={ink}
+        strokeWidth={23}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d={WORDMARK}
+      />
+    </svg>
   );
 }

@@ -46,7 +46,7 @@ export function AiImportDemo({
             animate={{ top: ["-20%", "100%"] }}
             transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity, repeatDelay: 0.6 }}
           >
-            <div className="bg-primary absolute inset-x-0 bottom-0 h-0.5 shadow-[0_0_12px_2px] shadow-emerald-400" />
+            <div className="bg-primary absolute inset-x-0 bottom-0 h-0.5 shadow-[0_0_12px_2px] shadow-red-400" />
           </motion.div>
         )}
       </div>

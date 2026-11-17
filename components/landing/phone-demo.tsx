@@ -91,7 +91,7 @@ export function PhoneDemo() {
                       exit={{ y: 80 }}
                       transition={{ type: "spring", stiffness: 420, damping: 32 }}
                     >
-                      <div className="bg-primary flex h-12 items-center gap-2.5 rounded-2xl px-3.5 text-white shadow-lg shadow-emerald-900/25">
+                      <div className="bg-primary flex h-12 items-center gap-2.5 rounded-2xl px-3.5 text-white shadow-lg shadow-red-900/25">
                         <span className="relative">
                           <ShoppingBag className="size-5" />
                           <motion.span

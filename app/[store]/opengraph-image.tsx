@@ -6,6 +6,7 @@ import { defaultLocale, isLocale } from "@/i18n/config";
 import { siteOrigin } from "@/lib/app-url";
 import { reportError } from "@/lib/report-error";
 import { firstProductImage, topItemNames } from "@/lib/seo";
+import { BRAND, BRAND_NAME } from "@/lib/brand";
 import { isHexColor } from "@/lib/design";
 import { getStoreLocale, getStorefront } from "@/lib/storefront";
 
@@ -177,13 +178,13 @@ function Fallback() {
         justifyContent: "center",
         width: "100%",
         height: "100%",
-        background: FOREST,
+        background: BRAND.ink,
         color: "#fff",
         fontSize: 96,
         fontWeight: 700,
       }}
     >
-      Flami
+      {BRAND_NAME}
     </div>
   );
 }

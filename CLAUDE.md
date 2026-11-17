@@ -4,6 +4,8 @@
 
 Kafe, oshxona va restoranlar uchun Take App'ga o'xshash multi-tenant SaaS.
 Birinchi do'kon — egasining oshxonasi (seed slug: `flami-grill`). Keyin boshqa kafelarga sotiladi.
+Platforma brendi: **Tezda** (tezda.app; avval Flami). Logo "— •" (Morze "TE"), ranglar va belgi yo'llari —
+`lib/brand.ts`; masterlar va qo'llanma — `docs/brand/tezda/kit/`. Brend nomini kodda yozmang — `BRAND_NAME`.
 
 ## Ish jarayoni
 

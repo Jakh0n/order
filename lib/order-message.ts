@@ -6,6 +6,7 @@ import type { Locale } from "@/i18n/config";
 import en from "@/messages/en.json";
 import ru from "@/messages/ru.json";
 import uz from "@/messages/uz.json";
+import { BRAND_NAME } from "@/lib/brand";
 
 // The message is written in the customer's language (Order.lang). New locale → add its messages here.
 export type Lang = Locale;
@@ -149,8 +150,8 @@ export function buildOrderMessage(
   }
 
   lines.push("");
-  // "_Sent from Flami_ https://…/store" — the link outside the italics so it stays tappable
-  const sentFrom = italic(t.sentFrom.replace("{store}", "Flami"));
+  // "_Sent from Tezda_ https://…/store" — the link outside the italics so it stays tappable
+  const sentFrom = italic(t.sentFrom.replace("{store}", BRAND_NAME));
   lines.push(base && store.slug ? `${sentFrom} ${base}/${store.slug}` : sentFrom);
 
   return lines.join("\n");
@@ -159,7 +160,7 @@ export function buildOrderMessage(
 /** "#bahorkafeorder12": letters and digits only, so Telegram and WhatsApp keep it one hashtag */
 export function orderHashtag(store: OrderMessageStore, number: number): string {
   const tag = (store.slug ?? store.name).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
-  return `#${tag || "flami"}order${number}`;
+  return `#${tag || "tezda"}order${number}`;
 }
 
 export function telegramLink(username: string, text: string): string {

@@ -7,9 +7,9 @@
     "copied": "Copied"
   },
   "home": {
-    "metaTitle": "Flami — your menu online, orders in WhatsApp and Telegram",
+    "metaTitle": "Tezda — your menu online, orders in WhatsApp and Telegram",
     "metaDescription": "Put your menu online in minutes. Customers order from your link and the full order arrives in your WhatsApp or Telegram. Free, no commission.",
-    "brand": "Flami",
+    "brand": "Tezda",
     "login": "Log in",
     "signup": "Create your store",
     "nav": {
@@ -56,7 +56,7 @@
       },
       "s2": {
         "title": "Share your link",
-        "body": "Put flami.org/your-store in your Instagram bio, print the QR code for tables, or send it to regulars."
+        "body": "Put tezda.app/your-store in your Instagram bio, print the QR code for tables, or send it to regulars."
       },
       "s3": {
         "title": "Get orders in chat",
@@ -172,7 +172,7 @@
       "p3": "Analytics for 7, 30 and 90 days",
       "p4": "Customer base with order history",
       "p5": "Full order history",
-      "p6": "No “Made with Flami”",
+      "p6": "No “Made with Tezda”",
       "cta": "Create your store — free",
       "proCta": "Start free, upgrade anytime"
     },
@@ -183,7 +183,7 @@
       "q2": "How do I receive orders?",
       "a2": "When a customer checks out, the order is saved and opens as a ready-made message to your WhatsApp number or Telegram account. Every order also appears on your order board.",
       "q3": "Do you take a cut of my sales?",
-      "a3": "No. Customers pay you directly — cash, card on delivery or bank transfer. Flami never handles the money.",
+      "a3": "No. Customers pay you directly — cash, card on delivery or bank transfer. Tezda never handles the money.",
       "q4": "Can I use my own currency and time zone?",
       "a4": "Yes. Choose them when you create your store, and change them later in settings.",
       "q5": "Can I change my menu later?",
@@ -201,15 +201,15 @@
       "cta": "Create my free store"
     },
     "footer": {
-      "rights": "© Flami",
+      "rights": "© Tezda",
       "made": "Made for small food businesses"
     },
     "problem": {
       "eyebrow": "Sound familiar?",
       "title": "Stop piecing orders together from a chat thread",
-      "body": "With Flami the customer picks from your menu, so the order arrives complete: what, how many, where to and how they'll pay. Read it once and start cooking.",
+      "body": "With Tezda the customer picks from your menu, so the order arrives complete: what, how many, where to and how they'll pay. Read it once and start cooking.",
       "dmLabel": "Ordering in DMs",
-      "flamiLabel": "Ordering with Flami",
+      "flamiLabel": "Ordering with Tezda",
       "messages": [
         "Hi! Do you have a menu?",
         "Sending you a photo",
@@ -259,7 +259,7 @@
       "perMonth": "You pay in commission each month",
       "perYear": "In a year:",
       "unit": "Amounts are in your own currency.",
-      "note": "Delivery apps help new customers find you. Flami is for the people who already know you: regulars, Instagram followers, guests at your tables. Those orders cost you 0%.",
+      "note": "Delivery apps help new customers find you. Tezda is for the people who already know you: regulars, Instagram followers, guests at your tables. Those orders cost you 0%.",
       "cta": "Start taking orders at 0%"
     },
     "sticky": {
@@ -268,7 +268,7 @@
     "loop": {
       "eyebrow": "Your customers stay yours",
       "title": "Every order brings you a customer, not just a sale",
-      "body": "You get each customer's name and phone in your own chat. Then Flami helps you bring them back.",
+      "body": "You get each customer's name and phone in your own chat. Then Tezda helps you bring them back.",
       "steps": [
         {
           "title": "The order arrives with who ordered",
@@ -433,7 +433,7 @@
     "lastOrder": "Your order #{number}",
     "trackOrder": "Track",
     "skipToMenu": "Skip to menu",
-    "madeWith": "Made with Flami",
+    "madeWith": "Made with Tezda",
     "openNav": "Open menu",
     "rateOrder": "How was order #{number}?",
     "rateNow": "Rate it",
@@ -1367,7 +1367,7 @@
       "freeDelivery": "Free delivery from an amount",
       "analytics": "Analytics for 7, 30 and 90 days",
       "customers": "Customer base with order history",
-      "branding": "No “Made with Flami”"
+      "branding": "No “Made with Tezda”"
     },
     "upgrade": "Upgrade to Pro",
     "renew": "Extend Pro",
@@ -1387,8 +1387,8 @@
     "enabled": "Done — new orders will appear as notifications on this device",
     "disabled": "Notifications turned off on this device",
     "failed": "Couldn't turn on notifications. Please try again.",
-    "installTitle": "Add Flami to your home screen",
-    "installSteps": "On iPhone, notifications only work from the home-screen app:\n1. Tap the Share button in Safari\n2. Choose “Add to Home Screen”\n3. Open Flami from the home screen and tap “Notify me”",
+    "installTitle": "Add Tezda to your home screen",
+    "installSteps": "On iPhone, notifications only work from the home-screen app:\n1. Tap the Share button in Safari\n2. Choose “Add to Home Screen”\n3. Open Tezda from the home screen and tap “Notify me”",
     "deniedTitle": "Notifications are blocked",
     "deniedSteps": "Allow notifications for this site in your browser settings (the lock icon next to the address), then reload the page.",
     "title": "New order #{number} · {total}",
@@ -1751,15 +1751,15 @@
   "legal": {
     "updated": "Last updated: {date}",
     "contact": "Questions or a deletion request: write to us on Telegram <link></link>.",
-    "contactNoLink": "Questions or a deletion request: contact the store you ordered from, or write to us from the Flami admin panel.",
+    "contactNoLink": "Questions or a deletion request: contact the store you ordered from, or write to us from the Tezda admin panel.",
     "footerPrivacy": "Privacy",
     "footerTerms": "Terms",
     "signupAgree": "By creating a store you agree to the <terms>Terms</terms> and the <privacy>Privacy Policy</privacy>.",
-    "checkoutAgree": "By placing an order you agree to Flami's <privacy>Privacy Policy</privacy>.",
+    "checkoutAgree": "By placing an order you agree to Tezda's <privacy>Privacy Policy</privacy>.",
     "privacy": {
       "title": "Privacy Policy",
-      "metaDescription": "What data Flami collects, why, who processes it and how to delete it.",
-      "intro": "Flami (flami.org) lets food businesses take orders online. Each store is an independent business. For orders, the store decides how customer data is used, and Flami processes it on the store's behalf. This page explains what we collect and why.",
+      "metaDescription": "What data Tezda collects, why, who processes it and how to delete it.",
+      "intro": "Tezda (tezda.app) lets food businesses take orders online. Each store is an independent business. For orders, the store decides how customer data is used, and Tezda processes it on the store's behalf. This page explains what we collect and why.",
       "sections": [
         {
           "title": "What customers give when ordering",
@@ -1771,7 +1771,7 @@
         },
         {
           "title": "What is kept in your browser",
-          "body": "Your cart, your last order (to show \"Track your order\"), your name and phone for the next checkout, and display choices. This stays on your device. We use cookies only to keep owners signed in, remember the language and the admin menu layout. Flami itself uses no advertising cookies."
+          "body": "Your cart, your last order (to show \"Track your order\"), your name and phone for the next checkout, and display choices. This stays on your device. We use cookies only to keep owners signed in, remember the language and the admin menu layout. Tezda itself uses no advertising cookies."
         },
         {
           "title": "Why we use the data",
@@ -1789,16 +1789,16 @@
     },
     "terms": {
       "title": "Terms of Service",
-      "metaDescription": "The rules for using Flami as a store owner and as a customer.",
-      "intro": "These terms apply to everyone who uses Flami (flami.org): store owners who run a store on it and customers who order from those stores.",
+      "metaDescription": "The rules for using Tezda as a store owner and as a customer.",
+      "intro": "These terms apply to everyone who uses Tezda (tezda.app): store owners who run a store on it and customers who order from those stores.",
       "sections": [
         {
-          "title": "What Flami is",
-          "body": "Flami gives a store an online menu, a checkout and an order board. The sale is between the store and the customer. Flami is not the seller and does not cook, deliver or take payments."
+          "title": "What Tezda is",
+          "body": "Tezda gives a store an online menu, a checkout and an order board. The sale is between the store and the customer. Tezda is not the seller and does not cook, deliver or take payments."
         },
         {
           "title": "Store owners",
-          "body": "You are responsible for your menu, prices, food quality and safety, delivery, refunds, the payments you receive and following the laws that apply to your business, including how you use your customers' data. Keep your password safe. You may not sell illegal goods, send spam or use Flami to deceive people."
+          "body": "You are responsible for your menu, prices, food quality and safety, delivery, refunds, the payments you receive and following the laws that apply to your business, including how you use your customers' data. Keep your password safe. You may not sell illegal goods, send spam or use Tezda to deceive people."
         },
         {
           "title": "Plans and payment",
@@ -1810,11 +1810,11 @@
         },
         {
           "title": "Our service",
-          "body": "We work to keep Flami available and correct, but it is provided as is. We may change features, and we may suspend a store that breaks these terms or the law. To the extent the law allows, Flami is not liable for losses from a store's goods or service, or from interruptions of the service."
+          "body": "We work to keep Tezda available and correct, but it is provided as is. We may change features, and we may suspend a store that breaks these terms or the law. To the extent the law allows, Tezda is not liable for losses from a store's goods or service, or from interruptions of the service."
         },
         {
           "title": "Changes",
-          "body": "We may update these terms. The date at the top shows the latest version. If you keep using Flami after a change, you accept the new terms."
+          "body": "We may update these terms. The date at the top shows the latest version. If you keep using Tezda after a change, you accept the new terms."
         }
       ]
     }
