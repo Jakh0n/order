@@ -11,6 +11,12 @@ export const BRAND = {
   gradientTo: "#D91E36",
 } as const;
 
+/**
+ * Typefaces: Manrope for headings (geometric, round even strokes like the wordmark; Latin + Cyrillic),
+ * Inter for text and UI (Apple-like, neutral). Loaded with next/font in app/page.tsx and app/layout.tsx.
+ */
+export const BRAND_FONTS = { display: "Manrope", text: "Inter" } as const;
+
 /** Main mark: tapered dash (the "trail") + dot. */
 export const MARK = {
   dash: "M46.95 108.03L122.74 104.03A24 24 0 1 1 122.74 151.97L46.95 147.97A20 20 0 0 1 46.95 108.03Z",

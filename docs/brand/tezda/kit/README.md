@@ -12,6 +12,11 @@
 - `guidelines.html` / `guidelines.png`: one-page usage guide
 - Source: `../final/build.py` regenerates all the SVGs
 
+## Typography
+- **Headings:** Manrope (Bold/ExtraBold, tight tracking). Geometric with round, even strokes, like the wordmark. Has Latin and Cyrillic.
+- **Text and UI:** Inter.
+- Both are free (Google Fonts, OFL). Don't use other display fonts on Tezda's own pages.
+
 ## Open items
 - The "tezda" wordmark is built from SVG strokes. It renders correctly in browsers, but before handing it to print or another designer, run "Outline stroke" in Figma/Illustrator.
 - The CMYK and Pantone values are approximate. Check them on a print proof.

@@ -1,6 +1,6 @@
 import { BarChart3, Bike, Check, ChefHat, Copy, QrCode, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
-import { Bricolage_Grotesque } from "next/font/google";
+import { Manrope } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -33,9 +33,11 @@ import {
 } from "@/lib/plan";
 import { cn } from "@/lib/utils";
 
-const display = Bricolage_Grotesque({
-  variable: "--font-bricolage",
-  subsets: ["latin"],
+// Tezda display face: geometric with round, even strokes like the "tezda" wordmark;
+// has Cyrillic, so Russian headings don't fall back to another font (lib/brand.ts BRAND_FONTS)
+const display = Manrope({
+  variable: "--font-brand-display",
+  subsets: ["latin", "cyrillic"],
 });
 
 const OG_LOCALES: Record<Locale, string> = { en: "en_US", ru: "ru_RU", uz: "uz_UZ" };
