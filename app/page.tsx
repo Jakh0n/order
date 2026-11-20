@@ -14,10 +14,12 @@ import { Faq } from "@/components/landing/faq";
 import { AiImportDemo } from "@/components/landing/ai-import-demo";
 import { CommissionCalculator } from "@/components/landing/commission-calculator";
 import { ChatCollapse } from "@/components/landing/chat-collapse";
+import { ClaimLink } from "@/components/landing/claim-link";
+import { LinkEverywhere } from "@/components/landing/link-everywhere";
 import { Hero } from "@/components/landing/hero";
 import { InAction } from "@/components/landing/in-action";
 import { Logo } from "@/components/landing/logo";
-import { Reveal, ScrollWords, StepsTrack } from "@/components/landing/motion-parts";
+import { Reveal, StepsTrack } from "@/components/landing/motion-parts";
 import { RelationshipLoop } from "@/components/landing/relationship-loop";
 import { SiteNav } from "@/components/landing/site-nav";
 import { StickyCta } from "@/components/landing/sticky-cta";
@@ -147,6 +149,7 @@ export default async function Home() {
   }[];
   // Demo QR — the live demo store on this site's own domain (APP_URL), never a hardcoded one
   const demoUrl = `${siteOrigin()}/${DEMO_STORE_SLUGS[0]}`;
+  const siteHost = siteOrigin().replace(/^https?:\/\/(www\.)?/, "");
   const qr = await QRCode.toString(demoUrl, {
     type: "svg",
     margin: 0,
@@ -423,15 +426,25 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Who it's for */}
-        <section className="py-20 sm:py-28">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <ScrollWords
-              text={t("audience.text")}
-              className="font-display text-3xl leading-[1.15] font-semibold tracking-[-0.025em] sm:text-5xl"
-            />
+        {/* Type your name → your own link, free or taken → claim it */}
+        <section id="claim" className="scroll-mt-20 py-20 sm:py-28">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <ClaimLink host={siteHost} />
           </div>
         </section>
+
+        {/* Where the link goes: Instagram, Telegram channel, table QR, Google Maps */}
+        {demo && (
+          <section className="py-20 sm:py-28">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6">
+              <LinkEverywhere
+                demo={demo}
+                link={demoUrl.replace(/^https?:\/\/(www\.)?/, "")}
+                qrSvg={qr}
+              />
+            </div>
+          </section>
+        )}
 
         {/* Pricing */}
         <section id="pricing" className="scroll-mt-20 py-20 sm:py-28">

@@ -148,9 +148,6 @@
         }
       ]
     },
-    "audience": {
-      "text": "Kabobxonalar, novvoyxonalar, kafelar, shirinlik do'konlari, qahva nuqtalari, fudtraklar va buyurtmani messenjer orqali oladigan uy oshpazlari uchun."
-    },
     "pricing": {
       "title": "Oddiy narxlar. Buyurtmalar hech qachon cheklanmaydi.",
       "lead": "Bepul boshlang va xohlaganingizcha bepul qoling. Mijozlarni qaytaradigan vositalar kerak bo'lganda Pro'ga o'ting.",
@@ -418,6 +415,49 @@
           "10 km · 15 000"
         ],
         "freeBar": "Bepul yetkazish uchun yana 15 000 qo'shing"
+      }
+    },
+    "claim": {
+      "title": "Havolangizgacha bitta nom qoldi",
+      "lead": "Kafengiz nomini yozing va mijozlar ochadigan havolani ko'ring. Bo'sh bo'lsa, bir daqiqada sizniki.",
+      "label": "Kafengiz nomi",
+      "placeholder": "masalan, Rayhon Kafe",
+      "placeholderName": "Kafengiz",
+      "placeholderSlug": "kafengiz",
+      "open": "Hozir ochiq",
+      "cta": "Do'kon ochish",
+      "ctaClaim": "{link} ni egallash",
+      "status": {
+        "checking": "Tekshirilmoqda…",
+        "free": "Bo'sh",
+        "taken": "Band — ro'yxatdan o'tishda boshqasini tanlaysiz",
+        "invalid": "Faqat harf va raqam"
+      }
+    },
+    "places": {
+      "eyebrow": "Mijozlar sizni qayerdan topadi",
+      "title": "Bitta havola. Mijozlaringiz bor hamma joyda.",
+      "lead": "Topilish uchun yangi joy kerak emas. Bitta havolani sizni allaqachon qidiradigan joylarga qo'ying.",
+      "instagram": {
+        "title": "Instagram profili",
+        "text": "Obunachilar havolani bosib buyurtma beradi, direktda narx so'rab o'tirmaydi.",
+        "bio": "Osh, somsa va boshqalar · shahar bo'ylab yetkazish"
+      },
+      "telegram": {
+        "title": "Telegram kanal",
+        "text": "Menyuni kanal tepasiga mahkamlang. Har bir yangi post odamlarni unga olib boradi.",
+        "pinned": "Mahkamlangan xabar"
+      },
+      "table": {
+        "title": "Stoldagi QR",
+        "text": "Mehmon skanerlaydi va joyidan buyurtma beradi; buyurtma stol raqami bilan keladi.",
+        "card": "Skanerlang va buyurtma bering"
+      },
+      "maps": {
+        "title": "Google Xaritalar",
+        "text": "Uni buyurtma havolasi qilib qo'shing: xaritada topganlar darhol buyurtma beradi.",
+        "order": "Onlayn buyurtma",
+        "category": "Kafe"
       }
     }
   },

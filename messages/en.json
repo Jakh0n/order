@@ -148,9 +148,6 @@
         }
       ]
     },
-    "audience": {
-      "text": "Made for kebab shops, bakeries, cafés, dessert shops, coffee carts, food trucks and home cooks who take orders by message."
-    },
     "pricing": {
       "title": "Simple pricing. Orders are never limited.",
       "lead": "Start free and stay free as long as you like. Move to Pro when you want tools that bring customers back.",
@@ -418,6 +415,49 @@
           "10 km · $4"
         ],
         "freeBar": "Add $4 more for free delivery"
+      }
+    },
+    "claim": {
+      "title": "Your link is one name away",
+      "lead": "Type your café's name and see the link your customers will open. If it's free, it's yours in a minute.",
+      "label": "Your café's name",
+      "placeholder": "e.g. Rayhon Kafe",
+      "placeholderName": "Your café",
+      "placeholderSlug": "your-cafe",
+      "open": "Open now",
+      "cta": "Create my store",
+      "ctaClaim": "Claim {link}",
+      "status": {
+        "checking": "Checking…",
+        "free": "Free",
+        "taken": "Taken — pick another at signup",
+        "invalid": "Use letters and numbers"
+      }
+    },
+    "places": {
+      "eyebrow": "Where customers find you",
+      "title": "One link. Everywhere your customers already are.",
+      "lead": "You don't need a new place to be found. Put the same link where people already look for you.",
+      "instagram": {
+        "title": "Instagram bio",
+        "text": "Followers tap the link and order instead of asking for the price in DMs.",
+        "bio": "Plov, samsa and more · delivery across the city"
+      },
+      "telegram": {
+        "title": "Telegram channel",
+        "text": "Pin the menu at the top of your channel. Every new post sends people to it.",
+        "pinned": "Pinned message"
+      },
+      "table": {
+        "title": "QR on the table",
+        "text": "Guests scan and order from their seat; the order comes with the table number.",
+        "card": "Scan to order"
+      },
+      "maps": {
+        "title": "Google Maps",
+        "text": "Add it as your order link, so people who find you on the map can order straight away.",
+        "order": "Order online",
+        "category": "Café"
       }
     }
   },
