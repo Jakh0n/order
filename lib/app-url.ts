@@ -33,7 +33,7 @@ export function siteOrigin(): string {
 
 /**
  * Fallback when APP_URL is missing on Vercel: the production domain Vercel exposes
- * (VERCEL_PROJECT_PRODUCTION_URL, e.g. "www.flami.org"), so link previews and canonicals never
+ * (VERCEL_PROJECT_PRODUCTION_URL, e.g. "tezda.app"), so link previews and canonicals never
  * point at localhost. APP_URL still wins — set it to the host that doesn't redirect.
  */
 function vercelProductionOrigin(): string | null {

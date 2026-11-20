@@ -42,7 +42,7 @@ export async function reverseGeocode(
 
   const res = await fetch(url, {
     headers: {
-      "User-Agent": `order-app/1.0 (${process.env.APP_URL || "https://flami.org"})`,
+      "User-Agent": `order-app/1.0 (${process.env.APP_URL || "https://tezda.app"})`,
       "Accept-Language": language,
     },
     signal: AbortSignal.timeout(6000),
