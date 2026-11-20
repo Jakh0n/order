@@ -1,6 +1,6 @@
 import "server-only";
 
-import { Prisma } from "@prisma/client";
+import { type OrderSource, Prisma } from "@prisma/client";
 
 import { JOIN, prisma } from "@/lib/db";
 import { type PricingItem, priceItems } from "@/lib/orders/pricing";
@@ -48,6 +48,8 @@ export interface InsertOrderInput {
   minOrder: number | null;
   /** Order rolling: contacts that take turns by order number (see orderContacts); none = admin order */
   contacts?: string[];
+  /** Where it came from (platform metrics); default ONLINE */
+  source?: OrderSource;
 }
 
 export type InsertOrderResult =
@@ -164,6 +166,7 @@ export async function insertOrder(input: InsertOrderInput): Promise<InsertOrderR
             customerEmail: input.customerEmail ?? null,
             total: priced.subtotal - discount + deliveryFee + tip,
             lang: input.lang,
+            source: input.source ?? "ONLINE",
             // Bitta INSERT bilan (har bir taom uchun alohida emas)
             items: {
               createMany: {

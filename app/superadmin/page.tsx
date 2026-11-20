@@ -26,6 +26,8 @@ import { logout } from "@/lib/auth/actions";
 import { getCurrentUser, requireSuperadmin } from "@/lib/auth/owner";
 import { formatMoney } from "@/lib/money";
 import {
+  type FunnelCounts,
+  getGrowthStats,
   getPlatformStats,
   listStores,
   STORE_FILTERS,
@@ -61,7 +63,11 @@ async function Superadmin({
 
   // requireSuperadmin cookies() ni o'qigan — endi joriy vaqtni ishlatish mumkin
   const now = new Date();
-  const [stats, stores] = await Promise.all([getPlatformStats(now), listStores(q, now, filter)]);
+  const [stats, growth, stores] = await Promise.all([
+    getPlatformStats(now),
+    getGrowthStats(now),
+    listStores(q, now, filter),
+  ]);
   const filterHref = (f: StoreFilter) =>
     `/superadmin?${new URLSearchParams({ ...(q && { q }), ...(f !== "all" && { status: f }) })}`;
 
@@ -113,6 +119,8 @@ async function Superadmin({
             }
           />
         </div>
+
+        <Growth growth={growth} />
 
         <section className="bg-card flex flex-col rounded-xl border">
           {/* Filters + search */}
@@ -216,6 +224,85 @@ async function Superadmin({
 }
 
 type T = Awaited<ReturnType<typeof getTranslations<"superadmin">>>;
+
+const FUNNEL_STEPS = [
+  "signups30",
+  "live",
+  "active",
+  "healthy",
+] as const satisfies readonly (keyof FunnelCounts)[];
+
+/** Growth funnel (docs/marketing/METRICS.md): real orders only — not manual, not the owner testing */
+async function Growth({ growth }: { growth: Awaited<ReturnType<typeof getGrowthStats>> }) {
+  const t = await getTranslations("superadmin.growth");
+  const sourceLabel = (source: string | null) => source ?? t("direct");
+  return (
+    <section className="bg-card flex flex-col rounded-xl border">
+      <div className="border-b px-4 py-3">
+        <h2 className="font-semibold">{t("title")}</h2>
+        <p className="text-muted-foreground text-xs">{t("hint")}</p>
+      </div>
+      <dl className="bg-border grid grid-cols-2 gap-px border-b md:grid-cols-4">
+        {FUNNEL_STEPS.map((step) => (
+          <div key={step} className="bg-card p-4">
+            <dt className="text-muted-foreground text-xs font-medium">{t(`${step}.label`)}</dt>
+            <dd className="mt-0.5 text-xl font-semibold tabular-nums">{growth.totals[step]}</dd>
+            <dd className="text-muted-foreground mt-0.5 text-xs">{t(`${step}.hint`)}</dd>
+          </div>
+        ))}
+      </dl>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <caption className="text-muted-foreground px-4 pt-3 text-left text-xs font-medium">
+            {t("bySource")}
+          </caption>
+          <thead className="text-muted-foreground text-left text-xs">
+            <tr className="border-b">
+              <th scope="col" className="px-4 py-2 font-medium">
+                {t("source")}
+              </th>
+              <th scope="col" className="px-4 py-2 text-right font-medium">
+                {t("stores")}
+              </th>
+              {FUNNEL_STEPS.map((step) => (
+                <th key={step} scope="col" className="px-4 py-2 text-right font-medium">
+                  {t(`${step}.label`)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y">
+            {growth.bySource.map((row) => (
+              <tr key={row.source ?? ""}>
+                <td
+                  className={cn(
+                    "max-w-48 truncate px-4 py-2",
+                    !row.source && "text-muted-foreground",
+                  )}
+                >
+                  {sourceLabel(row.source)}
+                </td>
+                <td className="px-4 py-2 text-right tabular-nums">{row.stores}</td>
+                {FUNNEL_STEPS.map((step) => (
+                  <td key={step} className="px-4 py-2 text-right tabular-nums">
+                    {row[step]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+/** "badge · bahor-kafe" — utm_source / ?ref= (or the referring site) and the campaign */
+function signupSourceText(store: SuperadminStore): string | null {
+  const source = store.signupSource ?? store.signupReferrer;
+  if (!source) return null;
+  return store.signupCampaign ? `${source} · ${store.signupCampaign}` : source;
+}
 type F = Awaited<ReturnType<typeof getFormatter>>;
 
 function planBadge(store: SuperadminStore, t: T, format: F) {
@@ -238,6 +325,7 @@ function planBadge(store: SuperadminStore, t: T, format: F) {
 
 async function StoreRow({ store }: { store: SuperadminStore }) {
   const [t, format] = await Promise.all([getTranslations("superadmin"), getFormatter()]);
+  const source = signupSourceText(store);
   return (
     <tr className={cn("hover:bg-muted/40 align-middle", store.isBlocked && "bg-destructive/5")}>
       <td className="px-4 py-3">
@@ -264,6 +352,9 @@ async function StoreRow({ store }: { store: SuperadminStore }) {
       <td className="px-4 py-3 text-right tabular-nums">{store._count.products}</td>
       <td className="text-muted-foreground px-4 py-3 whitespace-nowrap">
         {format.dateTime(store.createdAt, { dateStyle: "medium" })}
+        {source && (
+          <span className="block max-w-40 truncate text-xs">{t("sourceShort", { source })}</span>
+        )}
       </td>
       <td className="px-4 py-3">
         <div className="flex justify-end">
@@ -281,6 +372,7 @@ async function StoreRow({ store }: { store: SuperadminStore }) {
 
 async function StoreCard({ store }: { store: SuperadminStore }) {
   const [t, format] = await Promise.all([getTranslations("superadmin"), getFormatter()]);
+  const source = signupSourceText(store);
   return (
     <li className={cn("flex flex-col gap-3 p-4", store.isBlocked && "bg-destructive/5")}>
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -311,6 +403,12 @@ async function StoreCard({ store }: { store: SuperadminStore }) {
         </dd>
         <dt className="text-muted-foreground">{t("created")}</dt>
         <dd>{format.dateTime(store.createdAt, { dateStyle: "medium" })}</dd>
+        {source && (
+          <>
+            <dt className="text-muted-foreground">{t("growth.source")}</dt>
+            <dd className="truncate">{source}</dd>
+          </>
+        )}
       </dl>
       <StoreActions
         storeId={store.id}

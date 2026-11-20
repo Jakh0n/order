@@ -1,8 +1,10 @@
 "use server";
 
 import { Prisma } from "@prisma/client";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { ATTRIBUTION_COOKIE, decodeAttribution } from "@/lib/attribution";
 import { hashPassword } from "@/lib/auth/password";
 import { createSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
@@ -61,6 +63,10 @@ export async function signup(input: SignupInput): Promise<SignupResult> {
     return { ok: false, error: "slugTaken", fieldErrors: { "store.slug": "slugTaken" } };
   }
 
+  // Where this owner came from (first-touch cookie from proxy.ts)
+  const cookieStore = await cookies();
+  const attribution = decodeAttribution(cookieStore.get(ATTRIBUTION_COOKIE)?.value);
+
   let userId: string;
   try {
     const passwordHash = await hashPassword(password);
@@ -88,6 +94,7 @@ export async function signup(input: SignupInput): Promise<SignupResult> {
           acceptCardOnDelivery: true,
           acceptTransfer: false,
           minOrder: 0,
+          ...attribution,
         },
       });
       return created;
@@ -105,6 +112,7 @@ export async function signup(input: SignupInput): Promise<SignupResult> {
     return { ok: false, error: "server" };
   }
 
+  cookieStore.delete(ATTRIBUTION_COOKIE);
   await createSession(userId);
   // A brand-new store starts with "photo of your menu" (AI import)
   redirect("/admin/menu/import");

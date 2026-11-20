@@ -711,7 +711,32 @@
     "tools": "Developer tools",
     "extendYear": "+12 months (yearly)",
     "founding": "Founding: +{months} months",
-    "demoBadge": "Demo · not in stats"
+    "demoBadge": "Demo · not in stats",
+    "sourceShort": "via {source}",
+    "growth": {
+      "title": "Growth",
+      "hint": "Real orders only: placed by customers on the store page. Manual orders and the owner's own test orders don't count.",
+      "bySource": "Where stores come from",
+      "source": "Source",
+      "stores": "Stores",
+      "direct": "Direct / unknown",
+      "signups30": {
+        "label": "Signups",
+        "hint": "Last 30 days"
+      },
+      "live": {
+        "label": "Live",
+        "hint": "3+ dishes, channel set, 1+ real order"
+      },
+      "active": {
+        "label": "Active",
+        "hint": "Real order in the last 7 days"
+      },
+      "healthy": {
+        "label": "Healthy",
+        "hint": "10+ real orders in 30 days"
+      }
+    }
   },
   "orderMessage": {
     "header": "Order #{number}",
@@ -1807,7 +1832,7 @@
         },
         {
           "title": "What is kept in your browser",
-          "body": "Your cart, your last order (to show \"Track your order\"), your name and phone for the next checkout, and display choices. This stays on your device. We use cookies only to keep owners signed in, remember the language and the admin menu layout. Tezda itself uses no advertising cookies."
+          "body": "Your cart, your last order (to show \"Track your order\"), your name and phone for the next checkout, and display choices. This stays on your device. We use cookies only to keep owners signed in, remember the language and the admin menu layout, and to remember which link brought a visitor to our sign-up page (the campaign name and the referring site, nothing personal). Visits to our own website are counted with Vercel Web Analytics, which uses no cookies. Tezda itself uses no advertising cookies."
         },
         {
           "title": "Why we use the data",
