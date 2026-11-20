@@ -42,7 +42,7 @@ birligida (USD → sent). Vaqt zonasi: har bir do'konda alohida (`Store.timeZone
 - zustand — savat
 - lucide-react, qrcode
 - Alohida backend yo'q — Server Actions
-- Hosting: Vercel, region fra1
+- Hosting: Vercel, region hnd1 (`vercel.json`)
 
 ## Papka tuzilmasi
 
