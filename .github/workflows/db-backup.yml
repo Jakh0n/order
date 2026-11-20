@@ -1,0 +1,58 @@
+# Daily encrypted database backup (Supabase Free has no backups).
+# The repo is PUBLIC: artifacts can be downloaded by any GitHub user, so the dump is always
+# encrypted (gpg AES-256) and nothing from the database is printed to the log.
+# Secrets: BACKUP_DATABASE_URL (= DIRECT_URL, port 5432), BACKUP_PASSPHRASE. Restore: docs/backup.md
+name: Database backup
+
+on:
+  schedule:
+    - cron: "30 2 * * *" # every day 02:30 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ${{ secrets.BACKUP_DATABASE_URL }}
+      PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+    steps:
+      - name: Check secrets
+        run: |
+          if [ -z "$DATABASE_URL" ] || [ -z "$PASSPHRASE" ]; then
+            echo "::error::Set the BACKUP_DATABASE_URL and BACKUP_PASSPHRASE repository secrets"
+            exit 1
+          fi
+
+      - name: Dump and encrypt
+        run: |
+          set -euo pipefail
+          mkdir -p backup
+          file="backup/db-$(date -u +%Y-%m-%dT%H%MZ).dump.gpg"
+          # pg_dump major version must be >= the server's (Postgres 17). Only the app schema (Prisma).
+          docker run --rm -e DATABASE_URL postgres:17-alpine \
+            sh -c 'pg_dump "$DATABASE_URL" --format=custom --no-owner --no-privileges --schema=public' \
+            | gpg --batch --yes --symmetric --cipher-algo AES256 \
+                --pinentry-mode loopback --passphrase-fd 3 --output "$file" 3<<<"$PASSPHRASE"
+          size=$(stat -c%s "$file")
+          if [ "$size" -lt 10000 ]; then
+            echo "::error::Backup is suspiciously small ($size bytes)"
+            exit 1
+          fi
+          echo "Backup $(basename "$file"): $size bytes"
+
+      - name: Keep for 30 days
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_id }}
+          path: backup/
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error
