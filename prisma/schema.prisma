@@ -43,6 +43,16 @@ enum PaymentStatus {
   PAID
 }
 
+/// Where an order came from — platform metrics count only ONLINE as a real order
+enum OrderSource {
+  /// Placed by a customer on the store page
+  ONLINE
+  /// Typed in by the owner (admin → New order)
+  MANUAL
+  /// Placed on the store page by the owner (signed in, or with the store's own phone)
+  OWNER_TEST
+}
+
 enum OrderStatus {
   NEW
   ACCEPTED
@@ -154,6 +164,12 @@ model Store {
   polarSubscriptionId    String?
   /// Superadmin bloklagan: mijoz menyusi yopiq, buyurtma qabul qilinmaydi
   isBlocked              Boolean            @default(false)
+  /// Signup attribution (first touch on / or /signup, lib/attribution.ts): utm_source or ?ref=
+  signupSource           String?
+  signupMedium           String?
+  signupCampaign         String?
+  /// Host of the external page that sent the owner (no path), e.g. "instagram.com"
+  signupReferrer         String?
   ownerId                String
   owner                  User               @relation(fields: [ownerId], references: [id])
   categories             Category[]
@@ -279,6 +295,7 @@ model Order {
   /// Buyurtma paytidagi do'kon valyutasi (snapshot)
   currency      String        @default("USD")
   lang          String        @default("en")
+  source        OrderSource   @default(ONLINE)
   items         OrderItem[]
   review        Review?
   createdAt     DateTime      @default(now())

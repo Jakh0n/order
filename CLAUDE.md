@@ -112,6 +112,10 @@ lib/
   orders/insert.ts            insertOrder — narx hisoblash + raqam berish + saqlash (umumiy)
   orders/admin-actions.ts     updateOrderStatus, setOrderPaid, createManualOrder
   orders/status.ts            holat o'tishlari (nextStatus, canTransition)
+  orders/source.ts            Order.source: ONLINE (haqiqiy) | MANUAL | OWNER_TEST (egasi o'z sahifasidan / o'z raqami bilan)
+  attribution.ts              do'kon egasi qayerdan kelgani: proxy.ts `/` va `/signup` da first-touch cookie (utm_*, ?ref=,
+                              referrer host) → signup'da Store.signup*; superadmin "Growth" (live/active/healthy, manba bo'yicha).
+                              Vercel Web Analytics faqat landing + signup'da (`SiteAnalytics`), do'kon sahifalarida emas
   orders/reorder-actions.ts   getReorderLines — "Order again" (/o sahifasi, kirishsiz, rate limit)
   orders/receipt-actions.ts   uploadOrderReceipt — mijoz TRANSFER chekini yuklaydi (kirishsiz, orderId bo'yicha)
   geo/                        lookupAddress (server action) → reverseGeocode (Nominatim; provayderni shu faylda almashtiring)

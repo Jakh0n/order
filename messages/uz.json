@@ -711,7 +711,32 @@
     "tools": "Dasturchi vositalari",
     "extendYear": "+12 oy (yillik)",
     "founding": "Birinchi do'konlar: +{months} oy",
-    "demoBadge": "Demo · statistikada yo'q"
+    "demoBadge": "Demo · statistikada yo'q",
+    "sourceShort": "manba: {source}",
+    "growth": {
+      "title": "O'sish",
+      "hint": "Faqat haqiqiy buyurtmalar: mijozlar do'kon sahifasida bergan. Qo'lda kiritilgan va egasining sinov buyurtmalari hisoblanmaydi.",
+      "bySource": "Do'konlar qayerdan keladi",
+      "source": "Manba",
+      "stores": "Do'konlar",
+      "direct": "To'g'ridan-to'g'ri / noma'lum",
+      "signups30": {
+        "label": "Ro'yxatdan o'tganlar",
+        "hint": "Oxirgi 30 kun"
+      },
+      "live": {
+        "label": "Ishga tushgan",
+        "hint": "3+ taom, kanal sozlangan, 1+ haqiqiy buyurtma"
+      },
+      "active": {
+        "label": "Faol",
+        "hint": "Oxirgi 7 kunda haqiqiy buyurtma"
+      },
+      "healthy": {
+        "label": "Sog'lom",
+        "hint": "30 kunda 10+ haqiqiy buyurtma"
+      }
+    }
   },
   "orderMessage": {
     "header": "Buyurtma №{number}",
@@ -1807,7 +1832,7 @@
         },
         {
           "title": "Brauzeringizda nimalar saqlanadi",
-          "body": "Savat, oxirgi buyurtmangiz (\"Buyurtmani kuzatish\" uchun), keyingi buyurtma uchun ismingiz va telefoningiz hamda ko'rinish sozlamalari. Bular sizning qurilmangizda qoladi. Cookie'lardan faqat egani tizimda saqlab turish, tilni va admin menyusi ko'rinishini eslab qolish uchun foydalanamiz. Tezda'ning o'zi reklama cookie'laridan foydalanmaydi."
+          "body": "Savat, oxirgi buyurtmangiz (\"Buyurtmani kuzatish\" uchun), keyingi buyurtma uchun ismingiz va telefoningiz hamda ko'rinish sozlamalari. Bular sizning qurilmangizda qoladi. Cookie'lardan faqat egani tizimda saqlab turish, tilni va admin menyusi ko'rinishini eslab qolish hamda tashrif buyuruvchi ro'yxatdan o'tish sahifamizga qaysi havola orqali kelganini eslab qolish uchun foydalanamiz (kampaniya nomi va yo'naltirgan sayt, shaxsiy ma'lumotsiz). Saytimizga tashriflar cookie'siz Vercel Web Analytics orqali hisoblanadi. Tezda'ning o'zi reklama cookie'laridan foydalanmaydi."
         },
         {
           "title": "Ma'lumotdan nima uchun foydalanamiz",

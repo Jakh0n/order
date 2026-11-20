@@ -14,6 +14,7 @@ import { StoreBlocked } from "@/components/storefront/store-blocked";
 import { PromoPopup } from "@/components/storefront/promo-popup";
 import { StorefrontSections } from "@/components/storefront/storefront-sections";
 import { siteOrigin } from "@/lib/app-url";
+import { badgeHref } from "@/lib/attribution";
 import { storeJsonLd, topItemNames } from "@/lib/seo";
 import { BRAND, MARK } from "@/lib/brand";
 import { StoreTheme } from "@/components/storefront/store-theme";
@@ -95,7 +96,12 @@ async function Storefront({ params }: { params: PageProps<"/[store]">["params"] 
           {/* Free plan: a quiet "Made with Tezda" (Pro removes it) */}
           {store.showBranding && (
             <p className="text-muted-foreground py-6 text-center text-xs">
-              <Link href="/" className="hover:text-foreground inline-flex items-center gap-1.5">
+              {/* ?ref=badge: signups from store pages are counted (lib/attribution.ts); no prefetch — that'd count every diner */}
+              <Link
+                href={badgeHref(store.slug)}
+                prefetch={false}
+                className="hover:text-foreground inline-flex items-center gap-1.5"
+              >
                 <svg viewBox="24 92 212 72" className="h-2 w-auto" aria-hidden>
                   <path d={MARK.dash} fill="currentColor" />
                   <circle cx={MARK.dot.cx} cy={MARK.dot.cy} r={MARK.dot.r} fill={BRAND.red} />

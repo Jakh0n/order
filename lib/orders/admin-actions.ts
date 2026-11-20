@@ -123,6 +123,7 @@ export async function createManualOrder(input: ManualOrderInput): Promise<Manual
     const result = await insertOrder({
       ...data,
       storeId: store.id,
+      source: "MANUAL",
       currency: store.currency,
       deliveryFee: settings.deliveryFee,
       freeDeliveryFrom: isPro(settings) ? settings.freeDeliveryFrom : null,

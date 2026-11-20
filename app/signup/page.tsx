@@ -5,6 +5,7 @@ import { Suspense } from "react";
 
 import { SignupForm } from "@/components/auth/signup-form";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { SiteAnalytics } from "@/components/site-analytics";
 import { getRequestOrigin } from "@/lib/app-url";
 import { getCurrentUser, homePathFor } from "@/lib/auth/owner";
 
@@ -23,6 +24,7 @@ export default function SignupPage() {
       <Suspense fallback={<SignupForm host="" />}>
         <SignupFormWithHost />
       </Suspense>
+      <SiteAnalytics />
     </main>
   );
 }

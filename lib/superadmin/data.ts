@@ -1,9 +1,9 @@
 import "server-only";
 
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { JOIN, prisma } from "@/lib/db";
-import { isDemoStore, realStores } from "@/lib/demo";
+import { DEMO_STORE_SLUGS, isDemoStore, realStores } from "@/lib/demo";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -37,6 +37,76 @@ export async function getPlatformStats(now: Date) {
     orders30: orders30.reduce((sum, r) => sum + r._count, 0),
     revenue30: orders30.map((r) => ({ currency: r.currency, total: r._sum.total ?? 0 })),
   };
+}
+
+/** Store counts for the growth funnel (docs/marketing/METRICS.md definitions) */
+export interface FunnelCounts {
+  stores: number;
+  signups30: number;
+  /** ≥3 dishes + order channel set + ≥1 real order ever */
+  live: number;
+  /** ≥1 real order in the last 7 days */
+  active: number;
+  /** ≥10 real orders in the last 30 days */
+  healthy: number;
+}
+
+/** Signup source: utm_source / ?ref=, else the referring site; null = direct or before tracking */
+export type SourceRow = FunnelCounts & { source: string | null };
+
+/**
+ * Growth funnel by signup source. A real order = placed by a customer on the store page
+ * (Order.source ONLINE: not manual, not the owner testing) and not cancelled.
+ */
+export async function getGrowthStats(now: Date) {
+  const since7 = new Date(now.getTime() - 7 * DAY);
+  const since30 = new Date(now.getTime() - 30 * DAY);
+  const rows = await prisma.$queryRaw<SourceRow[]>`
+    WITH real_orders AS (
+      SELECT "storeId",
+        count(*)::int AS total,
+        (count(*) FILTER (WHERE "createdAt" >= ${since7}))::int AS last7,
+        (count(*) FILTER (WHERE "createdAt" >= ${since30}))::int AS last30
+      FROM "Order"
+      WHERE "source" = 'ONLINE' AND "status" <> 'CANCELLED'
+      GROUP BY "storeId"
+    ),
+    dishes AS (
+      SELECT "storeId", count(*)::int AS n FROM "Product" GROUP BY "storeId"
+    ),
+    s AS (
+      SELECT
+        st."createdAt",
+        coalesce(st."signupSource", st."signupReferrer") AS source,
+        coalesce(d.n, 0) >= 3
+          AND CASE st."channel"
+            WHEN 'TELEGRAM' THEN coalesce(st."telegramUsername", '') <> ''
+            ELSE coalesce(st."whatsappNumber", '') <> ''
+          END
+          AND coalesce(r.total, 0) >= 1 AS live,
+        coalesce(r.last7, 0) >= 1 AS active,
+        coalesce(r.last30, 0) >= 10 AS healthy
+      FROM "Store" st
+      LEFT JOIN real_orders r ON r."storeId" = st."id"
+      LEFT JOIN dishes d ON d."storeId" = st."id"
+      WHERE st."slug" NOT IN (${Prisma.join([...DEMO_STORE_SLUGS])})
+    )
+    SELECT
+      source,
+      count(*)::int AS stores,
+      (count(*) FILTER (WHERE "createdAt" >= ${since30}))::int AS "signups30",
+      (count(*) FILTER (WHERE live))::int AS live,
+      (count(*) FILTER (WHERE active))::int AS active,
+      (count(*) FILTER (WHERE healthy))::int AS healthy
+    FROM s
+    GROUP BY source
+    ORDER BY stores DESC, source
+  `;
+  const totals: FunnelCounts = { stores: 0, signups30: 0, live: 0, active: 0, healthy: 0 };
+  for (const row of rows) {
+    for (const key of Object.keys(totals) as (keyof FunnelCounts)[]) totals[key] += row[key];
+  }
+  return { totals, bySource: rows };
 }
 
 const PAGE_SIZE = 100;
@@ -78,6 +148,9 @@ export async function listStores(query: string, now: Date, filter: StoreFilter =
       paidUntil: true,
       isBlocked: true,
       createdAt: true,
+      signupSource: true,
+      signupReferrer: true,
+      signupCampaign: true,
       owner: { select: { email: true } },
       _count: { select: { orders: true, products: true } },
     },
