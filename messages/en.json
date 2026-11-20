@@ -18,9 +18,7 @@
       "pricing": "Pricing",
       "faq": "FAQ",
       "menu": "Menu",
-      "close": "Close menu",
-      "commission": "Commission",
-      "customers": "Customers"
+      "close": "Close menu"
     },
     "hero": {
       "title": "Put an end to messy orders in your chat.",
@@ -49,23 +47,6 @@
       "tgChats": "Chats",
       "tgToday": "Today",
       "tgOnline": "online"
-    },
-    "steps": {
-      "title": "From menu to first order in three steps",
-      "s1": {
-        "title": "Add your menu",
-        "body": "Upload photos, set prices and add options like size or extra sauce. Change anything later in seconds."
-      },
-      "s2": {
-        "title": "Share your link",
-        "body": "Put tezda.app/your-store in your Instagram bio, print the QR code for tables, or send it to regulars."
-      },
-      "s3": {
-        "title": "Get orders in chat",
-        "body": "Each order arrives in WhatsApp or Telegram, ready to cook — with a map pin for deliveries."
-      },
-      "v1Stock": "In stock",
-      "v2Copy": "Copy link"
     },
     "features": {
       "title": "Everything from the first order to your regulars",
@@ -148,9 +129,6 @@
         }
       ]
     },
-    "audience": {
-      "text": "Made for kebab shops, bakeries, cafés, dessert shops, coffee carts, food trucks and home cooks who take orders by message."
-    },
     "pricing": {
       "title": "Simple pricing. Orders are never limited.",
       "lead": "Start free and stay free as long as you like. Move to Pro when you want tools that bring customers back.",
@@ -230,195 +208,79 @@
         "payment": "Payment"
       }
     },
-    "ai": {
-      "eyebrow": "Menu from a photo",
-      "title": "Photograph your paper menu. AI types it in.",
-      "body": "It reads dish names and prices, usually in 10 to 30 seconds. You check everything before it goes live. On Pro you can import a spreadsheet too.",
-      "paperTitle": "Menu",
-      "found": "Found 4 dishes",
-      "note": "Photos are used only to read your menu.",
-      "dishes": [
-        {
-          "name": "Doner wrap",
-          "price": "6.00"
-        },
-        {
-          "name": "Fries",
-          "price": "3.50"
-        },
-        {
-          "name": "Lentil soup",
-          "price": "4.00"
-        },
-        {
-          "name": "Ayran",
-          "price": "2.00"
-        }
-      ]
-    },
-    "commission": {
-      "eyebrow": "0% commission",
-      "title": "See what commission costs you",
-      "lead": "Delivery apps take a share of every order. Move the sliders to your numbers.",
-      "orders": "Orders a day",
-      "average": "Average order",
-      "rate": "Commission",
-      "perMonth": "You pay in commission each month",
-      "perYear": "In a year:",
-      "unit": "Amounts are in your own currency.",
-      "note": "Delivery apps help new customers find you. Tezda is for the people who already know you: regulars, Instagram followers, guests at your tables. Those orders cost you 0%.",
-      "cta": "Start taking orders at 0%"
-    },
     "sticky": {
       "note": "Free plan. No card needed."
     },
-    "loop": {
-      "eyebrow": "Your customers stay yours",
-      "title": "Every order brings you a customer, not just a sale",
-      "body": "You get each customer's name and phone in your own chat. Then Tezda helps you bring them back.",
-      "steps": [
-        {
-          "title": "The order arrives with who ordered",
-          "body": "Name and phone number come with every order, straight to your WhatsApp or Telegram."
-        },
-        {
-          "title": "They follow it live",
-          "body": "A page shows when you accept, cook and send it out, so fewer \"where is my order?\" calls."
-        },
-        {
-          "title": "You ask for a review in one tap",
-          "body": "Ratings show on your store page and help new customers trust you."
-        },
-        {
-          "title": "They come back",
-          "body": "\"Order again\" repeats their last order in one tap. On Pro, give regulars a promo code."
-        },
-        {
-          "title": "You see your regulars",
-          "body": "Every customer by phone number: how often they order and how much they spend.",
-          "pro": true
-        }
-      ],
-      "demo": {
-        "orderTitle": "Order #12",
-        "orderItems": "2x Doner wrap · 1x Ayran",
-        "customerName": "Sam",
-        "customerPhone": "+1 555 ••• 0142",
-        "trackTitle": "Order #12",
-        "statuses": [
-          "Accepted",
-          "Ready",
-          "On the way"
-        ],
-        "reviewAsk": "How was your order?",
-        "reviewText": "Hot and fast. Ordering again on Friday",
-        "againTitle": "Your last order",
-        "againButton": "Order again",
-        "promoCode": "REGULAR10",
-        "promoText": "10% off",
-        "regularsTitle": "Your regulars",
-        "regulars": [
-          {
-            "name": "Sam",
-            "orders": "12 orders"
-          },
-          {
-            "name": "Maya",
-            "orders": "9 orders"
-          },
-          {
-            "name": "Daniel",
-            "orders": "7 orders"
-          }
-        ]
-      }
-    },
-    "action": {
-      "eyebrow": "See it in action",
-      "title": "Built for a busy kitchen",
-      "lead": "The parts owners use every day.",
-      "notify": {
-        "title": "No order slips by",
-        "body": "Your phone rings with every new order, and the customer sees each step.",
-        "pushTitle": "New order #{number}",
-        "pushBody": "2x Doner wrap · $14.50",
-        "statuses": [
-          "New",
-          "Accepted",
-          "Ready",
-          "On the way"
-        ]
+    "places": {
+      "eyebrow": "Where customers find you",
+      "title": "One link. Everywhere your customers already are.",
+      "lead": "You don't need a new place to be found. Put the same link where people already look for you.",
+      "instagram": {
+        "title": "Instagram bio",
+        "text": "Followers tap the link and order instead of asking for the price in DMs.",
+        "bio": "Plov, samsa and more · delivery across the city"
+      },
+      "telegram": {
+        "title": "Telegram channel",
+        "text": "Pin the menu at the top of your channel. Every new post sends people to it.",
+        "pinned": "Pinned message"
       },
       "table": {
-        "title": "From the table to the kitchen",
-        "body": "Guests scan the QR on their table and order. The kitchen ticket prints with the table number.",
-        "tableLabel": "Table 5",
-        "ticket": [
-          "2x Doner wrap",
-          "1x Lentil soup",
-          "2x Tea"
-        ]
+        "title": "QR on the table",
+        "text": "Guests scan and order from their seat; the order comes with the table number.",
+        "card": "Scan to order"
       },
-      "brand": {
-        "title": "Your colours, their language",
-        "body": "Pick your brand colour. Customers switch between Uzbek, Russian and English. Try it.",
-        "storeName": "Your café",
-        "colorLabel": "Colour",
-        "langLabel": "Language",
-        "dishes": {
-          "uz": [
-            {
-              "name": "Lavash",
-              "price": "25 000"
-            },
-            {
-              "name": "Somsa",
-              "price": "8 000"
-            },
-            {
-              "name": "Choy",
-              "price": "5 000"
-            }
-          ],
-          "ru": [
-            {
-              "name": "Шаурма",
-              "price": "25 000"
-            },
-            {
-              "name": "Самса",
-              "price": "8 000"
-            },
-            {
-              "name": "Чай",
-              "price": "5 000"
-            }
-          ],
-          "en": [
-            {
-              "name": "Doner wrap",
-              "price": "$6.00"
-            },
-            {
-              "name": "Samsa",
-              "price": "$2.00"
-            },
-            {
-              "name": "Tea",
-              "price": "$1.50"
-            }
-          ]
-        }
-      },
-      "delivery": {
-        "title": "Delivery that pays for itself",
-        "body": "Price by distance, and a nudge to reach free delivery.",
-        "rings": [
-          "5 km · $2",
-          "10 km · $4"
-        ],
-        "freeBar": "Add $4 more for free delivery"
+      "maps": {
+        "title": "Google Maps",
+        "text": "Add it as your order link, so people who find you on the map can order straight away.",
+        "order": "Order online",
+        "category": "Café"
       }
+    },
+    "setup": {
+      "eyebrow": "How it works",
+      "title": "Open your store yourself. No developer needed.",
+      "steps": [
+        {
+          "title": "Open your store",
+          "body": "Name, link, and where orders should arrive: Telegram or WhatsApp."
+        },
+        {
+          "title": "Add your menu from a photo",
+          "body": "Photograph your paper menu. AI reads the dishes and prices, usually in 10–30 seconds, and you check them before publishing."
+        },
+        {
+          "title": "Share your link",
+          "body": "Put it in your Instagram bio or print the table QR. Orders arrive in your chat."
+        }
+      ],
+      "note": "Photos are used only to read the menu.",
+      "exampleName": "Rayhon Kafe",
+      "exampleTelegram": "@rayhon_kafe",
+      "importTitle": "Menu from a photo",
+      "paperTitle": "Menu",
+      "found": "{count, plural, one {# dish found} other {# dishes found}}",
+      "addToMenu": "Add to menu",
+      "ready": "Your store is live",
+      "open": "Open now",
+      "dishes": [
+        {
+          "name": "Lavash",
+          "price": "25 000"
+        },
+        {
+          "name": "Samsa",
+          "price": "8 000"
+        },
+        {
+          "name": "Mastava",
+          "price": "22 000"
+        },
+        {
+          "name": "Tea",
+          "price": "5 000"
+        }
+      ]
     }
   },
   "menu": {

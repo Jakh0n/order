@@ -21,7 +21,14 @@ import { type SignupInput, signupSchema } from "@/lib/validators";
 
 type SlugStatus = { state: "idle" | "checking" } | ({ state: "done" } & SlugCheck);
 
-export function SignupForm({ host }: { host: string }) {
+export function SignupForm({
+  host,
+  initialStoreName = "",
+}: {
+  host: string;
+  /** Prefilled from the landing ("claim your link") */
+  initialStoreName?: string;
+}) {
   const t = useTranslations("signup");
   const tLegal = useTranslations("legal");
   const currentLocale = useLocale();
@@ -44,7 +51,7 @@ export function SignupForm({ host }: { host: string }) {
       email: "",
       password: "",
       store: {
-        storeName: "",
+        storeName: initialStoreName,
         slug: "",
         currency: "USD",
         // The owner's current time zone; can be changed later in Settings

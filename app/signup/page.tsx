@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
-export default function SignupPage() {
+export default function SignupPage({ searchParams }: PageProps<"/signup">) {
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-6 px-4 py-12">
       <Suspense>
@@ -22,7 +22,7 @@ export default function SignupPage() {
       </Suspense>
       <Header />
       <Suspense fallback={<SignupForm host="" />}>
-        <SignupFormWithHost />
+        <SignupFormWithHost searchParams={searchParams} />
       </Suspense>
       <SiteAnalytics />
     </main>
@@ -48,8 +48,17 @@ async function RedirectIfLoggedIn() {
   return null;
 }
 
-/** Slug oldidagi domen ("order.uz/") — so'rovdan, localhost bo'lib qolmasligi uchun */
-async function SignupFormWithHost() {
-  const host = (await getRequestOrigin()).replace(/^https?:\/\//, "");
-  return <SignupForm host={host} />;
+/**
+ * Slug oldidagi domen ("order.uz/") — so'rovdan, localhost bo'lib qolmasligi uchun.
+ * ?name= — the landing's "claim your link" passes the store name typed there.
+ */
+async function SignupFormWithHost({
+  searchParams,
+}: {
+  searchParams: PageProps<"/signup">["searchParams"];
+}) {
+  const [origin, params] = await Promise.all([getRequestOrigin(), searchParams]);
+  const host = origin.replace(/^https?:\/\//, "");
+  const name = typeof params.name === "string" ? params.name.trim().slice(0, 60) : "";
+  return <SignupForm host={host} initialStoreName={name} />;
 }

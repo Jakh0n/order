@@ -10,6 +10,8 @@ import { formatMoney } from "@/lib/money";
 import type { LandingDemo } from "@/lib/landing-demo";
 import { cn } from "@/lib/utils";
 
+import { useTyped } from "./motion-parts";
+
 import {
   TELEGRAM_BLUE,
   TelegramAvatar,
@@ -382,24 +384,6 @@ function Row({ left, right, muted }: { left: string; right: string; muted?: bool
       <span className="shrink-0 tabular-nums">{right}</span>
     </p>
   );
-}
-
-/** Types `text` in, starting after `delay` ms (instant when not animating) */
-function useTyped(text: string, animate: boolean, delay: number): string {
-  const [count, setCount] = useState(animate ? 0 : text.length);
-  useEffect(() => {
-    if (!animate) return;
-    let i = 0;
-    let timer: ReturnType<typeof setTimeout>;
-    const tick = () => {
-      i += 1;
-      setCount(i);
-      if (i < text.length) timer = setTimeout(tick, 45);
-    };
-    timer = setTimeout(tick, delay);
-    return () => clearTimeout(timer);
-  }, [text, animate, delay]);
-  return text.slice(0, count);
 }
 
 // ---------- "Send your order" ----------
