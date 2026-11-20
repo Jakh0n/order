@@ -4,6 +4,8 @@ import { Bricolage_Grotesque } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
+
+import { defaultLocale, isLocale, landingPath, type Locale, locales } from "@/i18n/config";
 import QRCode from "qrcode";
 
 import { JsonLd } from "@/components/json-ld";
@@ -35,13 +37,29 @@ const display = Bricolage_Grotesque({
   subsets: ["latin"],
 });
 
+const OG_LOCALES: Record<Locale, string> = { en: "en_US", ru: "ru_RU", uz: "uz_UZ" };
+
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("home");
+  const [t, locale] = await Promise.all([getTranslations("home"), getLocale()]);
+  const lang = isLocale(locale) ? locale : defaultLocale;
+  const url = landingPath(lang);
   return {
     title: { absolute: t("metaTitle") },
     description: t("metaDescription"),
-    alternates: { canonical: "/" },
-    openGraph: { title: t("metaTitle"), description: t("metaDescription"), url: "/" },
+    alternates: {
+      canonical: url,
+      languages: {
+        ...Object.fromEntries(locales.map((l) => [l, landingPath(l)])),
+        "x-default": landingPath(defaultLocale),
+      },
+    },
+    openGraph: {
+      title: t("metaTitle"),
+      description: t("metaDescription"),
+      url,
+      locale: OG_LOCALES[lang],
+      alternateLocale: locales.filter((l) => l !== lang).map((l) => OG_LOCALES[l]),
+    },
   };
 }
 

@@ -22,7 +22,8 @@ Platforma brendi: **Tezda** (tezda.app; avval Flami). Logo "— •" (Morze "TE"
 
 To'lov: onlayn to'lov YO'Q. Faqat `CASH`, `CARD_ON_DELIVERY`, `TRANSFER` (biznes hisob raqamiga).
 Egasi admin'da qo'lda "To'landi" qiladi.
-Xalqaro platforma. Tillar: en, ru, uz (`messages/*.json`). Til: `NEXT_LOCALE` cookie → do'kon sahifasida `Store.locale`
+Xalqaro platforma. Tillar: en, ru, uz (`messages/*.json`). Landing'ning har tili o'z URL'ida: `/` (en, x-default),
+`/ru`, `/uz` (`proxy.ts` → `/` ga rewrite + `x-page-locale`, cookie'dan ustun; hreflang + sitemap — `landingPath`). Til: `NEXT_LOCALE` cookie → do'kon sahifasida `Store.locale`
 (`proxy.ts` slug'ni header'da beradi, `getStoreLocale` keshlangan) → brauzer (Accept-Language) → en.
 Yangi til = `i18n/config.ts` locales + messages fayli + `lib/order-message.ts` dictionaries.
 Owner'ga xabar mijoz tilida (`Order.lang`).

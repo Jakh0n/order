@@ -6,7 +6,7 @@ export const ATTRIBUTION_COOKIE = "tz_src";
 export const ATTRIBUTION_MAX_AGE_SECONDS = 60 * 60 * 24 * 60; // 60 days
 
 /** Pages an owner lands on before signing up (diners on store pages are not tracked) */
-export const ATTRIBUTION_PATHS = new Set(["/", "/signup"]);
+export const ATTRIBUTION_PATHS = new Set(["/", "/ru", "/uz", "/signup"]);
 
 export interface Attribution {
   source?: string;
