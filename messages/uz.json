@@ -45,7 +45,10 @@
       "customerName": "Aziz",
       "customerAddress": "Chilonzor 9-kvartal, 14-uy, 32-xonadon",
       "tgStatus": "yaqinda tarmoqda edi",
-      "tgPlaceholder": "Xabar"
+      "tgPlaceholder": "Xabar",
+      "tgChats": "Chatlar",
+      "tgToday": "Bugun",
+      "tgOnline": "onlayn"
     },
     "steps": {
       "title": "Menyudan birinchi buyurtmagacha — uch qadam",
@@ -207,7 +210,6 @@
       "eyebrow": "Tanish holatmi?",
       "title": "Bitta buyurtma uchun 8 ta xabar va 19 daqiqa. Tig'iz soatda bu — yo'qolgan buyurtmalar.",
       "body": "Tezda'da mijoz menyuingizdan tanlaydi, shuning uchun buyurtma to'liq keladi: nima, nechta, qayerga va qanday to'laydi. Bir marta o'qiysiz va tayyorlashni boshlaysiz.",
-      "dmLabel": "Oddiy yozishma",
       "messages": [
         "Assalomu alaykum! Menyu bormi?",
         "Rasmini yuboryapman",
@@ -219,7 +221,6 @@
         "Naqdmi yoki karta?"
       ],
       "dmStatus": "{count, plural, other {# ta xabar}} · {minutes, plural, other {# daqiqa}}, buyurtma esa hali to'liq emas",
-      "tezdaLabel": "Tezda orqali buyurtma",
       "customer": "Mijoz",
       "tezdaStatus": "1 ta xabar · 0 daqiqa yozishma. Tayyorlashni boshlang.",
       "facts": {

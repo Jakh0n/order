@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Check, CircleAlert, X } from "lucide-react";
+import { Check, CircleAlert, X } from "lucide-react";
 import {
   type MotionValue,
   motion,
@@ -17,7 +17,16 @@ import { cn } from "@/lib/utils";
 
 import { CHAT_TIMES, minutesBetween, ORDER_FACTS } from "./chat-story";
 import { DmVsFlami } from "./dm-vs-flami";
-import { TELEGRAM_WALLPAPER, TelegramBubble, TelegramText } from "./telegram";
+import {
+  PhoneStatusBar,
+  TelegramAvatar,
+  TelegramBubble,
+  TelegramComposer,
+  TelegramDate,
+  TelegramHeader,
+  TelegramText,
+  TelegramWallpaper,
+} from "./telegram";
 
 /** Where on the scroll track things happen (0 = track enters, 1 = track leaves) */
 const MESSAGES_END = 0.5;
@@ -33,6 +42,7 @@ const VISIBLE_AT_START = 2;
  */
 export function ChatCollapse({ demo }: { demo: LandingDemo | null }) {
   const t = useTranslations("home.problem");
+  const tTg = useTranslations("home.demo");
   const messages = t.raw("messages") as string[];
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
@@ -67,7 +77,7 @@ export function ChatCollapse({ demo }: { demo: LandingDemo | null }) {
           <div
             className={cn(
               "order-first flex w-[min(300px,80vw)] flex-col gap-3 rounded-3xl px-5 py-4 transition-colors duration-300 lg:order-none lg:w-64 lg:py-6",
-              done ? "bg-primary text-white" : "bg-red-50 text-red-700",
+              done ? "bg-emerald-600 text-white" : "bg-red-50 text-red-700",
             )}
             aria-live="polite"
           >
@@ -98,7 +108,7 @@ export function ChatCollapse({ demo }: { demo: LandingDemo | null }) {
                         "flex size-4 shrink-0 items-center justify-center rounded-full",
                         known
                           ? done
-                            ? "text-primary bg-white"
+                            ? "bg-white text-emerald-700"
                             : "bg-emerald-600 text-white"
                           : "bg-red-200 text-red-700",
                       )}
@@ -116,61 +126,61 @@ export function ChatCollapse({ demo }: { demo: LandingDemo | null }) {
             </ul>
           </div>
 
-          {/* The owner's phone: a Telegram chat with the customer */}
-          <div className="relative h-[min(560px,70svh)] w-[min(300px,80vw)] overflow-hidden rounded-[2.75rem] bg-[#1c211f] p-[9px] shadow-[0_40px_80px_-40px_rgba(18,55,42,0.5)]">
-            <div
-              className={cn("relative h-full overflow-hidden rounded-[2.2rem]", TELEGRAM_WALLPAPER)}
-            >
-              <div className="absolute inset-x-0 top-0 z-10 flex items-center gap-2.5 bg-white px-4 pt-7 pb-2 text-[#111] shadow-[0_1px_0_rgba(0,0,0,0.06)]">
-                <ArrowLeft className="size-4 shrink-0 text-[#229ED9]" aria-hidden />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-semibold">{customer || t("customer")}</p>
-                  <p className="truncate text-[10.5px] text-black/45">
-                    {done ? t("tezdaLabel") : t("dmLabel")}
-                  </p>
-                </div>
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#ffb36b] to-[#f2754e] text-xs font-bold text-white">
-                  {(customer || t("customer")).charAt(0)}
-                </span>
-              </div>
-
-              <div className="relative h-full px-2.5 pt-[4.5rem] pb-4">
-                <motion.ul
-                  className="flex origin-top flex-col gap-1.5"
-                  style={{ scale: pileScale, opacity: pileOpacity, y: pileY, filter: pileBlur }}
-                >
-                  {messages.map((text, i) => (
-                    <Bubble
-                      key={i}
-                      text={text}
-                      time={CHAT_TIMES[i] ?? ""}
-                      fromCustomer={i % 2 === 0}
-                      progress={p}
-                      at={
-                        i < VISIBLE_AT_START
-                          ? -1
-                          : ((i - VISIBLE_AT_START + 1) /
-                              (messages.length - VISIBLE_AT_START + 1)) *
-                            MESSAGES_END
-                      }
-                    />
-                  ))}
-                </motion.ul>
-                {demo && (
-                  <motion.div
-                    className="absolute inset-x-2.5 top-[4.5rem]"
-                    style={{ scale: orderScale, opacity: orderOpacity }}
+          {/* The owner's phone: Telegram, a chat with the customer */}
+          <div className="relative h-[min(580px,72svh)] w-[min(300px,80vw)] rounded-[2.75rem] bg-[#1c211f] p-[9px] shadow-[0_40px_80px_-40px_rgba(18,55,42,0.5)]">
+            <div className="flex h-full flex-col overflow-hidden rounded-[2.2rem] bg-[#f7f7f7]">
+              <PhoneStatusBar
+                time={done ? CHAT_TIMES[0] : (CHAT_TIMES[shown - 1] ?? CHAT_TIMES[0])}
+              />
+              <TelegramHeader
+                back={tTg("tgChats")}
+                unread={3}
+                title={customer || t("customer")}
+                subtitle={tTg("tgOnline")}
+                subtitleOnline
+                avatar={<TelegramAvatar name={customer || t("customer")} />}
+              />
+              <TelegramWallpaper className="min-h-0 flex-1 overflow-hidden">
+                <div className="relative h-full px-2.5 pt-2">
+                  <TelegramDate label={tTg("tgToday")} />
+                  <motion.ul
+                    className="flex origin-top flex-col gap-1"
+                    style={{ scale: pileScale, opacity: pileOpacity, y: pileY, filter: pileBlur }}
                   >
-                    <TelegramBubble
-                      outgoing={false}
-                      time={CHAT_TIMES[0]}
-                      className="text-[10px] leading-[1.35]"
+                    {messages.map((text, i) => (
+                      <Bubble
+                        key={i}
+                        text={text}
+                        time={CHAT_TIMES[i] ?? ""}
+                        fromCustomer={i % 2 === 0}
+                        progress={p}
+                        at={
+                          i < VISIBLE_AT_START
+                            ? -1
+                            : ((i - VISIBLE_AT_START + 1) /
+                                (messages.length - VISIBLE_AT_START + 1)) *
+                              MESSAGES_END
+                        }
+                      />
+                    ))}
+                  </motion.ul>
+                  {demo && (
+                    <motion.div
+                      className="absolute inset-x-2.5 top-8"
+                      style={{ scale: orderScale, opacity: orderOpacity }}
                     >
-                      <TelegramText text={demo.message} />
-                    </TelegramBubble>
-                  </motion.div>
-                )}
-              </div>
+                      <TelegramBubble
+                        outgoing={false}
+                        time={CHAT_TIMES[0]}
+                        className="text-[10px] leading-[1.35]"
+                      >
+                        <TelegramText text={demo.message} />
+                      </TelegramBubble>
+                    </motion.div>
+                  )}
+                </div>
+              </TelegramWallpaper>
+              <TelegramComposer placeholder={tTg("tgPlaceholder")} />
             </div>
           </div>
         </div>
