@@ -34,7 +34,11 @@ export function SiteNav() {
       )}
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6">
-        <Link href={isLocale(locale) ? landingPath(locale) : "/"} className="rounded-lg" onClick={() => setOpen(false)}>
+        <Link
+          href={isLocale(locale) ? landingPath(locale) : "/"}
+          className="rounded-lg"
+          onClick={() => setOpen(false)}
+        >
           <Logo />
         </Link>
 

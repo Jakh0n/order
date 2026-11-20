@@ -175,7 +175,7 @@ export default async function Home() {
             </Reveal>
           </div>
           {/* Scroll story: the DM pile turns into one order (sticky phone) */}
-          <ChatCollapse />
+          <ChatCollapse demo={demo} />
         </section>
 
         {/* How it works */}

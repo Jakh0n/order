@@ -19,6 +19,8 @@ import { formatMoney } from "@/lib/money";
 import type { LandingDemo } from "@/lib/landing-demo";
 import { cn } from "@/lib/utils";
 
+import { TELEGRAM_BLUE, TELEGRAM_WALLPAPER, TelegramText } from "./telegram";
+
 /**
  * The whole customer path on the live demo store, ms per step:
  * 0 menu · 1–3 add dishes · 4 tap the cart · 5 checkout, contact typed in · 6 choose payment ·
@@ -26,7 +28,6 @@ import { cn } from "@/lib/utils";
  */
 const STEPS = [1400, 850, 850, 1000, 650, 2100, 1100, 800, 1700, 1500, 4200];
 const FINAL_STEP = STEPS.length - 1;
-const TELEGRAM_BLUE = "#229ED9";
 
 type Screen = "menu" | "checkout" | "send" | "telegram";
 
@@ -434,7 +435,7 @@ function SendScreen({ tapping }: { tapping: boolean }) {
 function TelegramScreen({ demo, sent }: { demo: LandingDemo; sent: boolean }) {
   const t = useTranslations("home.demo");
   return (
-    <div className="flex h-full flex-col bg-[linear-gradient(160deg,#d5e3b3,#a3c38c_55%,#8fb67f)]">
+    <div className={cn("flex h-full flex-col", TELEGRAM_WALLPAPER)}>
       <div className="flex items-center gap-2.5 bg-white px-3 pt-10 pb-2 text-[#111] shadow-[0_1px_0_rgba(0,0,0,0.06)]">
         <ArrowLeft className="size-4 shrink-0" style={{ color: TELEGRAM_BLUE }} />
         <div className="min-w-0 flex-1 text-center">
@@ -492,31 +493,6 @@ function TelegramScreen({ demo, sent }: { demo: LandingDemo; sent: boolean }) {
         )}
       </div>
     </div>
-  );
-}
-
-/** Telegram markup of the real message: **bold**, __italic__ */
-function TelegramText({ text }: { text: string }) {
-  return (
-    <>
-      {text.split("\n").map((line, i) =>
-        line === "" ? (
-          <span key={i} className="block h-1" />
-        ) : (
-          <span key={i} className="block">
-            {line.split(/(\*\*[^*]+\*\*|__[^_]+__)/g).map((part, j) => {
-              if (part.startsWith("**") && part.endsWith("**")) {
-                return <b key={j}>{part.slice(2, -2)}</b>;
-              }
-              if (part.startsWith("__") && part.endsWith("__")) {
-                return <i key={j}>{part.slice(2, -2)}</i>;
-              }
-              return part;
-            })}
-          </span>
-        ),
-      )}
-    </>
   );
 }
 
