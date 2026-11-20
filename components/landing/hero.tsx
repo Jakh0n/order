@@ -6,13 +6,14 @@ import { useTranslations } from "next-intl";
 import { useRef } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
+import type { LandingDemo } from "@/lib/landing-demo";
 import { cn } from "@/lib/utils";
 
 import { PhoneDemo } from "./phone-demo";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-export function Hero() {
+export function Hero({ demo }: { demo: LandingDemo | null }) {
   const t = useTranslations("home.hero");
   const reduce = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
@@ -110,9 +111,11 @@ export function Hero() {
           {/* Mint block behind the phone */}
           <div className="bg-mint absolute inset-x-6 top-0 bottom-0 -z-10 rounded-[3rem] sm:inset-x-16 lg:inset-x-10" />
           <div className="bg-saffron absolute top-10 left-2 -z-10 size-16 rounded-full sm:left-14 lg:left-4" />
-          <motion.div style={{ y: phoneY }}>
-            <PhoneDemo />
-          </motion.div>
+          {demo && (
+            <motion.div style={{ y: phoneY }}>
+              <PhoneDemo demo={demo} />
+            </motion.div>
+          )}
         </motion.div>
       </div>
     </section>

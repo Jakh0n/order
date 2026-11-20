@@ -9,6 +9,7 @@ import { defaultLocale, isLocale, landingPath, type Locale, locales } from "@/i1
 import QRCode from "qrcode";
 
 import { JsonLd } from "@/components/json-ld";
+import { getLandingDemo } from "@/lib/landing-demo";
 import { Faq } from "@/components/landing/faq";
 import { AiImportDemo } from "@/components/landing/ai-import-demo";
 import { CommissionCalculator } from "@/components/landing/commission-calculator";
@@ -136,6 +137,8 @@ export default async function Home() {
     getTranslations("legal"),
     getLocale(),
   ]);
+  // The animated phone shows the live demo store's real menu and the real order message
+  const demo = await getLandingDemo(isLocale(locale) ? locale : defaultLocale);
   const featureGroups = t.raw("features.groups") as {
     title: string;
     items: { t: string; pro?: boolean }[];
@@ -154,7 +157,7 @@ export default async function Home() {
       <SiteNav />
 
       <main className="flex-1">
-        <Hero />
+        <Hero demo={demo} />
 
         {/* The problem: an order spread over a chat vs one complete order */}
         <section id="why" className="scroll-mt-20 py-16 sm:py-24">
