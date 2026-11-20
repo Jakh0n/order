@@ -5,7 +5,7 @@ import { reportError } from "@/lib/report-error";
 import { getStoreLocale } from "@/lib/storefront";
 
 import { defaultLocale, isLocale, type Locale, LOCALE_COOKIE } from "./config";
-import { STORE_SLUG_HEADER } from "./store-header";
+import { PAGE_LOCALE_HEADER, STORE_SLUG_HEADER } from "./store-header";
 
 /** First supported language from Accept-Language ("ru-RU,ru;q=0.9,en;q=0.8" -> "ru"). */
 function fromAcceptLanguage(header: string | null): Locale | null {
@@ -31,6 +31,15 @@ export default getRequestConfig(async ({ locale: explicit }) => {
     };
   }
   const [cookieStore, headerStore] = await Promise.all([cookies(), headers()]);
+  // 0) the URL's own language (/ru, /uz landing) — the same page must always be the same language
+  const pageLocale = headerStore.get(PAGE_LOCALE_HEADER);
+  if (isLocale(pageLocale)) {
+    return {
+      locale: pageLocale,
+      timeZone: "UTC",
+      messages: (await import(`../messages/${pageLocale}.json`)).default,
+    };
+  }
   const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value;
   // 1) the customer's own choice (cookie) 2) on a store page — the store's language
   // (header set by proxy.ts) 3) the browser's language 4) English

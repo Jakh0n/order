@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, ChevronDown, Globe, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useTransition } from "react";
 
@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { setLocale } from "@/i18n/actions";
-import { type Locale, localeNames, locales } from "@/i18n/config";
+import { type Locale, landingLocale, landingPath, localeNames, locales } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 
 /**
@@ -31,6 +31,9 @@ export function LanguageSwitcher({
   const locale = useLocale();
   const t = useTranslations("common");
   const router = useRouter();
+  const pathname = usePathname();
+  // The landing page has a URL per language (/, /ru, /uz)
+  const onLanding = pathname === "/" || landingLocale(pathname) !== null;
   const [pending, startTransition] = useTransition();
 
   if (locales.length < 2) return null;
@@ -39,7 +42,8 @@ export function LanguageSwitcher({
     if (l === locale) return;
     startTransition(async () => {
       await setLocale(l);
-      router.refresh();
+      if (onLanding) router.push(landingPath(l));
+      else router.refresh();
     });
   }
 

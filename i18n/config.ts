@@ -12,6 +12,18 @@ export const localeNames: Record<Locale, string> = {
 export const defaultLocale: Locale = "en";
 export const LOCALE_COOKIE = "NEXT_LOCALE";
 
+/** Landing page per language: "/" is English (x-default), "/ru" and "/uz" are their own URLs,
+ *  so search engines can index every language (they send no cookie or Accept-Language). */
+export function landingPath(locale: Locale): string {
+  return locale === defaultLocale ? "/" : `/${locale}`;
+}
+
+/** "/ru" -> "ru"; "/" and anything else -> null */
+export function landingLocale(pathname: string): Locale | null {
+  const seg = pathname.replace(/^\/+|\/+$/g, "");
+  return isLocale(seg) && seg !== defaultLocale ? seg : null;
+}
+
 export function isLocale(value: unknown): value is Locale {
   return typeof value === "string" && (locales as readonly string[]).includes(value);
 }

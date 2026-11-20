@@ -3,10 +3,11 @@
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { isLocale, landingPath } from "@/i18n/config";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +17,7 @@ const LINKS = ["how", "customers", "commission", "pricing", "faq"] as const;
 
 export function SiteNav() {
   const t = useTranslations("home");
+  const locale = useLocale();
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -32,7 +34,7 @@ export function SiteNav() {
       )}
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6">
-        <Link href="/" className="rounded-lg" onClick={() => setOpen(false)}>
+        <Link href={isLocale(locale) ? landingPath(locale) : "/"} className="rounded-lg" onClick={() => setOpen(false)}>
           <Logo />
         </Link>
 
