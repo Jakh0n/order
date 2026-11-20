@@ -48,23 +48,6 @@
       "tgToday": "Bugun",
       "tgOnline": "onlayn"
     },
-    "steps": {
-      "title": "Menyudan birinchi buyurtmagacha — uch qadam",
-      "s1": {
-        "title": "Menyuni qo'shing",
-        "body": "Rasm yuklang, narx qo'ying va o'lcham yoki qo'shimcha sous kabi variantlar qo'shing. Keyin istalgan narsani soniyalarda o'zgartirasiz."
-      },
-      "s2": {
-        "title": "Havolani ulashing",
-        "body": "tezda.app/your-store ni Instagram profilingizga qo'ying, stollar uchun QR kodni chop eting yoki doimiy mijozlarga yuboring."
-      },
-      "s3": {
-        "title": "Buyurtmalarni chatda oling",
-        "body": "Har bir buyurtma WhatsApp yoki Telegram'ga tayyor holda keladi — yetkazish uchun xaritadagi nuqta bilan."
-      },
-      "v1Stock": "Mavjud",
-      "v2Copy": "Havoladan nusxa olish"
-    },
     "features": {
       "title": "Birinchi buyurtmadan doimiy mijozlargacha hammasi",
       "lead": "Keraklisidan foydalaning. Hammasi telefonda ishlaydi.",
@@ -225,32 +208,6 @@
         "payment": "To'lov"
       }
     },
-    "ai": {
-      "eyebrow": "Rasmdan menyu",
-      "title": "Qog'oz menyuni rasmga oling. AI o'zi kiritadi.",
-      "body": "Taom nomlari va narxlarni o'qiydi, odatda 10–30 soniyada. E'lon qilishdan oldin hammasini o'zingiz tekshirasiz. Pro'da jadvaldan ham yuklash mumkin.",
-      "paperTitle": "Menyu",
-      "found": "4 ta taom topildi",
-      "note": "Rasmlar faqat menyuni o'qish uchun ishlatiladi.",
-      "dishes": [
-        {
-          "name": "Lavash",
-          "price": "25 000"
-        },
-        {
-          "name": "Somsa",
-          "price": "8 000"
-        },
-        {
-          "name": "Mastava",
-          "price": "22 000"
-        },
-        {
-          "name": "Choy",
-          "price": "5 000"
-        }
-      ]
-    },
     "sticky": {
       "note": "Bepul tarif. Karta kerak emas."
     },
@@ -279,6 +236,51 @@
         "order": "Onlayn buyurtma",
         "category": "Kafe"
       }
+    },
+    "setup": {
+      "eyebrow": "Qanday ishlaydi",
+      "title": "Do'koningizni o'zingiz ochasiz. Dasturchi kerak emas.",
+      "steps": [
+        {
+          "title": "Do'kon oching",
+          "body": "Nom, havola va buyurtmalar qayerga kelishi: Telegram yoki WhatsApp."
+        },
+        {
+          "title": "Menyuni rasmdan qo'shing",
+          "body": "Qog'oz menyuni rasmga oling. AI taom nomlari va narxlarni odatda 10–30 soniyada o'qiydi, siz e'lon qilishdan oldin tekshirasiz."
+        },
+        {
+          "title": "Havolani ulashing",
+          "body": "Instagram profilingizga qo'ying yoki stollar uchun QR chop eting. Buyurtmalar chatingizga keladi."
+        }
+      ],
+      "note": "Rasmlar faqat menyuni o'qish uchun ishlatiladi.",
+      "exampleName": "Rayhon Kafe",
+      "exampleTelegram": "@rayhon_kafe",
+      "importTitle": "Rasmdan menyu",
+      "paperTitle": "Menyu",
+      "found": "{count, plural, other {# ta taom topildi}}",
+      "addToMenu": "Menyuga qo'shish",
+      "ready": "Do'koningiz ochildi",
+      "open": "Hozir ochiq",
+      "dishes": [
+        {
+          "name": "Lavash",
+          "price": "25 000"
+        },
+        {
+          "name": "Somsa",
+          "price": "8 000"
+        },
+        {
+          "name": "Mastava",
+          "price": "22 000"
+        },
+        {
+          "name": "Choy",
+          "price": "5 000"
+        }
+      ]
     }
   },
   "menu": {

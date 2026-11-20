@@ -48,23 +48,6 @@
       "tgToday": "Today",
       "tgOnline": "online"
     },
-    "steps": {
-      "title": "From menu to first order in three steps",
-      "s1": {
-        "title": "Add your menu",
-        "body": "Upload photos, set prices and add options like size or extra sauce. Change anything later in seconds."
-      },
-      "s2": {
-        "title": "Share your link",
-        "body": "Put tezda.app/your-store in your Instagram bio, print the QR code for tables, or send it to regulars."
-      },
-      "s3": {
-        "title": "Get orders in chat",
-        "body": "Each order arrives in WhatsApp or Telegram, ready to cook — with a map pin for deliveries."
-      },
-      "v1Stock": "In stock",
-      "v2Copy": "Copy link"
-    },
     "features": {
       "title": "Everything from the first order to your regulars",
       "lead": "Use the parts you need. All of it works on a phone.",
@@ -225,32 +208,6 @@
         "payment": "Payment"
       }
     },
-    "ai": {
-      "eyebrow": "Menu from a photo",
-      "title": "Photograph your paper menu. AI types it in.",
-      "body": "It reads dish names and prices, usually in 10 to 30 seconds. You check everything before it goes live. On Pro you can import a spreadsheet too.",
-      "paperTitle": "Menu",
-      "found": "Found 4 dishes",
-      "note": "Photos are used only to read your menu.",
-      "dishes": [
-        {
-          "name": "Doner wrap",
-          "price": "6.00"
-        },
-        {
-          "name": "Fries",
-          "price": "3.50"
-        },
-        {
-          "name": "Lentil soup",
-          "price": "4.00"
-        },
-        {
-          "name": "Ayran",
-          "price": "2.00"
-        }
-      ]
-    },
     "sticky": {
       "note": "Free plan. No card needed."
     },
@@ -279,6 +236,51 @@
         "order": "Order online",
         "category": "Café"
       }
+    },
+    "setup": {
+      "eyebrow": "How it works",
+      "title": "Open your store yourself. No developer needed.",
+      "steps": [
+        {
+          "title": "Open your store",
+          "body": "Name, link, and where orders should arrive: Telegram or WhatsApp."
+        },
+        {
+          "title": "Add your menu from a photo",
+          "body": "Photograph your paper menu. AI reads the dishes and prices, usually in 10–30 seconds, and you check them before publishing."
+        },
+        {
+          "title": "Share your link",
+          "body": "Put it in your Instagram bio or print the table QR. Orders arrive in your chat."
+        }
+      ],
+      "note": "Photos are used only to read the menu.",
+      "exampleName": "Rayhon Kafe",
+      "exampleTelegram": "@rayhon_kafe",
+      "importTitle": "Menu from a photo",
+      "paperTitle": "Menu",
+      "found": "{count, plural, one {# dish found} other {# dishes found}}",
+      "addToMenu": "Add to menu",
+      "ready": "Your store is live",
+      "open": "Open now",
+      "dishes": [
+        {
+          "name": "Lavash",
+          "price": "25 000"
+        },
+        {
+          "name": "Samsa",
+          "price": "8 000"
+        },
+        {
+          "name": "Mastava",
+          "price": "22 000"
+        },
+        {
+          "name": "Tea",
+          "price": "5 000"
+        }
+      ]
     }
   },
   "menu": {

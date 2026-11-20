@@ -1,4 +1,4 @@
-import { BarChart3, Bike, Check, ChefHat, Copy, QrCode, Sparkles } from "lucide-react";
+import { BarChart3, Bike, Check, ChefHat, QrCode } from "lucide-react";
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import Image from "next/image";
@@ -9,16 +9,14 @@ import { defaultLocale, isLocale, landingPath, type Locale, locales } from "@/i1
 import QRCode from "qrcode";
 
 import { JsonLd } from "@/components/json-ld";
-import { TelegramBubble, TelegramText, TelegramWallpaper } from "@/components/landing/telegram";
-import { formatMoney } from "@/lib/money";
 import { getLandingDemo } from "@/lib/landing-demo";
 import { Faq } from "@/components/landing/faq";
-import { AiImportDemo } from "@/components/landing/ai-import-demo";
 import { ChatCollapse } from "@/components/landing/chat-collapse";
 import { LinkEverywhere } from "@/components/landing/link-everywhere";
 import { Hero } from "@/components/landing/hero";
 import { Logo } from "@/components/landing/logo";
-import { Reveal, StepsTrack } from "@/components/landing/motion-parts";
+import { Reveal } from "@/components/landing/motion-parts";
+import { StoreSetup } from "@/components/landing/store-setup";
 import { SiteNav } from "@/components/landing/site-nav";
 import { StickyCta } from "@/components/landing/sticky-cta";
 import { SiteAnalytics } from "@/components/site-analytics";
@@ -141,17 +139,7 @@ export default async function Home() {
   ]);
   // The animated phone shows the live demo store's real menu and the real order message
   const demo = await getLandingDemo(isLocale(locale) ? locale : defaultLocale);
-  const firstDish = demo?.products[0];
-  // The real order message, trimmed for step 3 of "how it works": hashtag, items and the total
-  // (the bold line that isn't the hashtag or an item)
-  const messageLines = (demo?.message ?? "").split("\n").filter((line) => line !== "");
-  const totalLine = messageLines.find(
-    (line, i) => i > 0 && line.startsWith("**") && !/^\*\*\d+x\*\*/.test(line),
-  );
-  const messagePreview = [
-    ...messageLines.filter((line, i) => i === 0 || /^\*\*\d+x\*\*/.test(line)),
-    totalLine ?? "",
-  ].join("\n");
+  const siteHost = siteOrigin().replace(/^https?:\/\/(www\.)?/, "");
   const featureGroups = t.raw("features.groups") as {
     title: string;
     items: { t: string; pro?: boolean }[];
@@ -189,113 +177,10 @@ export default async function Home() {
           <ChatCollapse demo={demo} />
         </section>
 
-        {/* How it works */}
+        {/* How it works: the owner opens a store on their phone (sign up → menu from a photo → live) */}
         <section id="how" className="scroll-mt-20 py-20 sm:py-28">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <Reveal>
-              <h2 className="font-display max-w-2xl text-4xl font-bold tracking-[-0.03em] sm:text-5xl md:mx-auto md:text-center">
-                {t("steps.title")}
-              </h2>
-            </Reveal>
-            <div className="mt-14 sm:mt-20">
-              <StepsTrack
-                steps={[
-                  {
-                    title: t("steps.s1.title"),
-                    body: t("steps.s1.body"),
-                    visual: (
-                      <MiniCard>
-                        <div className="flex items-center gap-3">
-                          <div className="relative size-12 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
-                            {firstDish && (
-                              <Image
-                                src={firstDish.img}
-                                alt=""
-                                fill
-                                sizes="48px"
-                                className="object-cover"
-                              />
-                            )}
-                          </div>
-                          <div className="min-w-0 flex-1 text-left">
-                            <p className="truncate text-sm font-semibold">{firstDish?.name}</p>
-                            <p className="text-forest/60 text-xs tabular-nums">
-                              {firstDish &&
-                                demo &&
-                                formatMoney(firstDish.price, demo.store.currency)}
-                            </p>
-                          </div>
-                          <span className="text-forest/60 flex items-center gap-1.5 text-[11px]">
-                            {t("steps.v1Stock")}
-                            <span className="bg-primary flex h-4 w-7 items-center justify-end rounded-full p-0.5">
-                              <span className="size-3 rounded-full bg-white" />
-                            </span>
-                          </span>
-                        </div>
-                      </MiniCard>
-                    ),
-                  },
-                  {
-                    title: t("steps.s2.title"),
-                    body: t("steps.s2.body"),
-                    visual: (
-                      <MiniCard>
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="size-14 shrink-0 [&>svg]:size-full"
-                            dangerouslySetInnerHTML={{ __html: qr }}
-                          />
-                          <div className="min-w-0 flex-1 text-left">
-                            <p className="truncate text-sm font-semibold">
-                              {demoUrl.replace(/^https?:\/\/(www\.)?/, "")}
-                            </p>
-                            <p className="text-primary mt-1 flex items-center gap-1 text-xs font-medium">
-                              <Copy className="size-3" />
-                              {t("steps.v2Copy")}
-                            </p>
-                          </div>
-                        </div>
-                      </MiniCard>
-                    ),
-                  },
-                  {
-                    title: t("steps.s3.title"),
-                    body: t("steps.s3.body"),
-                    visual: (
-                      <TelegramWallpaper className="w-full max-w-[272px] rounded-2xl p-3">
-                        <TelegramBubble outgoing={false} time="19:42" className="text-left text-xs">
-                          <TelegramText text={messagePreview} />
-                        </TelegramBubble>
-                      </TelegramWallpaper>
-                    ),
-                  },
-                ]}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Menu from a photo */}
-        <section className="bg-mint/50 py-20 sm:py-28">
-          <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-            <Reveal>
-              <p className="text-primary flex items-center gap-2 text-sm font-semibold tracking-wide uppercase">
-                <Sparkles className="size-4" aria-hidden />
-                {t("ai.eyebrow")}
-              </p>
-              <h2 className="font-display mt-3 text-4xl font-bold tracking-[-0.03em] sm:text-5xl">
-                {t("ai.title")}
-              </h2>
-              <p className="text-forest/70 mt-5 text-lg leading-relaxed">{t("ai.body")}</p>
-              <p className="text-forest/50 mt-4 text-sm">{t("ai.note")}</p>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <AiImportDemo
-                dishes={t.raw("ai.dishes") as { name: string; price: string }[]}
-                paperTitle={t("ai.paperTitle")}
-                foundLabel={t("ai.found")}
-              />
-            </Reveal>
+            <StoreSetup host={siteHost} />
           </div>
         </section>
 
@@ -528,14 +413,6 @@ function homeJsonLd(description: string) {
       },
     ],
   };
-}
-
-function MiniCard({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="ring-forest/10 w-full max-w-[272px] rounded-2xl bg-white p-3 shadow-[0_12px_30px_-18px_rgba(18,55,42,0.35)] ring-1">
-      {children}
-    </div>
-  );
 }
 
 function Photo({ src, className }: { src: string; className?: string }) {
