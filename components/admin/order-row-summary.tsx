@@ -49,6 +49,11 @@ export async function OrderRowSummary({
         <Badge className={cn("shrink-0", STATUS_STYLE[order.status])}>
           {t(`status.${order.status}`)}
         </Badge>
+        {order.source === "OWNER_TEST" && (
+          <Badge variant="outline" className="shrink-0" title={t("adminOrders.testHint")}>
+            {t("adminOrders.test")}
+          </Badge>
+        )}
         <span
           className={cn(
             "flex min-w-0 items-center gap-1 truncate text-xs",

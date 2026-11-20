@@ -868,7 +868,9 @@
     "reviewCopied": "Message copied — paste it in the chat",
     "reviewReceived": "Customer rated {rating} of 5",
     "reviewRequest": "Hi {name}! Thank you for your order #{number} at {store}. How was it? Your review takes 10 seconds and helps us a lot: {link}",
-    "sentTo": "Sent to {contact}"
+    "sentTo": "Sent to {contact}",
+    "test": "Test",
+    "testHint": "Your own test order: it's not counted in revenue or analytics"
   },
   "adminMenu": {
     "addCategory": "Add category",

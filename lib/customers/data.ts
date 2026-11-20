@@ -52,6 +52,7 @@ export async function listCustomers(
   const base = Prisma.sql`
     FROM "Order" o
     WHERE o."storeId" = ${store.id} AND o."status" <> 'CANCELLED' AND o."customerPhone" <> ''
+      AND o."source" <> 'OWNER_TEST'
     GROUP BY o."customerPhone"`;
 
   const [rows, count] = await Promise.all([
@@ -78,7 +79,8 @@ export async function listCustomers(
     prisma.$queryRaw<{ total: number }[]>`
       SELECT count(DISTINCT o."customerPhone")::int AS total
       FROM "Order" o
-      WHERE o."storeId" = ${store.id} AND o."status" <> 'CANCELLED' AND o."customerPhone" <> ''`,
+      WHERE o."storeId" = ${store.id} AND o."status" <> 'CANCELLED' AND o."customerPhone" <> ''
+      AND o."source" <> 'OWNER_TEST'`,
   ]);
 
   return {

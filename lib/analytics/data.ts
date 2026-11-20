@@ -163,10 +163,11 @@ export async function getAnalytics(store: StoreRef, range: Range): Promise<Analy
   const prevFrom = new Date(from.getTime() - days * DAY_MS);
   const tz = store.timeZone;
 
-  // Shared filter: this store, not cancelled, in [start, end)
+  // Shared filter: this store, not cancelled, not the owner's own test orders, in [start, end)
   const where = (start: Date, end: Date) => Prisma.sql`
     o."storeId" = ${store.id}
     AND o."status" <> 'CANCELLED'
+    AND o."source" <> 'OWNER_TEST'
     AND o."createdAt" >= ${start} AND o."createdAt" < ${end}`;
   // createdAt is stored as UTC without a zone → local wall time of the store
   const local = Prisma.sql`((o."createdAt" AT TIME ZONE 'UTC') AT TIME ZONE ${tz})`;
@@ -240,7 +241,8 @@ export async function getAnalytics(store: StoreRef, range: Range): Promise<Analy
         count(*) FILTER (WHERE EXISTS (
           SELECT 1 FROM "Order" p
           WHERE p."storeId" = ${store.id} AND p."customerPhone" = cur.phone
-            AND p."status" <> 'CANCELLED' AND p."createdAt" < ${from}
+            AND p."status" <> 'CANCELLED' AND p."source" <> 'OWNER_TEST'
+            AND p."createdAt" < ${from}
         ))::int AS returning
       FROM cur`,
     prisma.$queryRaw<{ dow: number; h: number; orders: number }[]>`
@@ -262,6 +264,7 @@ export async function getAnalytics(store: StoreRef, range: Range): Promise<Analy
         SELECT o."customerPhone"
         FROM "Order" o
         WHERE o."storeId" = ${store.id} AND o."status" <> 'CANCELLED' AND o."customerPhone" <> ''
+          AND o."source" <> 'OWNER_TEST'
         GROUP BY o."customerPhone"
         HAVING count(*) >= 2 AND max(o."createdAt") < ${lapsedBefore}
       ) r`,
@@ -320,7 +323,8 @@ export async function getAnalytics(store: StoreRef, range: Range): Promise<Analy
         count(*) FILTER (WHERE o."createdAt" < ${from} AND o."status" = 'CANCELLED')::int AS prev,
         count(*) FILTER (WHERE o."createdAt" < ${from})::int AS prev_all
       FROM "Order" o
-      WHERE o."storeId" = ${store.id} AND o."createdAt" >= ${prevFrom} AND o."createdAt" < ${end}`,
+      WHERE o."storeId" = ${store.id} AND o."source" <> 'OWNER_TEST'
+        AND o."createdAt" >= ${prevFrom} AND o."createdAt" < ${end}`,
   ]);
 
   // Every day of the period, zeros included (a gap in a bar chart reads as "no data")

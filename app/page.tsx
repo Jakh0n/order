@@ -21,6 +21,7 @@ import { StickyCta } from "@/components/landing/sticky-cta";
 import { SiteAnalytics } from "@/components/site-analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { siteOrigin } from "@/lib/app-url";
+import { DEMO_STORE_SLUGS } from "@/lib/demo";
 import {
   FOUNDING_PRO_MONTHS,
   FOUNDING_STORES,
@@ -121,8 +122,9 @@ export default async function Home() {
     title: string;
     items: { t: string; pro?: boolean }[];
   }[];
-  // Static demo QR — points at the live demo store
-  const qr = await QRCode.toString("https://tezda.app/bahor-kafe", {
+  // Demo QR — the live demo store on this site's own domain (APP_URL), never a hardcoded one
+  const demoUrl = `${siteOrigin()}/${DEMO_STORE_SLUGS[0]}`;
+  const qr = await QRCode.toString(demoUrl, {
     type: "svg",
     margin: 0,
     color: { dark: "#12372a", light: "#00000000" },
@@ -204,7 +206,9 @@ export default async function Home() {
                             dangerouslySetInnerHTML={{ __html: qr }}
                           />
                           <div className="min-w-0 flex-1 text-left">
-                            <p className="truncate text-sm font-semibold">tezda.app/bahor-kafe</p>
+                            <p className="truncate text-sm font-semibold">
+                              {demoUrl.replace(/^https?:\/\/(www\.)?/, "")}
+                            </p>
                             <p className="text-primary mt-1 flex items-center gap-1 text-xs font-medium">
                               <Copy className="size-3" />
                               {t("steps.v2Copy")}

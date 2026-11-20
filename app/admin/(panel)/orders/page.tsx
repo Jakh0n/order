@@ -105,12 +105,18 @@ async function Orders({
       include: { items: { orderBy: { id: "asc" } }, review: { select: { rating: true } } },
     }),
     prisma.order.aggregate({
-      where: { ...today, status: { not: "CANCELLED" } },
+      // The owner's own test orders stay in the list but not in today's money
+      where: { ...today, status: { not: "CANCELLED" }, source: { not: "OWNER_TEST" } },
       _sum: { total: true },
       _count: true,
     }),
     prisma.order.aggregate({
-      where: { ...today, status: { not: "CANCELLED" }, paymentStatus: "PAID" },
+      where: {
+        ...today,
+        status: { not: "CANCELLED" },
+        source: { not: "OWNER_TEST" },
+        paymentStatus: "PAID",
+      },
       _sum: { total: true },
     }),
     prisma.order.groupBy({
