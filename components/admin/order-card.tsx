@@ -125,6 +125,11 @@ export async function OrderCard({
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           <Badge className={STATUS_STYLE[order.status]}>{t(`status.${order.status}`)}</Badge>
+          {order.source === "OWNER_TEST" && (
+            <Badge variant="outline" title={t("adminOrders.testHint")}>
+              {t("adminOrders.test")}
+            </Badge>
+          )}
           <Badge variant={paid ? "default" : "outline"}>
             {order.type === "DINE_IN"
               ? t(`table.pay.${order.paymentMethod}`)

@@ -188,7 +188,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Tezlik: bog'langan ma'lumot (include / nested select) o'qilsa — `...JOIN` qo'shing; bir-biriga bog'liq
   bo'lmagan so'rovlarni `Promise.all` bilan parallel qiling. Har bir so'rov bazaga borish = vaqt.
 - Sayt manzilini `NEXT_PUBLIC_APP_URL` dan emas, `getRequestOrigin()` dan oling. U `APP_URL` (asosiy domen,
-  hozir https://flami.org) ni ishlatadi, bo'lmasa so'rovdagi manzilni — QR va xabardagi havola localhost bo'lib qolmaydi.
+  hozir https://tezda.app) ni ishlatadi, bo'lmasa so'rovdagi manzilni — QR va xabardagi havola localhost bo'lib qolmaydi.
 - SEO: `app/robots.ts`, `app/sitemap.ts` (bloklanmagan, taomi bor do'konlar), `metadataBase` = `siteOrigin()`
   (APP_URL — redirect qilmaydigan asosiy domen bo'lishi shart). Do'kon sahifasi: title/description/canonical +
   JSON-LD; preview rasm `app/[store]/opengraph-image.tsx` (JPEG, WebP rasm sharp bilan o'giriladi).
@@ -239,7 +239,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - `vercel.json`: region `hnd1` — baza bilan bir joyda (Supabase ap-northeast-1). Baza ko'chsa, region ham o'zgaradi.
 - Build: `vercel-build` = `prisma generate && prisma migrate deploy && next build` — migratsiyalar avtomatik.
 - Env: `DATABASE_URL` (6543, `pgbouncer=true&connection_limit=3`), `DIRECT_URL` (5432), `AUTH_SECRET`,
-  `APP_URL=https://flami.org`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (secret),
+  `APP_URL=https://tezda.app`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (secret),
   `NEXT_PUBLIC_SENTRY_DSN`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY` + `VAPID_PRIVATE_KEY` (secret) + `VAPID_SUBJECT` (push),
   `SUPPORT_TELEGRAM`, `OPENAI_API_KEY` (secret, AI menyu importi), ixtiyoriy `OPENAI_MODEL` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
 - Monitoring: `GET /api/health` (200 = ilova + baza ishlayapti, 503 = baza javob bermayapti) — uptime servisga ulang.

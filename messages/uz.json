@@ -868,7 +868,9 @@
     "reviewCopied": "Xabar nusxalandi — uni chatga qo'ying",
     "reviewReceived": "Mijoz 5 dan {rating} baho berdi",
     "reviewRequest": "Assalomu alaykum, {name}! {store}dagi №{number} buyurtmangiz uchun rahmat. Qanday bo'ldi? Sharh 10 soniya oladi va bizga juda yordam beradi: {link}",
-    "sentTo": "Yuborildi: {contact}"
+    "sentTo": "Yuborildi: {contact}",
+    "test": "Sinov",
+    "testHint": "O'zingizning sinov buyurtmangiz: tushum va analitikada hisoblanmaydi"
   },
   "adminMenu": {
     "addCategory": "Kategoriya qo'shish",

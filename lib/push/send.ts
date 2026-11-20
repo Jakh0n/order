@@ -20,7 +20,7 @@ function configure(): boolean {
   const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
   const privateKey = process.env.VAPID_PRIVATE_KEY;
   if (!publicKey || !privateKey) return (configured = false);
-  webpush.setVapidDetails(process.env.VAPID_SUBJECT || "https://flami.org", publicKey, privateKey);
+  webpush.setVapidDetails(process.env.VAPID_SUBJECT || "https://tezda.app", publicKey, privateKey);
   return (configured = true);
 }
 
