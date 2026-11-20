@@ -164,6 +164,7 @@ prisma/schema.prisma, seed.ts
 ```bash
 npm run dev          # http://localhost:3000
 npm run check        # lint + typecheck
+npm test             # unit testlar (Vitest, tests/unit — sof funksiyalar, bazasiz)
 npm run db:migrate   # prisma migrate dev (-- --name <nom>)
 npm run db:seed      # namunaviy ma'lumot (qayta ishga tushirsa bo'ladi)
 npm run db:studio    # Prisma Studio
@@ -218,7 +219,8 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
   aks holda qayta ko'rsatilganda kiritilgan qiymat bo'sh ko'rinadi.
 - Supabase faqat Storage uchun; ma'lumotlar faqat Prisma orqali.
 - `SUPABASE_SERVICE_ROLE_KEY` hech qachon klient kodiga tushmaydi.
-- Har o'zgarishdan keyin: `npm run check`.
+- Har o'zgarishdan keyin: `npm run check` va `npm test`. Pul, narx, vaqt, holat yoki promo logikasini o'zgartirsangiz —
+  `tests/unit/` ga test qo'shing. CI (`.github/workflows/ci.yml`) har PR'da ikkalasini ishga tushiradi.
 - HOZIR QILINMAYDI: onlayn to'lov, Telegram bot, mobil ilova, ko'p filial.
 
 ## Ish tartibi
