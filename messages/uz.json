@@ -45,7 +45,10 @@
       "customerName": "Aziz",
       "customerAddress": "Chilonzor 9-kvartal, 14-uy, 32-xonadon",
       "tgStatus": "yaqinda tarmoqda edi",
-      "tgPlaceholder": "Xabar"
+      "tgPlaceholder": "Xabar",
+      "tgChats": "Chatlar",
+      "tgToday": "Bugun",
+      "tgOnline": "onlayn"
     },
     "steps": {
       "title": "Menyudan birinchi buyurtmagacha — uch qadam",
@@ -205,10 +208,8 @@
     },
     "problem": {
       "eyebrow": "Tanish holatmi?",
-      "title": "Buyurtmani yozishmadan bo'laklab yig'ishga chek qo'ying",
+      "title": "Bitta buyurtma uchun 8 ta xabar va 19 daqiqa. Tig'iz soatda bu — yo'qolgan buyurtmalar.",
       "body": "Tezda'da mijoz menyuingizdan tanlaydi, shuning uchun buyurtma to'liq keladi: nima, nechta, qayerga va qanday to'laydi. Bir marta o'qiysiz va tayyorlashni boshlaysiz.",
-      "dmLabel": "Direktda buyurtma",
-      "flamiLabel": "Tezda orqali buyurtma",
       "messages": [
         "Assalomu alaykum! Menyu bormi?",
         "Rasmini yuboryapman",
@@ -219,8 +220,15 @@
         "Bozor yonida, 3-podyezd",
         "Naqdmi yoki karta?"
       ],
-      "dmStatus": "{count, plural, other {# ta xabar}}, buyurtma esa hali to'liq emas",
-      "flamiStatus": "1 ta xabar, hammasi ichida. Tayyorlashni boshlang"
+      "dmStatus": "{count, plural, other {# ta xabar}} · {minutes, plural, other {# daqiqa}}, buyurtma esa hali to'liq emas",
+      "customer": "Mijoz",
+      "tezdaStatus": "1 ta xabar · 0 daqiqa yozishma. Tayyorlashni boshlang.",
+      "facts": {
+        "item": "Taom",
+        "quantity": "Soni",
+        "address": "Manzil",
+        "payment": "To'lov"
+      }
     },
     "ai": {
       "eyebrow": "Rasmdan menyu",

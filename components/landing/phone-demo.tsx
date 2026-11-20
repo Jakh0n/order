@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  ArrowLeft,
-  Bell,
-  CheckCheck,
-  Paperclip,
-  Plus,
-  Send,
-  ShoppingBag,
-  Smile,
-} from "lucide-react";
+import { ArrowLeft, ArrowUp, Bell, Plus, Send, ShoppingBag } from "lucide-react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -19,6 +10,17 @@ import { formatMoney } from "@/lib/money";
 import type { LandingDemo } from "@/lib/landing-demo";
 import { cn } from "@/lib/utils";
 
+import {
+  TELEGRAM_BLUE,
+  TelegramAvatar,
+  TelegramBubble,
+  TelegramComposer,
+  TelegramDate,
+  TelegramHeader,
+  TelegramText,
+  TelegramWallpaper,
+} from "./telegram";
+
 /**
  * The whole customer path on the live demo store, ms per step:
  * 0 menu · 1–3 add dishes · 4 tap the cart · 5 checkout, contact typed in · 6 choose payment ·
@@ -26,7 +28,6 @@ import { cn } from "@/lib/utils";
  */
 const STEPS = [1400, 850, 850, 1000, 650, 2100, 1100, 800, 1700, 1500, 4200];
 const FINAL_STEP = STEPS.length - 1;
-const TELEGRAM_BLUE = "#229ED9";
 
 type Screen = "menu" | "checkout" | "send" | "telegram";
 
@@ -434,89 +435,63 @@ function SendScreen({ tapping }: { tapping: boolean }) {
 function TelegramScreen({ demo, sent }: { demo: LandingDemo; sent: boolean }) {
   const t = useTranslations("home.demo");
   return (
-    <div className="flex h-full flex-col bg-[linear-gradient(160deg,#d5e3b3,#a3c38c_55%,#8fb67f)]">
-      <div className="flex items-center gap-2.5 bg-white px-3 pt-10 pb-2 text-[#111] shadow-[0_1px_0_rgba(0,0,0,0.06)]">
-        <ArrowLeft className="size-4 shrink-0" style={{ color: TELEGRAM_BLUE }} />
-        <div className="min-w-0 flex-1 text-center">
-          <p className="truncate text-[13px] font-semibold">{demo.store.name}</p>
-          <p className="truncate text-[10.5px] text-black/45">{t("tgStatus")}</p>
-        </div>
-        <span className="relative size-8 shrink-0 overflow-hidden rounded-full bg-neutral-200">
-          {demo.store.logoUrl && (
-            <Image src={demo.store.logoUrl} alt="" fill sizes="32px" className="object-cover" />
-          )}
-        </span>
-      </div>
+    <div className="flex h-full flex-col bg-[#f7f7f7]">
+      {/* Room for the phone's own status bar and notch */}
+      <div className="h-9 shrink-0" />
+      <TelegramHeader
+        back={t("tgChats")}
+        title={demo.store.name}
+        subtitle={t("tgStatus")}
+        avatar={<TelegramAvatar name={demo.store.name} src={demo.store.logoUrl} />}
+      />
 
-      <div className="flex min-h-0 flex-1 flex-col justify-end overflow-hidden p-2.5">
-        <AnimatePresence>
-          {sent && (
-            <motion.div
-              className="ml-auto w-[92%] rounded-2xl rounded-br-md bg-[#effdde] px-2.5 pt-1.5 pb-1 text-[9.5px] leading-[1.35] text-[#111] shadow-sm"
-              initial={{ opacity: 0, y: 40, scale: 0.92 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+      <TelegramWallpaper className="flex min-h-0 flex-1 flex-col justify-end overflow-hidden p-2.5">
+        <div className="relative">
+          <TelegramDate label={t("tgToday")} />
+          <AnimatePresence>
+            {sent && (
+              <motion.div
+                initial={{ opacity: 0, y: 40, scale: 0.92 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              >
+                <TelegramBubble
+                  outgoing
+                  time="19:42"
+                  className="max-w-[94%] text-[9.5px] leading-[1.35]"
+                >
+                  <TelegramText text={demo.message} />
+                </TelegramBubble>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </TelegramWallpaper>
+
+      {/* The ready message waits in the field for one tap on Send */}
+      <TelegramComposer
+        placeholder={t("tgPlaceholder")}
+        send={
+          sent ? undefined : (
+            <motion.span
+              className="relative flex size-7 shrink-0 items-center justify-center rounded-full text-white"
+              style={{ backgroundColor: TELEGRAM_BLUE }}
+              animate={{ scale: [1, 1, 0.85, 1] }}
+              transition={{ duration: 1.3, times: [0, 0.75, 0.87, 1] }}
             >
-              <TelegramText text={demo.message} />
-              <p className="flex items-center justify-end gap-0.5 text-[8.5px] text-[#4fae4e]">
-                19:42
-                <CheckCheck className="size-3" />
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Composer: the ready message waits for one tap on Send */}
-      <div className="flex items-end gap-2 bg-white px-2.5 pt-2 pb-5">
-        <Paperclip className="mb-1.5 size-4 shrink-0 text-black/40" />
-        <div className="max-h-16 min-h-8 flex-1 overflow-hidden rounded-2xl bg-neutral-100 px-2.5 py-1.5 text-[10px] leading-snug text-black/80">
-          {sent ? (
-            <span className="text-black/35">{t("tgPlaceholder")}</span>
-          ) : (
+              <TapRipple className="inset-0 size-7" delay={1} />
+              <ArrowUp className="size-4" strokeWidth={2.5} />
+            </motion.span>
+          )
+        }
+      >
+        {sent ? undefined : (
+          <span className="line-clamp-3">
             <TelegramText text={demo.message} />
-          )}
-        </div>
-        {sent ? (
-          <Smile className="mb-1.5 size-4 shrink-0 text-black/40" />
-        ) : (
-          <motion.span
-            className="relative flex size-8 shrink-0 items-center justify-center rounded-full text-white"
-            style={{ backgroundColor: TELEGRAM_BLUE }}
-            animate={{ scale: [1, 1, 0.85, 1] }}
-            transition={{ duration: 1.3, times: [0, 0.75, 0.87, 1] }}
-          >
-            <TapRipple className="inset-0" delay={1} />
-            <Send className="size-3.5 -translate-x-px" />
-          </motion.span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/** Telegram markup of the real message: **bold**, __italic__ */
-function TelegramText({ text }: { text: string }) {
-  return (
-    <>
-      {text.split("\n").map((line, i) =>
-        line === "" ? (
-          <span key={i} className="block h-1" />
-        ) : (
-          <span key={i} className="block">
-            {line.split(/(\*\*[^*]+\*\*|__[^_]+__)/g).map((part, j) => {
-              if (part.startsWith("**") && part.endsWith("**")) {
-                return <b key={j}>{part.slice(2, -2)}</b>;
-              }
-              if (part.startsWith("__") && part.endsWith("__")) {
-                return <i key={j}>{part.slice(2, -2)}</i>;
-              }
-              return part;
-            })}
           </span>
-        ),
-      )}
-    </>
+        )}
+      </TelegramComposer>
+    </div>
   );
 }
 

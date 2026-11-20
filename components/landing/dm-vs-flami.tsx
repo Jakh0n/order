@@ -1,94 +1,62 @@
 "use client";
 
 import { CheckCheck } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
 
+import type { LandingDemo } from "@/lib/landing-demo";
 import { cn } from "@/lib/utils";
 
-import { OrderMessage } from "./order-message";
-
-const EASE = [0.22, 1, 0.36, 1] as const;
+import { CHAT_TIMES, minutesBetween } from "./chat-story";
+import { TELEGRAM_WALLPAPER, TelegramBubble, TelegramText } from "./telegram";
 
 /**
- * Left: an order pieced together over many DMs (messages pop in one by one).
- * Right: the same order from Flami, complete in one message. Plays once on scroll.
+ * Reduced-motion version of the problem story, no animation:
+ * left, an order pieced together over many Telegram messages; right, the same order from Tezda
+ * in one complete message.
  */
 export function DmVsFlami({
   messages,
-  dmLabel,
-  flamiLabel,
+  demo,
 }: {
   /** Alternating customer / owner lines, customer first */
   messages: string[];
-  dmLabel: string;
-  flamiLabel: string;
+  demo: LandingDemo | null;
 }) {
-  const reduce = useReducedMotion();
-  const step = 0.28;
+  const t = useTranslations("home.problem");
+  const minutes = minutesBetween(CHAT_TIMES[0], CHAT_TIMES[messages.length - 1] ?? CHAT_TIMES[0]);
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 md:gap-8">
-      <div className="flex flex-col rounded-[2rem] bg-[#f3efe7] p-4 sm:p-6">
-        <p className="text-forest/60 mb-4 text-sm font-semibold tracking-wide uppercase">
-          {dmLabel}
+    <div className="mx-auto mt-10 grid max-w-6xl gap-6 px-4 sm:px-6 md:grid-cols-2 md:gap-8">
+      <div className={cn("flex flex-col rounded-[2rem] p-4 sm:p-6", TELEGRAM_WALLPAPER)}>
+        <p className="mb-4 w-fit rounded-full bg-red-50 px-3 py-1 text-sm font-semibold text-red-700">
+          {t("dmStatus", { count: messages.length, minutes })}
         </p>
-        <ul className="flex flex-col gap-2">
-          {messages.map((text, i) => {
-            const fromCustomer = i % 2 === 0;
-            return (
-              <motion.li
-                key={i}
-                className={cn(
-                  "max-w-[80%] rounded-2xl px-3.5 py-2 text-sm shadow-[0_1px_0.5px_rgba(11,20,26,.13)]",
-                  fromCustomer
-                    ? "rounded-tl-sm bg-white text-[#111b21]"
-                    : "bg-bubble ml-auto rounded-tr-sm text-[#111b21]",
-                )}
-                initial={reduce ? false : { opacity: 0, y: 12, scale: 0.96 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, margin: "0px 0px -15% 0px" }}
-                transition={{ duration: 0.35, ease: EASE, delay: i * step }}
-              >
+        <ul className="flex flex-col gap-1.5">
+          {messages.map((text, i) => (
+            <li key={i}>
+              <TelegramBubble outgoing={i % 2 === 1} time={CHAT_TIMES[i] ?? ""} className="text-sm">
                 {text}
-              </motion.li>
-            );
-          })}
-          {/* Still typing… the order isn't finished */}
-          <motion.li
-            aria-hidden
-            className="flex w-fit gap-1 rounded-2xl rounded-tl-sm bg-white px-3.5 py-3"
-            initial={reduce ? false : { opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "0px 0px -15% 0px" }}
-            transition={{ delay: messages.length * step }}
-          >
-            {[0, 1, 2].map((d) => (
-              <motion.span
-                key={d}
-                className="size-1.5 rounded-full bg-[#8696a0]"
-                animate={reduce ? undefined : { opacity: [0.3, 1, 0.3] }}
-                transition={{ duration: 1.2, repeat: Infinity, delay: d * 0.2 }}
-              />
-            ))}
-          </motion.li>
+              </TelegramBubble>
+            </li>
+          ))}
         </ul>
       </div>
 
-      <motion.div
-        className="bg-mint flex flex-col rounded-[2rem] p-4 sm:p-6"
-        initial={reduce ? false : { opacity: 0, x: 24 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, margin: "0px 0px -15% 0px" }}
-        transition={{ duration: 0.7, ease: EASE, delay: reduce ? 0 : 0.4 }}
-      >
-        <p className="text-primary mb-4 flex items-center gap-1.5 text-sm font-semibold tracking-wide uppercase">
-          <CheckCheck className="size-4" aria-hidden />
-          {flamiLabel}
-        </p>
-        <div className="bg-chat flex flex-1 items-start rounded-3xl p-4 sm:p-6">
-          <OrderMessage className="ml-auto w-full max-w-[300px]" />
+      {demo && (
+        <div className={cn("flex flex-col rounded-[2rem] p-4 sm:p-6", TELEGRAM_WALLPAPER)}>
+          <p className="bg-primary mb-4 flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold text-white">
+            <CheckCheck className="size-4" aria-hidden />
+            {t("tezdaStatus")}
+          </p>
+          <TelegramBubble
+            outgoing={false}
+            time={CHAT_TIMES[0]}
+            className="max-w-[320px] text-xs leading-snug"
+          >
+            <TelegramText text={demo.message} />
+          </TelegramBubble>
         </div>
-      </motion.div>
+      )}
     </div>
   );
 }

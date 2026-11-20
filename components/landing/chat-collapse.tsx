@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CircleAlert } from "lucide-react";
+import { Check, CircleAlert, X } from "lucide-react";
 import {
   type MotionValue,
   motion,
@@ -12,35 +12,48 @@ import {
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 
+import type { LandingDemo } from "@/lib/landing-demo";
 import { cn } from "@/lib/utils";
 
+import { CHAT_TIMES, minutesBetween, ORDER_FACTS } from "./chat-story";
 import { DmVsFlami } from "./dm-vs-flami";
-import { OrderMessage } from "./order-message";
+import {
+  PhoneStatusBar,
+  TelegramAvatar,
+  TelegramBubble,
+  TelegramComposer,
+  TelegramDate,
+  TelegramHeader,
+  TelegramText,
+  TelegramWallpaper,
+} from "./telegram";
 
 /** Where on the scroll track things happen (0 = track enters, 1 = track leaves) */
 const MESSAGES_END = 0.5;
 const COLLAPSE = [0.56, 0.7] as const;
 const ORDER_IN = [0.64, 0.78] as const;
+/** Shown before any scrolling, so the phone never starts empty */
+const VISIBLE_AT_START = 2;
 
 /**
- * Scroll story: the phone stays in place while DM messages pile up (counter in red),
- * then they squeeze together and turn into one complete Flami order (counter in green).
- * Reduced motion: the two chats side by side instead.
+ * Scroll story on the owner's phone (Telegram): the order is pieced together over many messages
+ * and minutes, a checklist shows what's still missing; then it all collapses into the one complete
+ * message a Tezda order sends. Reduced motion: the two chats side by side instead.
  */
-export function ChatCollapse() {
+export function ChatCollapse({ demo }: { demo: LandingDemo | null }) {
   const t = useTranslations("home.problem");
+  const tTg = useTranslations("home.demo");
   const messages = t.raw("messages") as string[];
-  const dmLabel = t("dmLabel");
-  const flamiLabel = t("flamiLabel");
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
-  const [shown, setShown] = useState(0);
+  const [shown, setShown] = useState(VISIBLE_AT_START);
   const [done, setDone] = useState(false);
   useMotionValueEvent(p, "change", (v) => {
-    setShown(Math.min(messages.length, Math.floor((v / MESSAGES_END) * messages.length) + 1));
-    setDone(v >= COLLAPSE[0] + 0.04);
+    const extra = Math.floor((v / MESSAGES_END) * (messages.length - VISIBLE_AT_START + 1));
+    setShown(Math.min(messages.length, VISIBLE_AT_START + Math.max(0, extra)));
+    setDone(demo !== null && v >= COLLAPSE[0] + 0.04);
   });
 
   // The pile squeezes up and fades; the order grows in its place
@@ -51,62 +64,123 @@ export function ChatCollapse() {
   const orderScale = useTransform(p, [...ORDER_IN], [0.7, 1]);
   const orderOpacity = useTransform(p, [...ORDER_IN], [0, 1]);
 
-  if (reduce) {
-    return <DmVsFlami messages={messages} dmLabel={dmLabel} flamiLabel={flamiLabel} />;
-  }
+  if (reduce) return <DmVsFlami messages={messages} demo={demo} />;
+
+  const minutes = minutesBetween(CHAT_TIMES[0], CHAT_TIMES[shown - 1] ?? CHAT_TIMES[0]);
+  const customer = demo?.customer.name ?? "";
 
   return (
     <div ref={ref} className="relative h-[260vh]">
       <div className="sticky top-0 flex h-svh items-center justify-center py-16">
-        <div className="flex w-full flex-col items-center gap-5 lg:flex-row lg:justify-center lg:gap-14">
-          {/* Counter: how much talking this order took */}
-          <motion.p
-            key={done ? "done" : "dm"}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+        <div className="flex w-full flex-col items-center gap-5 lg:flex-row lg:items-center lg:justify-center lg:gap-14">
+          {/* What this order cost so far + what's still missing */}
+          <div
             className={cn(
-              "order-first flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold sm:text-base lg:order-none lg:max-w-60 lg:flex-col lg:items-start lg:rounded-3xl lg:px-6 lg:py-5",
-              done ? "bg-primary text-white" : "bg-red-50 text-red-700",
+              "order-first flex w-[min(300px,80vw)] flex-col gap-3 rounded-3xl px-5 py-4 transition-colors duration-300 lg:order-none lg:w-64 lg:py-6",
+              done ? "bg-emerald-600 text-white" : "bg-red-50 text-red-700",
             )}
             aria-live="polite"
           >
-            {done ? (
-              <Check className="size-5 shrink-0 lg:size-7" aria-hidden />
-            ) : (
-              <CircleAlert className="size-5 shrink-0 lg:size-7" aria-hidden />
-            )}
-            <span>{done ? t("flamiStatus") : t("dmStatus", { count: Math.max(shown, 1) })}</span>
-          </motion.p>
+            <motion.p
+              key={done ? "done" : "dm"}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-start gap-2 text-sm font-semibold sm:text-base"
+            >
+              {done ? (
+                <Check className="mt-0.5 size-5 shrink-0" aria-hidden />
+              ) : (
+                <CircleAlert className="mt-0.5 size-5 shrink-0" aria-hidden />
+              )}
+              <span>{done ? t("tezdaStatus") : t("dmStatus", { count: shown, minutes })}</span>
+            </motion.p>
+            <ul className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-sm font-medium">
+              {ORDER_FACTS.map((fact) => {
+                const known = done || (fact.doneAt !== null && shown > fact.doneAt);
+                return (
+                  <li key={fact.key} className="flex items-center gap-1.5">
+                    <motion.span
+                      key={String(known)}
+                      initial={{ scale: 0.5 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 20 }}
+                      className={cn(
+                        "flex size-4 shrink-0 items-center justify-center rounded-full",
+                        known
+                          ? done
+                            ? "bg-white text-emerald-700"
+                            : "bg-emerald-600 text-white"
+                          : "bg-red-200 text-red-700",
+                      )}
+                    >
+                      {known ? (
+                        <Check className="size-3" strokeWidth={3} />
+                      ) : (
+                        <X className="size-3" strokeWidth={3} />
+                      )}
+                    </motion.span>
+                    {t(`facts.${fact.key}`)}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
 
-          {/* The phone */}
-          <div className="ring-forest relative h-[min(560px,70svh)] w-[min(300px,80vw)] overflow-hidden rounded-[2.75rem] ring-[10px]">
-            <div className="bg-forest absolute inset-x-0 top-0 z-10 flex h-14 items-end gap-2 px-5 pb-2 text-white">
-              <span className="bg-primary flex size-7 items-center justify-center rounded-full text-xs font-bold">
-                F
-              </span>
-              <span className="text-sm font-semibold">{done ? flamiLabel : dmLabel}</span>
-            </div>
-            <div className="bg-chat relative h-full px-3 pt-16 pb-4">
-              <motion.ul
-                className="flex origin-top flex-col gap-1.5"
-                style={{ scale: pileScale, opacity: pileOpacity, y: pileY, filter: pileBlur }}
-              >
-                {messages.map((text, i) => (
-                  <Bubble
-                    key={i}
-                    text={text}
-                    fromCustomer={i % 2 === 0}
-                    progress={p}
-                    at={(i / messages.length) * MESSAGES_END}
-                  />
-                ))}
-              </motion.ul>
-              <motion.div
-                className="absolute inset-x-3 top-20"
-                style={{ scale: orderScale, opacity: orderOpacity }}
-              >
-                <OrderMessage className="ml-auto w-full" />
-              </motion.div>
+          {/* The owner's phone: Telegram, a chat with the customer */}
+          <div className="relative h-[min(580px,72svh)] w-[min(300px,80vw)] rounded-[2.75rem] bg-[#1c211f] p-[9px] shadow-[0_40px_80px_-40px_rgba(18,55,42,0.5)]">
+            <div className="flex h-full flex-col overflow-hidden rounded-[2.2rem] bg-[#f7f7f7]">
+              <PhoneStatusBar
+                time={done ? CHAT_TIMES[0] : (CHAT_TIMES[shown - 1] ?? CHAT_TIMES[0])}
+              />
+              <TelegramHeader
+                back={tTg("tgChats")}
+                unread={3}
+                title={customer || t("customer")}
+                subtitle={tTg("tgOnline")}
+                subtitleOnline
+                avatar={<TelegramAvatar name={customer || t("customer")} />}
+              />
+              <TelegramWallpaper className="min-h-0 flex-1 overflow-hidden">
+                <div className="relative h-full px-2.5 pt-2">
+                  <TelegramDate label={tTg("tgToday")} />
+                  <motion.ul
+                    className="flex origin-top flex-col gap-1"
+                    style={{ scale: pileScale, opacity: pileOpacity, y: pileY, filter: pileBlur }}
+                  >
+                    {messages.map((text, i) => (
+                      <Bubble
+                        key={i}
+                        text={text}
+                        time={CHAT_TIMES[i] ?? ""}
+                        fromCustomer={i % 2 === 0}
+                        progress={p}
+                        at={
+                          i < VISIBLE_AT_START
+                            ? -1
+                            : ((i - VISIBLE_AT_START + 1) /
+                                (messages.length - VISIBLE_AT_START + 1)) *
+                              MESSAGES_END
+                        }
+                      />
+                    ))}
+                  </motion.ul>
+                  {demo && (
+                    <motion.div
+                      className="absolute inset-x-2.5 top-8"
+                      style={{ scale: orderScale, opacity: orderOpacity }}
+                    >
+                      <TelegramBubble
+                        outgoing={false}
+                        time={CHAT_TIMES[0]}
+                        className="text-[10px] leading-[1.35]"
+                      >
+                        <TelegramText text={demo.message} />
+                      </TelegramBubble>
+                    </motion.div>
+                  )}
+                </div>
+              </TelegramWallpaper>
+              <TelegramComposer placeholder={tTg("tgPlaceholder")} />
             </div>
           </div>
         </div>
@@ -117,11 +191,13 @@ export function ChatCollapse() {
 
 function Bubble({
   text,
+  time,
   fromCustomer,
   progress,
   at,
 }: {
   text: string;
+  time: string;
   fromCustomer: boolean;
   progress: MotionValue<number>;
   at: number;
@@ -129,14 +205,10 @@ function Bubble({
   const opacity = useTransform(progress, [at, at + 0.03], [0, 1]);
   const y = useTransform(progress, [at, at + 0.03], [14, 0]);
   return (
-    <motion.li
-      style={{ opacity, y }}
-      className={cn(
-        "max-w-[82%] rounded-xl px-3 py-1.5 text-[13px] text-[#111b21] shadow-[0_1px_0.5px_rgba(11,20,26,.13)]",
-        fromCustomer ? "rounded-tl-sm bg-white" : "bg-bubble ml-auto rounded-tr-sm",
-      )}
-    >
-      {text}
+    <motion.li style={at < 0 ? undefined : { opacity, y }}>
+      <TelegramBubble outgoing={!fromCustomer} time={time} className="text-[13px]">
+        {text}
+      </TelegramBubble>
     </motion.li>
   );
 }

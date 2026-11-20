@@ -45,7 +45,10 @@
       "customerName": "Aziz",
       "customerAddress": "Chilanzar 9, bldg 14, apt 32",
       "tgStatus": "last seen recently",
-      "tgPlaceholder": "Message"
+      "tgPlaceholder": "Message",
+      "tgChats": "Chats",
+      "tgToday": "Today",
+      "tgOnline": "online"
     },
     "steps": {
       "title": "From menu to first order in three steps",
@@ -205,10 +208,8 @@
     },
     "problem": {
       "eyebrow": "Sound familiar?",
-      "title": "Stop piecing orders together from a chat thread",
+      "title": "8 messages and 19 minutes for one order. At rush hour, that's lost orders.",
       "body": "With Tezda the customer picks from your menu, so the order arrives complete: what, how many, where to and how they'll pay. Read it once and start cooking.",
-      "dmLabel": "Ordering in DMs",
-      "flamiLabel": "Ordering with Tezda",
       "messages": [
         "Hi! Do you have a menu?",
         "Sending you a photo",
@@ -219,8 +220,15 @@
         "Near the market, 3rd entrance",
         "Cash or card?"
       ],
-      "dmStatus": "{count, plural, one {# message} other {# messages}} and the order still isn't complete",
-      "flamiStatus": "1 message with everything in it. Start cooking"
+      "dmStatus": "{count, plural, one {# message} other {# messages}} · {minutes, plural, one {# minute} other {# minutes}}, and the order still isn't complete",
+      "customer": "Customer",
+      "tezdaStatus": "1 message · 0 minutes of back-and-forth. Start cooking.",
+      "facts": {
+        "item": "Dish",
+        "quantity": "Quantity",
+        "address": "Address",
+        "payment": "Payment"
+      }
     },
     "ai": {
       "eyebrow": "Menu from a photo",
