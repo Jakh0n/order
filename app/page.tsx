@@ -332,9 +332,20 @@ export default async function Home() {
               </Link>
             </div>
             <div className="relative mx-auto hidden h-64 w-full max-w-sm sm:block" aria-hidden>
-              <Photo src="/landing/doner.jpg" className="top-6 left-0 -rotate-8" />
-              <Photo src="/landing/shish.jpg" className="top-0 left-1/2 z-10 -translate-x-1/2" />
-              <Photo src="/landing/ayran.jpg" className="top-8 right-0 rotate-8" />
+              {/* Three dishes from the live demo store */}
+              {demo?.products.slice(0, 3).map((p, i) => (
+                <Photo
+                  key={p.id}
+                  src={p.img}
+                  className={
+                    [
+                      "top-6 left-0 -rotate-8",
+                      "top-0 left-1/2 z-10 -translate-x-1/2",
+                      "top-8 right-0 rotate-8",
+                    ][i]
+                  }
+                />
+              ))}
             </div>
           </Reveal>
         </section>
