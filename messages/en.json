@@ -23,30 +23,29 @@
       "customers": "Customers"
     },
     "hero": {
-      "title": "Your menu on one link. Orders straight to your chat.",
-      "lead": "Customers open your menu, pick their food and check out. You get the whole order in WhatsApp or Telegram: items, total, address and a map pin.",
+      "title": "Put an end to messy orders in your chat.",
+      "lead": "Customers pick from your menu themselves. You get one ready message: items, total, address and a map pin. No more \"which one?\" or \"where do you live?\".",
       "cta": "Create my free store",
       "demo": "See a live store",
-      "note": "Free plan with unlimited orders. No card needed.",
+      "note": "Free, with unlimited orders. Open your store today and start taking orders today.",
       "chips": [
-        "0% commission",
-        "Menu from a photo",
-        "Telegram & WhatsApp",
-        "Uzbek, Russian, English"
+        "Address with a map pin",
+        "Every order is saved",
+        "Pre-orders while you're closed",
+        "Menu from a photo"
       ]
     },
     "demo": {
       "open": "Open now",
       "eta": "Delivery 25–35 min",
-      "kebabs": "Kebabs",
-      "sides": "Sides",
-      "drinks": "Drinks",
-      "viewCart": "Send order",
       "items": "{count, plural, one {# item} other {# items}}",
-      "chatStatus": "Business account",
       "newOrder": "New order #{number}",
       "newOrderBody": "{count, plural, one {# item} other {# items}} · {total}",
-      "label": "Animated demo: a customer adds a doner, fries and ayran, then sends the order to the shop on WhatsApp."
+      "label": "Animated demo on the live demo store: a customer adds three dishes, fills in the checkout, picks cash, places the order and sends it to the store's Telegram.",
+      "customerName": "Aziz",
+      "customerAddress": "Chilanzar 9, bldg 14, apt 32",
+      "tgStatus": "last seen recently",
+      "tgPlaceholder": "Message"
     },
     "steps": {
       "title": "From menu to first order in three steps",

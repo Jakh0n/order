@@ -23,30 +23,29 @@
       "customers": "Mijozlar"
     },
     "hero": {
-      "title": "Menyuingiz bitta havolada. Buyurtmalar to'g'ridan-to'g'ri chatga.",
-      "lead": "Mijozlar menyuingizni ochadi, taom tanlaydi va buyurtma beradi. Butun buyurtma WhatsApp yoki Telegram'ingizga keladi: taomlar, summa, manzil va xaritadagi nuqta.",
+      "title": "Chatdagi buyurtmalar tartibsizligiga chek qo'ying.",
+      "lead": "Mijoz menyudan o'zi tanlaydi. Sizga bitta tayyor xabar keladi: taomlar, summa, manzil, xarita nuqtasi. Hech qanday \"qaysi biri?\", \"manzil qayer?\" degan savollarsiz.",
       "cta": "Bepul do'kon ochish",
       "demo": "Namunani ko'rish",
-      "note": "Bepul tarif, buyurtmalar cheklanmagan. Karta kerak emas.",
+      "note": "Bepul, buyurtmalar soni cheklanmagan. Bugun oching va bugunoq buyurtma qabul qiling.",
       "chips": [
-        "0% komissiya",
-        "Rasmdan menyu",
-        "Telegram va WhatsApp",
-        "O'zbek, rus, ingliz"
+        "Manzil + xarita nuqtasi bilan",
+        "Har bir buyurtma saqlanadi",
+        "Yopiq paytda ham oldindan buyurtma",
+        "Menyu rasmdan avtomatik"
       ]
     },
     "demo": {
       "open": "Hozir ochiq",
       "eta": "Yetkazish 25–35 daq",
-      "kebabs": "Kaboblar",
-      "sides": "Garnirlar",
-      "drinks": "Ichimliklar",
-      "viewCart": "Buyurtmani yuborish",
       "items": "{count, plural, other {# ta taom}}",
-      "chatStatus": "Biznes akkaunt",
       "newOrder": "Yangi buyurtma №{number}",
       "newOrderBody": "{count, plural, other {# ta taom}} · {total}",
-      "label": "Animatsion namuna: mijoz donar, kartoshka fri va ayron qo'shadi, so'ng buyurtmani do'konning WhatsApp'iga yuboradi."
+      "label": "Jonli demo do'kondagi animatsion namuna: mijoz uchta taom qo'shadi, buyurtma formasini to'ldiradi, naqd to'lovni tanlaydi, buyurtma beradi va uni do'konning Telegram'iga yuboradi.",
+      "customerName": "Aziz",
+      "customerAddress": "Chilonzor 9-kvartal, 14-uy, 32-xonadon",
+      "tgStatus": "yaqinda tarmoqda edi",
+      "tgPlaceholder": "Xabar"
     },
     "steps": {
       "title": "Menyudan birinchi buyurtmagacha — uch qadam",
