@@ -9,18 +9,16 @@ import { defaultLocale, isLocale, landingPath, type Locale, locales } from "@/i1
 import QRCode from "qrcode";
 
 import { JsonLd } from "@/components/json-ld";
+import { TelegramBubble, TelegramText, TelegramWallpaper } from "@/components/landing/telegram";
+import { formatMoney } from "@/lib/money";
 import { getLandingDemo } from "@/lib/landing-demo";
 import { Faq } from "@/components/landing/faq";
 import { AiImportDemo } from "@/components/landing/ai-import-demo";
-import { CommissionCalculator } from "@/components/landing/commission-calculator";
 import { ChatCollapse } from "@/components/landing/chat-collapse";
-import { ClaimLink } from "@/components/landing/claim-link";
 import { LinkEverywhere } from "@/components/landing/link-everywhere";
 import { Hero } from "@/components/landing/hero";
-import { InAction } from "@/components/landing/in-action";
 import { Logo } from "@/components/landing/logo";
 import { Reveal, StepsTrack } from "@/components/landing/motion-parts";
-import { RelationshipLoop } from "@/components/landing/relationship-loop";
 import { SiteNav } from "@/components/landing/site-nav";
 import { StickyCta } from "@/components/landing/sticky-cta";
 import { SiteAnalytics } from "@/components/site-analytics";
@@ -143,13 +141,23 @@ export default async function Home() {
   ]);
   // The animated phone shows the live demo store's real menu and the real order message
   const demo = await getLandingDemo(isLocale(locale) ? locale : defaultLocale);
+  const firstDish = demo?.products[0];
+  // The real order message, trimmed for step 3 of "how it works": hashtag, items and the total
+  // (the bold line that isn't the hashtag or an item)
+  const messageLines = (demo?.message ?? "").split("\n").filter((line) => line !== "");
+  const totalLine = messageLines.find(
+    (line, i) => i > 0 && line.startsWith("**") && !/^\*\*\d+x\*\*/.test(line),
+  );
+  const messagePreview = [
+    ...messageLines.filter((line, i) => i === 0 || /^\*\*\d+x\*\*/.test(line)),
+    totalLine ?? "",
+  ].join("\n");
   const featureGroups = t.raw("features.groups") as {
     title: string;
     items: { t: string; pro?: boolean }[];
   }[];
   // Demo QR — the live demo store on this site's own domain (APP_URL), never a hardcoded one
   const demoUrl = `${siteOrigin()}/${DEMO_STORE_SLUGS[0]}`;
-  const siteHost = siteOrigin().replace(/^https?:\/\/(www\.)?/, "");
   const qr = await QRCode.toString(demoUrl, {
     type: "svg",
     margin: 0,
@@ -198,18 +206,24 @@ export default async function Home() {
                     visual: (
                       <MiniCard>
                         <div className="flex items-center gap-3">
-                          <div className="relative size-12 shrink-0 overflow-hidden rounded-xl">
-                            <Image
-                              src="/landing/fries.jpg"
-                              alt=""
-                              fill
-                              sizes="48px"
-                              className="object-cover"
-                            />
+                          <div className="relative size-12 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
+                            {firstDish && (
+                              <Image
+                                src={firstDish.img}
+                                alt=""
+                                fill
+                                sizes="48px"
+                                className="object-cover"
+                              />
+                            )}
                           </div>
                           <div className="min-w-0 flex-1 text-left">
-                            <p className="text-sm font-semibold">Fries</p>
-                            <p className="text-forest/60 text-xs tabular-nums">$3.99</p>
+                            <p className="truncate text-sm font-semibold">{firstDish?.name}</p>
+                            <p className="text-forest/60 text-xs tabular-nums">
+                              {firstDish &&
+                                demo &&
+                                formatMoney(firstDish.price, demo.store.currency)}
+                            </p>
                           </div>
                           <span className="text-forest/60 flex items-center gap-1.5 text-[11px]">
                             {t("steps.v1Stock")}
@@ -248,62 +262,16 @@ export default async function Home() {
                     title: t("steps.s3.title"),
                     body: t("steps.s3.body"),
                     visual: (
-                      <div className="bg-chat w-full max-w-[272px] rounded-2xl p-3">
-                        <div className="bg-bubble ml-auto w-[85%] rounded-xl rounded-tr-sm px-3 py-2 text-left text-xs leading-relaxed text-[#111b21] shadow-[0_1px_0.5px_rgba(11,20,26,.13)]">
-                          <b>Order #1043</b>
-                          <span className="mt-1 flex justify-between">
-                            <span>
-                              <b>2x</b> Doner Combo
-                            </span>
-                            <span className="tabular-nums">$25.98</span>
-                          </span>
-                          <b className="flex justify-between">
-                            <span>Total</span>
-                            <span className="tabular-nums">$28.97</span>
-                          </b>
-                        </div>
-                      </div>
+                      <TelegramWallpaper className="w-full max-w-[272px] rounded-2xl p-3">
+                        <TelegramBubble outgoing={false} time="19:42" className="text-left text-xs">
+                          <TelegramText text={messagePreview} />
+                        </TelegramBubble>
+                      </TelegramWallpaper>
                     ),
                   },
                 ]}
               />
             </div>
-          </div>
-        </section>
-
-        {/* Customer relationship: why owners keep their customers with Tezda */}
-        <section id="customers" className="bg-mint/40 scroll-mt-20 py-20 sm:py-28">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <Reveal className="max-w-2xl">
-              <p className="text-primary text-sm font-semibold tracking-wide uppercase">
-                {t("loop.eyebrow")}
-              </p>
-              <h2 className="font-display mt-3 text-4xl font-bold tracking-[-0.03em] sm:text-5xl">
-                {t("loop.title")}
-              </h2>
-              <p className="text-forest/70 mt-5 text-lg leading-relaxed">{t("loop.body")}</p>
-            </Reveal>
-            <Reveal delay={0.08} className="mt-12">
-              <RelationshipLoop />
-            </Reveal>
-          </div>
-        </section>
-
-        {/* Day-to-day features, each with a small live demo */}
-        <section className="py-20 sm:py-28">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <Reveal className="max-w-2xl">
-              <p className="text-primary text-sm font-semibold tracking-wide uppercase">
-                {t("action.eyebrow")}
-              </p>
-              <h2 className="font-display mt-3 text-4xl font-bold tracking-[-0.03em] sm:text-5xl">
-                {t("action.title")}
-              </h2>
-              <p className="text-forest/70 mt-5 text-lg leading-relaxed">{t("action.lead")}</p>
-            </Reveal>
-            <Reveal delay={0.08} className="mt-12">
-              <InAction />
-            </Reveal>
           </div>
         </section>
 
@@ -331,52 +299,18 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Commission calculator */}
-        <section id="commission" className="scroll-mt-20 py-20 sm:py-28">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <Reveal className="max-w-2xl">
-              <p className="text-primary text-sm font-semibold tracking-wide uppercase">
-                {t("commission.eyebrow")}
-              </p>
-              <h2 className="font-display mt-3 text-4xl font-bold tracking-[-0.03em] sm:text-5xl">
-                {t("commission.title")}
-              </h2>
-              <p className="text-forest/70 mt-5 text-lg leading-relaxed">{t("commission.lead")}</p>
-            </Reveal>
-            <Reveal delay={0.08} className="mt-12">
-              <CommissionCalculator
-                avg={
-                  locale === "en"
-                    ? { initial: 15, max: 100, step: 1 }
-                    : { initial: 60000, max: 300000, step: 5000 }
-                }
-                labels={{
-                  orders: t("commission.orders"),
-                  average: t("commission.average"),
-                  rate: t("commission.rate"),
-                  perMonth: t("commission.perMonth"),
-                  perYear: t("commission.perYear"),
-                  unit: t("commission.unit"),
-                }}
+        {/* Where the link goes: Instagram, Telegram channel, table QR, Google Maps */}
+        {demo && (
+          <section className="py-20 sm:py-28">
+            <div className="mx-auto max-w-6xl px-4 sm:px-6">
+              <LinkEverywhere
+                demo={demo}
+                link={demoUrl.replace(/^https?:\/\/(www\.)?/, "")}
+                qrSvg={qr}
               />
-            </Reveal>
-            <Reveal
-              delay={0.12}
-              className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <p className="text-forest/70 max-w-2xl leading-relaxed">{t("commission.note")}</p>
-              <Link
-                href="/signup"
-                className={cn(
-                  buttonVariants({ size: "lg" }),
-                  "h-13 shrink-0 rounded-full px-7 text-base",
-                )}
-              >
-                {t("commission.cta")}
-              </Link>
-            </Reveal>
-          </div>
-        </section>
+            </div>
+          </section>
+        )}
 
         {/* What you get, grouped by the owner's day */}
         <section id="features" className="scroll-mt-20 py-20 sm:py-28">
@@ -425,26 +359,6 @@ export default async function Home() {
             </div>
           </div>
         </section>
-
-        {/* Type your name → your own link, free or taken → claim it */}
-        <section id="claim" className="scroll-mt-20 py-20 sm:py-28">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <ClaimLink host={siteHost} />
-          </div>
-        </section>
-
-        {/* Where the link goes: Instagram, Telegram channel, table QR, Google Maps */}
-        {demo && (
-          <section className="py-20 sm:py-28">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6">
-              <LinkEverywhere
-                demo={demo}
-                link={demoUrl.replace(/^https?:\/\/(www\.)?/, "")}
-                qrSvg={qr}
-              />
-            </div>
-          </section>
-        )}
 
         {/* Pricing */}
         <section id="pricing" className="scroll-mt-20 py-20 sm:py-28">
