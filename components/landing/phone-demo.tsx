@@ -129,6 +129,7 @@ function MenuScreen({
   money: (minor: number) => string;
 }) {
   const t = useTranslations("home.demo");
+  const tCart = useTranslations("cart");
   const added = demo.picks.slice(0, Math.min(step, demo.picks.length));
   const tapping = step >= 1 && step <= demo.picks.length ? demo.picks[step - 1] : null;
   const cartTotal = demo.products
@@ -228,7 +229,7 @@ function MenuScreen({
                   {added.length}
                 </motion.span>
               </span>
-              <span className="min-w-0 flex-1 truncate text-sm font-semibold">{t("viewCart")}</span>
+              <span className="min-w-0 flex-1 truncate text-sm font-semibold">{tCart("view")}</span>
               <span className="text-sm font-semibold tabular-nums">{money(cartTotal)}</span>
             </div>
           </motion.div>
