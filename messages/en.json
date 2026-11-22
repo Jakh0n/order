@@ -756,7 +756,8 @@
     "invalid": "Wrong email or password",
     "noAccount": "Don't have an account?",
     "signupLink": "Sign up",
-    "tooMany": "Too many attempts. Please try again in 15 minutes."
+    "tooMany": "Too many attempts. Please try again in 15 minutes.",
+    "forgot": "Forgot password?"
   },
   "auth": {
     "continueWithGoogle": "Continue with Google",
@@ -764,6 +765,29 @@
     "googleFailed": "Couldn't sign in with Google. Please try again or use email.",
     "signedInAs": "Signed in as <b>{email}</b>",
     "switchAccount": "Not you?"
+  },
+  "passwordReset": {
+    "title": "Reset password",
+    "intro": "Enter your account email and we'll send you a code.",
+    "codeSent": "If an account exists for <b>{email}</b>, we've sent a 6-digit code to it.",
+    "newPassword": "New password",
+    "sendCode": "Send code",
+    "save": "Save and log in",
+    "backToLogin": "Back to login"
+  },
+  "authEmail": {
+    "signup": {
+      "subject": "{code} is your {brand} code",
+      "heading": "Confirm your email",
+      "intro": "Enter this code to finish opening your store:"
+    },
+    "reset": {
+      "subject": "{code} — reset your {brand} password",
+      "heading": "Reset your password",
+      "intro": "Enter this code to set a new password:"
+    },
+    "expires": "The code works for 10 minutes.",
+    "ignore": "If you didn't request this, just ignore this email."
   },
   "adminOrders": {
     "tabs": {
@@ -1062,8 +1086,19 @@
       "telegramInvalid": "Invalid username (5–32 characters: letters, digits, _)",
       "whatsappInvalid": "Invalid number — include the country code, e.g. +15551234567",
       "currencyInvalid": "Invalid currency",
-      "tooMany": "Too many attempts. Please try again a bit later."
-    }
+      "tooMany": "Too many attempts. Please try again a bit later.",
+      "codeWrong": "Wrong code. Check the email and try again.",
+      "codeExpired": "This code has expired. Send a new one.",
+      "emailUnverified": "Please confirm your email first"
+    },
+    "verifyTitle": "Confirm email",
+    "codeSent": "We sent a 6-digit code to <b>{email}</b>",
+    "code": "Code",
+    "checkSpam": "Can't find it? Check your Spam folder.",
+    "confirmCode": "Confirm",
+    "resendCode": "Send a new code",
+    "resendIn": "New code in {seconds}s",
+    "changeEmail": "Change email"
   },
   "errorPage": {
     "title": "Something went wrong",

@@ -49,7 +49,12 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
         />
       </div>
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="password">{t("password")}</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">{t("password")}</Label>
+          <Link href="/admin/reset" className="text-primary text-sm">
+            {t("forgot")}
+          </Link>
+        </div>
         <Input
           id="password"
           name="password"

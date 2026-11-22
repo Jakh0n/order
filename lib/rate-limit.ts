@@ -22,6 +22,11 @@ export const RULES = {
   signupIp: { name: "signup:ip", limit: 5, windowSeconds: 60 * 60 },
   /** "Continue with Google" callback (account lookup / creation) */
   googleAuthIp: { name: "google:ip", limit: 20, windowSeconds: 15 * 60 },
+  /** Emailed 6-digit codes (signup check, password reset): sending costs money and can spam people */
+  emailCodeIp: { name: "email-code:ip", limit: 10, windowSeconds: 60 * 60 },
+  emailCodeEmail: { name: "email-code:email", limit: 5, windowSeconds: 60 * 60 },
+  /** Guessing codes (each code also dies after 5 wrong tries) */
+  codeVerifyIp: { name: "code-verify:ip", limit: 30, windowSeconds: 15 * 60 },
   orderIp: { name: "order:ip", limit: 10, windowSeconds: 10 * 60 },
   orderPhone: { name: "order:phone", limit: 5, windowSeconds: 10 * 60 },
   slugCheckIp: { name: "slug:ip", limit: 60, windowSeconds: 60 },

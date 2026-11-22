@@ -56,7 +56,7 @@ app/
   o/[orderId]/page.tsx        buyurtma holati
   signup/                     ro'yxatdan o'tish ustasi (hisob + do'kon)
   admin/layout.tsx            admin PWA: manifest (/admin.webmanifest, scope /admin/), public/sw.js — push
-  admin/login/                kirish (email + parol)
+  admin/login/                kirish (email + parol, Google); admin/reset/ — parolni tiklash (email kod)
   admin/(panel)/qr/           QR kodlar: do'kon havolasi + stoldan buyurtma (yoqish, stollar soni) + kartochkalar
   admin/tables/               stol kartochkalarini chop etish, A6/A5/A4 ((panel) layout'idan tashqarida)
   admin/print/[orderId]/      80mm: ?type=kitchen (narxsiz, stol katta) | receipt (mijoz cheki); &auto=1 — chop etish oynasi
@@ -85,6 +85,10 @@ lib/
   auth/owner.ts               getCurrentUser, getCurrentOwner / requireOwner, requireSuperadmin, homePathFor
   auth/password.ts            scrypt xesh
   auth/actions.ts             login / logout
+  auth/email-actions.ts       email kodlari: sendSignupCode / verifySignupCode (signup 2-qadami → imzolangan token, signup
+                              uni tekshiradi), requestPasswordReset / resetPassword (/admin/reset); auth/email-code.ts — 6 xonali
+                              kod (HMAC, 10 daqiqa, 5 urinish), auth/token.ts — signToken / readToken
+  email/send.ts               sendEmail — Resend REST (RESEND_API_KEY, EMAIL_FROM); kalitsiz dev'da terminalga chiqadi
   auth/google.ts              "Continue with Google": OAuth (PKCE) — /api/auth/google → callback; googleId bo'yicha,
                               bo'lmasa tasdiqlangan email bo'yicha bog'lanadi; do'koni yo'q → /signup (faqat do'kon qadami, createStore)
   auth/signup-actions.ts      signup (user + store bitta tranzaksiyada), checkSlug
@@ -187,7 +191,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Xatolar: `catch` da foydalanuvchiga do'stona xato qaytarsangiz, `reportError(e, "joy")` ni chaqiring
   (`console.error` emas) — aks holda Sentry'ga tushmaydi. Session Replay yoqilmaydi (checkout formasi).
 - Ommaviy (kirishsiz) yoki qimmat Server Action'lar `rateLimit` bilan cheklanadi (`lib/rate-limit.ts` dagi RULES):
-  login, signup, Google callback, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder, checkPromo, submitReview, shouldAskForReview,
+  login, signup, Google callback, email kod yuborish/tekshirish, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder, checkPromo, submitReview, shouldAskForReview,
   AI menyu importi (menuImportFree 3 / menuImportPro 30 — 30 kunda, do'kon bo'yicha; AI pul turadi). Yangi shunday action qo'shsangiz — qoida qo'shing.
 - Tezlik: bog'langan ma'lumot (include / nested select) o'qilsa — `...JOIN` qo'shing; bir-biriga bog'liq
   bo'lmagan so'rovlarni `Promise.all` bilan parallel qiling. Har bir so'rov bazaga borish = vaqt.
@@ -246,7 +250,8 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Env: `DATABASE_URL` (6543, `pgbouncer=true&connection_limit=3`), `DIRECT_URL` (5432), `AUTH_SECRET`,
   `APP_URL=https://tezda.app`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (secret),
   `NEXT_PUBLIC_SENTRY_DSN`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY` + `VAPID_PRIVATE_KEY` (secret) + `VAPID_SUBJECT` (push),
-  `SUPPORT_TELEGRAM`, `OPENAI_API_KEY` (secret, AI menyu importi), `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` (secret, "Continue with Google"; bo'lmasa tugma yashirin), ixtiyoriy `OPENAI_MODEL` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
+  `SUPPORT_TELEGRAM`, `OPENAI_API_KEY` (secret, AI menyu importi), `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` (secret, "Continue with Google"; bo'lmasa tugma yashirin),
+  `RESEND_API_KEY` (secret) + `EMAIL_FROM` (signup kodi va parol tiklash; production'da kalitsiz email bilan ro'yxatdan o'tib bo'lmaydi), ixtiyoriy `OPENAI_MODEL` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
 - Monitoring: `GET /api/health` (200 = ilova + baza ishlayapti, 503 = baza javob bermayapti) — uptime servisga ulang.
 - Yuklama testi: `BASE_URL=<preview url> npm run loadtest` (k6, `loadtest/storefront.js`), production'ga emas.
 
