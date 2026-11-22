@@ -1791,7 +1791,9 @@
       "noNameColumn": "“Name” ustuni topilmadi. Namuna fayldan boshlang.",
       "tooMany": "Taomlar juda ko'p: ko'pi bilan 50 ta kategoriya va har birida 200 ta taom.",
       "unreadable": "Faylni o'qib bo'lmadi. Uni CSV (UTF-8) qilib saqlang va qayta urinib ko'ring."
-    }
+    },
+    "thousandsWarning": "Narxlar mingda yozilganga o'xshaydi: {fixed} o'rniga {example}?",
+    "timesThousand": "Hammasini 1000 ga ko'paytirish"
   },
   "export": {
     "button": "CSV eksport",

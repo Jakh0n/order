@@ -24,9 +24,11 @@ const INSTRUCTIONS = `You read restaurant / cafe menus from photos or text and r
 Rules:
 - Keep dish and category names exactly as written (same language and spelling). Do not translate.
 - Group dishes under the menu's own categories; if there are none, use one category named after the menu's main section.
-- price: the number shown for the dish in the menu currency, as a decimal (e.g. 8.99 or 25000). Never invent prices: if a dish has no visible price, use null.
+- price: the full amount in the store currency, as a decimal (e.g. 8.99 or 25000). Never invent prices: if a dish has no visible price, use null.
+- Many menus print prices in thousands, especially in KRW, UZS, VND, IDR, KZT: "8,0" / "8.0" / "8" next to dishes, or a note like "x1000", "천원", "ming so'm", "тыс.". Return the full amount (8000), not 8. In such currencies no dish costs under 1000.
 - If a dish lists sizes or variants with different prices (e.g. S 10 / M 12 / L 14), set price to the cheapest one and add a required option group (maxSelect 1) whose option prices are the difference from that cheapest price (0, 2, 4).
 - Extras with their own price ("+cheese 1") go into an optional option group; maxSelect = number of extras.
+- Option names say what the option is ("Extra meat", "Large"). Never use a price as an option name; prices go only in price.
 - description: the short text under the dish, or null. Do not write descriptions yourself.
 - Option group and option names are in the menu's language too (e.g. an Uzbek menu: "O'lcham", "Qo'shimcha"; Russian: "Размер", "Добавки").
 - Ignore phone numbers, addresses, opening hours and decorations.

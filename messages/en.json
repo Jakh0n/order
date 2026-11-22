@@ -1791,7 +1791,9 @@
       "noNameColumn": "No “Name” column found. Start from the example file.",
       "tooMany": "Too many dishes: up to 50 categories and 200 dishes in each.",
       "unreadable": "Couldn't read the file. Save it as CSV (UTF-8) and try again."
-    }
+    },
+    "thousandsWarning": "Prices look like they're in thousands: {example} instead of {fixed}?",
+    "timesThousand": "Multiply all by 1000"
   },
   "export": {
     "button": "Export CSV",
