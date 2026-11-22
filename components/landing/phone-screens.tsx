@@ -1,128 +1,24 @@
 "use client";
 
-import { ArrowLeft, ArrowUp, Bell, Plus, Send, ShoppingBag } from "lucide-react";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
+import { ArrowLeft, Plus, Send, ShoppingBag } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
-import { formatMoney } from "@/lib/money";
 import type { LandingDemo } from "@/lib/landing-demo";
 import { cn } from "@/lib/utils";
 
 import { useTyped } from "./motion-parts";
+import { TELEGRAM_BLUE } from "./telegram";
 
-import {
-  TELEGRAM_BLUE,
-  TelegramAvatar,
-  TelegramBubble,
-  TelegramComposer,
-  TelegramDate,
-  TelegramHeader,
-  TelegramText,
-  TelegramWallpaper,
-} from "./telegram";
-
-/**
- * The whole customer path on the live demo store, ms per step:
- * 0 menu · 1–3 add dishes · 4 tap the cart · 5 checkout, contact typed in · 6 choose payment ·
- * 7 "Place order" · 8 "send your order" · 9 Telegram, message ready · 10 sent + the owner is notified
- */
-const STEPS = [1400, 850, 850, 1000, 650, 2100, 1100, 800, 1700, 1500, 4200];
-const FINAL_STEP = STEPS.length - 1;
-
-type Screen = "menu" | "checkout" | "send" | "telegram";
-
-function screenOf(step: number): Screen {
-  if (step <= 4) return "menu";
-  if (step <= 7) return "checkout";
-  if (step === 8) return "send";
-  return "telegram";
-}
-
-export function PhoneDemo({ demo }: { demo: LandingDemo }) {
-  const t = useTranslations("home.demo");
-  const reduce = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.35 });
-  const [step, setStep] = useState(0);
-
-  // Plays only while visible; reduced motion shows the sent order instead.
-  useEffect(() => {
-    if (reduce || !inView) return;
-    const id = setTimeout(() => setStep((s) => (s + 1) % STEPS.length), STEPS[step]);
-    return () => clearTimeout(id);
-  }, [step, inView, reduce]);
-
-  const shown = reduce ? FINAL_STEP : step;
-  const screen = screenOf(shown);
-  const money = (minor: number) => formatMoney(minor, demo.store.currency);
-
-  return (
-    <div ref={ref} className="relative" role="img" aria-label={t("label")}>
-      {/* Phone */}
-      <div className="relative mx-auto aspect-[9/19] w-[272px] rounded-[2.75rem] bg-[#1c211f] p-[9px] shadow-[0_50px_90px_-40px_rgba(18,55,42,0.55),0_0_0_1px_rgba(255,255,255,0.06)_inset] sm:w-[300px]">
-        <div className="relative h-full overflow-hidden rounded-[2.2rem] bg-white" aria-hidden>
-          <div className="absolute top-2 left-1/2 z-30 h-[22px] w-[84px] -translate-x-1/2 rounded-full bg-[#1c211f]" />
-          <StatusBar light={screen === "menu"} />
-
-          <AnimatePresence initial={false} mode="popLayout">
-            <motion.div
-              key={screen}
-              className="absolute inset-0"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-30%", opacity: 0.4 }}
-              transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
-            >
-              {screen === "menu" && <MenuScreen demo={demo} step={shown} money={money} />}
-              {screen === "checkout" && (
-                <CheckoutScreen demo={demo} step={shown} money={money} animate={!reduce} />
-              )}
-              {screen === "send" && <SendScreen tapping={!reduce} />}
-              {screen === "telegram" && <TelegramScreen demo={demo} sent={shown === FINAL_STEP} />}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* The owner's side: the order arrives in their Telegram */}
-      <AnimatePresence>
-        {shown === FINAL_STEP && (
-          <motion.div
-            className="absolute top-20 -right-4 z-10 w-56 rounded-2xl bg-white p-3 shadow-[0_20px_50px_-20px_rgba(18,55,42,0.45)] ring-1 ring-black/5 sm:-right-16 lg:-right-24"
-            initial={reduce ? false : { opacity: 0, x: 24, scale: 0.9 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, transition: { duration: 0.2 } }}
-            transition={{ type: "spring", stiffness: 300, damping: 24, delay: 1.1 }}
-            aria-hidden
-          >
-            <div className="flex items-center gap-2.5">
-              <span
-                className="flex size-9 shrink-0 items-center justify-center rounded-xl text-white"
-                style={{ backgroundColor: TELEGRAM_BLUE }}
-              >
-                <Bell className="size-4" />
-              </span>
-              <div className="min-w-0 text-left">
-                <p className="text-sm font-semibold">
-                  {t("newOrder", { number: demo.orderNumber })}
-                </p>
-                <p className="text-muted-foreground text-xs tabular-nums">
-                  {t("newOrderBody", { count: demo.picks.length, total: money(demo.total) })}
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
+// Phone screens of the customer path on the live demo store, driven by `step`
+// (0 menu · 1–3 add dishes · 4 tap the cart · 5 checkout, contact typed in · 6 choose payment ·
+// 7 "Place order"). Used by the landing explainer video.
 
 // ---------- Menu ----------
 
-function MenuScreen({
+export function MenuScreen({
   demo,
   step,
   money,
@@ -244,7 +140,7 @@ function MenuScreen({
 
 // ---------- Checkout ----------
 
-function CheckoutScreen({
+export function CheckoutScreen({
   demo,
   step,
   money,
@@ -388,7 +284,7 @@ function Row({ left, right, muted }: { left: string; right: string; muted?: bool
 
 // ---------- "Send your order" ----------
 
-function SendScreen({ tapping }: { tapping: boolean }) {
+export function SendScreen({ tapping }: { tapping: boolean }) {
   const t = useTranslations("order");
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 bg-white px-5 text-center">
@@ -414,74 +310,9 @@ function SendScreen({ tapping }: { tapping: boolean }) {
   );
 }
 
-// ---------- Telegram ----------
-
-function TelegramScreen({ demo, sent }: { demo: LandingDemo; sent: boolean }) {
-  const t = useTranslations("home.demo");
-  return (
-    <div className="flex h-full flex-col bg-[#f7f7f7]">
-      {/* Room for the phone's own status bar and notch */}
-      <div className="h-9 shrink-0" />
-      <TelegramHeader
-        back={t("tgChats")}
-        title={demo.store.name}
-        subtitle={t("tgStatus")}
-        avatar={<TelegramAvatar name={demo.store.name} src={demo.store.logoUrl} />}
-      />
-
-      <TelegramWallpaper className="flex min-h-0 flex-1 flex-col justify-end overflow-hidden p-2.5">
-        <div className="relative">
-          <TelegramDate label={t("tgToday")} />
-          <AnimatePresence>
-            {sent && (
-              <motion.div
-                initial={{ opacity: 0, y: 40, scale: 0.92 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ type: "spring", stiffness: 380, damping: 30 }}
-              >
-                <TelegramBubble
-                  outgoing
-                  time="19:42"
-                  className="max-w-[94%] text-[9.5px] leading-[1.35]"
-                >
-                  <TelegramText text={demo.message} />
-                </TelegramBubble>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </TelegramWallpaper>
-
-      {/* The ready message waits in the field for one tap on Send */}
-      <TelegramComposer
-        placeholder={t("tgPlaceholder")}
-        send={
-          sent ? undefined : (
-            <motion.span
-              className="relative flex size-7 shrink-0 items-center justify-center rounded-full text-white"
-              style={{ backgroundColor: TELEGRAM_BLUE }}
-              animate={{ scale: [1, 1, 0.85, 1] }}
-              transition={{ duration: 1.3, times: [0, 0.75, 0.87, 1] }}
-            >
-              <TapRipple className="inset-0 size-7" delay={1} />
-              <ArrowUp className="size-4" strokeWidth={2.5} />
-            </motion.span>
-          )
-        }
-      >
-        {sent ? undefined : (
-          <span className="line-clamp-3">
-            <TelegramText text={demo.message} />
-          </span>
-        )}
-      </TelegramComposer>
-    </div>
-  );
-}
-
 // ---------- Shared ----------
 
-function TapRipple({ className, delay = 0 }: { className?: string; delay?: number }) {
+export function TapRipple({ className, delay = 0 }: { className?: string; delay?: number }) {
   return (
     <motion.span
       className={cn("pointer-events-none absolute size-8 rounded-full bg-white/45", className)}
@@ -492,7 +323,7 @@ function TapRipple({ className, delay = 0 }: { className?: string; delay?: numbe
   );
 }
 
-function StatusBar({ light }: { light: boolean }) {
+export function StatusBar({ light }: { light: boolean }) {
   return (
     <div
       className={cn(
