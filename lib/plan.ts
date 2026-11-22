@@ -15,11 +15,6 @@ export const BILLING_GRACE_MS = 2 * 24 * 60 * 60 * 1000;
 /** Yearly Pro = 10 months (2 months free) */
 export const PRO_PRICE_YEARLY_USD = 150;
 
-/** Founding offer: the first FOUNDING_STORES stores get Pro free for FOUNDING_PRO_MONTHS months,
- *  then keep PRO_PRICE_USD while they stay. Applied by hand in /superadmin. */
-export const FOUNDING_STORES = 100;
-export const FOUNDING_PRO_MONTHS = 6;
-
 export function planOf(
   store: { plan: "FREE" | "PAID"; paidUntil: Date | null },
   now: Date = new Date(),

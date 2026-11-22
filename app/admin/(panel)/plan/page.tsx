@@ -9,8 +9,6 @@ import { openBillingPortal, startCheckout } from "@/lib/billing/actions";
 import { billingEnabled } from "@/lib/billing/polar";
 import {
   BILLING_GRACE_MS,
-  FOUNDING_PRO_MONTHS,
-  FOUNDING_STORES,
   FREE_MONTHLY_ORDERS,
   planOf,
   PRO_PRICE_USD,
@@ -166,15 +164,6 @@ async function Plan({ searchParams }: { searchParams: Promise<{ billing?: string
           current={pro}
           currentLabel={t("yourPlan")}
         >
-          {!pro && (
-            <p className="bg-primary/10 rounded-lg px-3 py-2 text-sm">
-              {t(online ? "billing.founding" : "founding", {
-                count: FOUNDING_STORES,
-                months: FOUNDING_PRO_MONTHS,
-                code: "FOUNDING",
-              })}
-            </p>
-          )}
           {online ? (
             subscribed ? (
               <p className="text-muted-foreground text-center text-sm">{t("billing.renewsAuto")}</p>
