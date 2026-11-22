@@ -2,7 +2,6 @@
 
 import { Check, CircleAlert, X } from "lucide-react";
 import {
-  type MotionValue,
   motion,
   useMotionValueEvent,
   useReducedMotion,
@@ -59,7 +58,7 @@ export function ChatCollapse({ demo }: { demo: LandingDemo | null }) {
   // The pile squeezes up and fades; the order grows in its place
   const pileScale = useTransform(p, [...COLLAPSE], [1, 0.35]);
   const pileOpacity = useTransform(p, [...COLLAPSE], [1, 0]);
-  const pileY = useTransform(p, [...COLLAPSE], [0, -80]);
+  const pileY = useTransform(p, [...COLLAPSE], [0, -40]);
   const pileBlur = useTransform(p, [...COLLAPSE], ["blur(0px)", "blur(6px)"]);
   const orderScale = useTransform(p, [...ORDER_IN], [0.7, 1]);
   const orderOpacity = useTransform(p, [...ORDER_IN], [0, 1]);
@@ -70,8 +69,10 @@ export function ChatCollapse({ demo }: { demo: LandingDemo | null }) {
   const customer = demo?.customer.name ?? "";
 
   return (
-    <div ref={ref} className="relative h-[260vh]">
-      <div className="sticky top-0 flex h-svh items-center justify-center py-16">
+    // data-hide-sticky-cta: the bottom signup bar would cover the phone while the story is pinned
+    <div ref={ref} className="relative h-[260vh]" data-hide-sticky-cta>
+      {/* pt clears the fixed header (h-16) so the checklist is never under it */}
+      <div className="sticky top-0 flex h-svh items-center justify-center pt-20 pb-6 lg:py-16">
         <div className="flex w-full flex-col items-center gap-5 lg:flex-row lg:items-center lg:justify-center lg:gap-14">
           {/* What this order cost so far + what's still missing */}
           <div
@@ -127,7 +128,7 @@ export function ChatCollapse({ demo }: { demo: LandingDemo | null }) {
           </div>
 
           {/* The owner's phone: Telegram, a chat with the customer */}
-          <div className="relative h-[min(580px,72svh)] w-[min(300px,80vw)] rounded-[2.75rem] bg-[#1c211f] p-[9px] shadow-[0_40px_80px_-40px_rgba(18,55,42,0.5)]">
+          <div className="relative h-[min(580px,calc(100svh-17rem))] w-[min(300px,80vw)] lg:h-[min(580px,calc(100svh-8rem))] rounded-[2.75rem] bg-[#1c211f] p-[9px] shadow-[0_40px_80px_-40px_rgba(18,55,42,0.5)]">
             <div className="flex h-full flex-col overflow-hidden rounded-[2.2rem] bg-[#f7f7f7]">
               <PhoneStatusBar
                 time={done ? CHAT_TIMES[0] : (CHAT_TIMES[shown - 1] ?? CHAT_TIMES[0])}
@@ -141,32 +142,27 @@ export function ChatCollapse({ demo }: { demo: LandingDemo | null }) {
                 avatar={<TelegramAvatar name={customer || t("customer")} />}
               />
               <TelegramWallpaper className="min-h-0 flex-1 overflow-hidden">
-                <div className="relative h-full px-2.5 pt-2">
+                {/* Like Telegram: messages sit at the bottom by the composer; older ones go off the top */}
+                <div className="relative flex h-full flex-col justify-end px-2.5 pt-2 pb-2">
                   <TelegramDate label={tTg("tgToday")} />
                   <motion.ul
-                    className="flex origin-top flex-col gap-1"
+                    className="flex origin-bottom flex-col gap-1"
                     style={{ scale: pileScale, opacity: pileOpacity, y: pileY, filter: pileBlur }}
                   >
-                    {messages.map((text, i) => (
+                    {/* Only messages sent so far: unsent ones would take space at the bottom */}
+                    {messages.slice(0, shown).map((text, i) => (
                       <Bubble
                         key={i}
                         text={text}
                         time={CHAT_TIMES[i] ?? ""}
                         fromCustomer={i % 2 === 0}
-                        progress={p}
-                        at={
-                          i < VISIBLE_AT_START
-                            ? -1
-                            : ((i - VISIBLE_AT_START + 1) /
-                                (messages.length - VISIBLE_AT_START + 1)) *
-                              MESSAGES_END
-                        }
+                        animate={i >= VISIBLE_AT_START}
                       />
                     ))}
                   </motion.ul>
                   {demo && (
                     <motion.div
-                      className="absolute inset-x-2.5 top-8"
+                      className="absolute inset-x-2.5 bottom-2 origin-bottom"
                       style={{ scale: orderScale, opacity: orderOpacity }}
                     >
                       <TelegramBubble
@@ -193,19 +189,21 @@ function Bubble({
   text,
   time,
   fromCustomer,
-  progress,
-  at,
+  animate,
 }: {
   text: string;
   time: string;
   fromCustomer: boolean;
-  progress: MotionValue<number>;
-  at: number;
+  /** Slides in when it arrives (the first messages are there from the start) */
+  animate: boolean;
 }) {
-  const opacity = useTransform(progress, [at, at + 0.03], [0, 1]);
-  const y = useTransform(progress, [at, at + 0.03], [14, 0]);
   return (
-    <motion.li style={at < 0 ? undefined : { opacity, y }}>
+    <motion.li
+      layout="position"
+      initial={animate ? { opacity: 0, y: 14 } : false}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+    >
       <TelegramBubble outgoing={!fromCustomer} time={time} className="text-[13px]">
         {text}
       </TelegramBubble>

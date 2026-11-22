@@ -14,7 +14,12 @@ export function StickyCta({ label, note }: { label: string; note: string }) {
 
   useMotionValueEvent(scrollY, "change", (y) => {
     const nearEnd = y + window.innerHeight > document.documentElement.scrollHeight - 700;
-    setShow(y > 640 && !nearEnd);
+    // Step aside while a pinned scroll story (the phone mockup) fills the screen
+    const pinned = [...document.querySelectorAll("[data-hide-sticky-cta]")].some((el) => {
+      const r = el.getBoundingClientRect();
+      return r.top < window.innerHeight * 0.5 && r.bottom > window.innerHeight * 0.5;
+    });
+    setShow(y > 640 && !nearEnd && !pinned);
   });
 
   return (
