@@ -1528,7 +1528,8 @@
       "sectionsInvalid": "Check the sections",
       "linkInvalid": "Link must start with https://",
       "dateInvalid": "Invalid date",
-      "linkLabelRequired": "Enter a label"
+      "linkLabelRequired": "Enter a label",
+      "stale": "This page was changed elsewhere (another tab or device). Nothing was saved — reload to see the latest version."
     },
     "tabs": {
       "storefront": "Storefront",

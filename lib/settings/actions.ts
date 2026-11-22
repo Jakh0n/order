@@ -5,6 +5,8 @@ import { refresh, updateTag } from "next/cache";
 import { requireOwner } from "@/lib/auth/owner";
 import { prisma } from "@/lib/db";
 import { isPro } from "@/lib/plan";
+import { DESIGN_SELECT, designFormValues } from "@/lib/settings/design-values";
+import { mergeEdits } from "@/lib/settings/merge";
 import { deleteMenuImage, menuImagePrefix } from "@/lib/storage";
 import { storeCacheTag } from "@/lib/storefront";
 import {
@@ -100,10 +102,22 @@ export async function saveTableSettings(input: TableSettingsInput): Promise<Tabl
 }
 
 export type DesignResult =
-  { ok: true } | { ok: false; error: "invalid" | "server"; fieldErrors?: Record<string, string> };
+  | { ok: true; kept: boolean }
+  | {
+      ok: false;
+      error: "invalid" | "server" | "stale";
+      fieldErrors?: Record<string, string>;
+      /** stale: fields changed both in this editor and elsewhere */
+      conflicts?: string[];
+    };
 
 /** Design page: name, logo, cover, description, announcement, colors, menu layout */
-export async function saveDesign(input: DesignInput): Promise<DesignResult> {
+/**
+ * base = the values the editor was loaded with. Only fields the owner changed are written, so
+ * a value saved meanwhile elsewhere (another tab, a teammate) isn't overwritten by a stale form;
+ * a field changed in both places stops the save ("stale").
+ */
+export async function saveDesign(input: DesignInput, base: DesignInput): Promise<DesignResult> {
   const { store } = await requireOwner();
   const parsed = designSchema.safeParse(input);
   if (!parsed.success) {
@@ -124,35 +138,50 @@ export async function saveDesign(input: DesignInput): Promise<DesignResult> {
     }
   }
 
-  const [current, ownCategories] = await Promise.all([
-    prisma.store.findUnique({
-      where: { id: store.id },
-      select: { logoUrl: true, coverUrl: true },
-    }),
+  const [row, ownCategories] = await Promise.all([
+    prisma.store.findUnique({ where: { id: store.id }, select: DESIGN_SELECT }),
     prisma.category.findMany({ where: { storeId: store.id }, select: { id: true } }),
   ]);
-  if (!current) return { ok: false, error: "server" };
+  if (!row) return { ok: false, error: "server" };
+  const current = row;
   // Only this store's categories can be pinned
   const own = new Set(ownCategories.map((c) => c.id));
   data.pinnedCategoryIds = data.pinnedCategoryIds.filter((id) => own.has(id));
 
+  // Compare like with like: base and the database go through the same schema as the input
+  const baseParsed = designSchema.safeParse(base);
+  const nowParsed = designSchema.safeParse(designFormValues(row));
+  let patch: Partial<typeof data> = data;
+  let kept = false;
+  if (baseParsed.success && nowParsed.success) {
+    const merged = mergeEdits(baseParsed.data, data, nowParsed.data);
+    if (merged.conflicts.length > 0) {
+      return { ok: false, error: "stale", conflicts: merged.conflicts.map(String) };
+    }
+    patch = merged.patch;
+    kept = merged.kept.length > 0;
+  }
+
   try {
-    await prisma.store.update({ where: { id: store.id }, data });
+    if (Object.keys(patch).length > 0) {
+      await prisma.store.update({ where: { id: store.id }, data: patch });
+    }
   } catch (e) {
     reportError(e, "saveDesign");
     return { ok: false, error: "server" };
   }
 
-  // Replaced images are deleted from storage
-  if (current.logoUrl && current.logoUrl !== data.logoUrl) {
+  // Replaced images are deleted from storage (only ones this save actually replaced)
+  if ("logoUrl" in patch && current.logoUrl && current.logoUrl !== patch.logoUrl) {
     await deleteMenuImage(store.id, current.logoUrl);
   }
-  if (current.coverUrl && current.coverUrl !== data.coverUrl) {
+  if ("coverUrl" in patch && current.coverUrl && current.coverUrl !== patch.coverUrl) {
     await deleteMenuImage(store.id, current.coverUrl);
   }
   updateTag(storeCacheTag(store.slug));
   refresh();
-  return { ok: true };
+  // kept: newer values from elsewhere stayed — the editor reloads to show them
+  return { ok: true, kept };
 }
 
 /** Sidebar switch: pause / resume taking orders without opening Settings */

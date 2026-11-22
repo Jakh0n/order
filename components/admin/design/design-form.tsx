@@ -117,8 +117,19 @@ export function DesignForm({
     return () => window.removeEventListener("message", onReady);
   }, [draft, color, frameKey, tab]);
 
+  // What the form was loaded with (or last saved) — the server writes only what changed since
+  const [base, setBase] = useState(defaultValues);
+
   async function onSubmit(values: DesignInput) {
-    const result = await saveDesign(values);
+    const result = await saveDesign(values, base);
+    if (!result.ok && result.error === "stale") {
+      // Changed here and elsewhere: nothing was saved — reload to see the newer version
+      toast.error(t("errors.stale"), {
+        duration: 15_000,
+        action: { label: t("reload"), onClick: () => window.location.reload() },
+      });
+      return;
+    }
     if (!result.ok) {
       const fields = Object.entries(result.fieldErrors ?? {});
       for (const [field, message] of fields) setError(field as keyof DesignInput, { message });
@@ -126,7 +137,13 @@ export function DesignForm({
       return;
     }
     toast.success(t("saved"));
+    if (result.kept) {
+      // Newer values saved elsewhere stayed in place — show them instead of the old ones
+      window.location.reload();
+      return;
+    }
     reset(values);
+    setBase(values);
   }
 
   const saveButton = (
