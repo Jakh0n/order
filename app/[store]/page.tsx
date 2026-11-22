@@ -18,6 +18,7 @@ import { badgeHref } from "@/lib/attribution";
 import { storeJsonLd, topItemNames } from "@/lib/seo";
 import { BRAND, MARK } from "@/lib/brand";
 import { StoreTheme } from "@/components/storefront/store-theme";
+import { clip, plainText } from "@/lib/seo-text";
 import { getStorefront, getStorePixel } from "@/lib/storefront";
 
 export async function generateMetadata({ params }: PageProps<"/[store]">): Promise<Metadata> {
@@ -29,14 +30,23 @@ export async function generateMetadata({ params }: PageProps<"/[store]">): Promi
 
   const t = await getTranslations("seo");
   const items = topItemNames(data);
-  const description = [
-    items.length
-      ? t("storeDescription", { name: store.name, items: items.join(", ") })
-      : t("storeDescriptionNoItems", { name: store.name }),
-    store.address && t("storeLocated", { address: store.address }),
-  ]
-    .filter(Boolean)
-    .join(" ");
+  // The owner's own description leads (it has their keywords: "halal", "24/7"…), then dishes
+  const own = plainText(store.description);
+  const description = clip(
+    [
+      own,
+      items.length
+        ? t(own ? "storeMenuItems" : "storeDescription", {
+            name: store.name,
+            items: items.join(", "),
+          })
+        : !own && t("storeDescriptionNoItems", { name: store.name }),
+      store.address && t("storeLocated", { address: store.address }),
+    ]
+      .filter(Boolean)
+      .join(" "),
+    300,
+  );
   const title = t("storeTitle", { name: store.name });
 
   // og:image comes from app/[store]/opengraph-image.tsx

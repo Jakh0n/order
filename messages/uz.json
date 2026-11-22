@@ -1138,7 +1138,10 @@
     "storeLocated": "{address}.",
     "ogStoreCta": "Onlayn buyurtma",
     "ogHomeTitle": "Menyuingiz bitta havolada. Buyurtmalar to'g'ridan-to'g'ri chatga.",
-    "ogHomeBody": "Kichik ovqat bizneslari uchun onlayn menyu va buyurtma — buyurtmalar WhatsApp yoki Telegram'ga keladi."
+    "ogHomeBody": "Kichik ovqat bizneslari uchun onlayn menyu va buyurtma — buyurtmalar WhatsApp yoki Telegram'ga keladi.",
+    "storeMenuItems": "Menyuda: {items} va boshqalar.",
+    "ogOpen24": "24/7 ochiq",
+    "ogHours": "Ochiq {open}–{close}"
   },
   "receipt": {
     "label": "To'lov cheki",

@@ -5,7 +5,8 @@ import sharp from "sharp";
 import { defaultLocale, isLocale } from "@/i18n/config";
 import { siteOrigin } from "@/lib/app-url";
 import { reportError } from "@/lib/report-error";
-import { firstProductImage, topItemNames } from "@/lib/seo";
+import { productImages, topItemNames } from "@/lib/seo";
+import { clip, firstLine, isAlwaysOpen } from "@/lib/seo-text";
 import { BRAND, BRAND_NAME } from "@/lib/brand";
 import { isHexColor } from "@/lib/design";
 import { getStoreLocale, getStorefront } from "@/lib/storefront";
@@ -14,8 +15,9 @@ export const size = { width: 1200, height: 630 };
 // JPEG: a photo as PNG is ~750 KB, too big for chat link previews
 export const contentType = "image/jpeg";
 
-const FOREST = "#12372a";
-const GREEN = "#16a05d";
+const INK = BRAND.ink;
+const MUTED = "#55555f";
+const PHOTO_W = 480;
 
 /** The link preview shown when a store link is shared in WhatsApp, Telegram, Instagram or search. */
 export default async function Image({ params }: { params: Promise<{ store: string }> }) {
@@ -32,13 +34,26 @@ export default async function Image({ params }: { params: Promise<{ store: strin
   }
 
   const { store } = data;
-  const [photo, logo] = await Promise.all([
-    loadPhoto(firstProductImage(data) ?? store.coverUrl, 480, 630),
-    loadPhoto(store.logoUrl, 192, 192),
+  // Collage: one big dish on top, two below (or a single photo / the cover)
+  const urls = productImages(data, 3);
+  const [logo, ...photos] = await Promise.all([
+    loadPhoto(store.logoUrl, 192, 192, "contain"),
+    ...(urls.length >= 3
+      ? [
+          loadPhoto(urls[0], PHOTO_W, 360),
+          loadPhoto(urls[1], PHOTO_W / 2, 270),
+          loadPhoto(urls[2], PHOTO_W / 2, 270),
+        ]
+      : [loadPhoto(urls[0] ?? store.coverUrl, PHOTO_W, 630)]),
   ]);
-  // The store's brand colour, like its page; platform green otherwise
-  const accent = isHexColor(store.brandColor) ? store.brandColor : GREEN;
-  const items = topItemNames(data, 3).join(" · ");
+  const [big, small1, small2] = photos;
+  // The store's brand colour, like its page; Tezda red otherwise (the page's default too)
+  const accent = isHexColor(store.brandColor) ? store.brandColor : BRAND.red;
+  // The owner's own tagline ("Halal kebab, open 24/7") beats a list of dish names
+  const tagline = clip(firstLine(store.description), 90) || topItemNames(data, 3).join(" · ");
+  const hours = isAlwaysOpen(store)
+    ? t("ogOpen24")
+    : t("ogHours", { open: store.openTime ?? "", close: store.closeTime ?? "" });
   const host = new URL(siteOrigin()).host.replace(/^www\./, "");
 
   return toJpeg(
@@ -59,7 +74,14 @@ export default async function Image({ params }: { params: Promise<{ store: strin
               alt=""
               width={96}
               height={96}
-              style={{ width: 96, height: 96, borderRadius: 28, objectFit: "cover" }}
+              style={{
+                width: 96,
+                height: 96,
+                borderRadius: 28,
+                objectFit: "contain",
+                background: "#ffffff",
+                border: "2px solid #ececec",
+              }}
             />
           ) : (
             <div
@@ -84,19 +106,52 @@ export default async function Image({ params }: { params: Promise<{ store: strin
               marginTop: 36,
               fontSize: store.name.length > 22 ? 60 : 76,
               fontWeight: 700,
-              color: FOREST,
+              color: INK,
               lineHeight: 1.05,
               letterSpacing: -2,
             }}
           >
             {store.name}
           </div>
-          {items && (
-            <div style={{ marginTop: 20, fontSize: 30, color: "#4b6359", lineHeight: 1.3 }}>
-              {items}
+          {tagline && (
+            <div style={{ marginTop: 20, fontSize: 32, color: MUTED, lineHeight: 1.3 }}>
+              {tagline}
             </div>
           )}
-          <div style={{ display: "flex", flexDirection: "column", marginTop: 40, gap: 18 }}>
+          <div style={{ display: "flex", gap: 12, marginTop: 24 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "8px 18px",
+                borderRadius: 999,
+                background: "#e8f7ee",
+                color: "#137a43",
+                fontSize: 24,
+                fontWeight: 600,
+              }}
+            >
+              <div style={{ width: 10, height: 10, borderRadius: 999, background: "#16a05d" }} />
+              {hours}
+            </div>
+            {store.rating.count > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  padding: "8px 18px",
+                  borderRadius: 999,
+                  background: "#fff6e0",
+                  color: "#8a5a00",
+                  fontSize: 24,
+                  fontWeight: 600,
+                }}
+              >
+                {`★ ${store.rating.average.toFixed(1)} (${store.rating.count})`}
+              </div>
+            )}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", marginTop: 36, gap: 18 }}>
             <div
               style={{
                 display: "flex",
@@ -112,19 +167,57 @@ export default async function Image({ params }: { params: Promise<{ store: strin
             >
               {t("ogStoreCta")}
             </div>
-            <div style={{ fontSize: 26, color: "#4b6359", whiteSpace: "nowrap" }}>
+            <div style={{ fontSize: 26, color: MUTED, whiteSpace: "nowrap" }}>
               {`${host}/${store.slug}`}
             </div>
           </div>
         </div>
-        {photo && (
+        {big && !small1 && (
           <img
-            src={photo}
+            src={big}
             alt=""
-            width={480}
+            width={PHOTO_W}
             height={630}
-            style={{ width: 480, height: 630, objectFit: "cover" }}
+            style={{ width: PHOTO_W, height: 630 }}
           />
+        )}
+        {big && small1 && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: PHOTO_W,
+              height: 630,
+              gap: 6,
+              background: "#ffffff",
+            }}
+          >
+            <img
+              src={big}
+              alt=""
+              width={PHOTO_W}
+              height={357}
+              style={{ width: PHOTO_W, height: 357 }}
+            />
+            <div style={{ display: "flex", gap: 6 }}>
+              <img
+                src={small1}
+                alt=""
+                width={237}
+                height={267}
+                style={{ width: 237, height: 267 }}
+              />
+              {small2 && (
+                <img
+                  src={small2}
+                  alt=""
+                  width={237}
+                  height={267}
+                  style={{ width: 237, height: 267 }}
+                />
+              )}
+            </div>
+          </div>
         )}
       </div>,
       size,
@@ -150,16 +243,19 @@ async function toJpeg(image: ImageResponse): Promise<Response> {
  * is resized and re-encoded as JPEG. A failed download means no photo, not a broken preview.
  */
 async function loadPhoto(
-  url: string | null,
+  url: string | null | undefined,
   width: number,
   height: number,
+  /** contain: the whole picture on white (logos); cover: fill the box (dish photos) */
+  fit: "cover" | "contain" = "cover",
 ): Promise<string | null> {
   if (!url) return null;
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
     if (!res.ok || !res.headers.get("content-type")?.startsWith("image/")) return null;
     const jpeg = await sharp(Buffer.from(await res.arrayBuffer()))
-      .resize(width, height, { fit: "cover" })
+      .resize(width, height, { fit, background: "#ffffff" })
+      .flatten({ background: "#ffffff" })
       .jpeg({ quality: 82 })
       .toBuffer();
     return `data:image/jpeg;base64,${jpeg.toString("base64")}`;

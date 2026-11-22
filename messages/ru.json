@@ -1138,7 +1138,10 @@
     "storeLocated": "{address}.",
     "ogStoreCta": "Заказать онлайн",
     "ogHomeTitle": "Ваше меню по одной ссылке. Заказы — прямо в чат.",
-    "ogHomeBody": "Онлайн-меню и заказы для небольшого фуд-бизнеса — заказы приходят в WhatsApp или Telegram."
+    "ogHomeBody": "Онлайн-меню и заказы для небольшого фуд-бизнеса — заказы приходят в WhatsApp или Telegram.",
+    "storeMenuItems": "В меню: {items} и другое.",
+    "ogOpen24": "Открыто 24/7",
+    "ogHours": "Открыто {open}–{close}"
   },
   "receipt": {
     "label": "Чек об оплате",

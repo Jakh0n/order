@@ -5,6 +5,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import type { StorefrontData } from "@/lib/menu-types";
 import { toMajor } from "@/lib/money";
+import { isAlwaysOpen, plainText } from "@/lib/seo-text";
 
 const ALL_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -12,6 +13,22 @@ const ALL_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satur
 export function topItemNames(data: StorefrontData, count = 4): string[] {
   return data.categories
     .flatMap((c) => c.products.filter((p) => p.isAvailable).map((p) => p.name))
+    .slice(0, count);
+}
+
+/**
+ * A few menu photos for the link preview collage and JSON-LD: one per category first
+ * (variety — a section often shares one photo), then the rest in menu order.
+ */
+export function productImages(data: StorefrontData, count: number): string[] {
+  const perCategory = data.categories
+    .map((c) => c.products.find((p) => p.imageUrl)?.imageUrl)
+    .filter((u): u is string => !!u);
+  // Neighbouring sections often look alike (wrap / cheesy wrap): skip ahead for the third
+  const spread = perCategory.length >= 5 ? [0, 1, 4, 2, 3].map((i) => perCategory[i]) : perCategory;
+  const all = data.categories.flatMap((c) => c.products.map((p) => p.imageUrl));
+  return [...new Set([...spread, ...perCategory, ...all])]
+    .filter((u): u is string => !!u)
     .slice(0, count);
 }
 
@@ -31,7 +48,11 @@ export function firstProductImage(data: StorefrontData): string | null {
 export function storeJsonLd(data: StorefrontData, origin: string) {
   const { store, categories } = data;
   const url = `${origin}/${store.slug}`;
-  const image = store.logoUrl ?? firstProductImage(data);
+  // Logo, cover and a few dishes — search engines pick the best fit
+  const images = [store.logoUrl, store.coverUrl, ...productImages(data, 3)].filter(
+    (u): u is string => !!u,
+  );
+  const description = plainText(store.description);
 
   return {
     "@context": "https://schema.org",
@@ -39,20 +60,19 @@ export function storeJsonLd(data: StorefrontData, origin: string) {
     "@id": url,
     name: store.name,
     url,
-    ...(image && { image }),
+    ...(images.length > 0 && { image: images }),
+    ...(description && { description }),
     ...(store.phone && { telephone: store.phone }),
     ...(store.address && {
       address: { "@type": "PostalAddress", streetAddress: store.address },
     }),
-    ...(store.openTime &&
-      store.closeTime && {
-        openingHoursSpecification: {
-          "@type": "OpeningHoursSpecification",
-          dayOfWeek: ALL_DAYS,
-          opens: store.openTime,
-          closes: store.closeTime,
-        },
-      }),
+    // No hours set = open around the clock (schema.org: 00:00–23:59 every day)
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ALL_DAYS,
+      opens: isAlwaysOpen(store) ? "00:00" : store.openTime,
+      closes: isAlwaysOpen(store) ? "23:59" : store.closeTime,
+    },
     currenciesAccepted: store.currency,
     hasMenu: {
       "@type": "Menu",
