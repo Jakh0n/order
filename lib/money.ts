@@ -88,3 +88,29 @@ export function toMinor(major: number, currency: string): number {
 export function priceStep(currency: string): number {
   return 1 / 10 ** currencyDigits(currency);
 }
+
+/**
+ * Currencies where no dish costs under 1 000 units (KRW, UZS, VND...). Menus there often print
+ * prices in thousands ("8,0" = ₩8 000), which an AI reading the photo takes literally.
+ */
+const THOUSANDS_CURRENCIES = new Set([
+  "KRW",
+  "UZS",
+  "VND",
+  "IDR",
+  "KZT",
+  "MNT",
+  "LAK",
+  "PYG",
+  "COP",
+  "UGX",
+  "TZS",
+  "IRR",
+]);
+
+/** Prices (major units) that look like they were written in thousands: all under 1 000 in such a currency */
+export function looksLikeThousands(prices: number[], currency: string): boolean {
+  if (!THOUSANDS_CURRENCIES.has(currency.toUpperCase())) return false;
+  const priced = prices.filter((p) => p > 0);
+  return priced.length > 0 && priced.every((p) => p < 1000);
+}

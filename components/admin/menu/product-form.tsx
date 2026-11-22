@@ -13,6 +13,7 @@ import {
   useFieldArray,
   useForm,
   type UseFormRegister,
+  useWatch,
 } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -26,7 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { deleteProduct, saveProduct } from "@/lib/menu/admin-actions";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/components/currency-provider";
-import { priceStep } from "@/lib/money";
+import { formatMoney, priceStep, toMinor } from "@/lib/money";
 import {
   type ProductFormData,
   type ProductFormInput,
@@ -67,6 +68,8 @@ export function ProductForm({
     defaultValues,
   });
   const groups = useFieldArray({ control, name: "optionGroups" });
+  // Shown under the field as the customer sees it — "8.000" in a number field is 8, not 8 000
+  const price = useWatch({ control, name: "price" });
 
   const errorText: ErrorText = (message) => {
     if (!message) return null;
@@ -128,6 +131,11 @@ export function ProductForm({
             label={t("price", { currency })}
             htmlFor="price"
             error={errorText(errors.price?.message)}
+            hint={
+              typeof price === "number" && Number.isFinite(price) && price > 0
+                ? formatMoney(toMinor(price, currency), currency)
+                : undefined
+            }
           >
             <Input
               id="price"
@@ -407,17 +415,20 @@ function Field({
   label,
   htmlFor,
   error,
+  hint,
   children,
 }: {
   label: string;
   htmlFor?: string;
   error?: string | null;
+  hint?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-1.5">
       <Label htmlFor={htmlFor}>{label}</Label>
       {children}
+      {hint && !error && <p className="text-muted-foreground text-xs tabular-nums">{hint}</p>}
       <ErrorLine text={error} />
     </div>
   );

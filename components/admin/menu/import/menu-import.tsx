@@ -27,7 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import type { ImportDraft, MenuProgress } from "@/lib/ai/menu-schema";
 import { readMenuCsv } from "@/lib/menu/csv-actions";
 import { importMenu } from "@/lib/menu/import-actions";
-import { priceStep } from "@/lib/money";
+import { formatMoney, looksLikeThousands, priceStep, toMinor } from "@/lib/money";
 import { shrinkImage } from "@/lib/shrink-image";
 import { cn } from "@/lib/utils";
 
@@ -208,6 +208,27 @@ export function MenuImport({
   const included = draft?.reduce((s, c) => s + c.items.filter((i) => i.include).length, 0) ?? 0;
   const noPrice =
     draft?.reduce((s, c) => s + c.items.filter((i) => i.include && !i.price).length, 0) ?? 0;
+  // "8,0" on a Korean menu is ₩8 000 — offer to fix all prices at once
+  const thousands =
+    !!draft &&
+    looksLikeThousands(
+      draft.flatMap((c) => c.items.filter((i) => i.include).map((i) => i.price ?? 0)),
+      currency,
+    );
+  const timesThousand = () =>
+    setDraft((d) =>
+      d!.map((c) => ({
+        ...c,
+        items: c.items.map((i) => ({
+          ...i,
+          price: (i.price ?? 0) * 1000,
+          optionGroups: i.optionGroups.map((g) => ({
+            ...g,
+            options: g.options.map((o) => ({ ...o, price: o.price * 1000 })),
+          })),
+        })),
+      })),
+    );
 
   // ---------- Step 2: review ----------
   if (draft) {
@@ -225,6 +246,21 @@ export function MenuImport({
             <p className="text-muted-foreground">{t("reviewHint")}</p>
           </div>
         </div>
+
+        {thousands && (
+          <div className="flex flex-col gap-3 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900 sm:flex-row sm:items-center dark:bg-amber-950 dark:text-amber-200">
+            <AlertTriangle className="size-4 shrink-0" aria-hidden />
+            <p className="flex-1">
+              {t("thousandsWarning", {
+                example: formatMoney(toMinor(8, currency), currency),
+                fixed: formatMoney(toMinor(8000, currency), currency),
+              })}
+            </p>
+            <Button type="button" size="sm" variant="outline" onClick={timesThousand}>
+              {t("timesThousand")}
+            </Button>
+          </div>
+        )}
 
         {noPrice > 0 && (
           <p className="flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
@@ -318,9 +354,14 @@ export function MenuImport({
                         {currency}
                       </span>
                     </div>
-                    {!item.price && item.include && (
+                    {!item.price && item.include ? (
                       <span className="text-xs text-amber-700 dark:text-amber-400">
                         {t("noPrice")}
+                      </span>
+                    ) : (
+                      // What the customer will see — catches "8.000" read as 8
+                      <span className="text-muted-foreground text-right text-xs tabular-nums">
+                        {formatMoney(toMinor(item.price ?? 0, currency), currency)}
                       </span>
                     )}
                   </div>

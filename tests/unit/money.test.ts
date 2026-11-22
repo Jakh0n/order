@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { currencyDigits, formatMoney, isValidCurrency, priceStep, toMajor, toMinor } from "@/lib/money";
+import {
+  currencyDigits,
+  formatMoney,
+  isValidCurrency,
+  looksLikeThousands,
+  priceStep,
+  toMajor,
+  toMinor,
+} from "@/lib/money";
 
 describe("currencyDigits", () => {
   it("knows minor units", () => {
@@ -44,5 +52,23 @@ describe("isValidCurrency", () => {
     expect(isValidCurrency("UZS")).toBe(true);
     expect(isValidCurrency("usd")).toBe(false);
     expect(isValidCurrency("ABCD")).toBe(false);
+  });
+});
+
+describe("looksLikeThousands", () => {
+  it("flags a KRW / UZS menu read as 8, 12, 13", () => {
+    expect(looksLikeThousands([8, 12, 13], "KRW")).toBe(true);
+    expect(looksLikeThousands([25, 0, 32.5], "uzs")).toBe(true);
+  });
+  it("leaves real prices alone", () => {
+    expect(looksLikeThousands([8000, 12000], "KRW")).toBe(false);
+    expect(looksLikeThousands([8, 12000], "KRW")).toBe(false);
+  });
+  it("ignores currencies where small prices are normal", () => {
+    expect(looksLikeThousands([8.99, 12], "USD")).toBe(false);
+    expect(looksLikeThousands([800, 950], "JPY")).toBe(false);
+  });
+  it("needs at least one price", () => {
+    expect(looksLikeThousands([0, 0], "KRW")).toBe(false);
   });
 });
