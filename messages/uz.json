@@ -1528,7 +1528,8 @@
       "sectionsInvalid": "Bo'limlarni tekshiring",
       "linkInvalid": "Havola https:// bilan boshlanishi kerak",
       "dateInvalid": "Noto'g'ri sana",
-      "linkLabelRequired": "Nomini kiriting"
+      "linkLabelRequired": "Nomini kiriting",
+      "stale": "Bu sahifa boshqa joyda o'zgartirildi (boshqa tab yoki qurilma). Hech narsa saqlanmadi — so'nggi versiyani ko'rish uchun sahifani yangilang."
     },
     "tabs": {
       "storefront": "Vitrina",
