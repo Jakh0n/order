@@ -9,6 +9,7 @@ import { ATTRIBUTION_COOKIE, decodeAttribution } from "@/lib/attribution";
 import { getCurrentUser } from "@/lib/auth/owner";
 import { hashPassword } from "@/lib/auth/password";
 import { createSession } from "@/lib/auth/session";
+import { readToken, SIGNUP_EMAIL_TOKEN } from "@/lib/auth/token";
 import { prisma } from "@/lib/db";
 import { clientIp, rateLimit, RULES } from "@/lib/rate-limit";
 import { slugError } from "@/lib/slug";
@@ -78,17 +79,21 @@ function fieldErrorsOf(error: z.ZodError, prefix = "") {
 
 export type SignupResult = {
   ok: false;
-  error: "invalid" | "emailTaken" | "slugTaken" | "tooMany" | "server";
+  error: "invalid" | "emailTaken" | "emailUnverified" | "slugTaken" | "tooMany" | "server";
   fieldErrors?: Record<string, string>;
 };
 
-/** Hisob + do'kon bitta tranzaksiyada. Muvaffaqiyatda sessiya ochib /admin/menu ga yo'naltiradi. */
-export async function signup(input: SignupInput): Promise<SignupResult> {
+/** Hisob + do'kon bitta tranzaksiyada (email kod bilan tasdiqlangan bo'lishi shart). Muvaffaqiyatda sessiya ochib /admin/menu ga yo'naltiradi. */
+export async function signup(input: SignupInput, emailToken: string): Promise<SignupResult> {
   const parsed = signupSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: "invalid", fieldErrors: fieldErrorsOf(parsed.error) };
   }
   const { email, password, store } = parsed.data;
+  // The email was confirmed with an emailed code (lib/auth/email-actions.ts)
+  if (readToken(SIGNUP_EMAIL_TOKEN, emailToken) !== email) {
+    return { ok: false, error: "emailUnverified" };
+  }
 
   // Soxta do'konlar oqimidan himoya
   if (!(await rateLimit(RULES.signupIp, await clientIp()))) return { ok: false, error: "tooMany" };

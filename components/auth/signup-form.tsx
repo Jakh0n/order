@@ -10,11 +10,13 @@ import { toast } from "sonner";
 
 import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/auth/password-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { defaultLocale, isLocale } from "@/i18n/config";
 import { logout } from "@/lib/auth/actions";
+import { sendSignupCode, verifySignupCode } from "@/lib/auth/email-actions";
 import { checkSlug, createStore, signup, type SlugCheck } from "@/lib/auth/signup-actions";
 import { POPULAR_CURRENCIES } from "@/lib/money";
 import { slugify } from "@/lib/slug";
@@ -44,7 +46,14 @@ export function SignupForm({
   const tLegal = useTranslations("legal");
   const currentLocale = useLocale();
   const locale = isLocale(currentLocale) ? currentLocale : defaultLocale;
-  const [step, setStep] = useState<1 | 2>(account ? 2 : 1);
+  // 1 account → 2 email code → 3 store (Google: straight to 3)
+  const [step, setStep] = useState<1 | 2 | 3>(account ? 3 : 1);
+  const [code, setCode] = useState("");
+  const [codeError, setCodeError] = useState<string | null>(null);
+  const [codeBusy, setCodeBusy] = useState<"send" | "verify" | null>(null);
+  const [resendIn, setResendIn] = useState(0);
+  /** Signed proof that this email was confirmed (bound to the email on the server) */
+  const [verified, setVerified] = useState<{ email: string; token: string } | null>(null);
   const [slugTouched, setSlugTouched] = useState(false);
   const [slugStatus, setSlugStatus] = useState<SlugStatus>({ state: "idle" });
 
@@ -55,6 +64,7 @@ export function SignupForm({
     trigger,
     setValue,
     setError,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<SignupInput>({
     // With an account only the store part is validated (email/password stay empty)
@@ -108,14 +118,63 @@ export function SignupForm({
     return t.has(`errors.${message}`) ? t(`errors.${message}`) : t("errors.invalid");
   };
 
+  // "Send a new code" countdown
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const id = setTimeout(() => setResendIn((s) => s - 1), 1000);
+    return () => clearTimeout(id);
+  }, [resendIn]);
+
+  const typedEmail = () => getValues("email").trim().toLowerCase();
+
+  async function sendCode() {
+    setCodeBusy("send");
+    const result = await sendSignupCode(typedEmail());
+    setCodeBusy(null);
+    if (result.ok) {
+      setCode("");
+      setCodeError(null);
+      setResendIn(60);
+      return true;
+    }
+    if (result.error === "emailTaken" || result.error === "emailInvalid") {
+      setError("email", { message: result.error });
+      setStep(1);
+    } else {
+      toast.error(t(`errors.${result.error}`));
+    }
+    return false;
+  }
+
   async function next() {
-    if (await trigger(["email", "password"])) setStep(2);
+    if (!(await trigger(["email", "password"]))) return;
+    // Already confirmed this email (came back to step 1 without changing it)
+    if (verified?.email === typedEmail()) return setStep(3);
+    if (await sendCode()) setStep(2);
+  }
+
+  async function verify() {
+    setCodeBusy("verify");
+    const result = await verifySignupCode(typedEmail(), code);
+    setCodeBusy(null);
+    if (result.ok) {
+      setVerified({ email: typedEmail(), token: result.token });
+      setStep(3);
+    } else {
+      setCodeError(t(`errors.${result.error}`));
+    }
   }
 
   async function onSubmit(values: SignupInput) {
     // Muvaffaqiyatda server /admin/menu ga yo'naltiradi — bu yerga faqat xato qaytadi
-    const result = account ? await createStore(values.store) : await signup(values);
+    const result = account
+      ? await createStore(values.store)
+      : await signup(values, verified?.token ?? "");
     if (!result) return;
+    if (result.error === "emailUnverified") {
+      setVerified(null);
+      setStep(1);
+    }
     for (const [path, message] of Object.entries(result.fieldErrors ?? {})) {
       setError(path as FieldPath<SignupInput>, { message });
     }
@@ -133,9 +192,9 @@ export function SignupForm({
   const slugTaken = slugStatus.state === "done" && !slugStatus.available;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6">
       {account ? (
-        <div className="bg-muted/50 flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm">
+        <div className="bg-muted/60 flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm">
           <span className="min-w-0 truncate">
             {tAuth.rich("signedInAs", {
               email: account.email,
@@ -151,11 +210,24 @@ export function SignupForm({
           </button>
         </div>
       ) : (
-        <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span className="text-foreground font-medium">
-            {step === 1 ? t("accountTitle") : t("storeTitle")}
-          </span>
-          <span>{t("step", { current: step, total: 2 })}</span>
+        <div className="flex flex-col gap-2.5">
+          <div className="flex gap-1.5" aria-hidden>
+            {[1, 2, 3].map((n) => (
+              <span
+                key={n}
+                className={cn(
+                  "h-1 flex-1 rounded-full transition-colors duration-300",
+                  n <= step ? "bg-primary" : "bg-muted",
+                )}
+              />
+            ))}
+          </div>
+          <div className="text-muted-foreground flex items-center justify-between text-sm">
+            <span className="text-foreground font-medium">
+              {step === 1 ? t("accountTitle") : step === 2 ? t("verifyTitle") : t("storeTitle")}
+            </span>
+            <span>{t("step", { current: step, total: 3 })}</span>
+          </div>
         </div>
       )}
 
@@ -177,6 +249,7 @@ export function SignupForm({
             id="email"
             type="email"
             autoComplete="email"
+            className="h-11"
             aria-invalid={!!errors.email}
             {...register("email")}
           />
@@ -187,20 +260,85 @@ export function SignupForm({
           hint={t("passwordHint")}
           error={errorText(errors.password?.message)}
         >
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete="new-password"
+            className="h-11"
             aria-invalid={!!errors.password}
             {...register("password")}
           />
         </Field>
-        <Button type="button" size="lg" className="h-11" onClick={next}>
+        <Button
+          type="button"
+          size="lg"
+          className="h-11"
+          onClick={next}
+          disabled={codeBusy === "send"}
+        >
+          {codeBusy === "send" && <Loader2 className="animate-spin" />}
           {t("next")}
         </Button>
       </div>
 
       <div className={cn("flex flex-col gap-4", step !== 2 && "hidden")}>
+        <p className="text-muted-foreground text-sm">
+          {t.rich("codeSent", {
+            email: getValues("email"),
+            b: (chunks) => <span className="text-foreground font-medium">{chunks}</span>,
+          })}
+        </p>
+        <Field label={t("code")} htmlFor="code" hint={t("checkSpam")} error={codeError}>
+          <Input
+            id="code"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={7}
+            placeholder="123456"
+            className="h-12 text-center font-mono text-xl tracking-[0.4em]"
+            aria-invalid={!!codeError}
+            value={code}
+            onChange={(e) => {
+              setCode(e.target.value.replace(/[^\d]/g, "").slice(0, 6));
+              setCodeError(null);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                if (code.length === 6) verify();
+              }
+            }}
+          />
+        </Field>
+        <Button
+          type="button"
+          size="lg"
+          className="h-11"
+          disabled={code.length !== 6 || codeBusy !== null}
+          onClick={verify}
+        >
+          {codeBusy === "verify" && <Loader2 className="animate-spin" />}
+          {t("confirmCode")}
+        </Button>
+        <div className="flex items-center justify-between text-sm">
+          <button
+            type="button"
+            className="text-primary font-medium disabled:text-muted-foreground disabled:font-normal"
+            disabled={resendIn > 0 || codeBusy !== null}
+            onClick={sendCode}
+          >
+            {resendIn > 0 ? t("resendIn", { seconds: resendIn }) : t("resendCode")}
+          </button>
+          <button
+            type="button"
+            className="text-muted-foreground"
+            onClick={() => setStep(1)}
+          >
+            {t("changeEmail")}
+          </button>
+        </div>
+      </div>
+
+      <div className={cn("flex flex-col gap-4", step !== 3 && "hidden")}>
         <Field
           label={t("storeName")}
           htmlFor="storeName"
@@ -210,13 +348,14 @@ export function SignupForm({
             id="storeName"
             placeholder={t("storeNamePlaceholder")}
             maxLength={80}
+            className="h-11"
             aria-invalid={!!errors.store?.storeName}
             {...register("store.storeName")}
           />
         </Field>
 
         <Field label={t("slug")} htmlFor="slug" hint={t("slugHint")} error={errorText(slugError)}>
-          <div className="focus-within:border-ring focus-within:ring-ring/50 flex items-center rounded-lg border focus-within:ring-3">
+          <div className="focus-within:border-ring focus-within:ring-ring/50 flex h-11 items-center rounded-lg border focus-within:ring-3">
             <span className="text-muted-foreground shrink-0 pl-2.5 text-sm">{host}/</span>
             <input
               id="slug"
@@ -224,7 +363,7 @@ export function SignupForm({
               autoCorrect="off"
               spellCheck={false}
               maxLength={40}
-              className="h-9 min-w-0 flex-1 bg-transparent px-1 text-sm outline-none"
+              className="h-full min-w-0 flex-1 bg-transparent px-1 text-base outline-none md:text-sm"
               aria-invalid={!!slugError || slugTaken}
               {...register("store.slug", {
                 onChange: (e) => {
@@ -257,7 +396,7 @@ export function SignupForm({
         >
           <select
             id="currency"
-            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full rounded-lg border bg-transparent px-2.5 text-sm outline-none focus-visible:ring-3"
+            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-11 w-full rounded-lg border bg-transparent px-2.5 text-base outline-none md:text-sm focus-visible:ring-3"
             {...register("store.currency")}
           >
             {POPULAR_CURRENCIES.map((code) => (
@@ -306,6 +445,7 @@ export function SignupForm({
               placeholder={t("telegramPlaceholder")}
               autoCapitalize="off"
               autoCorrect="off"
+              className="h-11"
               aria-invalid={!!errors.store?.telegramUsername}
               {...register("store.telegramUsername")}
             />
@@ -321,6 +461,7 @@ export function SignupForm({
               id="whatsappNumber"
               type="tel"
               placeholder={t("whatsappPlaceholder")}
+              className="h-11"
               aria-invalid={!!errors.store?.whatsappNumber}
               {...register("store.whatsappNumber")}
             />

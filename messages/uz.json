@@ -756,7 +756,10 @@
     "invalid": "Email yoki parol noto'g'ri",
     "noAccount": "Akkauntingiz yo'qmi?",
     "signupLink": "Ro'yxatdan o'tish",
-    "tooMany": "Urinishlar juda ko'p. 15 daqiqadan keyin qayta urinib ko'ring."
+    "tooMany": "Urinishlar juda ko'p. 15 daqiqadan keyin qayta urinib ko'ring.",
+    "forgot": "Parolni unutdingizmi?",
+    "welcome": "Xush kelibsiz",
+    "subtitle": "Yangi buyurtmalarni ko'rish va menyuni boshqarish uchun kiring."
   },
   "auth": {
     "continueWithGoogle": "Google orqali davom etish",
@@ -764,6 +767,44 @@
     "googleFailed": "Google orqali kirib bo'lmadi. Qaytadan urinib ko'ring yoki email bilan kiring.",
     "signedInAs": "<b>{email}</b> sifatida kirdingiz",
     "switchAccount": "Siz emasmisiz?"
+  },
+  "authShell": {
+    "home": "Bosh sahifa",
+    "panelTitle": "Menyungiz bitta havolada. Buyurtmalar to'g'ri chatga.",
+    "benefit1": "Bepul tarif, buyurtmalar cheklanmagan",
+    "benefit2": "Buyurtmalar Telegram yoki WhatsApp'ga keladi",
+    "benefit3": "AI qog'oz menyuni rasmdan o'qiydi",
+    "orderFrom": "Telegram",
+    "orderTime": "hozirgina",
+    "orderTitle": "Yangi buyurtma #128 · Yetkazish",
+    "orderItems": "2 × Chicken burger, 1 × Fri, 1 × Limonad",
+    "orderMeta": "Naqd · 12:30",
+    "orderTotal": "$24.50",
+    "showPassword": "Parolni ko'rsatish",
+    "hidePassword": "Parolni yashirish"
+  },
+  "passwordReset": {
+    "title": "Parolni tiklash",
+    "intro": "Hisobingiz emailini kiriting — kod yuboramiz.",
+    "codeSent": "Agar <b>{email}</b> bilan hisob bo'lsa, unga 6 xonali kod yubordik.",
+    "newPassword": "Yangi parol",
+    "sendCode": "Kod yuborish",
+    "save": "Saqlash va kirish",
+    "backToLogin": "Kirish sahifasiga qaytish"
+  },
+  "authEmail": {
+    "signup": {
+      "subject": "{code} — {brand} kodingiz",
+      "heading": "Emailni tasdiqlang",
+      "intro": "Do'kon ochishni yakunlash uchun shu kodni kiriting:"
+    },
+    "reset": {
+      "subject": "{code} — {brand} parolini tiklash",
+      "heading": "Parolni tiklash",
+      "intro": "Yangi parol o'rnatish uchun shu kodni kiriting:"
+    },
+    "expires": "Kod 10 daqiqa amal qiladi.",
+    "ignore": "Agar buni siz so'ramagan bo'lsangiz, xatni e'tiborsiz qoldiring."
   },
   "adminOrders": {
     "tabs": {
@@ -1062,8 +1103,20 @@
       "telegramInvalid": "Noto'g'ri username (5–32 belgi: harflar, raqamlar, _)",
       "whatsappInvalid": "Noto'g'ri raqam — mamlakat kodini qo'shing, masalan +998901234567",
       "currencyInvalid": "Noto'g'ri valyuta",
-      "tooMany": "Urinishlar juda ko'p. Birozdan keyin urinib ko'ring."
-    }
+      "tooMany": "Urinishlar juda ko'p. Birozdan keyin urinib ko'ring.",
+      "codeWrong": "Kod noto'g'ri. Xatni tekshirib, qaytadan urinib ko'ring.",
+      "codeExpired": "Kodning muddati tugadi. Yangisini yuboring.",
+      "emailUnverified": "Avval emailni tasdiqlang"
+    },
+    "verifyTitle": "Emailni tasdiqlang",
+    "codeSent": "<b>{email}</b> manziliga 6 xonali kod yubordik",
+    "code": "Kod",
+    "checkSpam": "Xat topilmadimi? «Spam» papkasini tekshiring.",
+    "confirmCode": "Tasdiqlash",
+    "resendCode": "Yangi kod yuborish",
+    "resendIn": "Yangi kod {seconds} soniyadan keyin",
+    "changeEmail": "Emailni o'zgartirish",
+    "subtitle": "Bepul, buyurtmalar cheklanmagan. Taxminan 5 daqiqa vaqt oladi."
   },
   "errorPage": {
     "title": "Nimadir xato ketdi",

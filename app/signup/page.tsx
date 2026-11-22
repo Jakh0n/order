@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { SignupForm } from "@/components/auth/signup-form";
-import { LanguageSwitcher } from "@/components/language-switcher";
+import { AuthShell } from "@/components/auth/auth-shell";
 import { SiteAnalytics } from "@/components/site-analytics";
 import { getRequestOrigin } from "@/lib/app-url";
 import { isGoogleEnabled } from "@/lib/auth/google";
@@ -15,28 +15,15 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
-export default function SignupPage({ searchParams }: PageProps<"/signup">) {
+export default async function SignupPage({ searchParams }: PageProps<"/signup">) {
+  const t = await getTranslations("signup");
   return (
-    <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-6 px-4 py-12">
-      <Header />
+    <AuthShell title={t("title")} subtitle={t("subtitle")}>
       <Suspense fallback={<SignupForm host="" googleEnabled={isGoogleEnabled()} />}>
         <SignupFormWithHost searchParams={searchParams} />
       </Suspense>
       <SiteAnalytics />
-    </main>
-  );
-}
-
-async function Header() {
-  const t = await getTranslations("signup");
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <div>
-        <p className="text-muted-foreground text-sm">order</p>
-        <h1 className="text-xl font-semibold">{t("title")}</h1>
-      </div>
-      <LanguageSwitcher />
-    </div>
+    </AuthShell>
   );
 }
 

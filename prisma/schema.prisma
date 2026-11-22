@@ -412,3 +412,23 @@ model Review {
 
   @@index([storeId, isHidden, createdAt])
 }
+
+enum EmailCodePurpose {
+  SIGNUP
+  RESET
+}
+
+/// One-time 6-digit email code (signup email check, password reset). Only an HMAC of the code is stored.
+model EmailCode {
+  id        String           @id @default(cuid())
+  email     String
+  purpose   EmailCodePurpose
+  codeHash  String
+  /// Wrong guesses; the code dies after 5
+  attempts  Int              @default(0)
+  expiresAt DateTime
+  createdAt DateTime         @default(now())
+
+  @@index([email, purpose])
+  @@index([expiresAt])
+}
