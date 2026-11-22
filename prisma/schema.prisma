@@ -67,6 +67,8 @@ model User {
   email        String   @unique
   name         String?
   passwordHash String?
+  /// Google account id ("sub") — "Continue with Google"; null for email + password only
+  googleId     String?  @unique
   role         Role     @default(OWNER)
   stores       Store[]
   createdAt    DateTime @default(now())

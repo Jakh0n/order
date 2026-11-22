@@ -7,6 +7,7 @@ import { SignupForm } from "@/components/auth/signup-form";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { SiteAnalytics } from "@/components/site-analytics";
 import { getRequestOrigin } from "@/lib/app-url";
+import { isGoogleEnabled } from "@/lib/auth/google";
 import { getCurrentUser, homePathFor } from "@/lib/auth/owner";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -17,11 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function SignupPage({ searchParams }: PageProps<"/signup">) {
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-6 px-4 py-12">
-      <Suspense>
-        <RedirectIfLoggedIn />
-      </Suspense>
       <Header />
-      <Suspense fallback={<SignupForm host="" />}>
+      <Suspense fallback={<SignupForm host="" googleEnabled={isGoogleEnabled()} />}>
         <SignupFormWithHost searchParams={searchParams} />
       </Suspense>
       <SiteAnalytics />
@@ -42,12 +40,6 @@ async function Header() {
   );
 }
 
-async function RedirectIfLoggedIn() {
-  const current = await getCurrentUser();
-  if (current) redirect(homePathFor(current.user.role, !!current.store));
-  return null;
-}
-
 /**
  * Slug oldidagi domen ("order.uz/") — so'rovdan, localhost bo'lib qolmasligi uchun.
  * ?name= — the landing's "claim your link" passes the store name typed there.
@@ -57,8 +49,25 @@ async function SignupFormWithHost({
 }: {
   searchParams: PageProps<"/signup">["searchParams"];
 }) {
-  const [origin, params] = await Promise.all([getRequestOrigin(), searchParams]);
+  const [origin, params, current] = await Promise.all([
+    getRequestOrigin(),
+    searchParams,
+    getCurrentUser(),
+  ]);
+  // Signed in with Google but no store yet → only the store step; otherwise go home
+  if (current && (current.store || current.user.role === "SUPERADMIN")) {
+    redirect(homePathFor(current.user.role, !!current.store));
+  }
   const host = origin.replace(/^https?:\/\//, "");
   const name = typeof params.name === "string" ? params.name.trim().slice(0, 60) : "";
-  return <SignupForm host={host} initialStoreName={name} />;
+  const error = typeof params.error === "string" ? params.error : undefined;
+  return (
+    <SignupForm
+      host={host}
+      initialStoreName={name}
+      googleEnabled={isGoogleEnabled()}
+      googleError={error}
+      account={current ? { email: current.user.email } : undefined}
+    />
+  );
 }

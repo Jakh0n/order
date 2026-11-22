@@ -85,6 +85,8 @@ lib/
   auth/owner.ts               getCurrentUser, getCurrentOwner / requireOwner, requireSuperadmin, homePathFor
   auth/password.ts            scrypt xesh
   auth/actions.ts             login / logout
+  auth/google.ts              "Continue with Google": OAuth (PKCE) — /api/auth/google → callback; googleId bo'yicha,
+                              bo'lmasa tasdiqlangan email bo'yicha bog'lanadi; do'koni yo'q → /signup (faqat do'kon qadami, createStore)
   auth/signup-actions.ts      signup (user + store bitta tranzaksiyada), checkSlug
   report-error.ts             reportError — try/catch'da yutilgan xatolarni Sentry'ga yuborish
   sentry-options.ts           Sentry sozlamalari (dataCollection: shaxsiy ma'lumot o'chiq)
@@ -185,7 +187,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Xatolar: `catch` da foydalanuvchiga do'stona xato qaytarsangiz, `reportError(e, "joy")` ni chaqiring
   (`console.error` emas) — aks holda Sentry'ga tushmaydi. Session Replay yoqilmaydi (checkout formasi).
 - Ommaviy (kirishsiz) yoki qimmat Server Action'lar `rateLimit` bilan cheklanadi (`lib/rate-limit.ts` dagi RULES):
-  login, signup, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder, checkPromo, submitReview, shouldAskForReview,
+  login, signup, Google callback, checkSlug, createOrder, rasm yuklash, chek yuklash, reorder, checkPromo, submitReview, shouldAskForReview,
   AI menyu importi (menuImportFree 3 / menuImportPro 30 — 30 kunda, do'kon bo'yicha; AI pul turadi). Yangi shunday action qo'shsangiz — qoida qo'shing.
 - Tezlik: bog'langan ma'lumot (include / nested select) o'qilsa — `...JOIN` qo'shing; bir-biriga bog'liq
   bo'lmagan so'rovlarni `Promise.all` bilan parallel qiling. Har bir so'rov bazaga borish = vaqt.
@@ -244,7 +246,7 @@ npm run user:role -- you@mail.uz SUPERADMIN   # superadmin qilish (yoki OWNER)
 - Env: `DATABASE_URL` (6543, `pgbouncer=true&connection_limit=3`), `DIRECT_URL` (5432), `AUTH_SECRET`,
   `APP_URL=https://tezda.app`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (secret),
   `NEXT_PUBLIC_SENTRY_DSN`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY` + `VAPID_PRIVATE_KEY` (secret) + `VAPID_SUBJECT` (push),
-  `SUPPORT_TELEGRAM`, `OPENAI_API_KEY` (secret, AI menyu importi), ixtiyoriy `OPENAI_MODEL` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
+  `SUPPORT_TELEGRAM`, `OPENAI_API_KEY` (secret, AI menyu importi), `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` (secret, "Continue with Google"; bo'lmasa tugma yashirin), ixtiyoriy `OPENAI_MODEL` ("Pro'ga o'tish" tugmasi uchun username), ixtiyoriy `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN`.
 - Monitoring: `GET /api/health` (200 = ilova + baza ishlayapti, 503 = baza javob bermayapti) — uptime servisga ulang.
 - Yuklama testi: `BASE_URL=<preview url> npm run loadtest` (k6, `loadtest/storefront.js`), production'ga emas.
 

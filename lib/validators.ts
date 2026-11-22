@@ -683,3 +683,7 @@ export const signupSchema = z.object({
 });
 
 export type SignupInput = z.input<typeof signupSchema>;
+export type SignupStoreInput = z.input<typeof signupStoreSchema>;
+
+/** Store step only — the account already exists (signed in with Google) */
+export const signupStoreOnlySchema = z.object({ store: signupStoreSchema });

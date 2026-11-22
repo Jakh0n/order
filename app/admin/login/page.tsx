@@ -5,6 +5,7 @@ import { Suspense } from "react";
 
 import { LoginForm } from "@/components/admin/login-form";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { isGoogleEnabled } from "@/lib/auth/google";
 import { getCurrentUser, homePathFor } from "@/lib/auth/owner";
 
 export const metadata: Metadata = { robots: { index: false } };
@@ -18,7 +19,7 @@ export default function LoginPage() {
       <Header />
       {/* useSearchParams (?next=) — needs a Suspense boundary */}
       <Suspense>
-        <LoginForm />
+        <LoginForm googleEnabled={isGoogleEnabled()} />
       </Suspense>
     </main>
   );

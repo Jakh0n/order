@@ -5,35 +5,46 @@ import { Check, Loader2, X } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { Controller, type FieldPath, useForm, useWatch } from "react-hook-form";
+import { Controller, type FieldPath, type Resolver, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
+import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { defaultLocale, isLocale } from "@/i18n/config";
-import { checkSlug, signup, type SlugCheck } from "@/lib/auth/signup-actions";
+import { logout } from "@/lib/auth/actions";
+import { checkSlug, createStore, signup, type SlugCheck } from "@/lib/auth/signup-actions";
 import { POPULAR_CURRENCIES } from "@/lib/money";
 import { slugify } from "@/lib/slug";
 import { cn } from "@/lib/utils";
-import { type SignupInput, signupSchema } from "@/lib/validators";
+import { type SignupInput, signupSchema, signupStoreOnlySchema } from "@/lib/validators";
 
 type SlugStatus = { state: "idle" | "checking" } | ({ state: "done" } & SlugCheck);
 
 export function SignupForm({
   host,
   initialStoreName = "",
+  googleEnabled = false,
+  googleError,
+  account,
 }: {
   host: string;
   /** Prefilled from the landing ("claim your link") */
   initialStoreName?: string;
+  googleEnabled?: boolean;
+  /** ?error= from /api/auth/google/callback */
+  googleError?: string;
+  /** Signed in with Google, no store yet — only the store step is shown */
+  account?: { email: string };
 }) {
   const t = useTranslations("signup");
+  const tAuth = useTranslations("auth");
   const tLegal = useTranslations("legal");
   const currentLocale = useLocale();
   const locale = isLocale(currentLocale) ? currentLocale : defaultLocale;
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2>(account ? 2 : 1);
   const [slugTouched, setSlugTouched] = useState(false);
   const [slugStatus, setSlugStatus] = useState<SlugStatus>({ state: "idle" });
 
@@ -46,7 +57,10 @@ export function SignupForm({
     setError,
     formState: { errors, isSubmitting },
   } = useForm<SignupInput>({
-    resolver: zodResolver(signupSchema),
+    // With an account only the store part is validated (email/password stay empty)
+    resolver: (account
+      ? zodResolver(signupStoreOnlySchema)
+      : zodResolver(signupSchema)) as Resolver<SignupInput>,
     defaultValues: {
       email: "",
       password: "",
@@ -100,7 +114,7 @@ export function SignupForm({
 
   async function onSubmit(values: SignupInput) {
     // Muvaffaqiyatda server /admin/menu ga yo'naltiradi — bu yerga faqat xato qaytadi
-    const result = await signup(values);
+    const result = account ? await createStore(values.store) : await signup(values);
     if (!result) return;
     for (const [path, message] of Object.entries(result.fieldErrors ?? {})) {
       setError(path as FieldPath<SignupInput>, { message });
@@ -120,15 +134,44 @@ export function SignupForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
-      <div className="text-muted-foreground flex items-center justify-between text-sm">
-        <span className="text-foreground font-medium">
-          {step === 1 ? t("accountTitle") : t("storeTitle")}
-        </span>
-        <span>{t("step", { current: step, total: 2 })}</span>
-      </div>
+      {account ? (
+        <div className="bg-muted/50 flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm">
+          <span className="min-w-0 truncate">
+            {tAuth.rich("signedInAs", {
+              email: account.email,
+              b: (chunks) => <span className="font-medium">{chunks}</span>,
+            })}
+          </span>
+          <button
+            type="button"
+            className="text-primary shrink-0 font-medium"
+            onClick={() => logout()}
+          >
+            {tAuth("switchAccount")}
+          </button>
+        </div>
+      ) : (
+        <div className="text-muted-foreground flex items-center justify-between text-sm">
+          <span className="text-foreground font-medium">
+            {step === 1 ? t("accountTitle") : t("storeTitle")}
+          </span>
+          <span>{t("step", { current: step, total: 2 })}</span>
+        </div>
+      )}
 
       {/* Qadamlar yashiriladi, unmount qilinmaydi — kiritilgan qiymatlar saqlanib turadi */}
       <div className={cn("flex flex-col gap-4", step !== 1 && "hidden")}>
+        {googleEnabled && (
+          <>
+            <GoogleButton from="signup" />
+            {googleError && (
+              <p className="text-destructive text-sm" role="alert">
+                {googleError === "tooMany" ? t("errors.tooMany") : tAuth("googleFailed")}
+              </p>
+            )}
+            <AuthDivider />
+          </>
+        )}
         <Field label={t("email")} htmlFor="email" error={errorText(errors.email?.message)}>
           <Input
             id="email"
@@ -305,7 +348,7 @@ export function SignupForm({
             type="button"
             variant="outline"
             size="lg"
-            className="h-11"
+            className={cn("h-11", account && "hidden")}
             disabled={isSubmitting}
             onClick={() => setStep(1)}
           >
@@ -323,7 +366,7 @@ export function SignupForm({
         </div>
       </div>
 
-      <p className="text-muted-foreground text-center text-sm">
+      <p className={cn("text-muted-foreground text-center text-sm", account && "hidden")}>
         {t("haveAccount")}{" "}
         <Link href="/admin/login" className="text-primary font-medium">
           {t("loginLink")}

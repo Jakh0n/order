@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { safeNext } from "@/lib/auth/google-token";
 import { homePathFor } from "@/lib/auth/owner";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { createSession, deleteSession } from "@/lib/auth/session";
@@ -13,12 +14,6 @@ const loginSchema = z.object({
   email: z.string().trim().toLowerCase().email().max(200),
   password: z.string().min(1).max(200),
 });
-
-/** Only same-site admin paths (no open redirect via ?next=//evil.com) */
-function safeNext(value: FormDataEntryValue | null): string | null {
-  const next = typeof value === "string" ? value : "";
-  return /^\/admin\/[a-z0-9/_-]*$/i.test(next) && !next.includes("//") ? next : null;
-}
 
 export type LoginState = { error?: "invalid" | "tooMany"; email?: string } | undefined;
 

@@ -758,6 +758,13 @@
     "signupLink": "Зарегистрироваться",
     "tooMany": "Слишком много попыток. Попробуйте через 15 минут."
   },
+  "auth": {
+    "continueWithGoogle": "Продолжить с Google",
+    "or": "или",
+    "googleFailed": "Не удалось войти через Google. Попробуйте ещё раз или войдите по email.",
+    "signedInAs": "Вы вошли как <b>{email}</b>",
+    "switchAccount": "Не вы?"
+  },
   "adminOrders": {
     "tabs": {
       "active": "Активные",

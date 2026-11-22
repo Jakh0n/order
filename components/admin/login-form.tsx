@@ -6,19 +6,35 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
+import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/lib/auth/actions";
 
-export function LoginForm() {
+export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
   const t = useTranslations("adminLogin");
+  const tAuth = useTranslations("auth");
   const [state, action, pending] = useActionState(login, undefined);
+  const searchParams = useSearchParams();
   // Return path after login, e.g. a receipt link opened from Telegram (checked on the server)
-  const next = useSearchParams().get("next");
+  const next = searchParams.get("next");
+  // Set by /api/auth/google/callback
+  const googleError = searchParams.get("error");
 
   return (
     <form action={action} className="flex flex-col gap-4">
+      {googleEnabled && (
+        <>
+          <GoogleButton from="login" next={next} />
+          {googleError && !state?.error && (
+            <p className="text-destructive text-sm" role="alert">
+              {googleError === "tooMany" ? t("tooMany") : tAuth("googleFailed")}
+            </p>
+          )}
+          <AuthDivider />
+        </>
+      )}
       {next && <input type="hidden" name="next" value={next} />}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="email">{t("email")}</Label>
