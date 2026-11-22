@@ -140,6 +140,7 @@ function ProductForm({
           src={product.imageUrl}
           alt={product.name}
           sizes="(min-width: 640px) 448px, 100vw"
+          fit="contain"
           className="mt-2 aspect-[4/3] w-full sm:mt-0"
         />
       )}

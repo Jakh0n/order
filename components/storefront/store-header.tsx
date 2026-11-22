@@ -149,7 +149,8 @@ function Logo({ store, size }: { store: StorefrontStore; size: "sm" | "md" | "lg
       height={px}
       priority
       className={cn(
-        "border-background bg-background shrink-0 rounded-2xl object-cover shadow-sm",
+        // contain: a wide logo (wordmark) must not be cut; square logos still fill the box
+        "border-background shrink-0 rounded-2xl bg-white object-contain p-0.5 shadow-sm",
         box,
       )}
     />
