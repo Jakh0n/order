@@ -644,7 +644,11 @@
     "logout": "Chiqish",
     "errors": {
       "invalid": "Noto'g'ri ma'lumot",
-      "notFound": "Do'kon topilmadi"
+      "notFound": "Do'kon topilmadi",
+      "slugMismatch": "Havola mos kelmadi",
+      "activeSubscription": "Bu do'konda faol Pro obuna bor. Avval uni Polar'da bekor qiling.",
+      "demoStore": "Bosh sahifadagi demo do'konni o'chirib bo'lmaydi",
+      "server": "Nimadir xato ketdi. Qaytadan urinib ko'ring."
     },
     "sentryTest": "Sentry'ni sinash",
     "sentryTestHint": "Sinov xatosini yuboradi — u Sentry'da paydo bo'lishi kerak.",
@@ -687,7 +691,11 @@
         "label": "Sog'lom",
         "hint": "30 kunda 10+ haqiqiy buyurtma"
       }
-    }
+    },
+    "delete": "O'chirish",
+    "deleteTitle": "«{name}» butunlay o'chirilsinmi?",
+    "deleteHint": "Buyurtmalar, menyu, rasmlar, cheklar va egasining hisobi o'chiriladi. Buni qaytarib bo'lmaydi.",
+    "deleteTypeSlug": "Tasdiqlash uchun <b>{slug}</b> deb yozing"
   },
   "orderMessage": {
     "header": "Buyurtma №{number}",
