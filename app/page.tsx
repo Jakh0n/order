@@ -23,12 +23,7 @@ import { SiteAnalytics } from "@/components/site-analytics";
 import { buttonVariants } from "@/components/ui/button";
 import { siteOrigin } from "@/lib/app-url";
 import { DEMO_STORE_SLUGS } from "@/lib/demo";
-import {
-  FOUNDING_PRO_MONTHS,
-  FOUNDING_STORES,
-  PRO_PRICE_USD,
-  PRO_PRICE_YEARLY_USD,
-} from "@/lib/plan";
+import { PRO_PRICE_USD, PRO_PRICE_YEARLY_USD } from "@/lib/plan";
 import { cn } from "@/lib/utils";
 
 // Tezda display face: geometric with round, even strokes like the "tezda" wordmark;
@@ -93,13 +88,13 @@ function PriceCard({
   return (
     <div
       className={cn(
-        "flex h-full flex-col rounded-[2.5rem] border-2 p-7 sm:p-10",
+        "flex h-full flex-col rounded-[2rem] border-2 p-6 sm:rounded-[2.5rem] sm:p-8 lg:p-10",
         highlight ? "border-primary bg-primary/[0.03]" : "border-forest/10",
       )}
     >
       <h3 className="font-display text-2xl font-bold tracking-[-0.02em]">{name}</h3>
       <p className="mt-4 flex items-baseline gap-2">
-        <span className="font-display text-6xl font-bold tracking-[-0.04em] sm:text-7xl">
+        <span className="font-display text-6xl font-bold tracking-[-0.04em] lg:text-7xl">
           {price}
         </span>
         <span className="text-forest/60">{per}</span>
@@ -121,7 +116,7 @@ function PriceCard({
           href="/signup"
           className={cn(
             buttonVariants({ size: "lg", variant: highlight ? "default" : "outline" }),
-            "h-13 w-full rounded-full text-base",
+            "h-auto min-h-13 w-full rounded-full py-3 text-center text-base whitespace-normal",
           )}
         >
           {cta}
@@ -257,22 +252,7 @@ export default async function Home() {
               </p>
             </Reveal>
 
-            <Reveal delay={0.05}>
-              <p className="bg-primary/10 text-forest mt-10 flex flex-col gap-1 rounded-3xl px-5 py-4 sm:flex-row sm:items-center sm:gap-3 sm:rounded-full sm:px-6">
-                <span className="bg-primary w-fit shrink-0 rounded-full px-3 py-1 text-xs font-bold tracking-wide text-white uppercase">
-                  {t("pricing.foundingLabel")}
-                </span>
-                <span className="text-forest/85 text-sm sm:text-base">
-                  {t("pricing.founding", {
-                    count: FOUNDING_STORES,
-                    months: FOUNDING_PRO_MONTHS,
-                    price: `$${PRO_PRICE_USD}`,
-                  })}
-                </span>
-              </p>
-            </Reveal>
-
-            <div className="mt-6 grid gap-5 lg:grid-cols-2">
+            <div className="mt-10 grid gap-5 md:grid-cols-2 [&>*]:min-w-0">
               <Reveal delay={0.1}>
                 <PriceCard
                   name={t("pricing.freeName")}
@@ -353,12 +333,12 @@ export default async function Home() {
       <StickyCta label={t("hero.cta")} note={t("sticky.note")} />
       <SiteAnalytics />
 
-      <footer className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <footer className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-4">
           <Logo />
           <span className="text-forest/55 text-sm">{t("footer.made")}</span>
         </div>
-        <div className="text-forest/60 flex items-center gap-5 text-sm">
+        <div className="text-forest/60 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
           <Link href="/admin/login" className="hover:text-forest">
             {t("login")}
           </Link>
@@ -371,7 +351,7 @@ export default async function Home() {
           <Link href="/terms" className="hover:text-forest">
             {tLegal("footerTerms")}
           </Link>
-          <span>{t("footer.rights")}</span>
+          <span className="basis-full sm:basis-auto">{t("footer.rights")}</span>
         </div>
       </footer>
     </div>

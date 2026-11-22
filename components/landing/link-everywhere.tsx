@@ -49,9 +49,14 @@ export async function LinkEverywhere({
         <p className="text-forest/70 mt-5 text-lg leading-relaxed">{t("lead")}</p>
       </Reveal>
 
-      <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Phones: a swipe row (peek of the next card) instead of four tall cards stacked */}
+      <div className="-mx-4 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-4 px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:mt-12 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
         {places.map((place, i) => (
-          <Reveal key={place.key} delay={i * 0.08} className="flex">
+          <Reveal
+            key={place.key}
+            delay={i * 0.08}
+            className="flex w-[82%] shrink-0 snap-start sm:w-auto"
+          >
             <article className="bg-mint/60 flex w-full flex-col rounded-[2rem] p-5">
               <div className="flex h-56 items-center justify-center">{place.mock}</div>
               <h3 className="font-display mt-5 text-xl font-bold tracking-tight">

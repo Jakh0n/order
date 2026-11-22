@@ -42,7 +42,7 @@ export function SiteNav() {
           <Logo />
         </Link>
 
-        <ul className="hidden flex-1 items-center gap-1 text-sm font-medium md:flex">
+        <ul className="hidden flex-1 items-center gap-1 text-sm font-medium lg:flex">
           {LINKS.map((key) => (
             <li key={key}>
               <a
@@ -55,7 +55,7 @@ export function SiteNav() {
           ))}
         </ul>
 
-        <div className="ml-auto flex items-center gap-1 sm:gap-2 md:ml-0">
+        <div className="ml-auto flex items-center gap-1 sm:gap-2 lg:ml-0">
           <LanguageSwitcher className="text-forest/80 hover:text-forest hover:bg-forest/5 data-[popup-open]:bg-forest/5" />
           <Link
             href="/admin/login"
@@ -63,12 +63,16 @@ export function SiteNav() {
           >
             {t("login")}
           </Link>
-          <Link href="/signup" className={cn(buttonVariants(), "rounded-full px-4")}>
+          {/* Phones: the hero button and the sticky bottom bar carry signup; it's also in the menu */}
+          <Link
+            href="/signup"
+            className={cn(buttonVariants(), "hidden rounded-full px-4 sm:inline-flex")}
+          >
             {t("signup")}
           </Link>
           <button
             type="button"
-            className="hover:bg-forest/5 -mr-2 flex size-10 items-center justify-center rounded-full md:hidden"
+            className="hover:bg-forest/5 -mr-2 flex size-10 items-center justify-center rounded-full lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? t("nav.close") : t("nav.menu")}
@@ -83,7 +87,7 @@ export function SiteNav() {
         {open && (
           <motion.div
             id="mobile-nav"
-            className="overflow-hidden md:hidden"
+            className="overflow-hidden lg:hidden"
             initial={{ height: 0 }}
             animate={{ height: "auto" }}
             exit={{ height: 0 }}
@@ -101,10 +105,20 @@ export function SiteNav() {
                   </a>
                 </li>
               ))}
-              <li className="mt-2">
+              <li className="mt-2 grid gap-2 sm:grid-cols-2">
+                <Link
+                  href="/signup"
+                  onClick={() => setOpen(false)}
+                  className={cn(buttonVariants({ size: "lg" }), "h-12 w-full rounded-full text-base")}
+                >
+                  {t("signup")}
+                </Link>
                 <Link
                   href="/admin/login"
-                  className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full")}
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "lg" }),
+                    "h-12 w-full rounded-full text-base",
+                  )}
                 >
                   {t("login")}
                 </Link>
