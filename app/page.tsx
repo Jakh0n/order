@@ -153,7 +153,7 @@ export default async function Home() {
       <SiteNav />
 
       <main className="flex-1">
-        <Hero demo={demo} />
+        <Hero demo={demo} link={`${siteHost}/${DEMO_STORE_SLUGS[0]}`} />
 
         {/* The problem: an order spread over a chat vs one complete order */}
         <section id="why" className="scroll-mt-20 py-16 sm:py-24">

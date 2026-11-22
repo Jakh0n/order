@@ -39,7 +39,6 @@
       "items": "{count, plural, one {# item} other {# items}}",
       "newOrder": "New order #{number}",
       "newOrderBody": "{count, plural, one {# item} other {# items}} · {total}",
-      "label": "Animated demo on the live demo store: a customer adds three dishes, fills in the checkout, picks cash, places the order and sends it to the store's Telegram.",
       "customerName": "Aziz",
       "customerAddress": "Chilanzar 9, bldg 14, apt 32",
       "tgStatus": "last seen recently",
@@ -279,6 +278,92 @@
           "price": "5 000"
         }
       ]
+    },
+    "explainer": {
+      "label": "Video: how a food business takes orders with an online menu",
+      "posterTitle": "One complete order instead of eight messages",
+      "posterMeta": "{duration} · works without sound",
+      "play": "Watch how it works",
+      "pause": "Pause",
+      "resume": "Play",
+      "replay": "Watch again",
+      "you": "You",
+      "customer": "Customer",
+      "chapters": {
+        "problem": "The problem",
+        "store": "Your store",
+        "order": "An order",
+        "report": "Your day"
+      },
+      "chats": [
+        "Malika",
+        "Jasur",
+        "Dilnoza",
+        "Bekzod",
+        "Nodira",
+        "Sardor"
+      ],
+      "unread": "{count} unread",
+      "reading": "Reading your menu…",
+      "linkTitle": "Your store link",
+      "copy": "Copy",
+      "ticket": "Kitchen",
+      "orderTitle": "Order #{number}",
+      "today": "Today",
+      "orders": "Orders",
+      "revenue": "Revenue",
+      "returning": "Returning customers",
+      "top": "Top dishes",
+      "byHour": "Orders by hour",
+      "sample": "Sample data",
+      "scenes": {
+        "hook": {
+          "title": "Rush hour. The phone won't stop.",
+          "sub": "Menu, prices, address: every customer asks in the chat."
+        },
+        "dm": {
+          "title": "One order, eight messages",
+          "sub": "And the order still isn't complete."
+        },
+        "collapse": {
+          "title": "With a menu link, one message",
+          "sub": "The customer picks from your menu. You get the whole order at once."
+        },
+        "open": {
+          "title": "Open your store yourself",
+          "sub": "Name, link and where orders go. No developer needed."
+        },
+        "menu": {
+          "title": "Snap your paper menu",
+          "sub": "AI reads the dishes and prices. You check them before publishing."
+        },
+        "share": {
+          "title": "Share one link",
+          "sub": "Instagram bio, Telegram channel, the QR on each table."
+        },
+        "order": {
+          "title": "The customer orders alone",
+          "sub": "Dishes, address and payment, picked from your menu."
+        },
+        "arrive": {
+          "title": "The order arrives complete",
+          "sub": "Dishes, total, address and map pin. Print the kitchen ticket."
+        },
+        "status": {
+          "title": "Customers follow their order",
+          "sub": "Fewer “where is my order?” calls."
+        },
+        "report": {
+          "title": "At closing, see your day",
+          "sub": "Revenue, top dishes and who came back."
+        },
+        "end": {
+          "title": "Free. Orders are never limited.",
+          "sub": "Open today and take your first order today."
+        }
+      },
+      "back": "Back to the site",
+      "close": "Close"
     }
   },
   "menu": {

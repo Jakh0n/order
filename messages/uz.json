@@ -39,7 +39,6 @@
       "items": "{count, plural, other {# ta taom}}",
       "newOrder": "Yangi buyurtma №{number}",
       "newOrderBody": "{count, plural, other {# ta taom}} · {total}",
-      "label": "Jonli demo do'kondagi animatsion namuna: mijoz uchta taom qo'shadi, buyurtma formasini to'ldiradi, naqd to'lovni tanlaydi, buyurtma beradi va uni do'konning Telegram'iga yuboradi.",
       "customerName": "Aziz",
       "customerAddress": "Chilonzor 9-kvartal, 14-uy, 32-xonadon",
       "tgStatus": "yaqinda tarmoqda edi",
@@ -279,6 +278,92 @@
           "price": "5 000"
         }
       ]
+    },
+    "explainer": {
+      "label": "Video: oshxona onlayn menyu orqali buyurtmani qanday qabul qiladi",
+      "posterTitle": "8 ta xabar o'rniga bitta tayyor buyurtma",
+      "posterMeta": "{duration} · ovozsiz ham tushunarli",
+      "play": "Qanday ishlashini ko'ring",
+      "pause": "Pauza",
+      "resume": "Davom ettirish",
+      "replay": "Qayta ko'rish",
+      "you": "Siz",
+      "customer": "Mijoz",
+      "chapters": {
+        "problem": "Muammo",
+        "store": "Do'koningiz",
+        "order": "Buyurtma",
+        "report": "Kun yakuni"
+      },
+      "chats": [
+        "Malika",
+        "Jasur",
+        "Dilnoza",
+        "Bekzod",
+        "Nodira",
+        "Sardor"
+      ],
+      "unread": "{count} ta o'qilmagan",
+      "reading": "Menyu o'qilmoqda…",
+      "linkTitle": "Do'koningiz havolasi",
+      "copy": "Nusxa",
+      "ticket": "Oshxona",
+      "orderTitle": "Buyurtma №{number}",
+      "today": "Bugun",
+      "orders": "Buyurtmalar",
+      "revenue": "Tushum",
+      "returning": "Qaytgan mijozlar",
+      "top": "Top taomlar",
+      "byHour": "Soatlar bo'yicha",
+      "sample": "Namuna",
+      "scenes": {
+        "hook": {
+          "title": "Tig'iz soat. Telefon tinmaydi.",
+          "sub": "Menyu, narx, manzil: har bir mijoz chatda so'raydi."
+        },
+        "dm": {
+          "title": "Bitta buyurtma, 8 ta xabar",
+          "sub": "Buyurtma esa hali ham to'liq emas."
+        },
+        "collapse": {
+          "title": "Menyu havolasi bilan esa bitta xabar",
+          "sub": "Mijoz menyudan o'zi tanlaydi. Sizga butun buyurtma birdaniga keladi."
+        },
+        "open": {
+          "title": "Do'konni o'zingiz ochasiz",
+          "sub": "Nom, havola va buyurtmalar qayerga kelishi. Dasturchi kerak emas."
+        },
+        "menu": {
+          "title": "Qog'oz menyuni rasmga oling",
+          "sub": "AI taomlar va narxlarni o'qiydi, siz e'lon qilishdan oldin tekshirasiz."
+        },
+        "share": {
+          "title": "Bitta havolani ulashing",
+          "sub": "Instagram bio, Telegram kanal, har bir stoldagi QR."
+        },
+        "order": {
+          "title": "Mijoz o'zi buyurtma beradi",
+          "sub": "Taom, manzil va to'lovni menyudan tanlaydi."
+        },
+        "arrive": {
+          "title": "Buyurtma to'liq holda keladi",
+          "sub": "Taomlar, summa, manzil va xarita nuqtasi. Oshxona chekini chop eting."
+        },
+        "status": {
+          "title": "Mijoz buyurtmani o'zi kuzatadi",
+          "sub": "“Buyurtmam qayerda?” qo'ng'iroqlari kamayadi."
+        },
+        "report": {
+          "title": "Kun oxirida natijani ko'ring",
+          "sub": "Tushum, top taomlar va kim qaytib kelgani."
+        },
+        "end": {
+          "title": "Bepul. Buyurtmalar cheklanmaydi.",
+          "sub": "Bugun oching, birinchi buyurtmani bugunoq oling."
+        }
+      },
+      "back": "Saytga qaytish",
+      "close": "Yopish"
     }
   },
   "menu": {
