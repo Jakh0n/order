@@ -132,8 +132,6 @@
     "pricing": {
       "title": "Simple pricing. Orders are never limited.",
       "lead": "Start free and stay free as long as you like. Move to Pro when you want tools that bring customers back.",
-      "founding": "The first {count} stores get Pro free for {months} months, then keep {price} a month for as long as they stay.",
-      "foundingLabel": "Founding offer",
       "freeName": "Free",
       "freePer": "forever",
       "freeIntro": "Everything to take orders online.",
@@ -579,7 +577,6 @@
     "actions": "Actions",
     "tools": "Developer tools",
     "extendYear": "+12 months (yearly)",
-    "founding": "Founding: +{months} months",
     "demoBadge": "Demo · not in stats",
     "sourceShort": "via {source}",
     "growth": {
@@ -1297,7 +1294,6 @@
     "renewMessage": "Hi! I'd like to extend Pro for my store \"{store}\".",
     "neverLimit": "Free never blocks orders: new and active orders always arrive and stay visible.",
     "perYear": "or {price} a year — 2 months free",
-    "founding": "Founding offer: the first {count} stores get Pro free for {months} months. Write to us and we'll switch you on.",
     "billing": {
       "payMonthly": "Pay monthly · {price}",
       "payYearly": "Pay yearly · {price}",
@@ -1307,8 +1303,7 @@
       "success": "Payment received. Pro turns on within a minute — refresh the page if you don't see it yet.",
       "error": "Couldn't open the payment page. Please try again in a minute.",
       "limited": "Too many attempts. Please try again later.",
-      "paidThrough": "paid through {date}",
-      "founding": "Founding offer: the first {count} stores get Pro free for {months} months — choose monthly and enter code {code} at checkout."
+      "paidThrough": "paid through {date}"
     }
   },
   "push": {
@@ -1734,7 +1729,7 @@
         },
         {
           "title": "Plans and payment",
-          "body": "The Free plan never limits incoming orders. Pro adds tools for a monthly or yearly fee, paid to us directly. Pro ends at the end of the paid period unless it is renewed, and your data stays. Prices may change. We will tell you before a change affects you, and the founding-store price is kept as promised."
+          "body": "The Free plan never limits incoming orders. Pro adds tools for a monthly or yearly fee, paid to us directly. Pro ends at the end of the paid period unless it is renewed, and your data stays. Prices may change. We will tell you before a change affects you."
         },
         {
           "title": "Customers",

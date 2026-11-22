@@ -12,7 +12,6 @@ import {
   setStoreBlocked,
   type SuperadminResult,
 } from "@/lib/superadmin/actions";
-import { FOUNDING_PRO_MONTHS } from "@/lib/plan";
 
 export function StoreActions({
   storeId,
@@ -60,16 +59,6 @@ export function StoreActions({
       >
         {t("extendYear")}
       </Button>
-      {/* Founding offer (first stores): free Pro for a few months, one tap instead of six */}
-      {plan === "FREE" && (
-        <Button
-          size="sm"
-          disabled={pending}
-          onClick={() => run(() => extendPaidPlan(storeId, FOUNDING_PRO_MONTHS))}
-        >
-          {t("founding", { months: FOUNDING_PRO_MONTHS })}
-        </Button>
-      )}
       {plan === "PAID" && (
         <Button
           size="sm"

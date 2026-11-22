@@ -1,21 +1,14 @@
 // Polar billing setup (idempotent — safe to run again).
 // Usage: npm run polar:setup -- sandbox https://<public-url>
 //        npm run polar:setup -- production https://tezda.app
-// Creates: "Tezda Pro" monthly ($15) + yearly ($150) products, FOUNDING discount
-// (100% off for 6 months, 100 uses), webhook → <url>/api/webhooks/polar.
+// Creates: "Tezda Pro" monthly ($15) + yearly ($150) products, webhook → <url>/api/webhooks/polar.
 // Writes POLAR_* values into .env.local (sandbox) or .env.polar-production.local (production,
 // for Vercel env — never used by local dev). The webhook secret is never printed.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
 import { createPolar } from "@polar-sh/sdk/2026-10";
 
-import {
-  FOUNDING_PRO_MONTHS,
-  FOUNDING_STORES,
-  PRO_PRICE_USD,
-  PRO_PRICE_YEARLY_USD,
-} from "../lib/plan";
-
+import { PRO_PRICE_USD, PRO_PRICE_YEARLY_USD } from "../lib/plan";
 
 function readEnv(file: string): Record<string, string> {
   if (!existsSync(file)) return {};
@@ -73,22 +66,6 @@ async function main() {
   const monthly = await product("tezda-pro-monthly", "month", PRO_PRICE_USD);
   const yearly = await product("tezda-pro-yearly", "year", PRO_PRICE_YEARLY_USD);
 
-  // Founding offer: monthly plan only, 100% off for the first months
-  const discounts = (await polar.discounts.list({ limit: 100 })).items;
-  if (!discounts.some((d) => d.code === "FOUNDING")) {
-    await polar.discounts.create({
-      name: "Founding stores",
-      code: "FOUNDING",
-      type: "percentage",
-      basis_points: 10_000,
-      duration: "repeating",
-      duration_in_months: FOUNDING_PRO_MONTHS,
-      max_redemptions: FOUNDING_STORES,
-      max_redemptions_per_customer: 1,
-      products: [monthly],
-    });
-  }
-
   // Webhook → syncSubscription
   const url = `${baseUrl}/api/webhooks/polar`;
   const endpoints = (await polar.webhooks.listWebhookEndpoints({ limit: 100 })).items;
@@ -120,7 +97,6 @@ async function main() {
   console.log(`Polar ${env} ready → ${envFile}`);
   console.log(`  monthly product: ${monthly}`);
   console.log(`  yearly product:  ${yearly}`);
-  console.log(`  discount code:   FOUNDING`);
   console.log(`  webhook:         ${url}`);
 }
 

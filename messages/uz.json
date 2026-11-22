@@ -132,8 +132,6 @@
     "pricing": {
       "title": "Oddiy narxlar. Buyurtmalar hech qachon cheklanmaydi.",
       "lead": "Bepul boshlang va xohlaganingizcha bepul qoling. Mijozlarni qaytaradigan vositalar kerak bo'lganda Pro'ga o'ting.",
-      "founding": "Birinchi {count} ta do'konga {months} oy Pro bepul, keyin esa biz bilan qolguncha oyiga {price}.",
-      "foundingLabel": "Birinchilar uchun taklif",
       "freeName": "Free",
       "freePer": "doimiy",
       "freeIntro": "Onlayn buyurtma qabul qilish uchun hammasi.",
@@ -579,7 +577,6 @@
     "actions": "Amallar",
     "tools": "Dasturchi vositalari",
     "extendYear": "+12 oy (yillik)",
-    "founding": "Birinchi do'konlar: +{months} oy",
     "demoBadge": "Demo · statistikada yo'q",
     "sourceShort": "manba: {source}",
     "growth": {
@@ -1297,7 +1294,6 @@
     "renewMessage": "Assalomu alaykum! \"{store}\" do'konim uchun Pro'ni uzaytirmoqchiman.",
     "neverLimit": "Free hech qachon buyurtmani to'xtatmaydi: yangi va faol buyurtmalar doim keladi va ko'rinadi.",
     "perYear": "yoki yiliga {price} — 2 oy bepul",
-    "founding": "Birinchilar uchun taklif: birinchi {count} ta do'konga {months} oy Pro bepul. Bizga yozing — yoqib beramiz.",
     "billing": {
       "payMonthly": "Oylik to'lash · {price}",
       "payYearly": "Yillik to'lash · {price}",
@@ -1307,8 +1303,7 @@
       "success": "To'lov qabul qilindi. Pro bir daqiqa ichida yoqiladi — hali ko'rinmasa, sahifani yangilang.",
       "error": "To'lov sahifasini ochib bo'lmadi. Bir daqiqadan keyin qayta urinib ko'ring.",
       "limited": "Juda ko'p urinish. Keyinroq qayta urinib ko'ring.",
-      "paidThrough": "{date} gacha to'langan",
-      "founding": "Birinchilar uchun taklif: dastlabki {count} ta do'kon Pro'ni {months} oy bepul oladi — oylik to'lovni tanlang va {code} kodini kiriting."
+      "paidThrough": "{date} gacha to'langan"
     }
   },
   "push": {
@@ -1734,7 +1729,7 @@
         },
         {
           "title": "Tariflar va to'lov",
-          "body": "Free tarifi kelayotgan buyurtmalarni hech qachon cheklamaydi. Pro oylik yoki yillik to'lov evaziga qo'shimcha vositalar beradi, to'lov bizga to'g'ridan-to'g'ri qilinadi. Uzaytirilmasa, Pro to'langan muddat oxirida tugaydi, ma'lumotlaringiz esa saqlanib qoladi. Narxlar o'zgarishi mumkin. O'zgarish sizga ta'sir qilishidan oldin xabar beramiz, birinchi do'konlarga va'da qilingan narx esa saqlanadi."
+          "body": "Free tarifi kelayotgan buyurtmalarni hech qachon cheklamaydi. Pro oylik yoki yillik to'lov evaziga qo'shimcha vositalar beradi, to'lov bizga to'g'ridan-to'g'ri qilinadi. Uzaytirilmasa, Pro to'langan muddat oxirida tugaydi, ma'lumotlaringiz esa saqlanib qoladi. Narxlar o'zgarishi mumkin. O'zgarish sizga ta'sir qilishidan oldin xabar beramiz."
         },
         {
           "title": "Mijozlar",
