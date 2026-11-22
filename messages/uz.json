@@ -758,6 +758,13 @@
     "signupLink": "Ro'yxatdan o'tish",
     "tooMany": "Urinishlar juda ko'p. 15 daqiqadan keyin qayta urinib ko'ring."
   },
+  "auth": {
+    "continueWithGoogle": "Google orqali davom etish",
+    "or": "yoki",
+    "googleFailed": "Google orqali kirib bo'lmadi. Qaytadan urinib ko'ring yoki email bilan kiring.",
+    "signedInAs": "<b>{email}</b> sifatida kirdingiz",
+    "switchAccount": "Siz emasmisiz?"
+  },
   "adminOrders": {
     "tabs": {
       "active": "Faol",

@@ -62,7 +62,7 @@ export async function requireOwner(): Promise<CurrentOwner> {
   if (!owner) {
     // Do'konsiz superadmin admin paneliga emas, o'z paneliga
     const current = await getCurrentUser();
-    redirect(current?.user.role === "SUPERADMIN" ? "/superadmin" : "/admin/login");
+    redirect(current ? homePathFor(current.user.role, false) : "/admin/login");
   }
   return owner;
 }
@@ -80,5 +80,7 @@ export async function requireSuperadmin() {
 /** Kirgandan keyingi bosh sahifa */
 export function homePathFor(role: string, hasStore: boolean) {
   if (role === "SUPERADMIN" && !hasStore) return "/superadmin";
+  // Signed up with Google but hasn't created the store yet — finish the store step
+  if (!hasStore) return "/signup";
   return "/admin/orders";
 }

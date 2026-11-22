@@ -20,6 +20,8 @@ export const RULES = {
   loginIp: { name: "login:ip", limit: 20, windowSeconds: 15 * 60 },
   loginEmail: { name: "login:email", limit: 10, windowSeconds: 15 * 60 },
   signupIp: { name: "signup:ip", limit: 5, windowSeconds: 60 * 60 },
+  /** "Continue with Google" callback (account lookup / creation) */
+  googleAuthIp: { name: "google:ip", limit: 20, windowSeconds: 15 * 60 },
   orderIp: { name: "order:ip", limit: 10, windowSeconds: 10 * 60 },
   orderPhone: { name: "order:phone", limit: 5, windowSeconds: 10 * 60 },
   slugCheckIp: { name: "slug:ip", limit: 60, windowSeconds: 60 },
