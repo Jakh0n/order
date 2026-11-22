@@ -361,6 +361,7 @@ async function StoreRow({ store }: { store: SuperadminStore }) {
           <StoreActions
             storeId={store.id}
             name={store.name}
+            slug={store.slug}
             plan={store.plan}
             isBlocked={store.isBlocked}
           />
@@ -413,6 +414,7 @@ async function StoreCard({ store }: { store: SuperadminStore }) {
       <StoreActions
         storeId={store.id}
         name={store.name}
+        slug={store.slug}
         plan={store.plan}
         isBlocked={store.isBlocked}
       />

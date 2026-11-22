@@ -124,3 +124,40 @@ export async function receiptUrls(paths: string[]): Promise<Map<string, string>>
   for (const item of data) if (item.path && item.signedUrl) urls.set(item.path, item.signedUrl);
   return urls;
 }
+
+/** All files of a store (menu images + receipts) — when the store itself is deleted. Errors are reported, not thrown. */
+export async function deleteStoreFiles(storeId: string): Promise<number> {
+  const supabase = getSupabaseAdmin();
+  let removed = 0;
+
+  async function listAll(bucket: string, prefix: string): Promise<string[]> {
+    const files: string[] = [];
+    for (let offset = 0; ; offset += 1000) {
+      const { data, error } = await supabase.storage
+        .from(bucket)
+        .list(prefix, { limit: 1000, offset });
+      if (error) throw error;
+      for (const item of data) {
+        const path = `${prefix}/${item.name}`;
+        // Folders have no id (receipts: stores/{storeId}/{orderId}/...)
+        if (item.id === null) files.push(...(await listAll(bucket, path)));
+        else files.push(path);
+      }
+      if (data.length < 1000) return files;
+    }
+  }
+
+  for (const bucket of [BUCKET, RECEIPT_BUCKET]) {
+    try {
+      const files = await listAll(bucket, `stores/${storeId}`);
+      for (let i = 0; i < files.length; i += 100) {
+        const { error } = await supabase.storage.from(bucket).remove(files.slice(i, i + 100));
+        if (error) throw error;
+      }
+      removed += files.length;
+    } catch (e) {
+      reportError(e, "deleteStoreFiles", { bucket });
+    }
+  }
+  return removed;
+}

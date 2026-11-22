@@ -644,7 +644,11 @@
     "logout": "Log out",
     "errors": {
       "invalid": "Invalid data",
-      "notFound": "Store not found"
+      "notFound": "Store not found",
+      "slugMismatch": "The link doesn't match",
+      "activeSubscription": "This store has an active Pro subscription. Cancel it in Polar first.",
+      "demoStore": "The demo store on the landing page can't be deleted",
+      "server": "Something went wrong. Please try again."
     },
     "sentryTest": "Test Sentry",
     "sentryTestHint": "Sends a test error — it should appear in Sentry.",
@@ -687,7 +691,11 @@
         "label": "Healthy",
         "hint": "10+ real orders in 30 days"
       }
-    }
+    },
+    "delete": "Delete",
+    "deleteTitle": "Delete \"{name}\" for good?",
+    "deleteHint": "Orders, menu, images, receipts and the owner's account are deleted. This can't be undone.",
+    "deleteTypeSlug": "Type <b>{slug}</b> to confirm"
   },
   "orderMessage": {
     "header": "Order #{number}",
