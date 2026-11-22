@@ -1138,7 +1138,10 @@
     "storeLocated": "{address}.",
     "ogStoreCta": "Order online",
     "ogHomeTitle": "Your menu on one link. Orders straight to your chat.",
-    "ogHomeBody": "Online menu and ordering for small food businesses — orders arrive in WhatsApp or Telegram."
+    "ogHomeBody": "Online menu and ordering for small food businesses — orders arrive in WhatsApp or Telegram.",
+    "storeMenuItems": "Menu: {items} and more.",
+    "ogOpen24": "Open 24/7",
+    "ogHours": "Open {open}–{close}"
   },
   "receipt": {
     "label": "Payment receipt",
