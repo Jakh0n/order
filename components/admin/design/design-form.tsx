@@ -725,7 +725,7 @@ function HeaderEditor({
         <div className="relative">
           <div className="border-background bg-background relative size-20 overflow-hidden rounded-2xl border-4 shadow-md">
             {logoUrl ? (
-              <Image src={logoUrl} alt="" fill sizes="80px" className="object-cover" />
+              <Image src={logoUrl} alt="" fill sizes="80px" className="bg-white object-contain" />
             ) : (
               <span className="bg-primary text-primary-foreground flex size-full items-center justify-center text-2xl font-bold">
                 {name?.charAt(0).toUpperCase() || "?"}

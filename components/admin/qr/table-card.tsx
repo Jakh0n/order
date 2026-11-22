@@ -56,7 +56,7 @@ export function TableCard({
             <img
               src={store.logoUrl}
               alt=""
-              className="relative size-[14cqw] rounded-[3.5cqw] bg-white object-cover ring-[0.8cqw] ring-white/40"
+              className="relative size-[14cqw] rounded-[3.5cqw] bg-white object-contain ring-[0.8cqw] ring-white/40"
             />
           ) : (
             <span className="relative flex size-[14cqw] items-center justify-center rounded-[3.5cqw] bg-white/20 text-[7cqw] font-bold ring-[0.8cqw] ring-white/30">
