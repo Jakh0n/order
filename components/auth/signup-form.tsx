@@ -10,6 +10,7 @@ import { toast } from "sonner";
 
 import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/auth/password-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -191,9 +192,9 @@ export function SignupForm({
   const slugTaken = slugStatus.state === "done" && !slugStatus.available;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6">
       {account ? (
-        <div className="bg-muted/50 flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm">
+        <div className="bg-muted/60 flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm">
           <span className="min-w-0 truncate">
             {tAuth.rich("signedInAs", {
               email: account.email,
@@ -209,11 +210,24 @@ export function SignupForm({
           </button>
         </div>
       ) : (
-        <div className="text-muted-foreground flex items-center justify-between text-sm">
-          <span className="text-foreground font-medium">
-            {step === 1 ? t("accountTitle") : step === 2 ? t("verifyTitle") : t("storeTitle")}
-          </span>
-          <span>{t("step", { current: step, total: 3 })}</span>
+        <div className="flex flex-col gap-2.5">
+          <div className="flex gap-1.5" aria-hidden>
+            {[1, 2, 3].map((n) => (
+              <span
+                key={n}
+                className={cn(
+                  "h-1 flex-1 rounded-full transition-colors duration-300",
+                  n <= step ? "bg-primary" : "bg-muted",
+                )}
+              />
+            ))}
+          </div>
+          <div className="text-muted-foreground flex items-center justify-between text-sm">
+            <span className="text-foreground font-medium">
+              {step === 1 ? t("accountTitle") : step === 2 ? t("verifyTitle") : t("storeTitle")}
+            </span>
+            <span>{t("step", { current: step, total: 3 })}</span>
+          </div>
         </div>
       )}
 
@@ -235,6 +249,7 @@ export function SignupForm({
             id="email"
             type="email"
             autoComplete="email"
+            className="h-11"
             aria-invalid={!!errors.email}
             {...register("email")}
           />
@@ -245,10 +260,10 @@ export function SignupForm({
           hint={t("passwordHint")}
           error={errorText(errors.password?.message)}
         >
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete="new-password"
+            className="h-11"
             aria-invalid={!!errors.password}
             {...register("password")}
           />
@@ -333,13 +348,14 @@ export function SignupForm({
             id="storeName"
             placeholder={t("storeNamePlaceholder")}
             maxLength={80}
+            className="h-11"
             aria-invalid={!!errors.store?.storeName}
             {...register("store.storeName")}
           />
         </Field>
 
         <Field label={t("slug")} htmlFor="slug" hint={t("slugHint")} error={errorText(slugError)}>
-          <div className="focus-within:border-ring focus-within:ring-ring/50 flex items-center rounded-lg border focus-within:ring-3">
+          <div className="focus-within:border-ring focus-within:ring-ring/50 flex h-11 items-center rounded-lg border focus-within:ring-3">
             <span className="text-muted-foreground shrink-0 pl-2.5 text-sm">{host}/</span>
             <input
               id="slug"
@@ -347,7 +363,7 @@ export function SignupForm({
               autoCorrect="off"
               spellCheck={false}
               maxLength={40}
-              className="h-9 min-w-0 flex-1 bg-transparent px-1 text-sm outline-none"
+              className="h-full min-w-0 flex-1 bg-transparent px-1 text-base outline-none md:text-sm"
               aria-invalid={!!slugError || slugTaken}
               {...register("store.slug", {
                 onChange: (e) => {
@@ -380,7 +396,7 @@ export function SignupForm({
         >
           <select
             id="currency"
-            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full rounded-lg border bg-transparent px-2.5 text-sm outline-none focus-visible:ring-3"
+            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-11 w-full rounded-lg border bg-transparent px-2.5 text-base outline-none md:text-sm focus-visible:ring-3"
             {...register("store.currency")}
           >
             {POPULAR_CURRENCIES.map((code) => (
@@ -429,6 +445,7 @@ export function SignupForm({
               placeholder={t("telegramPlaceholder")}
               autoCapitalize="off"
               autoCorrect="off"
+              className="h-11"
               aria-invalid={!!errors.store?.telegramUsername}
               {...register("store.telegramUsername")}
             />
@@ -444,6 +461,7 @@ export function SignupForm({
               id="whatsappNumber"
               type="tel"
               placeholder={t("whatsappPlaceholder")}
+              className="h-11"
               aria-invalid={!!errors.store?.whatsappNumber}
               {...register("store.whatsappNumber")}
             />

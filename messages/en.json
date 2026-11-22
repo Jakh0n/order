@@ -757,7 +757,9 @@
     "noAccount": "Don't have an account?",
     "signupLink": "Sign up",
     "tooMany": "Too many attempts. Please try again in 15 minutes.",
-    "forgot": "Forgot password?"
+    "forgot": "Forgot password?",
+    "welcome": "Welcome back",
+    "subtitle": "Log in to see new orders and manage your menu."
   },
   "auth": {
     "continueWithGoogle": "Continue with Google",
@@ -765,6 +767,21 @@
     "googleFailed": "Couldn't sign in with Google. Please try again or use email.",
     "signedInAs": "Signed in as <b>{email}</b>",
     "switchAccount": "Not you?"
+  },
+  "authShell": {
+    "home": "Home",
+    "panelTitle": "Your menu on one link. Orders straight to your chat.",
+    "benefit1": "Free plan with unlimited orders",
+    "benefit2": "Orders arrive in Telegram or WhatsApp",
+    "benefit3": "AI reads your paper menu from a photo",
+    "orderFrom": "Telegram",
+    "orderTime": "just now",
+    "orderTitle": "New order #128 · Delivery",
+    "orderItems": "2 × Chicken burger, 1 × Fries, 1 × Lemonade",
+    "orderMeta": "Cash · 12:30",
+    "orderTotal": "$24.50",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "passwordReset": {
     "title": "Reset password",
@@ -1098,7 +1115,8 @@
     "confirmCode": "Confirm",
     "resendCode": "Send a new code",
     "resendIn": "New code in {seconds}s",
-    "changeEmail": "Change email"
+    "changeEmail": "Change email",
+    "subtitle": "Free, with unlimited orders. Takes about 5 minutes."
   },
   "errorPage": {
     "title": "Something went wrong",

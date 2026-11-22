@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/auth/password-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { requestPasswordReset, resetPassword } from "@/lib/auth/email-actions";
@@ -53,7 +54,7 @@ export function ResetPasswordForm() {
 
   return (
     <form
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-5"
       onSubmit={(e) => {
         e.preventDefault();
         if (step === 1) sendCode();
@@ -62,13 +63,13 @@ export function ResetPasswordForm() {
     >
       {step === 1 ? (
         <>
-          <p className="text-muted-foreground text-sm">{t("intro")}</p>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="email">{tSignup("email")}</Label>
             <Input
               id="email"
               type="email"
               autoComplete="email"
+              className="h-11"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -99,10 +100,10 @@ export function ResetPasswordForm() {
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="password">{t("newPassword")}</Label>
-            <Input
+            <PasswordInput
               id="password"
-              type="password"
               autoComplete="new-password"
+              className="h-11"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

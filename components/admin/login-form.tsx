@@ -8,6 +8,7 @@ import { useActionState } from "react";
 
 import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/auth/password-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/lib/auth/actions";
@@ -23,7 +24,7 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
   const googleError = searchParams.get("error");
 
   return (
-    <form action={action} className="flex flex-col gap-4">
+    <form action={action} className="flex flex-col gap-5">
       {googleEnabled && (
         <>
           <GoogleButton from="login" next={next} />
@@ -43,6 +44,7 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
           name="email"
           type="email"
           autoComplete="username"
+          className="h-11"
           defaultValue={state?.email}
           key={state?.email}
           required
@@ -51,15 +53,15 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between">
           <Label htmlFor="password">{t("password")}</Label>
-          <Link href="/admin/reset" className="text-primary text-sm">
+          <Link href="/admin/reset" className="text-muted-foreground hover:text-foreground text-sm">
             {t("forgot")}
           </Link>
         </div>
-        <Input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           autoComplete="current-password"
+          className="h-11"
           required
         />
       </div>
@@ -72,7 +74,7 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
         {pending && <Loader2 className="animate-spin" />}
         {t("submit")}
       </Button>
-      <p className="text-muted-foreground text-center text-sm">
+      <p className="text-muted-foreground mt-2 text-center text-sm">
         {t("noAccount")}{" "}
         <Link href="/signup" className="text-primary font-medium">
           {t("signupLink")}

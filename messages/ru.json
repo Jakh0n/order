@@ -757,7 +757,9 @@
     "noAccount": "Нет аккаунта?",
     "signupLink": "Зарегистрироваться",
     "tooMany": "Слишком много попыток. Попробуйте через 15 минут.",
-    "forgot": "Забыли пароль?"
+    "forgot": "Забыли пароль?",
+    "welcome": "С возвращением",
+    "subtitle": "Войдите, чтобы видеть новые заказы и управлять меню."
   },
   "auth": {
     "continueWithGoogle": "Продолжить с Google",
@@ -765,6 +767,21 @@
     "googleFailed": "Не удалось войти через Google. Попробуйте ещё раз или войдите по email.",
     "signedInAs": "Вы вошли как <b>{email}</b>",
     "switchAccount": "Не вы?"
+  },
+  "authShell": {
+    "home": "Главная",
+    "panelTitle": "Ваше меню по одной ссылке. Заказы прямо в чат.",
+    "benefit1": "Бесплатный тариф без лимита заказов",
+    "benefit2": "Заказы приходят в Telegram или WhatsApp",
+    "benefit3": "ИИ прочитает бумажное меню по фото",
+    "orderFrom": "Telegram",
+    "orderTime": "только что",
+    "orderTitle": "Новый заказ #128 · Доставка",
+    "orderItems": "2 × Чикен бургер, 1 × Картошка фри, 1 × Лимонад",
+    "orderMeta": "Наличные · 12:30",
+    "orderTotal": "$24.50",
+    "showPassword": "Показать пароль",
+    "hidePassword": "Скрыть пароль"
   },
   "passwordReset": {
     "title": "Сброс пароля",
@@ -1098,7 +1115,8 @@
     "confirmCode": "Подтвердить",
     "resendCode": "Отправить новый код",
     "resendIn": "Новый код через {seconds} с",
-    "changeEmail": "Изменить email"
+    "changeEmail": "Изменить email",
+    "subtitle": "Бесплатно, без лимита заказов. Займёт около 5 минут."
   },
   "errorPage": {
     "title": "Что-то пошло не так",

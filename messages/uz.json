@@ -757,7 +757,9 @@
     "noAccount": "Akkauntingiz yo'qmi?",
     "signupLink": "Ro'yxatdan o'tish",
     "tooMany": "Urinishlar juda ko'p. 15 daqiqadan keyin qayta urinib ko'ring.",
-    "forgot": "Parolni unutdingizmi?"
+    "forgot": "Parolni unutdingizmi?",
+    "welcome": "Xush kelibsiz",
+    "subtitle": "Yangi buyurtmalarni ko'rish va menyuni boshqarish uchun kiring."
   },
   "auth": {
     "continueWithGoogle": "Google orqali davom etish",
@@ -765,6 +767,21 @@
     "googleFailed": "Google orqali kirib bo'lmadi. Qaytadan urinib ko'ring yoki email bilan kiring.",
     "signedInAs": "<b>{email}</b> sifatida kirdingiz",
     "switchAccount": "Siz emasmisiz?"
+  },
+  "authShell": {
+    "home": "Bosh sahifa",
+    "panelTitle": "Menyungiz bitta havolada. Buyurtmalar to'g'ri chatga.",
+    "benefit1": "Bepul tarif, buyurtmalar cheklanmagan",
+    "benefit2": "Buyurtmalar Telegram yoki WhatsApp'ga keladi",
+    "benefit3": "AI qog'oz menyuni rasmdan o'qiydi",
+    "orderFrom": "Telegram",
+    "orderTime": "hozirgina",
+    "orderTitle": "Yangi buyurtma #128 · Yetkazish",
+    "orderItems": "2 × Chicken burger, 1 × Fri, 1 × Limonad",
+    "orderMeta": "Naqd · 12:30",
+    "orderTotal": "$24.50",
+    "showPassword": "Parolni ko'rsatish",
+    "hidePassword": "Parolni yashirish"
   },
   "passwordReset": {
     "title": "Parolni tiklash",
@@ -1098,7 +1115,8 @@
     "confirmCode": "Tasdiqlash",
     "resendCode": "Yangi kod yuborish",
     "resendIn": "Yangi kod {seconds} soniyadan keyin",
-    "changeEmail": "Emailni o'zgartirish"
+    "changeEmail": "Emailni o'zgartirish",
+    "subtitle": "Bepul, buyurtmalar cheklanmagan. Taxminan 5 daqiqa vaqt oladi."
   },
   "errorPage": {
     "title": "Nimadir xato ketdi",
