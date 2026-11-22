@@ -34,6 +34,8 @@ export const RESERVED_SLUGS = new Set([
   // SEO metadata routes (app/icon.svg, app/apple-icon.tsx, app/opengraph-image.tsx)
   "icon",
   "apple-icon",
+  "icon1", // app/icon1.png (192 px PNG favicon)
+  "favicon", // app/favicon.ico
   "opengraph-image",
 ]);
 
